@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import 'sanitize.css';
 
 import { AppContainer } from './components/app';
+import { GeneralLayout } from './components/general_layout';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
 import * as serviceWorker from './serviceWorker';
@@ -23,10 +24,12 @@ const Web3WrappedApp = (
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <AppContainer>
-                <Switch>
-                    <Route exact={true} path="/" component={Marketplace} />
-                    <Route exact={true} path="/my-wallet" component={MyWallet} />
-                </Switch>
+                <GeneralLayout>
+                    <Switch>
+                        <Route exact={true} path="/" component={Marketplace} />
+                        <Route exact={true} path="/my-wallet" component={MyWallet} />
+                    </Switch>
+                </GeneralLayout>
             </AppContainer>
         </ConnectedRouter>
     </Provider>
