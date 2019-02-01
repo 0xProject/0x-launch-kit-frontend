@@ -3,12 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getKnownTokens } from '../../store/selectors';
-import { StoreState } from '../../store/types';
+import { getKnownTokens, getWeb3State } from '../../store/selectors';
+import { StoreState, Web3State } from '../../store/types';
 import { TokenBalance } from '../../util/types';
 import { Card } from '../common/card';
 
 interface PropsFromState {
+    web3State: Web3State;
     knownTokens: TokenBalance[];
 }
 
@@ -24,7 +25,7 @@ const THead = styled.thead`
 `;
 
 const Row = styled.tr<{ isLast: boolean }>`
-    border-bottom: ${props => props.isLast ? '' : '1px solid #e7e7e7'};
+    border-bottom: ${props => (props.isLast ? '' : '1px solid #e7e7e7')};
 `;
 
 const THTokens = styled.th`
@@ -51,9 +52,7 @@ const tokenBalanceToRow = (tokenBalance: TokenBalance, index: number, tokensCoun
 
     const decimalsPerToken = new BigNumber(10).pow(tokenBalance.token.decimals);
 
-    const formattedBalance = tokenBalance.balance
-        .div(decimalsPerToken)
-        .toFixed(2);
+    const formattedBalance = tokenBalance.balance.div(decimalsPerToken).toFixed(2);
 
     return (
         <Row key={symbol} isLast={index + 1 === tokensCount}>
@@ -65,21 +64,27 @@ const tokenBalanceToRow = (tokenBalance: TokenBalance, index: number, tokensCoun
 
 class WalletTokenBalances extends React.PureComponent<WalletTokenBalancesProps> {
     public render = () => {
-        const { knownTokens } = this.props;
+        const { knownTokens, web3State } = this.props;
 
         return (
             <Card title="Token Balances">
-                <table>
-                    <THead>
-                        <tr>
-                            <THTokens>Token</THTokens>
-                            <THAmount>Available Qty.</THAmount>
-                        </tr>
-                    </THead>
-                    <tbody>
-                        {knownTokens.map((tokenBalance, index) => tokenBalanceToRow(tokenBalance, index, knownTokens.length))}
-                    </tbody>
-                </table>
+                {web3State === Web3State.Error ? (
+                    <p>Your wallet is not connected</p>
+                ) : (
+                    <table>
+                        <THead>
+                            <tr>
+                                <THTokens>Token</THTokens>
+                                <THAmount>Available Qty.</THAmount>
+                            </tr>
+                        </THead>
+                        <tbody>
+                            {knownTokens.map((tokenBalance, index) =>
+                                tokenBalanceToRow(tokenBalance, index, knownTokens.length),
+                            )}
+                        </tbody>
+                    </table>
+                )}
             </Card>
         );
     };
@@ -88,6 +93,7 @@ class WalletTokenBalances extends React.PureComponent<WalletTokenBalancesProps> 
 const mapStateToProps = (state: StoreState): PropsFromState => {
     return {
         knownTokens: getKnownTokens(state),
+        web3State: getWeb3State(state),
     };
 };
 
