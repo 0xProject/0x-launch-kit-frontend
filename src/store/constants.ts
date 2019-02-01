@@ -1,0 +1,3 @@
+export const SET_ETH_ACCOUNT = 'SET_ETH_ACCOUNT';
+
+export const SET_WEB3_STATE = 'SET_WEB3_STATE';
