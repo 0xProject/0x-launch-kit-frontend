@@ -63,3 +63,15 @@ export const getKnownTokens = (networkId: number): Token[] => {
 
     return tokensMap[networkId];
 };
+
+export const getTokenBySymbol = (networkId: number, symbol: string): Token => {
+    const knownTokens = getKnownTokens(networkId);
+
+    const token = knownTokens.filter(t => t.symbol === symbol)[0];
+
+    if (!token) {
+        throw new Error(`Token with symbol ${symbol} not found in known tokens`);
+    }
+
+    return token;
+};

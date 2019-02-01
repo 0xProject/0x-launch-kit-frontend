@@ -2,21 +2,36 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface Props {
-    children: React.ReactNode;
     title: string;
+    action?: React.ReactNode;
+    children: React.ReactNode;
     style?: React.CSSProperties;
 }
 
-const CardTitle = styled.h1`
+const headerHeight = 70;
+
+const CardHeader = styled.div`
     margin: 0;
-    padding: 15px;
+    padding: 0 15px;
+    height: ${headerHeight}px;
+
+    border-bottom: 1px solid #dedede;
+`;
+
+const CardTitle = styled.h1`
+    display: inline-block;
+    margin: 0;
 
     font-style: normal;
     font-weight: bold;
-    line-height: normal;
+    line-height: ${headerHeight}px;
     font-size: 16px;
+`;
 
-    border-bottom: 1px solid #dedede;
+const CardAction = styled.div`
+    float: right;
+
+    line-height: ${headerHeight}px;
 `;
 
 const CardBody = styled.div`
@@ -31,11 +46,14 @@ const CardWrapper = styled.div`
 `;
 
 export const Card: React.FC<Props> = props => {
-    const { title, children, ...restProps } = props;
+    const { title, action, children, ...restProps } = props;
 
     return (
         <CardWrapper {...restProps}>
-            <CardTitle>{title}</CardTitle>
+            <CardHeader>
+                <CardTitle>{title}</CardTitle>
+                {action ? <CardAction>{action}</CardAction> : null}
+            </CardHeader>
             <CardBody>{children}</CardBody>
         </CardWrapper>
     );

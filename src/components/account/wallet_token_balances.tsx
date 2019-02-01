@@ -1,12 +1,12 @@
-import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getKnownTokens } from '../../store/selectors';
-import { StoreState } from '../../store/types';
-import { TokenBalance } from '../../util/types';
+import { tokenAmountInUnits } from '../../util/tokens';
+import { StoreState, TokenBalance } from '../../util/types';
 import { Card } from '../common/card';
+import { TH, THead } from '../common/table';
 
 interface PropsFromState {
     knownTokens: TokenBalance[];
@@ -14,51 +14,27 @@ interface PropsFromState {
 
 type WalletTokenBalancesProps = PropsFromState;
 
-const headerPaddingBottom = 20;
-const rowsVerticalPadding = 10;
-
-const THead = styled.thead`
-    text-transform: uppercase;
-    color: #ccc;
-    font-size: 12px;
-`;
-
 const Row = styled.tr<{ isLast: boolean }>`
-    border-bottom: ${props => props.isLast ? '' : '1px solid #e7e7e7'};
+    border-bottom: ${props => (props.isLast ? '' : '1px solid #e7e7e7')};
 `;
 
-const THTokens = styled.th`
-    padding-bottom: ${headerPaddingBottom}px;
-    text-align: left;
+const TD = styled.td`
+    padding: 10px 0;
 `;
 
-const THAmount = styled.th`
-    padding-bottom: ${headerPaddingBottom}px;
-    text-align: left;
-`;
-
-const TDTokens = styled.td`
-    padding: ${rowsVerticalPadding}px 0;
+const TDTokens = styled(TD)`
     min-width: 20em;
-`;
-
-const TDAmount = styled.td`
-    padding: ${rowsVerticalPadding}px 0;
 `;
 
 const tokenBalanceToRow = (tokenBalance: TokenBalance, index: number, tokensCount: number) => {
     const { symbol } = tokenBalance.token;
 
-    const decimalsPerToken = new BigNumber(10).pow(tokenBalance.token.decimals);
-
-    const formattedBalance = tokenBalance.balance
-        .div(decimalsPerToken)
-        .toFixed(2);
+    const formattedBalance = tokenAmountInUnits(tokenBalance.token, tokenBalance.balance);
 
     return (
         <Row key={symbol} isLast={index + 1 === tokensCount}>
             <TDTokens>{symbol}</TDTokens>
-            <TDAmount>{formattedBalance}</TDAmount>
+            <TD>{formattedBalance}</TD>
         </Row>
     );
 };
@@ -72,12 +48,14 @@ class WalletTokenBalances extends React.PureComponent<WalletTokenBalancesProps> 
                 <table>
                     <THead>
                         <tr>
-                            <THTokens>Token</THTokens>
-                            <THAmount>Available Qty.</THAmount>
+                            <TH>Token</TH>
+                            <TH>Available Qty.</TH>
                         </tr>
                     </THead>
                     <tbody>
-                        {knownTokens.map((tokenBalance, index) => tokenBalanceToRow(tokenBalance, index, knownTokens.length))}
+                        {knownTokens.map((tokenBalance, index) =>
+                            tokenBalanceToRow(tokenBalance, index, knownTokens.length),
+                        )}
                     </tbody>
                 </table>
             </Card>

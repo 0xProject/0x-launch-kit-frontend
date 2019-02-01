@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getEthAccount } from '../../store/selectors';
-import { StoreState } from '../../store/types';
+import { StoreState } from '../../util/types';
 
 interface PropsFromState {
     ethAccount: string;
@@ -34,6 +34,10 @@ const mapStateToProps = (state: StoreState): PropsFromState => {
     };
 };
 
-const WalletConnectionStatusContainer = connect(mapStateToProps)(WalletConnectionStatus);
+const mapDispatchToProps = (state: StoreState): {} => {
+    return {};
+};
+
+const WalletConnectionStatusContainer = connect(mapStateToProps, mapDispatchToProps)(WalletConnectionStatus);
 
 export { WalletConnectionStatus, WalletConnectionStatusContainer };

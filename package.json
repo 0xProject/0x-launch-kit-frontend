@@ -4,6 +4,7 @@
     "private": true,
     "dependencies": {
         "0x.js": "^3.0.3",
+        "@0x/connect": "^3.0.13",
         "@0x/web3-wrapper": "^3.2.4",
         "connected-react-router": "^6.2.2",
         "history": "^4.7.2",
