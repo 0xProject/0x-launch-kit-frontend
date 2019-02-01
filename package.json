@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "0x.js": "^3.0.3",
         "@0x/web3-wrapper": "^3.2.4",
         "connected-react-router": "^6.2.2",
         "history": "^4.7.2",
@@ -15,8 +16,9 @@
         "react-scripts": "2.1.3",
         "redux": "^4.0.1",
         "redux-thunk": "^2.3.0",
-        "typesafe-actions": "^3.0.0",
-        "typescript": "3.2.4"
+        "sanitize.css": "^8.0.0",
+        "styled-components": "^4.1.3",
+        "typesafe-actions": "^3.0.0"
     },
     "scripts": {
         "start": "PORT=3001 react-scripts start",
@@ -52,6 +54,8 @@
         "@types/react-dom": "16.0.11",
         "@types/react-redux": "^7.0.1",
         "@types/react-router": "^4.4.3",
+        "@types/react-router-dom": "^4.3.1",
+        "@types/styled-components": "^4.1.6",
         "enzyme": "^3.8.0",
         "enzyme-adapter-react-16": "^1.7.1",
         "husky": "^1.3.1",
@@ -60,6 +64,7 @@
         "tslint": "^5.12.0",
         "tslint-config-prettier": "^1.17.0",
         "tslint-config-standard": "^8.0.1",
-        "tslint-react": "^3.6.0"
+        "tslint-react": "^3.6.0",
+        "typescript": "3.2.4"
     }
 }
