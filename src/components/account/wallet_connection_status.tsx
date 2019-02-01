@@ -8,15 +8,22 @@ interface PropsFromState {
     ethAccount: string;
 }
 
-type WalletConnectionStatusProps = PropsFromState;
+type WalletConnectionStatusProps = PropsFromState & {
+    style?: React.CSSProperties;
+};
+
+const truncateAddress = (address: string) => {
+    return `${address.slice(0, 7)}...${address.slice(address.length - 5)}`;
+};
 
 class WalletConnectionStatus extends React.PureComponent<WalletConnectionStatusProps> {
     public render = () => {
-        const { ethAccount } = this.props;
+        const { ethAccount, ...restProps } = this.props;
+
         return (
-            <div className="wallet-connection-status">
-                <p>{ethAccount ? `Connected with: ${ethAccount}` : 'Not connected'}</p>
-            </div>
+            <span className="wallet-connection-status" {...restProps}>
+                {ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected'}
+            </span>
         );
     };
 }

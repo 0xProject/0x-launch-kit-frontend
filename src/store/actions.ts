@@ -1,52 +1,60 @@
-import { Web3Wrapper } from '@0x/web3-wrapper';
+import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { SET_ETH_ACCOUNT, SET_WEB3_STATE } from './constants';
+import { getEthereumClient } from '../util/get_ethereum_client';
+import { getTokenBalance } from '../util/get_token_balance';
+import { getKnownTokens, getWethToken } from '../util/known_tokens';
+import { TokenBalance } from '../util/types';
+
+import * as constants from './constants';
 import { Web3State } from './types';
 
-export const setEthAccount = createAction(SET_ETH_ACCOUNT, resolve => {
+export const setEthAccount = createAction(constants.SET_ETH_ACCOUNT, resolve => {
     return (ethAccount: string) => resolve(ethAccount);
 });
 
-export const setWeb3State = createAction(SET_WEB3_STATE, resolve => {
+export const setWeb3State = createAction(constants.SET_WEB3_STATE, resolve => {
     return (web3State: Web3State) => resolve(web3State);
 });
 
-export function initWallet(): (dispatch: any) => any {
+export const setKnownTokens = createAction(constants.SET_KNOWN_TOKENS, resolve => {
+    return (knownTokens: TokenBalance[]) => resolve(knownTokens);
+});
+
+export const setWethBalance = createAction(constants.SET_WETH_BALANCE, resolve => {
+    return (wethBalance: BigNumber) => resolve(wethBalance);
+});
+
+export const initWallet = () => {
     return async (dispatch: any) => {
         dispatch(setWeb3State(Web3State.Loading));
 
-        const web3Wrapper = await createEthereumClient();
+        const web3Wrapper = await getEthereumClient();
 
         if (web3Wrapper) {
-            const accounts = await web3Wrapper.getAvailableAddressesAsync();
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
 
-            dispatch(setEthAccount(accounts[0]));
+            const knownTokens = getKnownTokens(networkId);
+
+            const balances = await Promise.all(knownTokens.map(token => getTokenBalance(token, ethAccount)));
+            const tokenBalances = knownTokens.map((token, index) => {
+              return {
+                token,
+                balance: balances[index],
+              };
+            });
+
+            const wethToken = getWethToken(networkId);
+
+            const wethBalance = await getTokenBalance(wethToken, ethAccount);
+
+            dispatch(setKnownTokens(tokenBalances));
+            dispatch(setWethBalance(wethBalance));
+            dispatch(setEthAccount(ethAccount));
             dispatch(setWeb3State(Web3State.Done));
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }
     };
-}
-
-const createEthereumClient = async () => {
-    const provider: any = window.ethereum || window.web3;
-
-    if (window.ethereum) {
-        const web3Wrapper = new Web3Wrapper(provider);
-
-        try {
-            // Request account access if needed
-            await provider.enable();
-
-            return web3Wrapper;
-        } catch (error) {
-            // TODO: User denied account access
-            return null;
-        }
-    } else if (window.web3) {
-        return new Web3Wrapper(window.web3.currentProvider);
-    } else {
-        return null;
-    }
 };

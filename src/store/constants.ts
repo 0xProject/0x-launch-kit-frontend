@@ -1,3 +1,4 @@
 export const SET_ETH_ACCOUNT = 'SET_ETH_ACCOUNT';
-
+export const SET_KNOWN_TOKENS = 'SET_KNOWN_TOKENS';
 export const SET_WEB3_STATE = 'SET_WEB3_STATE';
+export const SET_WETH_BALANCE = 'SET_WETH_BALANCE';
