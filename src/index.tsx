@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
+import 'sanitize.css';
 
 import { AppContainer } from './components/app';
 import { Marketplace } from './pages/marketplace';
