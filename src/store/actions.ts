@@ -2,18 +2,19 @@ import { Web3Wrapper } from '@0x/web3-wrapper';
 import { createAction } from 'typesafe-actions';
 
 import { SET_ETH_ACCOUNT, SET_WEB3_STATE } from './constants';
+import { Web3State } from './types';
 
 export const setEthAccount = createAction(SET_ETH_ACCOUNT, resolve => {
     return (ethAccount: string) => resolve(ethAccount);
 });
 
 export const setWeb3State = createAction(SET_WEB3_STATE, resolve => {
-    return (web3State: string) => resolve(web3State);
+    return (web3State: Web3State) => resolve(web3State);
 });
 
 export function initWallet(): (dispatch: any) => any {
     return async (dispatch: any) => {
-        dispatch(setWeb3State('loading'));
+        dispatch(setWeb3State(Web3State.Loading));
 
         const web3Wrapper = await createEthereumClient();
 
@@ -21,9 +22,9 @@ export function initWallet(): (dispatch: any) => any {
             const accounts = await web3Wrapper.getAvailableAddressesAsync();
 
             dispatch(setEthAccount(accounts[0]));
-            dispatch(setWeb3State('done'));
+            dispatch(setWeb3State(Web3State.Done));
         } else {
-            dispatch(setWeb3State('error'));
+            dispatch(setWeb3State(Web3State.Error));
         }
     };
 }

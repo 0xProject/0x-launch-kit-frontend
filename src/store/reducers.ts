@@ -4,13 +4,13 @@ import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
 import * as actions from './actions';
-import { BlockchainState, StoreState } from './types';
+import { BlockchainState, StoreState, Web3State } from './types';
 
 export type RootAction = ActionType<typeof actions>;
 
 const initialState: BlockchainState = {
     ethAccount: '',
-    web3State: 'loading',
+    web3State: Web3State.Loading,
 };
 
 export function blockchain(state: BlockchainState = initialState, action: RootAction): BlockchainState {
