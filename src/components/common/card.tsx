@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
     title: string;
-    style?: React.CSSProperties;
 }
 
 const CardTitle = styled.h1`
