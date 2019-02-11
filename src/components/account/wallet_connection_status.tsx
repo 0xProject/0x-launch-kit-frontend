@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 
 import { getEthAccount } from '../../store/selectors';
-import { StoreState } from '../../store/types';
+import { StoreState } from '../../util/types';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
     ethAccount: string;
