@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getOrders, getSelectedToken } from '../../store/selectors';
+import { getSelectedToken, getUserOrders } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, UIOrder, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
@@ -90,9 +90,9 @@ class OrderHistory extends React.Component<Props, State> {
                             <THead>
                                 <tr>
                                     <TH>Side</TH>
-                                    <TH>Size</TH>
-                                    <TH>Filled</TH>
-                                    <TH>Price</TH>
+                                    <TH>Size ({selectedToken.symbol})</TH>
+                                    <TH>Filled ({selectedToken.symbol})</TH>
+                                    <TH>Price (WETH)</TH>
                                     <TH>Status</TH>
                                 </tr>
                             </THead>
@@ -111,7 +111,7 @@ class OrderHistory extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): Props => {
     return {
-        orders: getOrders(state),
+        orders: getUserOrders(state),
         selectedToken: getSelectedToken(state),
     };
 };

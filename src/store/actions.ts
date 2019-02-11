@@ -1,10 +1,10 @@
 import { assetDataUtils, BigNumber, ContractWrappers } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { getRelayer } from '../services/relayer';
 import { getEthereumClient } from '../util/get_ethereum_client';
 import { getTokenBalance } from '../util/get_token_balance';
 import { getKnownTokens, getTokenBySymbol, getWethToken } from '../util/known_tokens';
+import { getRelayer } from '../util/relayer';
 import { Token, TokenBalance, UIOrder, Web3State } from '../util/types';
 import { ordersToUIOrders } from '../util/ui_orders';
 
@@ -27,6 +27,10 @@ export const setWethBalance = createAction(constants.SET_WETH_BALANCE, resolve =
 });
 
 export const setOrders = createAction(constants.SET_ORDERS, resolve => {
+    return (orders: UIOrder[]) => resolve(orders);
+});
+
+export const setUserOrders = createAction(constants.SET_USER_ORDERS, resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
 
@@ -65,21 +69,11 @@ export const initWallet = () => {
 
             const contractWrappers = new ContractWrappers(web3Wrapper.getProvider(), { networkId });
 
-            const mySellOrders = await relayer
-                .getOrdersAsync({
-                    makerAddress: ethAccount,
-                    makerAssetData: selectedTokenAssetData,
-                })
-                .then(page => page.records)
-                .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-            const myBuyOrders = await relayer
-                .getOrdersAsync({
-                    makerAddress: ethAccount,
-                    takerAssetData: selectedTokenAssetData,
-                })
-                .then(page => page.records)
-                .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-            const myOrders = [...mySellOrders, ...myBuyOrders];
+            const orders = await relayer.getAllOrdersAsync(selectedTokenAssetData);
+            const ordersInfo = await contractWrappers.exchange.getOrdersInfoAsync(orders);
+            const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+
+            const myOrders = await relayer.getUserOrdersAsync(ethAccount, selectedTokenAssetData);
             const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
             const myUIOrders = ordersToUIOrders(myOrders, myOrdersInfo, selectedToken);
 
@@ -88,7 +82,8 @@ export const initWallet = () => {
             dispatch(setEthAccount(ethAccount));
             dispatch(setWeb3State(Web3State.Done));
             dispatch(setSelectedToken(selectedToken));
-            dispatch(setOrders(myUIOrders));
+            dispatch(setOrders(uiOrders));
+            dispatch(setUserOrders(myUIOrders));
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }

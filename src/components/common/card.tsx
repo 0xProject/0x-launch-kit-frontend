@@ -43,6 +43,7 @@ const CardWrapper = styled.div`
     background-color: white;
     border: 1px solid #dedede;
     border-radius: 4px;
+    margin-bottom: 1.5rem;
 `;
 
 export const Card: React.FC<Props> = props => {

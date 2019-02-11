@@ -19,6 +19,7 @@ const initialBlockchainState: BlockchainState = {
 
 const initialRelayerState: RelayerState = {
     orders: [],
+    userOrders: [],
     selectedToken: null,
 };
 
@@ -40,6 +41,8 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
     switch (action.type) {
         case getType(actions.setOrders):
             return { ...state, orders: action.payload };
+        case getType(actions.setUserOrders):
+            return { ...state, userOrders: action.payload };
         case getType(actions.setSelectedToken):
             return { ...state, selectedToken: action.payload };
     }

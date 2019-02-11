@@ -28,6 +28,7 @@ export interface BlockchainState {
 
 export interface RelayerState {
     readonly orders: UIOrder[];
+    readonly userOrders: UIOrder[];
     readonly selectedToken: Token | null;
 }
 
@@ -46,4 +47,16 @@ export interface UIOrder {
     filled: BigNumber;
     price: BigNumber;
     status: OrderStatus;
+}
+
+export interface OrderBookItem {
+    side: UIOrderSide;
+    size: BigNumber;
+    price: BigNumber;
+}
+
+export interface OrderBook {
+    buyOrders: OrderBookItem[];
+    sellOrders: OrderBookItem[];
+    spread: BigNumber;
 }

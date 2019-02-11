@@ -54,7 +54,7 @@ describe('ordersToUIOrders', () => {
         expect(uiOrders[0]).toEqual({
             rawOrder: orders[0],
             side: UIOrderSide.Buy,
-            size: new BigNumber('100'),
+            size: new BigNumber('1'),
             filled: new BigNumber('0'),
             price: new BigNumber('100'),
             status: OrderStatus.Fillable,
@@ -97,8 +97,64 @@ describe('ordersToUIOrders', () => {
         expect(uiOrders[1]).toEqual({
             rawOrder: orders[1],
             side: UIOrderSide.Buy,
-            size: new BigNumber('100'),
+            size: new BigNumber('1'),
             filled: new BigNumber('0'),
+            price: new BigNumber('100'),
+            status: OrderStatus.Fillable,
+        });
+    });
+
+    it('should convert a partially filled sell Order to a UIOrder', async () => {
+        // given
+        const orders: SignedOrder[] = [makeSellOrder({
+            makerAssetAmount: '1',
+            takerAssetAmount: '50',
+        })];
+        const selectedToken = mockToken1;
+        const ordersInfo: OrderInfo[] = [{
+            orderHash: '',
+            orderStatus: OrderStatus.Fillable,
+            orderTakerAssetFilledAmount: new BigNumber('25'),
+        }];
+
+        // when
+        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+
+        // then
+        expect(uiOrders).toHaveLength(1);
+        expect(uiOrders[0]).toEqual({
+            rawOrder: orders[0],
+            side: UIOrderSide.Sell,
+            size: new BigNumber('1'),
+            filled: new BigNumber('0.5'),
+            price: new BigNumber('50'),
+            status: OrderStatus.Fillable,
+        });
+    });
+
+    it('should convert a partially filled buy Order to a UIOrder', async () => {
+        // given
+        const orders: SignedOrder[] = [makeBuyOrder({
+            makerAssetAmount: '100',
+            takerAssetAmount: '1',
+        })];
+        const selectedToken = mockToken1;
+        const ordersInfo: OrderInfo[] = [{
+            orderHash: '',
+            orderStatus: OrderStatus.Fillable,
+            orderTakerAssetFilledAmount: new BigNumber('0.75'),
+        }];
+
+        // when
+        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+
+        // then
+        expect(uiOrders).toHaveLength(1);
+        expect(uiOrders[0]).toEqual({
+            rawOrder: orders[0],
+            side: UIOrderSide.Buy,
+            size: new BigNumber('1'),
+            filled: new BigNumber('0.75'),
             price: new BigNumber('100'),
             status: OrderStatus.Fillable,
         });

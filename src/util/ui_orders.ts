@@ -1,7 +1,7 @@
 import { assetDataUtils, OrderInfo } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
-import { Token, UIOrder, UIOrderSide } from '../util/types';
+import { OrderBookItem, Token, UIOrder, UIOrderSide } from '../util/types';
 
 export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[], selectedToken: Token): UIOrder[] => {
     if (ordersInfo.length !== orders.length) {
@@ -14,9 +14,9 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
         const orderInfo = ordersInfo[i];
 
         const side = order.takerAssetData === selectedTokenEncoded ? UIOrderSide.Buy : UIOrderSide.Sell;
-        const size = order.makerAssetAmount;
-        const filled = orderInfo.orderTakerAssetFilledAmount;
-        const price = side === UIOrderSide.Buy ? order.makerAssetAmount.div(order.takerAssetAmount) : order.takerAssetAmount.div(order.makerAssetAmount);
+        const size = side === UIOrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
+        const filled = side === UIOrderSide.Sell ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).mul(order.makerAssetAmount) : orderInfo.orderTakerAssetFilledAmount;
+        const price = side === UIOrderSide.Sell ? order.takerAssetAmount.div(order.makerAssetAmount) : order.makerAssetAmount.div(order.takerAssetAmount);
         const status = orderInfo.orderStatus;
 
         return {
@@ -28,4 +28,25 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
             status,
         };
     });
+};
+
+export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
+    const initialValue: { [x: string]: OrderBookItem[] } = {};
+
+    const ordersByPrice = orders
+        .reduce((acc, order) => {
+            acc[order.price.toFixed(2)] = acc[order.price.toFixed(2)] || [];
+            acc[order.price.toFixed(2)].push(order);
+            return acc;
+        }, initialValue);
+
+    return Object.keys(ordersByPrice)
+        .map(price => {
+            return ordersByPrice[price].reduce((acc, order) => {
+                return {
+                    ...acc,
+                    size: acc.size.add(order.size),
+                };
+            });
+        });
 };

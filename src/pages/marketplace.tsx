@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { OrderBookTableContainer } from '../components/marketplace/order_book';
 import { OrderHistoryContainer } from '../components/marketplace/order_history';
 
 class Marketplace extends React.PureComponent {
@@ -7,6 +8,7 @@ class Marketplace extends React.PureComponent {
         return (
             <div>
                 <OrderHistoryContainer />
+                <OrderBookTableContainer />
             </div>
         );
     }
