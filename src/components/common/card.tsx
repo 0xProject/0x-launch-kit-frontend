@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLDivElement> {
     title: string;
     action?: React.ReactNode;
     children: React.ReactNode;
-    style?: React.CSSProperties;
 }
 
 const headerHeight = 70;

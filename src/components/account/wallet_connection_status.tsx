@@ -1,22 +1,18 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 
 import { getEthAccount } from '../../store/selectors';
 import { StoreState } from '../../util/types';
 
-interface PropsFromState {
+interface Props extends HTMLAttributes<HTMLSpanElement> {
     ethAccount: string;
 }
-
-type WalletConnectionStatusProps = PropsFromState & {
-    style?: React.CSSProperties;
-};
 
 const truncateAddress = (address: string) => {
     return `${address.slice(0, 7)}...${address.slice(address.length - 5)}`;
 };
 
-class WalletConnectionStatus extends React.PureComponent<WalletConnectionStatusProps> {
+class WalletConnectionStatus extends React.PureComponent<Props> {
     public render = () => {
         const { ethAccount, ...restProps } = this.props;
 
@@ -28,7 +24,7 @@ class WalletConnectionStatus extends React.PureComponent<WalletConnectionStatusP
     };
 }
 
-const mapStateToProps = (state: StoreState): PropsFromState => {
+const mapStateToProps = (state: StoreState): Props => {
     return {
         ethAccount: getEthAccount(state),
     };
