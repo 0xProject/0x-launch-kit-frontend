@@ -1,22 +1,27 @@
-import { assetDataUtils, BigNumber, OrderInfo, OrderStatus } from '0x.js';
+import { BigNumber, OrderInfo, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
-import { Token, UIOrderSide } from './types';
-import { ordersToUIOrders } from './ui_orders';
+import { makeBuyOrder, makeSellOrder, mockToken1 } from './test-utils';
+import { OrderBookItem, UIOrderSide } from './types';
+import { mergeByPrice, ordersToUIOrders } from './ui_orders';
 
 describe('ordersToUIOrders', () => {
     it('should convert a sell Order to a UIOrder', async () => {
         // given
-        const orders: SignedOrder[] = [makeSellOrder({
-            makerAssetAmount: '1',
-            takerAssetAmount: '50',
-        })];
+        const orders: SignedOrder[] = [
+            makeSellOrder({
+                makerAssetAmount: '1',
+                takerAssetAmount: '50',
+            }),
+        ];
         const selectedToken = mockToken1;
-        const ordersInfo: OrderInfo[] = [{
-            orderHash: '',
-            orderStatus: OrderStatus.Fillable,
-            orderTakerAssetFilledAmount: new BigNumber('0'),
-        }];
+        const ordersInfo: OrderInfo[] = [
+            {
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('0'),
+            },
+        ];
 
         // when
         const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
@@ -35,16 +40,20 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a buy Order to a UIOrder', async () => {
         // given
-        const orders: SignedOrder[] = [makeBuyOrder({
-            makerAssetAmount: '100',
-            takerAssetAmount: '1',
-        })];
+        const orders: SignedOrder[] = [
+            makeBuyOrder({
+                makerAssetAmount: '100',
+                takerAssetAmount: '1',
+            }),
+        ];
         const selectedToken = mockToken1;
-        const ordersInfo: OrderInfo[] = [{
-            orderHash: '',
-            orderStatus: OrderStatus.Fillable,
-            orderTakerAssetFilledAmount: new BigNumber('0'),
-        }];
+        const ordersInfo: OrderInfo[] = [
+            {
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('0'),
+            },
+        ];
 
         // when
         const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
@@ -63,23 +72,29 @@ describe('ordersToUIOrders', () => {
 
     it('should convert buy and sell Orders to UIOrders', async () => {
         // given
-        const orders: SignedOrder[] = [makeSellOrder({
-            makerAssetAmount: '1',
-            takerAssetAmount: '50',
-        }), makeBuyOrder({
-            makerAssetAmount: '100',
-            takerAssetAmount: '1',
-        })];
+        const orders: SignedOrder[] = [
+            makeSellOrder({
+                makerAssetAmount: '1',
+                takerAssetAmount: '50',
+            }),
+            makeBuyOrder({
+                makerAssetAmount: '100',
+                takerAssetAmount: '1',
+            }),
+        ];
         const selectedToken = mockToken1;
-        const ordersInfo: OrderInfo[] = [{
-            orderHash: '',
-            orderStatus: OrderStatus.Fillable,
-            orderTakerAssetFilledAmount: new BigNumber('0'),
-        }, {
-            orderHash: '',
-            orderStatus: OrderStatus.Fillable,
-            orderTakerAssetFilledAmount: new BigNumber('0'),
-        }];
+        const ordersInfo: OrderInfo[] = [
+            {
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('0'),
+            },
+            {
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('0'),
+            },
+        ];
 
         // when
         const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
@@ -106,16 +121,20 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a partially filled sell Order to a UIOrder', async () => {
         // given
-        const orders: SignedOrder[] = [makeSellOrder({
-            makerAssetAmount: '1',
-            takerAssetAmount: '50',
-        })];
+        const orders: SignedOrder[] = [
+            makeSellOrder({
+                makerAssetAmount: '1',
+                takerAssetAmount: '50',
+            }),
+        ];
         const selectedToken = mockToken1;
-        const ordersInfo: OrderInfo[] = [{
-            orderHash: '',
-            orderStatus: OrderStatus.Fillable,
-            orderTakerAssetFilledAmount: new BigNumber('25'),
-        }];
+        const ordersInfo: OrderInfo[] = [
+            {
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('25'),
+            },
+        ];
 
         // when
         const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
@@ -134,16 +153,20 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a partially filled buy Order to a UIOrder', async () => {
         // given
-        const orders: SignedOrder[] = [makeBuyOrder({
-            makerAssetAmount: '100',
-            takerAssetAmount: '1',
-        })];
+        const orders: SignedOrder[] = [
+            makeBuyOrder({
+                makerAssetAmount: '100',
+                takerAssetAmount: '1',
+            }),
+        ];
         const selectedToken = mockToken1;
-        const ordersInfo: OrderInfo[] = [{
-            orderHash: '',
-            orderStatus: OrderStatus.Fillable,
-            orderTakerAssetFilledAmount: new BigNumber('0.75'),
-        }];
+        const ordersInfo: OrderInfo[] = [
+            {
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('0.75'),
+            },
+        ];
 
         // when
         const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
@@ -160,21 +183,26 @@ describe('ordersToUIOrders', () => {
         });
     });
 
-    it('should throw if orders length and ordersInfo length don\'t match', async () => {
+    it("should throw if orders length and ordersInfo length don't match", async () => {
         // given
-        const orders: SignedOrder[] = [makeBuyOrder({
-            makerAssetAmount: '1',
-            takerAssetAmount: '100',
-        }), makeSellOrder({
-            makerAssetAmount: '100',
-            takerAssetAmount: '1',
-        })];
+        const orders: SignedOrder[] = [
+            makeBuyOrder({
+                makerAssetAmount: '1',
+                takerAssetAmount: '100',
+            }),
+            makeSellOrder({
+                makerAssetAmount: '100',
+                takerAssetAmount: '1',
+            }),
+        ];
         const selectedToken = mockToken1;
-        const ordersInfo: OrderInfo[] = [{
-            orderHash: '',
-            orderStatus: OrderStatus.Fillable,
-            orderTakerAssetFilledAmount: new BigNumber('0'),
-        }];
+        const ordersInfo: OrderInfo[] = [
+            {
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('0'),
+            },
+        ];
 
         // when
         const functionCall = () => ordersToUIOrders(orders, ordersInfo, selectedToken);
@@ -184,56 +212,96 @@ describe('ordersToUIOrders', () => {
     });
 });
 
-const mockToken1: Token = {
-    address: '0xBA50C9066a29268904Bd074C1C6A17f3575a84e7',
-    decimals: 18,
-    symbol: 'MOCK1',
-};
+describe('mergeByPrice', () => {
+    it('should group orders with the same price', async () => {
+        // given
+        const orders = [
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('5.00'),
+            },
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('3.00'),
+            },
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.01'),
+                size: new BigNumber('4.00'),
+            },
+        ];
 
-const mockToken2: Token = {
-    address: '0x1F7B687533F4Afa4fAA41c2D2fBca05Cc0C3Fd65',
-    decimals: 18,
-    symbol: 'MOCK2',
-};
+        // when
+        const result = mergeByPrice(orders);
 
-const makeSellOrder = ({ makerAssetAmount, takerAssetAmount }: { makerAssetAmount: string; takerAssetAmount: string }) => {
-    const oneYearFromNow = Math.floor(new Date().valueOf() / 1000) + 3600 * 24 * 365;
+        // then
+        expect(result).toEqual([
+            {
+                side: UIOrderSide.Sell,
+                size: new BigNumber('8.00'),
+                price: new BigNumber('1.00'),
+            },
+            {
+                side: UIOrderSide.Sell,
+                size: new BigNumber('4.00'),
+                price: new BigNumber('1.01'),
+            },
+        ]);
+    });
 
-    return {
-        makerAddress: '0x5409ed021d9299bf6814279a6a1411a7e866a631',
-        exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
-        takerAddress: '0x0000000000000000000000000000000000000000',
-        senderAddress: '0x0000000000000000000000000000000000000000',
-        feeRecipientAddress: '0x0000000000000000000000000000000000000000',
-        expirationTimeSeconds: new BigNumber(oneYearFromNow),
-        salt: new BigNumber('4253024946184612711043400606072358480456814389671017608724053124375087745'),
-        makerAssetAmount: new BigNumber(makerAssetAmount),
-        takerAssetAmount: new BigNumber(takerAssetAmount),
-        makerAssetData: assetDataUtils.encodeERC20AssetData(mockToken1.address),
-        takerAssetData: assetDataUtils.encodeERC20AssetData(mockToken2.address),
-        makerFee: new BigNumber('0'),
-        takerFee: new BigNumber( '0' ),
-        signature: '',
-    };
-};
+    it('should return the same list if all prices are different', async () => {
+        // given
+        const orders = [
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('5.00'),
+            },
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.01'),
+                size: new BigNumber('3.00'),
+            },
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.02'),
+                size: new BigNumber('4.00'),
+            },
+        ];
 
-const makeBuyOrder = ({ makerAssetAmount, takerAssetAmount }: { makerAssetAmount: string; takerAssetAmount: string }) => {
-    const oneYearFromNow = Math.floor(new Date().valueOf() / 1000) + 3600 * 24 * 365;
+        // when
+        const result = mergeByPrice(orders);
 
-    return {
-        makerAddress: '0x5409ed021d9299bf6814279a6a1411a7e866a631',
-        exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
-        takerAddress: '0x0000000000000000000000000000000000000000',
-        senderAddress: '0x0000000000000000000000000000000000000000',
-        feeRecipientAddress: '0x0000000000000000000000000000000000000000',
-        expirationTimeSeconds: new BigNumber(oneYearFromNow),
-        salt: new BigNumber('4253024946184612711043400606072358480456814389671017608724053124375087745'),
-        makerAssetAmount: new BigNumber(makerAssetAmount),
-        takerAssetAmount: new BigNumber(takerAssetAmount),
-        makerAssetData: assetDataUtils.encodeERC20AssetData(mockToken2.address),
-        takerAssetData: assetDataUtils.encodeERC20AssetData(mockToken1.address),
-        makerFee: new BigNumber('0'),
-        takerFee: new BigNumber( '0' ),
-        signature: '',
-    };
-};
+        // then
+        expect(result).toEqual([
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('5.00'),
+            },
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.01'),
+                size: new BigNumber('3.00'),
+            },
+            {
+                side: UIOrderSide.Sell,
+                price: new BigNumber('1.02'),
+                size: new BigNumber('4.00'),
+            },
+        ]);
+    });
+
+    it('should work with an empty list', async () => {
+        // given
+        const orders: OrderBookItem[] = [];
+
+        // when
+        const result = mergeByPrice(orders);
+
+        // then
+        expect(result).toEqual([]);
+    });
+});

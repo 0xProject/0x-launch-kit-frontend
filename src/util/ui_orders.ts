@@ -5,7 +5,11 @@ import { OrderBookItem, Token, UIOrder, UIOrderSide } from '../util/types';
 
 export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[], selectedToken: Token): UIOrder[] => {
     if (ordersInfo.length !== orders.length) {
-        throw new Error(`AssertionError: Orders info length does not match orders length: ${ordersInfo.length} !== ${orders.length}`);
+        throw new Error(
+            `AssertionError: Orders info length does not match orders length: ${ordersInfo.length} !== ${
+                orders.length
+            }`,
+        );
     }
 
     const selectedTokenEncoded = assetDataUtils.encodeERC20AssetData(selectedToken.address);
@@ -15,8 +19,14 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
 
         const side = order.takerAssetData === selectedTokenEncoded ? UIOrderSide.Buy : UIOrderSide.Sell;
         const size = side === UIOrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
-        const filled = side === UIOrderSide.Sell ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).mul(order.makerAssetAmount) : orderInfo.orderTakerAssetFilledAmount;
-        const price = side === UIOrderSide.Sell ? order.takerAssetAmount.div(order.makerAssetAmount) : order.makerAssetAmount.div(order.takerAssetAmount);
+        const filled =
+            side === UIOrderSide.Sell
+                ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).mul(order.makerAssetAmount)
+                : orderInfo.orderTakerAssetFilledAmount;
+        const price =
+            side === UIOrderSide.Sell
+                ? order.takerAssetAmount.div(order.makerAssetAmount)
+                : order.makerAssetAmount.div(order.takerAssetAmount);
         const status = orderInfo.orderStatus;
 
         return {
@@ -30,15 +40,14 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
     });
 };
 
-export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
+export const mergeByPrice = (orders: OrderBookItem[]): OrderBookItem[] => {
     const initialValue: { [x: string]: OrderBookItem[] } = {};
 
-    const ordersByPrice = orders
-        .reduce((acc, order) => {
-            acc[order.price.toFixed(2)] = acc[order.price.toFixed(2)] || [];
-            acc[order.price.toFixed(2)].push(order);
-            return acc;
-        }, initialValue);
+    const ordersByPrice = orders.reduce((acc, order) => {
+        acc[order.price.toFixed(2)] = acc[order.price.toFixed(2)] || [];
+        acc[order.price.toFixed(2)].push(order);
+        return acc;
+    }, initialValue);
 
     return Object.keys(ordersByPrice)
         .map(price => {
@@ -48,5 +57,10 @@ export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
                     size: acc.size.add(order.size),
                 };
             });
-        });
+        })
+        .map(order => ({
+            side: order.side,
+            price: order.price,
+            size: order.size,
+        }));
 };
