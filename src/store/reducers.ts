@@ -13,7 +13,7 @@ export type RootAction = ActionType<typeof actions>;
 const initialBlockchainState: BlockchainState = {
     ethAccount: '',
     web3State: Web3State.Loading,
-    knownTokens: [],
+    tokenBalances: [],
     wethBalance: new BigNumber(0),
 };
 
@@ -29,8 +29,8 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, ethAccount: action.payload };
         case getType(actions.setWeb3State):
             return { ...state, web3State: action.payload };
-        case getType(actions.setKnownTokens):
-            return { ...state, knownTokens: action.payload };
+        case getType(actions.setTokenBalances):
+            return { ...state, tokenBalances: action.payload };
         case getType(actions.setWethBalance):
             return { ...state, wethBalance: action.payload };
     }

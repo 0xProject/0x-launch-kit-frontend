@@ -1,25 +1,17 @@
 import { ConnectedRouter } from 'connected-react-router';
-import { createBrowserHistory } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router';
-import { applyMiddleware, compose, createStore } from 'redux';
-import thunk from 'redux-thunk';
 import 'sanitize.css';
 
 import { AppContainer } from './components/app';
 import { GeneralLayout } from './components/general_layout';
+import './icons';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
 import * as serviceWorker from './serviceWorker';
-import { createRootReducer } from './store/reducers';
-
-export const history = createBrowserHistory();
-const rootReducer = createRootReducer(history);
-
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+import { history, store } from './store/index';
 
 const Web3WrappedApp = (
     <Provider store={store}>

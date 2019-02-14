@@ -11,6 +11,7 @@ export interface Token {
 export interface TokenBalance {
     token: Token;
     balance: BigNumber;
+    isUnlocked: boolean;
 }
 
 export enum Web3State {
@@ -22,7 +23,7 @@ export enum Web3State {
 export interface BlockchainState {
     readonly ethAccount: string;
     readonly web3State: Web3State;
-    readonly knownTokens: TokenBalance[];
+    readonly tokenBalances: TokenBalance[];
     readonly wethBalance: BigNumber;
 }
 

@@ -2,7 +2,7 @@ import { Web3Wrapper } from '@0x/web3-wrapper';
 
 let web3Wrapper: Web3Wrapper | null = null;
 
-export const getEthereumClient = async () => {
+export const getWeb3Wrapper = async () => {
     if (web3Wrapper) {
         return web3Wrapper;
     }
@@ -27,4 +27,14 @@ export const getEthereumClient = async () => {
     } else {
         return null;
     }
+};
+
+export const getWeb3WrapperOrThrow = async (): Promise<Web3Wrapper> => {
+    const web3WrapperOrNull = await getWeb3Wrapper();
+
+    if (!web3WrapperOrNull) {
+        throw new Error('web3 is not present');
+    }
+
+    return web3WrapperOrNull;
 };
