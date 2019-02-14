@@ -1,14 +1,16 @@
 import { assetDataUtils, BigNumber, ContractWrappers } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { getEthereumClient } from '../util/get_ethereum_client';
-import { getTokenBalance } from '../util/get_token_balance';
+import { getContractWrappers } from '../services/contract_wrappers';
+import { getRelayer } from '../services/relayer';
+import { getWeb3Wrapper } from '../services/web3_wrapper';
+import { getTokenBalance, tokenToTokenBalance } from '../util/get_token_balance';
 import { getKnownTokens, getTokenBySymbol, getWethToken } from '../util/known_tokens';
-import { getRelayer } from '../util/relayer';
 import { Token, TokenBalance, UIOrder, Web3State } from '../util/types';
 import { ordersToUIOrders } from '../util/ui_orders';
 
 import * as constants from './constants';
+import { getEthAccount, getTokenBalances } from './selectors';
 
 export const setEthAccount = createAction(constants.SET_ETH_ACCOUNT, resolve => {
     return (ethAccount: string) => resolve(ethAccount);
@@ -18,8 +20,8 @@ export const setWeb3State = createAction(constants.SET_WEB3_STATE, resolve => {
     return (web3State: Web3State) => resolve(web3State);
 });
 
-export const setKnownTokens = createAction(constants.SET_KNOWN_TOKENS, resolve => {
-    return (knownTokens: TokenBalance[]) => resolve(knownTokens);
+export const setTokenBalances = createAction(constants.SET_TOKEN_BALANCES, resolve => {
+    return (tokenBalances: TokenBalance[]) => resolve(tokenBalances);
 });
 
 export const setWethBalance = createAction(constants.SET_WETH_BALANCE, resolve => {
@@ -38,11 +40,35 @@ export const setSelectedToken = createAction(constants.SET_SELECTED_TOKEN, resol
     return (selectedToken: Token | null) => resolve(selectedToken);
 });
 
+export const unlockToken = (token: Token) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const tokenBalances = getTokenBalances(state);
+
+        const contractWrappers = await getContractWrappers();
+        await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+
+        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
+            if (tokenBalance.token.address !== token.address) {
+                return tokenBalance;
+            }
+
+            return {
+                ...tokenBalance,
+                isUnlocked: true,
+            };
+        });
+
+        dispatch(setTokenBalances(updatedTokenBalances));
+    };
+};
+
 export const initWallet = () => {
     return async (dispatch: any) => {
         dispatch(setWeb3State(Web3State.Loading));
 
-        const web3Wrapper = await getEthereumClient();
+        const web3Wrapper = await getWeb3Wrapper();
 
         const relayer = getRelayer();
 
@@ -52,13 +78,7 @@ export const initWallet = () => {
 
             const knownTokens = getKnownTokens(networkId);
 
-            const balances = await Promise.all(knownTokens.map(token => getTokenBalance(token, ethAccount)));
-            const tokenBalances = knownTokens.map((token, index) => {
-                return {
-                    token,
-                    balance: balances[index],
-                };
-            });
+            const tokenBalances = await Promise.all(knownTokens.map(token => tokenToTokenBalance(token, ethAccount)));
 
             const wethToken = getWethToken(networkId);
 
@@ -77,7 +97,7 @@ export const initWallet = () => {
             const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
             const myUIOrders = ordersToUIOrders(myOrders, myOrdersInfo, selectedToken);
 
-            dispatch(setKnownTokens(tokenBalances));
+            dispatch(setTokenBalances(tokenBalances));
             dispatch(setWethBalance(wethBalance));
             dispatch(setEthAccount(ethAccount));
             dispatch(setWeb3State(Web3State.Done));

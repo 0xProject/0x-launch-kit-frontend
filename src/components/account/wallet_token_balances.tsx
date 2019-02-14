@@ -1,18 +1,23 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getKnownTokens } from '../../store/selectors';
+import { unlockToken } from '../../store/actions';
+import { getTokenBalances } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, TokenBalance } from '../../util/types';
+import { StoreState, Token, TokenBalance } from '../../util/types';
 import { Card } from '../common/card';
 import { TH, THead } from '../common/table';
 
-interface PropsFromState {
-    knownTokens: TokenBalance[];
+interface StateProps {
+    tokenBalances: TokenBalance[];
+}
+interface DispatchProps {
+    onUnlockToken: (token: Token) => void;
 }
 
-type WalletTokenBalancesProps = PropsFromState;
+type Props = StateProps & DispatchProps;
 
 const Row = styled.tr<{ isLast: boolean }>`
     border-bottom: ${props => (props.isLast ? '' : '1px solid #e7e7e7')};
@@ -26,22 +31,47 @@ const TDTokens = styled(TD)`
     min-width: 20em;
 `;
 
-const tokenBalanceToRow = (tokenBalance: TokenBalance, index: number, tokensCount: number) => {
-    const { symbol } = tokenBalance.token;
+const TDLock = styled(TD)<{ isUnlocked: boolean }>`
+    text-align: center;
+    cursor: ${props => props.isUnlocked ? 'default' : 'pointer'};
+    color: ${props => props.isUnlocked ? '#c4c4c4' : 'black'};
+`;
 
-    const formattedBalance = tokenAmountInUnits(tokenBalance.token, tokenBalance.balance);
+interface LockCellProps {
+    isUnlocked: boolean;
+    onClick: any;
+}
 
-    return (
-        <Row key={symbol} isLast={index + 1 === tokensCount}>
-            <TDTokens>{symbol}</TDTokens>
-            <TD>{formattedBalance}</TD>
-        </Row>
-    );
+const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
+    return <TDLock isUnlocked={isUnlocked} onClick={onClick}>
+        <FontAwesomeIcon icon={isUnlocked ? 'lock-open' : 'lock'} />
+    </TDLock>;
 };
 
-class WalletTokenBalances extends React.PureComponent<WalletTokenBalancesProps> {
+class WalletTokenBalances extends React.PureComponent<Props> {
     public render = () => {
-        const { knownTokens } = this.props;
+        const { tokenBalances, onUnlockToken } = this.props;
+
+        const rows = tokenBalances.map((tokenBalance, index) => {
+            const { token, balance, isUnlocked } = tokenBalance;
+            const { symbol } = token;
+
+            const formattedBalance = tokenAmountInUnits(token, balance);
+
+            const onClick = () => {
+                if (!isUnlocked) {
+                    onUnlockToken(token);
+                }
+            };
+
+            return (
+            <Row key={symbol} isLast={index + 1 === tokenBalances.length}>
+                <TDTokens>{symbol}</TDTokens>
+                <TD>{formattedBalance}</TD>
+                <LockCell isUnlocked={isUnlocked} onClick={onClick} />
+            </Row>
+            );
+        });
 
         return (
             <Card title="Token Balances">
@@ -50,12 +80,11 @@ class WalletTokenBalances extends React.PureComponent<WalletTokenBalancesProps> 
                         <tr>
                             <TH>Token</TH>
                             <TH>Available Qty.</TH>
+                            <TH>Locked?</TH>
                         </tr>
                     </THead>
                     <tbody>
-                        {knownTokens.map((tokenBalance, index) =>
-                            tokenBalanceToRow(tokenBalance, index, knownTokens.length),
-                        )}
+                        {rows}
                     </tbody>
                 </table>
             </Card>
@@ -63,12 +92,15 @@ class WalletTokenBalances extends React.PureComponent<WalletTokenBalancesProps> 
     };
 }
 
-const mapStateToProps = (state: StoreState): PropsFromState => {
+const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        knownTokens: getKnownTokens(state),
+        tokenBalances: getTokenBalances(state),
     };
 };
+const mapDispatchToProps = {
+    onUnlockToken: unlockToken,
+};
 
-const WalletTokenBalancesContainer = connect(mapStateToProps)(WalletTokenBalances);
+const WalletTokenBalancesContainer = connect(mapStateToProps, mapDispatchToProps)(WalletTokenBalances);
 
 export { WalletTokenBalances, WalletTokenBalancesContainer };

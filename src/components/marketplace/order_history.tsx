@@ -9,10 +9,12 @@ import { StoreState, Token, UIOrder, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
 import { TH as THBase, THead } from '../common/table';
 
-interface Props {
+interface StateProps {
     orders: UIOrder[];
     selectedToken: Token | null;
 }
+
+type Props = StateProps;
 
 interface State {
     tab: Tab;
@@ -109,7 +111,7 @@ class OrderHistory extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state: StoreState): Props => {
+const mapStateToProps = (state: StoreState): StateProps => {
     return {
         orders: getUserOrders(state),
         selectedToken: getSelectedToken(state),

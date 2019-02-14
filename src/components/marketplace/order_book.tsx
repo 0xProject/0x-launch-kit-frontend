@@ -8,10 +8,12 @@ import { OrderBook, OrderBookItem, StoreState, Token, UIOrderSide } from '../../
 import { Card } from '../common/card';
 import { TH as THBase, THead } from '../common/table';
 
-interface Props {
+interface StateProps {
     orderBook: OrderBook;
     selectedToken: Token | null;
 }
+
+type Props = StateProps;
 
 interface State {
     tab: Tab;
@@ -136,7 +138,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state: StoreState): Props => {
+const mapStateToProps = (state: StoreState): StateProps => {
     return {
         orderBook: getOrderBook(state),
         selectedToken: getSelectedToken(state),

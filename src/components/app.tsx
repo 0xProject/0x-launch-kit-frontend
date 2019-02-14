@@ -5,17 +5,17 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { initWallet } from '../store/actions';
 
-interface AppOwnProps {
+interface OwnProps {
     children: React.ReactNode;
 }
 
-interface PropsFromDispatch {
+interface DispatchProps {
     onInitWallet: () => any;
 }
 
-type AppProps = AppOwnProps & PropsFromDispatch;
+type Props = OwnProps & DispatchProps;
 
-class App extends React.Component<AppProps> {
+class App extends React.Component<Props> {
     public componentWillMount = () => {
         this.props.onInitWallet();
     };
