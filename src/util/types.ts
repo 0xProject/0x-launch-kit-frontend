@@ -24,6 +24,7 @@ export interface BlockchainState {
     readonly ethAccount: string;
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];
+    readonly ethBalance: BigNumber;
     readonly wethBalance: BigNumber;
 }
 

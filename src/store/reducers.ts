@@ -14,6 +14,7 @@ const initialBlockchainState: BlockchainState = {
     ethAccount: '',
     web3State: Web3State.Loading,
     tokenBalances: [],
+    ethBalance: new BigNumber(0),
     wethBalance: new BigNumber(0),
 };
 
@@ -33,6 +34,10 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, tokenBalances: action.payload };
         case getType(actions.setWethBalance):
             return { ...state, wethBalance: action.payload };
+        case getType(actions.setEthBalance):
+            return { ...state, ethBalance: action.payload };
+        case getType(actions.initializeBlockchainData):
+            return action.payload;
     }
     return state;
 }
@@ -45,6 +50,8 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
             return { ...state, userOrders: action.payload };
         case getType(actions.setSelectedToken):
             return { ...state, selectedToken: action.payload };
+        case getType(actions.initializeRelayerData):
+            return action.payload;
     }
     return state;
 }
