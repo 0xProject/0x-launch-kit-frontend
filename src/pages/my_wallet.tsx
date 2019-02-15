@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { WalletTokenBalancesContainer } from '../components/account';
+import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../components/account';
 
 export const MyWallet = () => (
   <div>
       <WalletTokenBalancesContainer />
+      <WalletWethBalanceContainer />
   </div>
 );

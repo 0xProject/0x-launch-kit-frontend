@@ -35,7 +35,7 @@ const CardAction = styled.div`
 
 const CardBody = styled.div`
     margin: 0;
-    padding: 18px 15px;
+    padding: 0;
 `;
 
 const CardWrapper = styled.div`

@@ -7,6 +7,5 @@ export const THead = styled.thead`
 `;
 
 export const TH = styled.th`
-    padding-bottom: 20px;
     text-align: left;
 `;

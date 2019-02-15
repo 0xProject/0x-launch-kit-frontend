@@ -6,6 +6,7 @@ import { getOrderBook, getSelectedToken } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, StoreState, Token, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
+import { CardLoading } from '../common/loading';
 import { TH as THBase, THead } from '../common/table';
 
 interface StateProps {
@@ -25,30 +26,49 @@ enum Tab {
 }
 
 const TR = styled.tr`
+    &:first-child td {
+        padding-top: 10px;
+    }
+    &:last-child td {
+        padding-bottom: 10px;
+    }
 `;
 const HeaderTR = styled(TR)`
     border: 1px solid #dedede;
     border-width: 1px 0;
+
+    &:first-child {
+        border-top: 0;
+    }
 `;
 const TH = styled(THBase)`
     min-width: 10rem;
     padding: 10px 0;
 
+    &:first-child {
+        padding-left: 18px;
+    }
     &:last-child {
         width: 100%;
     }
 `;
-const CustomTD = styled.td`
-    padding: 5px 0;
+
+const CustomTD = styled.td<{ isLastSell: boolean; isFirstBuy: boolean }>`
     min-width: 10rem;
+
+    padding-bottom: ${props => props.isLastSell ? '10px' : '5px'};
+    padding-top: ${props => props.isFirstBuy ? '10px' : '5px'};
+
+    &:first-child {
+        padding-left: 18px;
+    }
 `;
 
 const SideTD = styled(CustomTD)<{ side: UIOrderSide }>`
     color: ${props => (props.side === UIOrderSide.Buy ? '#3CB34F' : '#FF6534')};
 `;
 
-const SpreadTH = styled(TH)`
-`;
+const SpreadTH = styled(TH)``;
 
 const SpreadLabelTH = styled(SpreadTH)`
     color: #ccc;
@@ -60,21 +80,24 @@ const SpreadValueTH = styled(SpreadTH)`
     font-weight: normal;
 `;
 
-const orderToRow = (order: OrderBookItem, index: number, selectedToken: Token) => {
-    const size = tokenAmountInUnits(selectedToken, order.size);
+const NoOrders = styled.div`
+    padding: 10px 18px;
+`;
+
+const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
+    const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
+
+    const isLastSell = order.side === UIOrderSide.Sell && index + 1 === count;
+    const isFirstBuy = order.side === UIOrderSide.Buy && index === 0;
 
     return (
         <TR key={index}>
-            <CustomTD>{size}</CustomTD>
-            <SideTD side={order.side}>{price}</SideTD>
+            <CustomTD isLastSell={isLastSell} isFirstBuy={isFirstBuy}>{size}</CustomTD>
+            <SideTD side={order.side} isLastSell={isLastSell} isFirstBuy={isFirstBuy}>{price}</SideTD>
         </TR>
     );
 };
-
-const Spacing = styled.div`
-    height: 0.5rem;
-`;
 
 class OrderBookTable extends React.Component<Props, State> {
     public state = {
@@ -107,32 +130,32 @@ class OrderBookTable extends React.Component<Props, State> {
             </HeaderTR>
         );
 
+        let content: React.ReactNode;
+        if (!selectedToken) {
+            content = <CardLoading />;
+        } else if (!buyOrders.length && !sellOrders.length) {
+            content = <NoOrders>There are no orders to show</NoOrders>;
+        } else {
+            content = (
+                <table>
+                    <THead>
+                        <HeaderTR>
+                            <TH>Order size</TH>
+                            <TH>Price</TH>
+                        </HeaderTR>
+                    </THead>
+                    <tbody>
+                        {sellOrders.map((order, index) => orderToRow(order, index, sellOrders.length, selectedToken))}
+                        {spreadRow}
+                        {buyOrders.map((order, index) => orderToRow(order, index, buyOrders.length, selectedToken))}
+                    </tbody>
+                </table>
+            );
+        }
+
         return (
             <Card title="Order book" action={TabSelector}>
-                {selectedToken ? (
-                    (buyOrders.length + sellOrders.length) ? (
-                        <table>
-                            <THead>
-                                <HeaderTR>
-                                    <TH>Order size</TH>
-                                    <TH>Price</TH>
-                                </HeaderTR>
-                            </THead>
-                            <Spacing />
-                            <tbody>
-                                {sellOrders.map((order, index) => orderToRow(order, index, selectedToken))}
-                                <Spacing />
-                                {spreadRow}
-                                <Spacing />
-                                {buyOrders.map((order, index) => orderToRow(order, index, selectedToken))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        'There are no orders to show'
-                    )
-                ) : (
-                    'Loading orders...'
-                )}
+                {content}
             </Card>
         );
     };

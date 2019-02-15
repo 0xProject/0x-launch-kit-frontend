@@ -1,6 +1,7 @@
 import { ConnectedRouter } from 'connected-react-router';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactModal from 'react-modal';
 import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import 'sanitize.css';
@@ -12,6 +13,8 @@ import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
 import * as serviceWorker from './serviceWorker';
 import { history, store } from './store/index';
+
+ReactModal.setAppElement('#root');
 
 const Web3WrappedApp = (
     <Provider store={store}>
