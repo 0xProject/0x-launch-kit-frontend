@@ -31,16 +31,17 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "test-once": "cross-env CI=true react-scripts test",
-        "lint": "tslint --project . 'src/**/*.{ts,tsx}'",
+        "lint": "tslint --project . 'src/**/*.{ts,tsx}' && npm run prettier-check",
         "eject": "react-scripts eject",
-        "prettier": "prettier --write '**/*.{ts,tsx,json,md}' --config .prettierrc"
+        "prettier": "prettier --write '**/*.{ts,tsx,json,md}' --ignore-path .gitignore",
+        "prettier-check": "prettier --check '**/*.{ts,tsx,json,md}' --ignore-path .gitignore"
     },
     "eslintConfig": {
         "extends": "react-app"
     },
     "husky": {
         "hooks": {
-            "pre-commit": "npm run lint",
+            "pre-commit": "npm run prettier-check",
             "pre-push": "npm run lint && npm run test-once"
         }
     },
