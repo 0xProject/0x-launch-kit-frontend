@@ -1,24 +1,44 @@
 import React, { HTMLAttributes } from 'react';
-// import styled from 'styled-components';
+import styled from 'styled-components';
+
+import { TabItem } from '../../util/types';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-    tabs: any;
+    tabs: TabItem[];
 }
 
-export const TabSelector: React.FC<Props> = props => {
-    // const { tabs } = props;
-    return null;
-    // return (
-    //     <span>
-    //         {tabs.map((item, index) => {
+interface ItemProps {
+    active?: boolean;
+}
 
-    //         })}
-    //         {/* <span onClick={setTabOpen} style={{ color: this.state.tab === Tab.Open ? 'black' : '#ccc' }}>
-    //         Open
-    //     </span>
-    //     &nbsp;/&nbsp;
-    //     <span onClick={setTabFilled} style={{ color: this.state.tab === Tab.Filled ? 'black' : '#ccc' }}>
-    //         Filled
-    //     </span> */}
-    //     </span>)
+const CardTabSelectorWrapper = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+`;
+
+const CardTabSelectorItem = styled.span<ItemProps>`
+    color: ${props => (props.active ? '#000' : '#ccc')};
+    cursor: ${props => (props.active ? 'default' : 'pointer')};
+
+    &:after {
+        color: #ccc;
+        content: '/';
+        padding: 0 10px;
+    }
+
+    &:last-child:after {
+        display: none;
+    }
+`;
+
+export const CardTabSelector: React.FC<Props> = props => {
+    const { tabs } = props;
+
+    return (
+        <CardTabSelectorWrapper>
+            {tabs.map((item, index) => {
+                return <CardTabSelectorItem key={index} onClick={item.onClick} active={item.active}>{item.text}</CardTabSelectorItem>;
+            })}
+        </CardTabSelectorWrapper>);
 };

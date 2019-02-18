@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import { getSelectedToken, getUserOrders } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Token, UIOrder, UIOrderSide } from '../../util/types';
+import { StoreState, Tab, TabItem, Token, UIOrder, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
+import { CardTabSelector } from '../common/card_tab_selector';
 import { CardLoading } from '../common/loading';
 import { TH as THBase, THead } from '../common/table';
 
@@ -19,11 +20,6 @@ type Props = StateProps;
 
 interface State {
     tab: Tab;
-}
-
-enum Tab {
-    Open,
-    Filled,
 }
 
 const TR = styled.tr``;
@@ -87,17 +83,20 @@ class OrderHistory extends React.Component<Props, State> {
         const setTabOpen = () => this.setState({ tab: Tab.Open });
         const setTabFilled = () => this.setState({ tab: Tab.Filled });
 
-        const TabSelector = (
-            <span>
-                <span onClick={setTabOpen} style={{ color: this.state.tab === Tab.Open ? 'black' : '#ccc' }}>
-                    Open
-                </span>
-                &nbsp;/&nbsp;
-                <span onClick={setTabFilled} style={{ color: this.state.tab === Tab.Filled ? 'black' : '#ccc' }}>
-                    Filled
-                </span>
-            </span>
-        );
+        const cardTabs: TabItem[] = [
+            {
+                active: this.state.tab === Tab.Open,
+                onClick: setTabOpen,
+                text: 'Open',
+            },
+            {
+                active: this.state.tab === Tab.Filled,
+                onClick: setTabFilled,
+                text: 'Filled',
+            },
+        ];
+
+        const TabSelector = <CardTabSelector tabs={cardTabs} />;
 
         let content: React.ReactNode;
         if (!selectedToken) {

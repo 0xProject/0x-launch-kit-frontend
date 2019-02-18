@@ -2,6 +2,17 @@ import { BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
 
+export interface TabItem {
+    onClick: any;
+    active: boolean;
+    text: string;
+}
+
+export enum Tab {
+    Open,
+    Filled,
+}
+
 export interface Token {
     address: string;
     symbol: string;
