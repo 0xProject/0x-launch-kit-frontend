@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Toolbar } from './toolbar';
+import { Toolbar } from './common/toolbar';
 
 const General = styled.div`
     background: #F5F5F5;
