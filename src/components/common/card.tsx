@@ -8,41 +8,43 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const headerHeight = 70;
+const borderColor = '#DEDEDE';
+
+const CardWrapper = styled.div`
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid ${borderColor};
+    margin-bottom: 30px;
+`;
 
 const CardHeader = styled.div`
-    margin: 0;
-    padding: 0 15px;
-    height: ${headerHeight}px;
-
-    border-bottom: 1px solid #dedede;
+    align-items: center;
+    border-bottom: 1px solid ${borderColor};
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
 `;
 
 const CardTitle = styled.h1`
-    display: inline-block;
-    margin: 0;
-
-    font-style: normal;
-    font-weight: bold;
-    line-height: ${headerHeight}px;
+    color: #000;
     font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0 20px 0 0;
 `;
 
 const CardAction = styled.div`
-    float: right;
-
-    line-height: ${headerHeight}px;
+    color: #b9b9b9;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
 `;
 
 const CardBody = styled.div`
     margin: 0;
-    padding: 0;
-`;
-
-const CardWrapper = styled.div`
-    background-color: white;
-    border: 1px solid #dedede;
-    border-radius: 4px;
-    margin-bottom: 1.5rem;
+    padding: 10px 20px 0;
 `;
 
 export const Card: React.FC<Props> = props => {
