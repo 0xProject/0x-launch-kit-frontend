@@ -1,8 +1,9 @@
 import React, { HTMLAttributes } from 'react';
-import styled from 'styled-components';
-import { StoreState } from '../../util/types';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
+
 import { getEthAccount } from '../../store/selectors';
+import { StoreState } from '../../util/types';
 
 interface WrapperProps {
     status?: string;
@@ -17,7 +18,7 @@ const WalletConnectionStatusWrapper = styled.div`
 `;
 
 const WalletConnectionStatusDot = styled.div<WrapperProps>`
-    background-color: ${props => props.status ? '#55BC65' : "#ccc"};
+    background-color: ${props => (props.status ? '#55BC65' : '#ccc')};
     border-radius: 50%;
     height: 10px;
     margin-right: 10px;
@@ -56,6 +57,9 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const WalletConnectionStatusContainer = connect(mapStateToProps, {})(WalletConnectionStatus);
+const WalletConnectionStatusContainer = connect(
+    mapStateToProps,
+    {},
+)(WalletConnectionStatus);
 
 export { WalletConnectionStatus, WalletConnectionStatusContainer };

@@ -156,9 +156,21 @@ describe('selectors', () => {
 
     it('should return the order book', () => {
         // given
-        const openSellOrder1 = openOrder({ side: UIOrderSide.Sell, size: new BigNumber(1), price: new BigNumber('8.0') });
-        const openSellOrder2 = openOrder({ side: UIOrderSide.Sell, size: new BigNumber(1), price: new BigNumber('8.1') });
-        const openSellOrder3 = openOrder({ side: UIOrderSide.Sell, size: new BigNumber(1), price: new BigNumber('8.0') });
+        const openSellOrder1 = openOrder({
+            side: UIOrderSide.Sell,
+            size: new BigNumber(1),
+            price: new BigNumber('8.0'),
+        });
+        const openSellOrder2 = openOrder({
+            side: UIOrderSide.Sell,
+            size: new BigNumber(1),
+            price: new BigNumber('8.1'),
+        });
+        const openSellOrder3 = openOrder({
+            side: UIOrderSide.Sell,
+            size: new BigNumber(1),
+            price: new BigNumber('8.0'),
+        });
         const openBuyOrder1 = openOrder({ side: UIOrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.5') });
         const openBuyOrder2 = openOrder({ side: UIOrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.3') });
         const openBuyOrder3 = openOrder({ side: UIOrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.3') });

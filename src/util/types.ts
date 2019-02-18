@@ -40,7 +40,10 @@ export interface StoreState {
     readonly relayer: RelayerState;
 }
 
-export enum UIOrderSide { Sell, Buy }
+export enum UIOrderSide {
+    Sell,
+    Buy,
+}
 
 export interface UIOrder {
     rawOrder: SignedOrder;

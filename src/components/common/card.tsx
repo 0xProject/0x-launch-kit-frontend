@@ -7,7 +7,6 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
 }
 
-const headerHeight = 70;
 const borderColor = '#DEDEDE';
 
 const CardWrapper = styled.div`

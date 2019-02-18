@@ -37,24 +37,35 @@ class WethModal extends React.Component<Props, State> {
 
         return (
             <Modal {...restProps}>
-                <span onClick={this.closeModal} style={{float: 'right'}}>X</span>
+                <span onClick={this.closeModal} style={{ float: 'right' }}>
+                    X
+                </span>
                 <div>{ethBalanceStr} ETH</div>
                 <div>{wethBalanceStr} wETH</div>
                 <div>Selected: {selectedWethStr}</div>
                 <div>
                     <label>
                         Select wETH
-                        <input type="range" min="0" max={maxEthStr} step="0.1" value={selectedWethStr} onChange={this.updateSelectedWeth}/>
+                        <input
+                            type="range"
+                            min="0"
+                            max={maxEthStr}
+                            step="0.1"
+                            value={selectedWethStr}
+                            onChange={this.updateSelectedWeth}
+                        />
                     </label>
                 </div>
-                <button onClick={this.submit} disabled={isDisabled}>Update Balance{isSubmitting && '...'}</button>
+                <button onClick={this.submit} disabled={isDisabled}>
+                    Update Balance{isSubmitting && '...'}
+                </button>
             </Modal>
         );
-    }
+    };
 
     public submit = () => {
         this.props.onSubmit(this.state.selectedWeth);
-    }
+    };
 
     public updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
         const { totalEth } = this.props;
@@ -68,13 +79,13 @@ class WethModal extends React.Component<Props, State> {
         this.setState({
             selectedWeth: newSelectedWeth,
         });
-    }
+    };
 
     public closeModal = (e: any) => {
         if (this.props.onRequestClose) {
             this.props.onRequestClose(e);
         }
-    }
+    };
 }
 
 export { WethModal };

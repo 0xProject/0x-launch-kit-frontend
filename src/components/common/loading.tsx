@@ -22,4 +22,8 @@ const CenteredLoading = styled(Loading)`
     transform: translate(-50%, -50%);
 `;
 
-export const CardLoading: React.FC = () => <LoadingWrapper><CenteredLoading /></LoadingWrapper>;
+export const CardLoading: React.FC = () => (
+    <LoadingWrapper>
+        <CenteredLoading />
+    </LoadingWrapper>
+);

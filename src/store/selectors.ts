@@ -23,18 +23,14 @@ export const getOpenOrders = createSelector(
 export const getOpenSellOrders = createSelector(
     getOpenOrders,
     orders => {
-        return orders
-            .filter(order => order.side === UIOrderSide.Sell)
-            .sort((o1, o2) => o2.price.comparedTo(o1.price));
+        return orders.filter(order => order.side === UIOrderSide.Sell).sort((o1, o2) => o2.price.comparedTo(o1.price));
     },
 );
 
 export const getOpenBuyOrders = createSelector(
     getOpenOrders,
     orders => {
-        return orders
-            .filter(order => order.side === UIOrderSide.Buy)
-            .sort((o1, o2) => o2.price.comparedTo(o1.price));
+        return orders.filter(order => order.side === UIOrderSide.Buy).sort((o1, o2) => o2.price.comparedTo(o1.price));
     },
 );
 
