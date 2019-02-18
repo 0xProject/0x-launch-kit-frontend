@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import { Toolbar } from './toolbar';
 
 const General = styled.div`
     background: #F5F5F5;
+    height: 100%;
 `;
 
 const Content = styled.div`
