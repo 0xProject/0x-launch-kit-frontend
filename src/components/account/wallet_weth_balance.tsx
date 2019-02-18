@@ -88,6 +88,7 @@ const modalStyle = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
+        minWidth: '400px',
     },
 };
 
@@ -127,7 +128,6 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <Value>{formattedTotalEth} ETH</Value>
                     </Row>
                     <WethModal
-                        ethBalance={ethBalance}
                         wethBalance={wethBalance}
                         totalEth={totalEth}
                         isOpen={this.state.modalIsOpen}
