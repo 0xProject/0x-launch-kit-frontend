@@ -1,17 +1,18 @@
-import { ConnectedRouter } from 'connected-react-router';
+import 'sanitize.css';
+import './index.css';
+
+import './icons';
+import * as serviceWorker from './serviceWorker';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactModal from 'react-modal';
-import { Provider } from 'react-redux';
-import { Route, Switch } from 'react-router';
-import 'sanitize.css';
-
 import { AppContainer } from './components/app';
+import { ConnectedRouter } from 'connected-react-router';
 import { GeneralLayout } from './components/general_layout';
-import './icons';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
-import * as serviceWorker from './serviceWorker';
+import { Provider } from 'react-redux';
+import { Route, Switch } from 'react-router';
 import { history, store } from './store/index';
 
 ReactModal.setAppElement('#root');
