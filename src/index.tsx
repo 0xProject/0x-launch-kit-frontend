@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import ReactModal from 'react-modal';
 import { AppContainer } from './components/app';
 import { ConnectedRouter } from 'connected-react-router';
-import { GeneralLayout } from './components/general_layout';
+import { GeneralLayout } from './components/GeneralLayout';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
 import { Provider } from 'react-redux';

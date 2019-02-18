@@ -1,8 +1,28 @@
 import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
-
-import { getEthAccount } from '../../store/selectors';
+import styled from 'styled-components';
 import { StoreState } from '../../util/types';
+import { connect } from 'react-redux';
+import { getEthAccount } from '../../store/selectors';
+
+interface WrapperProps {
+    status?: string;
+}
+
+const WalletConnectionStatusWrapper = styled.div`
+    align-items: center;
+    color: #333;
+    display: flex;
+    font-size: 16px;
+    font-weight: 500;
+`;
+
+const WalletConnectionStatusDot = styled.div<WrapperProps>`
+    background-color: ${props => props.status ? '#55BC65' : "#ccc"};
+    border-radius: 50%;
+    height: 10px;
+    margin-right: 10px;
+    width: 10px;
+`;
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
 
@@ -19,11 +39,13 @@ const truncateAddress = (address: string) => {
 class WalletConnectionStatus extends React.PureComponent<Props> {
     public render = () => {
         const { ethAccount, ...restProps } = this.props;
+        const status: string = ethAccount ? 'active' : '';
 
         return (
-            <span className="wallet-connection-status" {...restProps}>
+            <WalletConnectionStatusWrapper {...restProps}>
+                <WalletConnectionStatusDot status={status} />
                 {ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected'}
-            </span>
+            </WalletConnectionStatusWrapper>
         );
     };
 }

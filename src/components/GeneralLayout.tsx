@@ -4,12 +4,15 @@ import { Toolbar } from './common/toolbar';
 
 const General = styled.div`
     background: #F5F5F5;
+    display: flex;
+    flex-direction: column;
     height: 100%;
 `;
 
 const Content = styled.div`
-    margin-top: 10px;
-    padding: 0.5em 1em;
+    flex-grow: 1;
+    overflow: auto;
+    padding: 10px;
 `;
 
 interface GeneralLayoutProps {
