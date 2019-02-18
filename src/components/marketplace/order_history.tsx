@@ -10,6 +10,8 @@ import { Card } from '../common/card';
 import { CardLoading } from '../common/loading';
 import { TH as THBase, THead } from '../common/table';
 
+import { CancelOrderButtonContainer } from './cancel_order_button';
+
 interface StateProps {
     orders: UIOrder[];
     selectedToken: Token | null;
@@ -67,6 +69,7 @@ const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
             <CustomTD>{filled}</CustomTD>
             <CustomTD>{price}</CustomTD>
             <CustomTD>{status}</CustomTD>
+            <CustomTD><CancelOrderButtonContainer order={order} /></CustomTD>
         </TR>
     );
 };
@@ -114,6 +117,7 @@ class OrderHistory extends React.Component<Props, State> {
                             <TH>Filled ({'foo'})</TH>
                             <TH>Price (WETH)</TH>
                             <TH>Status</TH>
+                            <TH>&nbsp;</TH>
                         </tr>
                     </THead>
                     <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, selectedToken))}</tbody>
