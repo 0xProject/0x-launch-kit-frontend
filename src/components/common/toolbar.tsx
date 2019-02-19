@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { WalletConnectionStatusContainer } from '../account';
 
-import { Logo } from './Logo';
+import { Logo } from './logo';
 
 const ToolbarWrapper = styled.div`
     align-items: center;
