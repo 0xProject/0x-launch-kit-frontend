@@ -11,7 +11,7 @@ class Marketplace extends React.PureComponent {
                 <OrderBookTableContainer />
             </div>
         );
-    }
+    };
 }
 
 export { Marketplace };

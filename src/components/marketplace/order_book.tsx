@@ -56,8 +56,8 @@ const TH = styled(THBase)`
 const CustomTD = styled.td<{ isLastSell: boolean; isFirstBuy: boolean }>`
     min-width: 10rem;
 
-    padding-bottom: ${props => props.isLastSell ? '10px' : '5px'};
-    padding-top: ${props => props.isFirstBuy ? '10px' : '5px'};
+    padding-bottom: ${props => (props.isLastSell ? '10px' : '5px')};
+    padding-top: ${props => (props.isFirstBuy ? '10px' : '5px')};
 
     &:first-child {
         padding-left: 18px;
@@ -93,8 +93,12 @@ const orderToRow = (order: OrderBookItem, index: number, count: number, selected
 
     return (
         <TR key={index}>
-            <CustomTD isLastSell={isLastSell} isFirstBuy={isFirstBuy}>{size}</CustomTD>
-            <SideTD side={order.side} isLastSell={isLastSell} isFirstBuy={isFirstBuy}>{price}</SideTD>
+            <CustomTD isLastSell={isLastSell} isFirstBuy={isFirstBuy}>
+                {size}
+            </CustomTD>
+            <SideTD side={order.side} isLastSell={isLastSell} isFirstBuy={isFirstBuy}>
+                {price}
+            </SideTD>
         </TR>
     );
 };

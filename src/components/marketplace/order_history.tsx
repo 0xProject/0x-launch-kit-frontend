@@ -5,10 +5,11 @@ import styled from 'styled-components';
 
 import { getSelectedToken, getUserOrders } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Token, UIOrder, UIOrderSide } from '../../util/types';
+import { StoreState, Tab, TabItem, Token, UIOrder, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
+import { CardTabSelector } from '../common/card_tab_selector';
 import { CardLoading } from '../common/loading';
-import { TH as THBase, THead } from '../common/table';
+import { CustomTD, Table, TH, THead, TR } from '../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
 
@@ -17,35 +18,11 @@ interface StateProps {
     selectedToken: Token | null;
 }
 
-type Props = StateProps;
-
 interface State {
     tab: Tab;
 }
 
-enum Tab {
-    Open,
-    Filled,
-}
-
-const TR = styled.tr``;
-const TH = styled(THBase)`
-    min-width: 10rem;
-
-    padding: 10px 0;
-
-    &:first-child {
-        padding-left: 18px;
-    }
-`;
-const CustomTD = styled.td`
-    padding-bottom: 10px;
-    min-width: 10rem;
-
-    &:first-child {
-        padding-left: 18px;
-    }
-`;
+type Props = StateProps;
 
 const NoOrders = styled.div`
     padding: 10px 18px;
@@ -90,43 +67,45 @@ class OrderHistory extends React.Component<Props, State> {
         const setTabOpen = () => this.setState({ tab: Tab.Open });
         const setTabFilled = () => this.setState({ tab: Tab.Filled });
 
-        const TabSelector = (
-            <span>
-                <span onClick={setTabOpen} style={{ color: this.state.tab === Tab.Open ? 'black' : '#ccc' }}>
-                    Open
-                </span>
-                &nbsp;/&nbsp;
-                <span onClick={setTabFilled} style={{ color: this.state.tab === Tab.Filled ? 'black' : '#ccc' }}>
-                    Filled
-                </span>
-            </span>
-        );
+        const cardTabs: TabItem[] = [
+            {
+                active: this.state.tab === Tab.Open,
+                onClick: setTabOpen,
+                text: 'Open',
+            },
+            {
+                active: this.state.tab === Tab.Filled,
+                onClick: setTabFilled,
+                text: 'Filled',
+            },
+        ];
 
         let content: React.ReactNode;
+
         if (!selectedToken) {
             content = <CardLoading />;
         } else if (!ordersToShow.length) {
             content = <NoOrders>There are no orders to show</NoOrders>;
         } else {
             content = (
-                <table>
+                <Table>
                     <THead>
-                        <tr>
+                        <TR>
                             <TH>Side</TH>
                             <TH>Size ({'foo'})</TH>
                             <TH>Filled ({'foo'})</TH>
                             <TH>Price (WETH)</TH>
                             <TH>Status</TH>
                             <TH>&nbsp;</TH>
-                        </tr>
+                        </TR>
                     </THead>
                     <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, selectedToken))}</tbody>
-                </table>
+                </Table>
             );
         }
 
         return (
-            <Card title="Orders" action={TabSelector}>
+            <Card title="Orders" action={<CardTabSelector tabs={cardTabs} />}>
                 {content}
             </Card>
         );
