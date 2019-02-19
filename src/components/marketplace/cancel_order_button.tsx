@@ -52,7 +52,7 @@ class CancelOrderButton extends React.Component<Props, State> {
           const { order, onCancelOrder } = this.props;
           await onCancelOrder(order.rawOrder);
         } catch (err) {
-          throw err;
+          alert(`Could not cancel the specified order`);
         } finally {
           this.setState({ isLoading: false });
         }
