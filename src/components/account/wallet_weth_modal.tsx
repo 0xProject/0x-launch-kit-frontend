@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { Button as ButtonBase } from '../common/button';
-import { CloseModalButton } from '../common/close_modal_button';
-import { InfoIcon } from '../common/info_icon';
+import { CloseModalButton } from '../common/icons/close_modal_button';
+import { InfoIcon } from '../common/icons/info_icon';
 
 interface Props extends React.ComponentProps<typeof Modal> {
     wethBalance: BigNumber;

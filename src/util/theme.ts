@@ -7,3 +7,7 @@ export const themeColors = {
     textLight: '#999999',
     borderColor: '#DEDEDE',
 };
+
+export const themeDimensions = {
+    sidebarWidth: '350px',
+};

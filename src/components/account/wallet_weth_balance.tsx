@@ -88,7 +88,7 @@ const modalStyle = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
-        minWidth: '400px',
+        minWidth: '350px',
     },
 };
 
@@ -144,7 +144,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         }
 
         return (
-            <Card title="ETH/wETH Balances" style={{ width: '33%' }}>
+            <Card title="ETH/wETH Balances">
                 <Content>{content}</Content>
             </Card>
         );
