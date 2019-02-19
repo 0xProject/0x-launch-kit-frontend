@@ -68,8 +68,8 @@ const TDBalance = styled(TD)`
 const TDLock = styled(TD)<{ isUnlocked: boolean }>`
     min-width: 6em;
     text-align: center;
-    cursor: ${props => props.isUnlocked ? 'default' : 'pointer'};
-    color: ${props => props.isUnlocked ? '#c4c4c4' : 'black'};
+    cursor: ${props => (props.isUnlocked ? 'default' : 'pointer')};
+    color: ${props => (props.isUnlocked ? '#c4c4c4' : 'black')};
 `;
 
 interface LockCellProps {
@@ -78,9 +78,11 @@ interface LockCellProps {
 }
 
 const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
-    return <TDLock isUnlocked={isUnlocked} onClick={onClick}>
-        <FontAwesomeIcon icon={isUnlocked ? 'lock-open' : 'lock'} />
-    </TDLock>;
+    return (
+        <TDLock isUnlocked={isUnlocked} onClick={onClick}>
+            <FontAwesomeIcon icon={isUnlocked ? 'lock-open' : 'lock'} />
+        </TDLock>
+    );
 };
 
 class WalletTokenBalances extends React.PureComponent<Props> {
@@ -100,12 +102,12 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             };
 
             return (
-            <TR key={symbol}>
-                <TDTokens>{symbol}</TDTokens>
-                <TDBalance>{formattedBalance}</TDBalance>
-                <LockCell isUnlocked={isUnlocked} onClick={onClick} />
-                <TD />
-            </TR>
+                <TR key={symbol}>
+                    <TDTokens>{symbol}</TDTokens>
+                    <TDBalance>{formattedBalance}</TDBalance>
+                    <LockCell isUnlocked={isUnlocked} onClick={onClick} />
+                    <TD />
+                </TR>
             );
         });
 
@@ -123,18 +125,12 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                             <TH />
                         </TR>
                     </THead>
-                    <tbody>
-                        {rows}
-                    </tbody>
+                    <tbody>{rows}</tbody>
                 </table>
             );
         }
 
-        return (
-            <Card title="Token Balances">
-                {content}
-            </Card>
-        );
+        return <Card title="Token Balances">{content}</Card>;
     };
 }
 
@@ -148,6 +144,9 @@ const mapDispatchToProps = {
     onUnlockToken: unlockToken,
 };
 
-const WalletTokenBalancesContainer = connect(mapStateToProps, mapDispatchToProps)(WalletTokenBalances);
+const WalletTokenBalancesContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(WalletTokenBalances);
 
 export { WalletTokenBalances, WalletTokenBalancesContainer };

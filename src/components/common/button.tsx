@@ -25,9 +25,5 @@ const StyledButton = styled.button`
 export const Button: React.FC<Props> = props => {
     const { children, ...restProps } = props;
 
-    return (
-        <StyledButton {...restProps}>
-            {children}
-        </StyledButton>
-    );
+    return <StyledButton {...restProps}>{children}</StyledButton>;
 };

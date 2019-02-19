@@ -126,22 +126,35 @@ class WethModal extends React.Component<Props, State> {
                     <EthBoxUnit>wETH</EthBoxUnit>
                 </WethBox>
                 <div>
-                    <Slider type="range" min="0" max={totalEthStr} step="0.01" value={selectedWethStr} onChange={this.updateSelectedWeth} />
+                    <Slider
+                        type="range"
+                        min="0"
+                        max={totalEthStr}
+                        step="0.01"
+                        value={selectedWethStr}
+                        onChange={this.updateSelectedWeth}
+                    />
                 </div>
                 {isInsufficientEth ? (
                     <SetMinEthWrapper>
                         ETH required for fees.&nbsp;
-                        <SetMinEthButton href="" onClick={this.setMinEth}>0.5 ETH Recommended</SetMinEthButton>
+                        <SetMinEthButton href="" onClick={this.setMinEth}>
+                            0.5 ETH Recommended
+                        </SetMinEthButton>
                     </SetMinEthWrapper>
-                ) : <SetMinEthWrapper>&nbsp;</SetMinEthWrapper> }
-                <Button onClick={this.submit} disabled={isDisabled}>Update Balance{isSubmitting && '...'}</Button>
+                ) : (
+                    <SetMinEthWrapper>&nbsp;</SetMinEthWrapper>
+                )}
+                <Button onClick={this.submit} disabled={isDisabled}>
+                    Update Balance{isSubmitting && '...'}
+                </Button>
             </Modal>
         );
-    }
+    };
 
     public submit = () => {
         this.props.onSubmit(this.state.selectedWeth);
-    }
+    };
 
     public updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
         const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, 18);
@@ -149,13 +162,13 @@ class WethModal extends React.Component<Props, State> {
         this.setState({
             selectedWeth: newSelectedWeth,
         });
-    }
+    };
 
     public closeModal = (e: any) => {
         if (this.props.onRequestClose) {
             this.props.onRequestClose(e);
         }
-    }
+    };
 
     public setMinEth: React.ReactEventHandler<HTMLAnchorElement> = e => {
         e.preventDefault();
@@ -163,7 +176,7 @@ class WethModal extends React.Component<Props, State> {
         this.setState({
             selectedWeth: this.props.totalEth.sub(minEth),
         });
-    }
+    };
 }
 
 export { WethModal };

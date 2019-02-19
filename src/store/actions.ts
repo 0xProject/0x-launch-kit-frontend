@@ -89,11 +89,20 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
 
         let tx: string;
         if (wethBalance.lessThan(newWethBalance)) {
-            tx = await contractWrappers.etherToken.depositAsync(wethAddress, newWethBalance.sub(wethBalance), ethAccount);
+            tx = await contractWrappers.etherToken.depositAsync(
+                wethAddress,
+                newWethBalance.sub(wethBalance),
+                ethAccount,
+            );
         } else if (wethBalance.greaterThan(newWethBalance)) {
-            tx = await contractWrappers.etherToken.withdrawAsync(wethAddress, wethBalance.sub(newWethBalance), ethAccount, {
-                gasLimit: 1000000,
-            });
+            tx = await contractWrappers.etherToken.withdrawAsync(
+                wethAddress,
+                wethBalance.sub(newWethBalance),
+                ethAccount,
+                {
+                    gasLimit: 1000000,
+                },
+            );
         } else {
             return;
         }
@@ -140,18 +149,22 @@ export const initWallet = () => {
             const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
             const myUIOrders = ordersToUIOrders(myOrders, myOrdersInfo, selectedToken);
 
-            dispatch(initializeBlockchainData({
-                web3State: Web3State.Done,
-                ethAccount,
-                ethBalance,
-                wethBalance,
-                tokenBalances,
-            }));
-            dispatch(initializeRelayerData({
-                orders: uiOrders,
-                userOrders: myUIOrders,
-                selectedToken,
-            }));
+            dispatch(
+                initializeBlockchainData({
+                    web3State: Web3State.Done,
+                    ethAccount,
+                    ethBalance,
+                    wethBalance,
+                    tokenBalances,
+                }),
+            );
+            dispatch(
+                initializeRelayerData({
+                    orders: uiOrders,
+                    userOrders: myUIOrders,
+                    selectedToken,
+                }),
+            );
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }

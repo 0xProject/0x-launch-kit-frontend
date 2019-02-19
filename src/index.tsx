@@ -9,6 +9,7 @@ import 'sanitize.css';
 import { AppContainer } from './components/app';
 import { GeneralLayout } from './components/general_layout';
 import './icons';
+import './index.css';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
 import * as serviceWorker from './serviceWorker';

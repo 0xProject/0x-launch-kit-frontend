@@ -117,7 +117,8 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <Value>{formattedEth}</Value>
                     </Row>
                     <Button onClick={this.openModal}>
-                        <ButtonLabel>Convert</ButtonLabel> <ArrowUp>↑</ArrowUp><ArrowDown>↓</ArrowDown>
+                        <ButtonLabel>Convert</ButtonLabel> <ArrowUp>↑</ArrowUp>
+                        <ArrowDown>↓</ArrowDown>
                     </Button>
                     <Row>
                         <Label>wETH</Label>
@@ -143,7 +144,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         }
 
         return (
-            <Card title="ETH/wETH Balances" style={{width: '33%'}}>
+            <Card title="ETH/wETH Balances" style={{ width: '33%' }}>
                 <Content>{content}</Content>
             </Card>
         );
@@ -161,7 +162,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
             });
             this.closeModal();
         }
-    }
+    };
 
     public openModal = () => {
         this.setState({
@@ -187,6 +188,9 @@ const mapDispatchToProps = {
     onUpdateWethBalance: updateWethBalance,
 };
 
-const WalletWethBalanceContainer = connect(mapStateToProps, mapDispatchToProps)(WalletWethBalance);
+const WalletWethBalanceContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(WalletWethBalance);
 
 export { WalletWethBalance, WalletWethBalanceContainer };
