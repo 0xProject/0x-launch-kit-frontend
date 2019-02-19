@@ -43,7 +43,7 @@ const CardAction = styled.div`
 
 const CardBody = styled.div`
     margin: 0;
-    padding: 10px 20px 0;
+    padding: 10px 20px;
 `;
 
 export const Card: React.FC<Props> = props => {

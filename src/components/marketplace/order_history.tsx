@@ -16,28 +16,37 @@ interface StateProps {
     selectedToken: Token | null;
 }
 
-type Props = StateProps;
-
 interface State {
     tab: Tab;
 }
 
+type Props = StateProps;
+
+const TABLE = styled.table`
+    width: 100%;
+`;
 const TR = styled.tr``;
 const TH = styled(THBase)`
-    min-width: 10rem;
+    color: #b9b9b9;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    padding: 0 10px 5px 0;
+    text-transform: uppercase;
 
-    padding: 10px 0;
-
-    &:first-child {
-        padding-left: 18px;
+    &:last-child {
+        padding-right: 0;
     }
 `;
 const CustomTD = styled.td`
-    padding-bottom: 10px;
-    min-width: 10rem;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.2;
+    padding: 5px 10px 5px 0;
 
-    &:first-child {
-        padding-left: 18px;
+    &:last-child {
+        padding-right: 0;
     }
 `;
 
@@ -96,32 +105,31 @@ class OrderHistory extends React.Component<Props, State> {
             },
         ];
 
-        const TabSelector = <CardTabSelector tabs={cardTabs} />;
-
         let content: React.ReactNode;
+
         if (!selectedToken) {
             content = <CardLoading />;
         } else if (!ordersToShow.length) {
             content = <NoOrders>There are no orders to show</NoOrders>;
         } else {
             content = (
-                <table>
+                <TABLE>
                     <THead>
-                        <tr>
+                        <TR>
                             <TH>Side</TH>
                             <TH>Size ({'foo'})</TH>
                             <TH>Filled ({'foo'})</TH>
                             <TH>Price (WETH)</TH>
                             <TH>Status</TH>
-                        </tr>
+                        </TR>
                     </THead>
                     <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, selectedToken))}</tbody>
-                </table>
+                </TABLE>
             );
         }
 
         return (
-            <Card title="Orders" action={TabSelector}>
+            <Card title="Orders" action={<CardTabSelector tabs={cardTabs} />}>
                 {content}
             </Card>
         );

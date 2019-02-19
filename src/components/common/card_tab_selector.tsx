@@ -38,7 +38,12 @@ export const CardTabSelector: React.FC<Props> = props => {
     return (
         <CardTabSelectorWrapper>
             {tabs.map((item, index) => {
-                return <CardTabSelectorItem key={index} onClick={item.onClick} active={item.active}>{item.text}</CardTabSelectorItem>;
+                return (
+                    <CardTabSelectorItem key={index} onClick={item.onClick} active={item.active}>
+                        {item.text}
+                    </CardTabSelectorItem>
+                );
             })}
-        </CardTabSelectorWrapper>);
+        </CardTabSelectorWrapper>
+    );
 };
