@@ -1,15 +1,15 @@
-import { assetDataUtils, BigNumber } from '0x.js';
+import { BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
-import { getRelayer } from '../services/relayer';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
+import { cancelSignedOrder } from '../util/cancel_order';
+import { getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../util/get_orders';
 import { getTokenBalance, tokenToTokenBalance } from '../util/get_token_balance';
 import { getKnownTokens, getTokenBySymbol, getWethToken } from '../util/known_tokens';
 import { BlockchainState, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
-import { ordersToUIOrders } from '../util/ui_orders';
 
 import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance } from './selectors';
 
@@ -164,14 +164,7 @@ export const getAllOrders = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const selectedToken = getSelectedToken(state) as Token;
-
-        const relayer = getRelayer();
-        const selectedTokenAssetData = assetDataUtils.encodeERC20AssetData(selectedToken.address);
-        const orders = await relayer.getAllOrdersAsync(selectedTokenAssetData);
-
-        const contractWrappers = await getContractWrappers();
-        const ordersInfo = await contractWrappers.exchange.getOrdersInfoAsync(orders);
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+        const uiOrders = await getAllOrdersAsUIOrders(selectedToken);
 
         dispatch(setOrders(uiOrders));
     };
@@ -182,14 +175,7 @@ export const getUserOrders = () => {
         const state = getState();
         const selectedToken = getSelectedToken(state) as Token;
         const ethAccount = getEthAccount(state);
-
-        const relayer = getRelayer();
-        const selectedTokenAssetData = assetDataUtils.encodeERC20AssetData(selectedToken.address);
-        const myOrders = await relayer.getUserOrdersAsync(ethAccount, selectedTokenAssetData);
-
-        const contractWrappers = await getContractWrappers();
-        const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
-        const myUIOrders = ordersToUIOrders(myOrders, myOrdersInfo, selectedToken);
+        const myUIOrders = await getUserOrdersAsUIOrders(selectedToken, ethAccount);
 
         dispatch(setUserOrders(myUIOrders));
     };
@@ -197,10 +183,7 @@ export const getUserOrders = () => {
 
 export const cancelOrder = (order: SignedOrder) => {
     return async (dispatch: any) => {
-        const contractWrappers = await getContractWrappers();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const tx = await contractWrappers.exchange.cancelOrderAsync(order, TX_DEFAULTS);
-        await web3Wrapper.awaitTransactionSuccessAsync(tx);
+        await cancelSignedOrder(order);
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
