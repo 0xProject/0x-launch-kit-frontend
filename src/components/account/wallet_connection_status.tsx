@@ -30,6 +30,9 @@ const mapStateToProps = (state: StoreState): Props => {
     };
 };
 
-const WalletConnectionStatusContainer = connect(mapStateToProps, {})(WalletConnectionStatus);
+const WalletConnectionStatusContainer = connect(
+    mapStateToProps,
+    {},
+)(WalletConnectionStatus);
 
 export { WalletConnectionStatus, WalletConnectionStatusContainer };

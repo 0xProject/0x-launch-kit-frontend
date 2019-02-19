@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Toolbar } from './toolbar';
 
 const General = styled.div`
-    background: #F5F5F5;
+    background: #f5f5f5;
 `;
 
 const Content = styled.div`
@@ -17,12 +17,12 @@ interface GeneralLayoutProps {
 }
 
 export const GeneralLayout = (props: React.Props<any> | GeneralLayoutProps) => {
-  const { children } = props;
+    const { children } = props;
 
-  return (
-    <General>
-        <Toolbar />
-        <Content>{children}</Content>
-    </General>
-  );
+    return (
+        <General>
+            <Toolbar />
+            <Content>{children}</Content>
+        </General>
+    );
 };

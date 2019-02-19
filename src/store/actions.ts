@@ -39,10 +39,10 @@ export const initWallet = () => {
 
             const balances = await Promise.all(knownTokens.map(token => getTokenBalance(token, ethAccount)));
             const tokenBalances = knownTokens.map((token, index) => {
-              return {
-                token,
-                balance: balances[index],
-              };
+                return {
+                    token,
+                    balance: balances[index],
+                };
             });
 
             const wethToken = getWethToken(networkId);
