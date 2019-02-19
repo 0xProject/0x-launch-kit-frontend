@@ -121,6 +121,16 @@ const ButtonLabel = styled.span`
     margin-right: 10px;
 `;
 
+const Note = styled.p`
+    color: #ababab;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 24px;
+    margin: -10px 0 30px;
+    padding: 0 40px;
+    text-align: center;
+`;
+
 class WalletWethBalance extends React.PureComponent<Props, State> {
     public readonly state: State = {
         modalIsOpen: false,
@@ -175,9 +185,15 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         }
 
         return (
-            <Card title="ETH / wETH Balances">
-                <Content>{content}</Content>
-            </Card>
+            <>
+                <Card title="ETH / wETH Balances">
+                    <Content>{content}</Content>
+                </Card>
+                <Note>
+                    wETH is used for trades on 0x
+                    <br />1 wETH = 1 ETH
+                </Note>
+            </>
         );
     };
 
