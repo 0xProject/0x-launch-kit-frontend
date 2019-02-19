@@ -21,7 +21,7 @@ interface State {
     isLoading: boolean;
 }
 
-const BUTTON = styled.button`
+const Button = styled.button`
     background: none;
     border: none;
     color: #c4c4c4;
@@ -42,9 +42,9 @@ class CancelOrderButton extends React.Component<Props, State> {
     public render = () => {
         const { isLoading } = this.state;
         return (
-            <BUTTON type="button" disabled={isLoading} onClick={this._cancelOrder}>
+            <Button type="button" disabled={isLoading} onClick={this._cancelOrder}>
                 <FontAwesomeIcon icon="times" />
-            </BUTTON>
+            </Button>
         );
     };
 
