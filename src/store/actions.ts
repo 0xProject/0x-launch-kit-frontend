@@ -2,6 +2,7 @@ import { assetDataUtils, BigNumber, ContractWrappers } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
+import { TX_DEFAULTS } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { getRelayer } from '../services/relayer';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
@@ -100,9 +101,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
                 wethAddress,
                 wethBalance.sub(newWethBalance),
                 ethAccount,
-                {
-                    gasLimit: 1000000,
-                },
+                TX_DEFAULTS,
             );
         } else {
             return;
@@ -180,9 +179,7 @@ export const cancelOrder = (order: SignedOrder) => {
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = new ContractWrappers(web3Wrapper.getProvider(), { networkId });
-        const tx = await contractWrappers.exchange.cancelOrderAsync(order, {
-            gasLimit: 1000000,
-        });
+        const tx = await contractWrappers.exchange.cancelOrderAsync(order, TX_DEFAULTS);
         await web3Wrapper.awaitTransactionSuccessAsync(tx);
 
         const relayer = getRelayer();
