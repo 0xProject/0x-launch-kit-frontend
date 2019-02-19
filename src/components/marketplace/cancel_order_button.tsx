@@ -24,7 +24,7 @@ interface State {
 const BUTTON = styled.button`
     background: none;
     border: none;
-    color: #C4C4C4;
+    color: #c4c4c4;
     display: inline-block;
     height: 1em;
     outline: 0;
@@ -41,20 +41,22 @@ class CancelOrderButton extends React.Component<Props, State> {
 
     public render = () => {
         const { isLoading } = this.state;
-        return <BUTTON type="button" disabled={isLoading} onClick={this._cancelOrder}>
-            <FontAwesomeIcon icon="times" />
-        </BUTTON>;
+        return (
+            <BUTTON type="button" disabled={isLoading} onClick={this._cancelOrder}>
+                <FontAwesomeIcon icon="times" />
+            </BUTTON>
+        );
     };
 
-    private readonly _cancelOrder  = async () => {
+    private readonly _cancelOrder = async () => {
         this.setState({ isLoading: true });
         try {
-          const { order, onCancelOrder } = this.props;
-          await onCancelOrder(order.rawOrder);
+            const { order, onCancelOrder } = this.props;
+            await onCancelOrder(order.rawOrder);
         } catch (err) {
-          alert(`Could not cancel the specified order`);
+            alert(`Could not cancel the specified order`);
         } finally {
-          this.setState({ isLoading: false });
+            this.setState({ isLoading: false });
         }
     };
 }
@@ -63,6 +65,9 @@ const mapDispatchToProps = {
     onCancelOrder: cancelOrder,
 };
 
-const CancelOrderButtonContainer = connect(null, mapDispatchToProps)(CancelOrderButton);
+const CancelOrderButtonContainer = connect(
+    null,
+    mapDispatchToProps,
+)(CancelOrderButton);
 
 export { CancelOrderButton, CancelOrderButtonContainer };

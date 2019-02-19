@@ -46,7 +46,9 @@ const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
             <CustomTD>{filled}</CustomTD>
             <CustomTD>{price}</CustomTD>
             <CustomTD>{status}</CustomTD>
-            <CustomTD><CancelOrderButtonContainer order={order} /></CustomTD>
+            <CustomTD>
+                <CancelOrderButtonContainer order={order} />
+            </CustomTD>
         </TR>
     );
 };
