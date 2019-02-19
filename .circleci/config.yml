@@ -1,0 +1,26 @@
+version: 2
+jobs:
+    build:
+        docker:
+            - image: circleci/node:9
+        steps:
+            - checkout
+            - restore_cache: # special step to restore the dependency cache
+                  keys:
+                      # when lock file changes, use increasingly general patterns to restore cache
+                      - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                      - yarn-packages-v1-{{ .Branch }}-
+                      - yarn-packages-v1-
+            - run:
+                  name: Setup Yarn Dependencies #install all the dependencies
+                  command: yarn
+            - save_cache: #saves a cache of the installed dependencies
+                  key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                  paths:
+                      - ~/.cache/yarn
+            - run:
+                  name: Lint checks
+                  command: npm run lint
+            - run:
+                  name: Tests
+                  command: npm run test-once
