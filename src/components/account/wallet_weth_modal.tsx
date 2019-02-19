@@ -7,7 +7,7 @@ import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
-import { InfoIcon } from '../common/icons/info_icon';
+import { Tooltip } from '../common/tooltip';
 
 interface Props extends React.ComponentProps<typeof Modal> {
     wethBalance: BigNumber;
@@ -60,6 +60,7 @@ const CloseButtonContainer = styled.div`
     height: 20px;
     justify-content: flex-end;
     margin-right: -10px;
+    margin-top: -10px;
 `;
 
 const Title = styled.h1`
@@ -90,7 +91,7 @@ const EthBox = styled.div`
     position: relative;
 `;
 
-const InfoIconStyled = styled.div`
+const TooltipStyled = styled.div`
     cursor: pointer;
     position: absolute;
     right: 8px;
@@ -106,7 +107,7 @@ const EthBoxValue = styled.h2<EthBoxProps>`
     font-size: 24px;
     font-weight: 600;
     line-height: 1.2;
-    margin: 0 0 8px;
+    margin: 0 0 5px;
     text-align: center;
 `;
 
@@ -169,9 +170,9 @@ class WethModal extends React.Component<Props, State> {
                     <EthBox>
                         <EthBoxValue isZero={selectedWethStr === minSlidervalue}>{selectedWethStr}</EthBoxValue>
                         <EthBoxUnit>wETH</EthBoxUnit>
-                        <InfoIconStyled>
-                            <InfoIcon />
-                        </InfoIconStyled>
+                        <TooltipStyled>
+                            <Tooltip />
+                        </TooltipStyled>
                     </EthBox>
                 </EthBoxes>
                 <Slider

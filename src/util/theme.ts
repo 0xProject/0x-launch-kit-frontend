@@ -11,3 +11,23 @@ export const themeColors = {
 export const themeDimensions = {
     sidebarWidth: '350px',
 };
+
+export const themeModalStyle = {
+    content: {
+        bottom: 'auto',
+        borderColor: themeColors.borderColor,
+        flexGrow: '0',
+        left: 'auto',
+        minWidth: '350px',
+        position: 'relative',
+        right: 'auto',
+        top: 'auto',
+    },
+    overlay: {
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        display: 'flex',
+        justifyContent: 'center',
+        zIndex: '12345',
+    },
+};
