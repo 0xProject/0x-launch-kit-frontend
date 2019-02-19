@@ -9,7 +9,7 @@ import { StoreState, Tab, TabItem, Token, UIOrder, UIOrderSide } from '../../uti
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { CardLoading } from '../common/loading';
-import { TH as THBase, THead } from '../common/table';
+import { CustomTD, Table, TH, THead, TR } from '../common/table';
 
 interface StateProps {
     orders: UIOrder[];
@@ -21,34 +21,6 @@ interface State {
 }
 
 type Props = StateProps;
-
-const TABLE = styled.table`
-    width: 100%;
-`;
-const TR = styled.tr``;
-const TH = styled(THBase)`
-    color: #b9b9b9;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-    padding: 0 10px 5px 0;
-    text-transform: uppercase;
-
-    &:last-child {
-        padding-right: 0;
-    }
-`;
-const CustomTD = styled.td`
-    font-size: 14px;
-    font-weight: normal;
-    line-height: 1.2;
-    padding: 5px 10px 5px 0;
-
-    &:last-child {
-        padding-right: 0;
-    }
-`;
 
 const NoOrders = styled.div`
     padding: 10px 18px;
@@ -113,7 +85,7 @@ class OrderHistory extends React.Component<Props, State> {
             content = <NoOrders>There are no orders to show</NoOrders>;
         } else {
             content = (
-                <TABLE>
+                <Table>
                     <THead>
                         <TR>
                             <TH>Side</TH>
@@ -124,7 +96,7 @@ class OrderHistory extends React.Component<Props, State> {
                         </TR>
                     </THead>
                     <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, selectedToken))}</tbody>
-                </TABLE>
+                </Table>
             );
         }
 
