@@ -89,8 +89,8 @@ class OrderHistory extends React.Component<Props, State> {
                     <THead>
                         <TR>
                             <TH>Side</TH>
-                            <TH>Size ({'foo'})</TH>
-                            <TH>Filled ({'foo'})</TH>
+                            <TH>Size ({selectedToken.symbol})</TH>
+                            <TH>Filled ({selectedToken.symbol})</TH>
                             <TH>Price (WETH)</TH>
                             <TH>Status</TH>
                         </TR>
