@@ -3,27 +3,27 @@ import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
 
 export interface TabItem {
-    onClick: any;
     active: boolean;
+    onClick: any;
     text: string;
 }
 
 export interface Token {
     address: string;
-    symbol: string;
     decimals: number;
+    symbol: string;
 }
 
 export interface TokenBalance {
-    token: Token;
     balance: BigNumber;
     isUnlocked: boolean;
+    token: Token;
 }
 
 export enum Web3State {
-    Loading,
     Done,
     Error,
+    Loading,
 }
 
 export interface BlockchainState {

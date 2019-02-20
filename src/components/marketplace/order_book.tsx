@@ -8,6 +8,7 @@ import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
+import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 
@@ -26,10 +27,6 @@ enum Tab {
 interface State {
     tab: Tab;
 }
-
-const NoOrders = styled.div`
-    padding: 10px 18px;
-`;
 
 const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
@@ -77,7 +74,7 @@ class OrderBookTable extends React.Component<Props, State> {
         if (!selectedToken) {
             content = <CardLoading />;
         } else if (!buyOrders.length && !sellOrders.length) {
-            content = <NoOrders>There are no orders to show</NoOrders>;
+            content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {
             content = (
                 <Table fitInCard={true}>

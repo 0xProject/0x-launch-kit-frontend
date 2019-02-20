@@ -48,6 +48,7 @@ const CardBody = styled.div`
     min-height: 140px;
     overflow-x: auto;
     padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
+    position: relative;
 `;
 
 export const Card: React.FC<Props> = props => {

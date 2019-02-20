@@ -8,8 +8,8 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const MainContentWrapper = styled.div`
-    flex-shrink: 1;
     flex-grow: 0;
+    flex-shrink: 1;
 
     @media (min-width: ${themeBreakPoints.xl}) {
         flex-grow: 1;
