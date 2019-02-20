@@ -35,6 +35,7 @@ describe('ordersToUIOrders', () => {
             filled: new BigNumber('0'),
             price: new BigNumber('50'),
             status: OrderStatus.Fillable,
+            emptySize:  new BigNumber('1'),
         });
     });
 
@@ -67,6 +68,7 @@ describe('ordersToUIOrders', () => {
             filled: new BigNumber('0'),
             price: new BigNumber('100'),
             status: OrderStatus.Fillable,
+            emptySize:  new BigNumber('1'),
         });
     });
 
@@ -108,6 +110,7 @@ describe('ordersToUIOrders', () => {
             filled: new BigNumber('0'),
             price: new BigNumber('50'),
             status: OrderStatus.Fillable,
+            emptySize:  new BigNumber('1'),
         });
         expect(uiOrders[1]).toEqual({
             rawOrder: orders[1],
@@ -116,6 +119,7 @@ describe('ordersToUIOrders', () => {
             filled: new BigNumber('0'),
             price: new BigNumber('100'),
             status: OrderStatus.Fillable,
+            emptySize:  new BigNumber('1'),
         });
     });
 
@@ -148,6 +152,7 @@ describe('ordersToUIOrders', () => {
             filled: new BigNumber('0.5'),
             price: new BigNumber('50'),
             status: OrderStatus.Fillable,
+            emptySize:  new BigNumber('0.5'),
         });
     });
 
@@ -180,6 +185,7 @@ describe('ordersToUIOrders', () => {
             filled: new BigNumber('0.75'),
             price: new BigNumber('100'),
             status: OrderStatus.Fillable,
+            emptySize:  new BigNumber('0.25'),
         });
     });
 
@@ -220,16 +226,19 @@ describe('mergeByPrice', () => {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('5.00'),
+                emptySize:  new BigNumber('8.00'),
             },
             {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('3.00'),
+                emptySize:  new BigNumber('3.00'),
             },
             {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('4.00'),
+                emptySize:  new BigNumber('4.00'),
             },
         ];
 
@@ -242,11 +251,13 @@ describe('mergeByPrice', () => {
                 side: UIOrderSide.Sell,
                 size: new BigNumber('8.00'),
                 price: new BigNumber('1.00'),
+                emptySize:  new BigNumber('8.00'),
             },
             {
                 side: UIOrderSide.Sell,
                 size: new BigNumber('4.00'),
                 price: new BigNumber('1.01'),
+                emptySize:  new BigNumber('4.00'),
             },
         ]);
     });
@@ -258,16 +269,19 @@ describe('mergeByPrice', () => {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('5.00'),
+                emptySize:  new BigNumber('5.00'),
             },
             {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('3.00'),
+                emptySize:  new BigNumber('3.00'),
             },
             {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.02'),
                 size: new BigNumber('4.00'),
+                emptySize:  new BigNumber('4.00'),
             },
         ];
 
@@ -280,16 +294,19 @@ describe('mergeByPrice', () => {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('5.00'),
+                emptySize:  new BigNumber('5.00'),
             },
             {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('3.00'),
+                emptySize:  new BigNumber('3.00'),
             },
             {
                 side: UIOrderSide.Sell,
                 price: new BigNumber('1.02'),
                 size: new BigNumber('4.00'),
+                emptySize:  new BigNumber('4.00'),
             },
         ]);
     });
