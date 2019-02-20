@@ -33,3 +33,13 @@ export const themeModalStyle = {
         zIndex: '12345',
     },
 };
+
+export const themeBreakPoints = {
+    lg: '992px',
+    md: '768px',
+    sm: '480px',
+    xl: '1024px',
+    xs: '320px',
+    xxl: '1280px',
+    xxxl: '1366px',
+};
