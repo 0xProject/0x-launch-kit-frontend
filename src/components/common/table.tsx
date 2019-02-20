@@ -1,27 +1,22 @@
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../util/theme';
-
-export const THead = styled.thead`
-    text-transform: uppercase;
-    color: #ccc;
-    font-size: 12px;
-`;
+import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 
 interface TableStyleProps {
-    color?: string;
     borderBottom?: boolean;
     borderTop?: boolean;
+    color?: string;
     textAlign?: string;
+}
+
+interface TableProps {
+    fitInCard?: boolean;
+    isResponsive?: boolean;
+    styles?: TableStyleProps;
 }
 
 interface TableTDProps {
     styles?: TableStyleProps;
-}
-
-interface TableProps {
-    styles?: TableStyleProps;
-    fitInCard?: boolean;
 }
 
 export const Table = styled.table<TableProps>`
@@ -30,10 +25,21 @@ export const Table = styled.table<TableProps>`
     border-top: ${props => (props.styles && props.styles.borderTop ? `1px solid ${themeColors.borderColor}` : 'none')};
     margin-left: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
     margin-right: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
+    min-width: ${props => (props.isResponsive ? 'fit-content' : '0')};
     width: ${props =>
         props.fitInCard
             ? `calc(100% + ${themeDimensions.horizontalPadding} + ${themeDimensions.horizontalPadding})`
             : '100%'};
+
+    @media (min-width: ${themeBreakPoints.xl}) {
+        min-width: 100%;
+    }
+`;
+
+export const THead = styled.thead`
+    color: #ccc;
+    font-size: 12px;
+    text-transform: uppercase;
 `;
 
 export const TR = styled.tr``;
@@ -47,10 +53,11 @@ export const TH = styled.th<TableTDProps>`
     font-weight: 500;
     letter-spacing: 0.5px;
     line-height: 1.2;
-    padding: 0 10px 5px 0;
+    padding: 0 ${themeDimensions.horizontalPadding} 5px 0;
     text-align: ${props =>
         props.styles && props.styles.textAlign && props.styles.textAlign.length ? props.styles.textAlign : 'left'};
     text-transform: uppercase;
+    white-space: nowrap;
 
     &:last-child {
         padding-right: 0;
@@ -65,7 +72,7 @@ export const CustomTD = styled.td<TableTDProps>`
     font-size: 14px;
     font-weight: normal;
     line-height: 1.2;
-    padding: 5px 10px 5px 0;
+    padding: 5px ${themeDimensions.horizontalPadding} 5px 0;
     text-align: ${props =>
         props.styles && props.styles.textAlign && props.styles.textAlign.length ? props.styles.textAlign : 'left'};
 

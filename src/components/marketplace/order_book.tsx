@@ -34,12 +34,15 @@ const NoOrders = styled.div`
 const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
-    const color = order.side === UIOrderSide.Buy ? themeColors.orange : themeColors.green;
+    const priceColor = order.side === UIOrderSide.Buy ? themeColors.orange : themeColors.green;
+    const time: string = '';
+    const timeColor = time ? '#000' : themeColors.lightGray;
 
     return (
         <TR key={index}>
             <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
-            <CustomTDLast styles={{ textAlign: 'right', color }}>{price}</CustomTDLast>
+            <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{price}</CustomTD>
+            <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
         </TR>
     );
 };
@@ -81,7 +84,8 @@ class OrderBookTable extends React.Component<Props, State> {
                     <THead>
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
-                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</THLast>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</TH>
+                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
                         </TR>
                     </THead>
                     <tbody>
@@ -90,8 +94,11 @@ class OrderBookTable extends React.Component<Props, State> {
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 Spread
                             </CustomTDTitle>
-                            <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 {spread.toFixed(2)}
+                            </CustomTD>
+                            <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                                {}
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) => orderToRow(order, index, buyOrders.length, selectedToken))}

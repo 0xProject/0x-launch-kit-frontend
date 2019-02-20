@@ -95,7 +95,7 @@ class OrderHistory extends React.Component<Props, State> {
             content = <NoOrders>There are no orders to show</NoOrders>;
         } else {
             content = (
-                <Table>
+                <Table isResponsive={true}>
                     <THead>
                         <TR>
                             <TH>Side</TH>

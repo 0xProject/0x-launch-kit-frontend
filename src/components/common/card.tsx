@@ -46,6 +46,7 @@ const CardAction = styled.div`
 const CardBody = styled.div`
     margin: 0;
     min-height: 140px;
+    overflow-x: auto;
     padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
 `;
 
