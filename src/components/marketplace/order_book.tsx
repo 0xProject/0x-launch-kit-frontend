@@ -85,7 +85,7 @@ const NoOrders = styled.div`
 `;
 
 const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
-    const size = tokenAmountInUnits(order.size, selectedToken.decimals);
+    const emptySize = tokenAmountInUnits(order.emptySize, selectedToken.decimals);
     const price = order.price.toString();
 
     const isLastSell = order.side === UIOrderSide.Sell && index + 1 === count;
@@ -94,7 +94,7 @@ const orderToRow = (order: OrderBookItem, index: number, count: number, selected
     return (
         <TR key={index}>
             <CustomTD isLastSell={isLastSell} isFirstBuy={isFirstBuy}>
-                {size}
+                {emptySize}
             </CustomTD>
             <SideTD side={order.side} isLastSell={isLastSell} isFirstBuy={isFirstBuy}>
                 {price}

@@ -63,12 +63,14 @@ export interface UIOrder {
     filled: BigNumber;
     price: BigNumber;
     status: OrderStatus;
+    emptySize: BigNumber;
 }
 
 export interface OrderBookItem {
     side: UIOrderSide;
     size: BigNumber;
     price: BigNumber;
+    emptySize: BigNumber;
 }
 
 export interface OrderBook {

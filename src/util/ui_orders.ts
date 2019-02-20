@@ -29,6 +29,7 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
                 : order.makerAssetAmount.div(order.takerAssetAmount);
         const status = orderInfo.orderStatus;
 
+        const emptySize = size.minus(filled);
         return {
             rawOrder: order,
             side,
@@ -36,19 +37,20 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
             filled,
             price,
             status,
+            emptySize,
         };
     });
 };
 
 export const mergeByPrice = (orders: OrderBookItem[]): OrderBookItem[] => {
     const initialValue: { [x: string]: OrderBookItem[] } = {};
-
     const ordersByPrice = orders.reduce((acc, order) => {
         acc[order.price.toFixed(2)] = acc[order.price.toFixed(2)] || [];
         acc[order.price.toFixed(2)].push(order);
         return acc;
     }, initialValue);
 
+    /* Returns an array of OrderBookItem */
     return Object.keys(ordersByPrice)
         .map(price => {
             return ordersByPrice[price].reduce((acc, order) => {
@@ -62,5 +64,6 @@ export const mergeByPrice = (orders: OrderBookItem[]): OrderBookItem[] => {
             side: order.side,
             price: order.price,
             size: order.size,
+            emptySize: order.emptySize,
         }));
 };
