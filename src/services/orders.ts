@@ -1,10 +1,13 @@
 import { assetDataUtils } from '0x.js';
+import { SignedOrder } from '@0x/connect';
 
-import { getContractWrappers } from '../services/contract_wrappers';
-import { getRelayer } from '../services/relayer';
+import { TX_DEFAULTS } from '../common/constants';
 import { Token } from '../util/types';
+import { ordersToUIOrders } from '../util/ui_orders';
 
-import { ordersToUIOrders } from './ui_orders';
+import { getContractWrappers } from './contract_wrappers';
+import { getRelayer } from './relayer';
+import { getWeb3WrapperOrThrow } from './web3_wrapper';
 
 export const getAllOrders = (token: Token) => {
     const relayer = getRelayer();
@@ -30,4 +33,11 @@ export const getUserOrdersAsUIOrders = async (token: Token, ethAccount: string) 
     const contractWrappers = await getContractWrappers();
     const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
     return ordersToUIOrders(myOrders, myOrdersInfo, token);
+};
+
+export const cancelSignedOrder = async (order: SignedOrder) => {
+    const contractWrappers = await getContractWrappers();
+    const web3Wrapper = await getWeb3WrapperOrThrow();
+    const tx = await contractWrappers.exchange.cancelOrderAsync(order, TX_DEFAULTS);
+    return web3Wrapper.awaitTransactionSuccessAsync(tx);
 };
