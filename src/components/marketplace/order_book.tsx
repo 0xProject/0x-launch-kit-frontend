@@ -4,8 +4,9 @@ import styled from 'styled-components';
 
 import { getOrderBook, getSelectedToken } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, StoreState, Token, UIOrderSide } from '../../util/types';
+import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
+import { CardTabSelector } from '../common/card_tab_selector';
 import { CardLoading } from '../common/loading';
 import { TH as THBase, THead } from '../common/table';
 
@@ -16,13 +17,13 @@ interface StateProps {
 
 type Props = StateProps;
 
-interface State {
-    tab: Tab;
-}
-
 enum Tab {
     Current,
     History,
+}
+
+interface State {
+    tab: Tab;
 }
 
 const TR = styled.tr`
@@ -34,8 +35,8 @@ const TR = styled.tr`
     }
 `;
 const HeaderTR = styled(TR)`
-    border: 1px solid #dedede;
     border-width: 1px 0;
+    border: 1px solid #dedede;
 
     &:first-child {
         border-top: 0;
@@ -55,7 +56,6 @@ const TH = styled(THBase)`
 
 const CustomTD = styled.td<{ isLastSell: boolean; isFirstBuy: boolean }>`
     min-width: 10rem;
-
     padding-bottom: ${props => (props.isLastSell ? '10px' : '5px')};
     padding-top: ${props => (props.isFirstBuy ? '10px' : '5px')};
 
@@ -115,17 +115,18 @@ class OrderBookTable extends React.Component<Props, State> {
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
 
-        const TabSelector = (
-            <span>
-                <span onClick={setTabCurrent} style={{ color: this.state.tab === Tab.Current ? 'black' : '#ccc' }}>
-                    Current
-                </span>
-                &nbsp;/&nbsp;
-                <span onClick={setTabHistory} style={{ color: this.state.tab === Tab.History ? 'black' : '#ccc' }}>
-                    History
-                </span>
-            </span>
-        );
+        const cardTabs: TabItem[] = [
+            {
+                active: this.state.tab === Tab.Current,
+                onClick: setTabCurrent,
+                text: 'Current',
+            },
+            {
+                active: this.state.tab === Tab.History,
+                onClick: setTabHistory,
+                text: 'History',
+            },
+        ];
 
         const spreadRow = (
             <HeaderTR>
@@ -135,6 +136,7 @@ class OrderBookTable extends React.Component<Props, State> {
         );
 
         let content: React.ReactNode;
+
         if (!selectedToken) {
             content = <CardLoading />;
         } else if (!buyOrders.length && !sellOrders.length) {
@@ -158,7 +160,7 @@ class OrderBookTable extends React.Component<Props, State> {
         }
 
         return (
-            <Card title="Order book" action={TabSelector}>
+            <Card title="Orderbook" action={<CardTabSelector tabs={cardTabs} />}>
                 {content}
             </Card>
         );

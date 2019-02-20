@@ -8,11 +8,6 @@ export interface TabItem {
     text: string;
 }
 
-export enum Tab {
-    Open,
-    Filled,
-}
-
 export interface Token {
     address: string;
     symbol: string;

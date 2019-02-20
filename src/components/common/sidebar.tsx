@@ -9,9 +9,16 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const SidebarWrapper = styled.div`
     flex-shrink: 0;
-    margin-right: 10px;
     max-width: 100%;
     width: ${themeDimensions.sidebarWidth};
+
+    &:first-child {
+        margin-right: 10px;
+    }
+
+    &:last-child {
+        margin-left: 10px;
+    }
 `;
 
 export const Sidebar: React.FC<Props> = props => {
