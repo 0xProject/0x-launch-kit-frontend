@@ -11,7 +11,7 @@ export const Loading: React.FC = props => {
 };
 
 const LoadingWrapper = styled.div`
-    min-height: 5rem;
+    min-height: 200px;
     position: relative;
 `;
 

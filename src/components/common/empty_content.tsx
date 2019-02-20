@@ -28,7 +28,7 @@ const EmptyContentWrapper = styled.div<Props>`
 `;
 
 export const EmptyContent: React.FC<Props> = props => {
-    const { text } = props;
+    const { text, ...restProps } = props;
 
-    return <EmptyContentWrapper>{text}</EmptyContentWrapper>;
+    return <EmptyContentWrapper {...restProps}>{text}</EmptyContentWrapper>;
 };
