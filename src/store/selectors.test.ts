@@ -196,7 +196,7 @@ describe('selectors', () => {
                     side: UIOrderSide.Sell,
                     size: new BigNumber(2),
                     price: new BigNumber('8.0'),
-                    emptySize: new BigNumber('-'),
+                    emptySize: new BigNumber('0'),
                 },
             ],
             buyOrders: [
