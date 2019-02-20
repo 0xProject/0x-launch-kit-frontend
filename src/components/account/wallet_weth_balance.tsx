@@ -152,7 +152,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
             content = (
                 <>
                     <Row>
-                        <Label>wETH</Label>
+                        <Label>ETH</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
                     <Button onClick={this.openModal}>
@@ -161,7 +161,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Button>
                     <Row>
                         <LabelWrapper>
-                            <Label>ETH</Label> <Tooltip type="full" />
+                            <Label>wETH</Label> <Tooltip type="full" />
                         </LabelWrapper>
                         <Value>{formattedWeth}</Value>
                     </Row>
