@@ -5,10 +5,13 @@ import styled from 'styled-components';
 
 import { updateWethBalance } from '../../store/actions';
 import { getEthBalance, getWeb3State, getWethBalance } from '../../store/selectors';
+import { themeColors, themeModalStyle } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
+import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { CardLoading } from '../common/loading';
+import { Tooltip } from '../common/tooltip';
 
 import { WethModal } from './wallet_weth_modal';
 
@@ -30,67 +33,103 @@ interface State {
 }
 
 const Content = styled.div`
+    margin: 0 -20px;
     position: relative;
-    font-size: 16px;
 `;
 
 const Row = styled.div`
-    width: 100%;
-    padding: 18px 30px;
-    border-bottom: solid 1px #dedede;
+    align-items: center;
+    border-bottom: solid 1px ${themeColors.borderColor};
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    position: relative;
+    z-index: 1;
+
+    &:first-child {
+        padding-top: 5px;
+    }
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 5px;
+    }
 `;
 
-const Label = styled.div`
-    display: inline-block;
-    width: 30%;
+const LabelWrapper = styled.span`
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    margin-right: 15px;
+`;
+
+const Label = styled.span`
+    color: #000;
+    flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    margin-right: 15px;
 `;
 
 const Value = styled.div`
-    display: inline-block;
-    width: 70%;
-    text-align: right;
-    font-weight: bold;
+    color: #000;
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
 `;
 
 const Button = styled.button`
-    padding: 4px 10px 10px 10px;
-    background-color: white;
-    border: 1px solid #dedede;
+    align-items: center;
+    background-color: #fff;
     border-radius: 4px;
-
-    position: absolute;
+    border: 1px solid ${themeColors.borderColor};
+    cursor: pointer;
+    display: flex;
+    height: 40px;
     left: 50%;
+    padding: 0 10px;
+    position: absolute;
     transform: translate(-50%, -50%);
+    transition: border 0.15s ease-out;
+    z-index: 2;
+
+    &:hover {
+        border-color: #666;
+    }
+
+    &:active {
+        opacity: 0.8;
+    }
 
     &:focus {
         outline: none;
     }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.5;
+    }
 `;
 
 const ButtonLabel = styled.span`
-    line-height: 32px;
-    vertical-align: bottom;
+    color: #474747;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-right: 10px;
 `;
 
-const Arrow = styled.span`
-    font-size: 32px;
+const Note = styled.p`
+    color: #ababab;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 24px;
+    margin: -10px 0 30px;
+    padding: 0 40px;
+    text-align: center;
 `;
-const ArrowUp = styled(Arrow)``;
-const ArrowDown = styled(Arrow)`
-    margin-left: -5px;
-`;
-
-const modalStyle = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        minWidth: '400px',
-    },
-};
 
 class WalletWethBalance extends React.PureComponent<Props, State> {
     public readonly state: State = {
@@ -113,15 +152,17 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
             content = (
                 <>
                     <Row>
-                        <Label>ETH</Label>
+                        <Label>wETH</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
                     <Button onClick={this.openModal}>
-                        <ButtonLabel>Convert</ButtonLabel> <ArrowUp>↑</ArrowUp>
-                        <ArrowDown>↓</ArrowDown>
+                        <ButtonLabel>Convert</ButtonLabel>
+                        <ArrowUpDownIcon />
                     </Button>
                     <Row>
-                        <Label>wETH</Label>
+                        <LabelWrapper>
+                            <Label>ETH</Label> <Tooltip type="full" />
+                        </LabelWrapper>
                         <Value>{formattedWeth}</Value>
                     </Row>
                     <Row>
@@ -129,13 +170,13 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <Value>{formattedTotalEth} ETH</Value>
                     </Row>
                     <WethModal
-                        wethBalance={wethBalance}
-                        totalEth={totalEth}
                         isOpen={this.state.modalIsOpen}
-                        onRequestClose={this.closeModal}
-                        style={modalStyle}
-                        onSubmit={this.handleSubmit}
                         isSubmitting={isSubmitting}
+                        onRequestClose={this.closeModal}
+                        onSubmit={this.handleSubmit}
+                        style={themeModalStyle}
+                        totalEth={totalEth}
+                        wethBalance={wethBalance}
                     />
                 </>
             );
@@ -144,9 +185,15 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         }
 
         return (
-            <Card title="ETH/wETH Balances" style={{ width: '33%' }}>
-                <Content>{content}</Content>
-            </Card>
+            <>
+                <Card title="ETH / wETH Balances">
+                    <Content>{content}</Content>
+                </Card>
+                <Note>
+                    wETH is used for trades on 0x
+                    <br />1 wETH = 1 ETH
+                </Note>
+            </>
         );
     };
 

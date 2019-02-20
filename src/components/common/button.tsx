@@ -1,24 +1,41 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
+import { themeColors } from '../../util/theme';
+
 interface Props extends HTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     disabled: boolean;
+    theme?: string;
 }
 
+interface ButtonColors {
+    [primary: string]: string;
+    secondary: string;
+    tertiary: string;
+}
+
+const buttonColors: ButtonColors = {
+    primary: themeColors.darkBlue,
+    secondary: themeColors.darkGray,
+    tertiary: themeColors.orange,
+};
+
 const StyledButton = styled.button`
-    background-color: #002979;
-    color: white;
-    border: 0;
+    background-color: ${props => (props.theme.length ? buttonColors[props.theme] : buttonColors.primary)};
     border-radius: 4px;
-    padding: 0.5em;
+    border: 0;
+    color: #fff;
+    font-weight: 600;
+    padding: 15px;
 
     &:focus {
         outline: none;
     }
 
     &:disabled {
-        background-color: #b2bfd7;
+        cursor: default;
+        opacity: 0.5;
     }
 `;
 
