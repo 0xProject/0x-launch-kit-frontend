@@ -61,3 +61,8 @@ export const getOrderBook = createSelector(
         };
     },
 );
+
+export const getSelectedTokenSymbol = createSelector(
+    getSelectedToken,
+    token => (token ? token.symbol : ''),
+);
