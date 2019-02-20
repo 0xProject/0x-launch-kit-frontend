@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
 
 import { Logo } from './logo';
@@ -15,7 +16,7 @@ const ToolbarWrapper = styled.div`
     flex-shrink: 0;
     height: 64px;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 ${themeDimensions.horizontalPadding};
     position: sticky;
 `;
 

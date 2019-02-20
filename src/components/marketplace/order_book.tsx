@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getOrderBook, getSelectedToken } from '../../store/selectors';
+import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrderSide } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { CardLoading } from '../common/loading';
-import { TH as THBase, THead } from '../common/table';
+import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
     orderBook: OrderBook;
@@ -26,60 +27,6 @@ interface State {
     tab: Tab;
 }
 
-const TR = styled.tr`
-    &:first-child td {
-        padding-top: 10px;
-    }
-    &:last-child td {
-        padding-bottom: 10px;
-    }
-`;
-const HeaderTR = styled(TR)`
-    border-width: 1px 0;
-    border: 1px solid #dedede;
-
-    &:first-child {
-        border-top: 0;
-    }
-`;
-const TH = styled(THBase)`
-    min-width: 10rem;
-    padding: 10px 0;
-
-    &:first-child {
-        padding-left: 18px;
-    }
-    &:last-child {
-        width: 100%;
-    }
-`;
-
-const CustomTD = styled.td<{ isLastSell: boolean; isFirstBuy: boolean }>`
-    min-width: 10rem;
-    padding-bottom: ${props => (props.isLastSell ? '10px' : '5px')};
-    padding-top: ${props => (props.isFirstBuy ? '10px' : '5px')};
-
-    &:first-child {
-        padding-left: 18px;
-    }
-`;
-
-const SideTD = styled(CustomTD)<{ side: UIOrderSide }>`
-    color: ${props => (props.side === UIOrderSide.Buy ? '#3CB34F' : '#FF6534')};
-`;
-
-const SpreadTH = styled(TH)``;
-
-const SpreadLabelTH = styled(SpreadTH)`
-    color: #ccc;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 12px;
-`;
-const SpreadValueTH = styled(SpreadTH)`
-    font-weight: normal;
-`;
-
 const NoOrders = styled.div`
     padding: 10px 18px;
 `;
@@ -87,18 +34,12 @@ const NoOrders = styled.div`
 const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
-
-    const isLastSell = order.side === UIOrderSide.Sell && index + 1 === count;
-    const isFirstBuy = order.side === UIOrderSide.Buy && index === 0;
+    const color = order.side === UIOrderSide.Buy ? themeColors.orange : themeColors.green;
 
     return (
         <TR key={index}>
-            <CustomTD isLastSell={isLastSell} isFirstBuy={isFirstBuy}>
-                {size}
-            </CustomTD>
-            <SideTD side={order.side} isLastSell={isLastSell} isFirstBuy={isFirstBuy}>
-                {price}
-            </SideTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
+            <CustomTDLast styles={{ textAlign: 'right', color }}>{price}</CustomTDLast>
         </TR>
     );
 };
@@ -128,13 +69,6 @@ class OrderBookTable extends React.Component<Props, State> {
             },
         ];
 
-        const spreadRow = (
-            <HeaderTR>
-                <SpreadLabelTH>Spread</SpreadLabelTH>
-                <SpreadValueTH>{spread.toFixed(2)}</SpreadValueTH>
-            </HeaderTR>
-        );
-
         let content: React.ReactNode;
 
         if (!selectedToken) {
@@ -143,19 +77,26 @@ class OrderBookTable extends React.Component<Props, State> {
             content = <NoOrders>There are no orders to show</NoOrders>;
         } else {
             content = (
-                <table>
+                <Table fitInCard={true}>
                     <THead>
-                        <HeaderTR>
-                            <TH>Order size</TH>
-                            <TH>Price</TH>
-                        </HeaderTR>
+                        <TR>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
+                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</THLast>
+                        </TR>
                     </THead>
                     <tbody>
                         {sellOrders.map((order, index) => orderToRow(order, index, sellOrders.length, selectedToken))}
-                        {spreadRow}
+                        <TR>
+                            <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                                Spread
+                            </CustomTDTitle>
+                            <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                                {spread.toFixed(2)}
+                            </CustomTDLast>
+                        </TR>
                         {buyOrders.map((order, index) => orderToRow(order, index, buyOrders.length, selectedToken))}
                     </tbody>
-                </table>
+                </Table>
             );
         }
 

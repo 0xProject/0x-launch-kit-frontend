@@ -10,6 +10,8 @@ export const themeColors = {
 
 export const themeDimensions = {
     sidebarWidth: '350px',
+    horizontalPadding: '20px',
+    verticalPadding: '10px',
 };
 
 export const themeModalStyle = {

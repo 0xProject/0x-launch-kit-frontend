@@ -1,6 +1,8 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
+import { themeDimensions } from '../../util/theme';
+
 interface Props extends HTMLAttributes<HTMLDivElement> {
     title: string;
     action?: React.ReactNode;
@@ -21,7 +23,7 @@ const CardHeader = styled.div`
     border-bottom: 1px solid ${borderColor};
     display: flex;
     justify-content: space-between;
-    padding: 15px 20px;
+    padding: 15px ${themeDimensions.horizontalPadding};
 `;
 
 const CardTitle = styled.h1`
@@ -44,7 +46,7 @@ const CardAction = styled.div`
 const CardBody = styled.div`
     margin: 0;
     min-height: 140px;
-    padding: 10px 20px;
+    padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
 `;
 
 export const Card: React.FC<Props> = props => {
