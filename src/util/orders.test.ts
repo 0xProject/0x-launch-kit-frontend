@@ -1,6 +1,6 @@
 import { BigNumber } from '0x.js';
 
-import { UIOrderSide } from '../util/types';
+import { OrderSide } from '../util/types';
 
 import { buildOrder } from './orders';
 
@@ -24,7 +24,7 @@ describe('buildOrder', () => {
                 price,
                 exchangeAddress,
             },
-            UIOrderSide.Buy,
+            OrderSide.Buy,
         );
 
         // then
@@ -60,7 +60,7 @@ describe('buildOrder', () => {
                 price,
                 exchangeAddress,
             },
-            UIOrderSide.Sell,
+            OrderSide.Sell,
         );
 
         // then

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getOrderBook, getSelectedToken } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, StoreState, Token, UIOrderSide } from '../../util/types';
+import { OrderBook, OrderBookItem, OrderSide, StoreState, Token } from '../../util/types';
 import { Card } from '../common/card';
 import { CardLoading } from '../common/loading';
 import { TH as THBase, THead } from '../common/table';
@@ -64,8 +64,8 @@ const CustomTD = styled.td<{ isLastSell: boolean; isFirstBuy: boolean }>`
     }
 `;
 
-const SideTD = styled(CustomTD)<{ side: UIOrderSide }>`
-    color: ${props => (props.side === UIOrderSide.Buy ? '#3CB34F' : '#FF6534')};
+const SideTD = styled(CustomTD)<{ side: OrderSide }>`
+    color: ${props => (props.side === OrderSide.Buy ? '#3CB34F' : '#FF6534')};
 `;
 
 const SpreadTH = styled(TH)``;
@@ -88,8 +88,8 @@ const orderToRow = (order: OrderBookItem, index: number, count: number, selected
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
 
-    const isLastSell = order.side === UIOrderSide.Sell && index + 1 === count;
-    const isFirstBuy = order.side === UIOrderSide.Buy && index === 0;
+    const isLastSell = order.side === OrderSide.Sell && index + 1 === count;
+    const isFirstBuy = order.side === OrderSide.Buy && index === 0;
 
     return (
         <TR key={index}>

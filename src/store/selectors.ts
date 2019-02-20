@@ -1,7 +1,7 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { createSelector } from 'reselect';
 
-import { OrderBook, StoreState, UIOrderSide } from '../util/types';
+import { OrderBook, OrderSide, StoreState } from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
@@ -23,14 +23,14 @@ export const getOpenOrders = createSelector(
 export const getOpenSellOrders = createSelector(
     getOpenOrders,
     orders => {
-        return orders.filter(order => order.side === UIOrderSide.Sell).sort((o1, o2) => o2.price.comparedTo(o1.price));
+        return orders.filter(order => order.side === OrderSide.Sell).sort((o1, o2) => o2.price.comparedTo(o1.price));
     },
 );
 
 export const getOpenBuyOrders = createSelector(
     getOpenOrders,
     orders => {
-        return orders.filter(order => order.side === UIOrderSide.Buy).sort((o1, o2) => o2.price.comparedTo(o1.price));
+        return orders.filter(order => order.side === OrderSide.Buy).sort((o1, o2) => o2.price.comparedTo(o1.price));
     },
 );
 

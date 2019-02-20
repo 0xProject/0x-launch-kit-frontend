@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { getSelectedToken, getUserOrders } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Tab, TabItem, Token, UIOrder, UIOrderSide } from '../../util/types';
+import { OrderSide, StoreState, Tab, TabItem, Token, UIOrder } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { CardLoading } from '../common/loading';
@@ -28,12 +28,12 @@ const NoOrders = styled.div`
     padding: 10px 18px;
 `;
 
-const SideTD = styled(CustomTD)<{ side: UIOrderSide }>`
-    color: ${props => (props.side === UIOrderSide.Buy ? '#3CB34F' : '#FF6534')};
+const SideTD = styled(CustomTD)<{ side: OrderSide }>`
+    color: ${props => (props.side === OrderSide.Buy ? '#3CB34F' : '#FF6534')};
 `;
 
 const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
-    const sideLabel = order.side === UIOrderSide.Sell ? 'Sell' : 'Buy';
+    const sideLabel = order.side === OrderSide.Sell ? 'Sell' : 'Buy';
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const filled = tokenAmountInUnits(order.filled, selectedToken.decimals);
     const price = order.price.toString();

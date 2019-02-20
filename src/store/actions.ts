@@ -10,7 +10,7 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens, getTokenBySymbol, getWethToken } from '../util/known_tokens';
 import { buildOrder } from '../util/orders';
-import { BlockchainState, RelayerState, Token, TokenBalance, UIOrder, UIOrderSide, Web3State } from '../util/types';
+import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
 
 import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance } from './selectors';
 
@@ -191,7 +191,7 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitOrder = (amount: BigNumber, price: number, side: UIOrderSide) => {
+export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);

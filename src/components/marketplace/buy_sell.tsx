@@ -5,12 +5,9 @@ import styled from 'styled-components';
 
 import { submitOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
-import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
-import { StoreState, Token, UIOrderSide } from '../../util/types';
+import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Card } from '../common/card';
-import { CardLoading } from '../common/loading';
-import { TH as THBase, THead } from '../common/table';
 
 enum Tab {
     Buy,
@@ -21,7 +18,7 @@ interface StateProps {
     selectedTokenSymbol: string;
 }
 interface DispatchProps {
-    onSubmitOrder: (amount: BigNumber, price: number, side: UIOrderSide) => Promise<any>;
+    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
 }
 type Props = StateProps & DispatchProps;
 

@@ -1,7 +1,7 @@
 import { assetDataUtils, OrderInfo } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
-import { OrderBookItem, Token, UIOrder, UIOrderSide } from '../util/types';
+import { OrderBookItem, OrderSide, Token, UIOrder } from '../util/types';
 
 export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[], selectedToken: Token): UIOrder[] => {
     if (ordersInfo.length !== orders.length) {
@@ -17,14 +17,14 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
     return orders.map((order, i) => {
         const orderInfo = ordersInfo[i];
 
-        const side = order.takerAssetData === selectedTokenEncoded ? UIOrderSide.Buy : UIOrderSide.Sell;
-        const size = side === UIOrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
+        const side = order.takerAssetData === selectedTokenEncoded ? OrderSide.Buy : OrderSide.Sell;
+        const size = side === OrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
         const filled =
-            side === UIOrderSide.Sell
+            side === OrderSide.Sell
                 ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).mul(order.makerAssetAmount)
                 : orderInfo.orderTakerAssetFilledAmount;
         const price =
-            side === UIOrderSide.Sell
+            side === OrderSide.Sell
                 ? order.takerAssetAmount.div(order.makerAssetAmount)
                 : order.makerAssetAmount.div(order.takerAssetAmount);
         const status = orderInfo.orderStatus;

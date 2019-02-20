@@ -1,8 +1,7 @@
 import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order } from '0x.js';
-import { SignedOrder } from '@0x/connect';
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
-import { OrderBookItem, Token, UIOrder, UIOrderSide } from '../util/types';
+import { OrderSide } from '../util/types';
 
 interface BuildOrderParams {
     account: string;
@@ -13,7 +12,7 @@ interface BuildOrderParams {
     exchangeAddress: string;
 }
 
-export const buildOrder = (params: BuildOrderParams, side: UIOrderSide): Order => {
+export const buildOrder = (params: BuildOrderParams, side: OrderSide): Order => {
     const { account, exchangeAddress, amount, price, tokenAddress, wethAddress } = params;
     const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
 
@@ -25,11 +24,11 @@ export const buildOrder = (params: BuildOrderParams, side: UIOrderSide): Order =
         expirationTimeSeconds: tomorrow,
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
-        makerAssetAmount: side === UIOrderSide.Buy ? amount.mul(price) : amount,
-        makerAssetData: side === UIOrderSide.Buy ? wethAssetData : tokenAssetData,
+        makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,
+        makerAssetData: side === OrderSide.Buy ? wethAssetData : tokenAssetData,
         takerAddress: ZERO_ADDRESS,
-        takerAssetAmount: side === UIOrderSide.Buy ? amount : amount.mul(price),
-        takerAssetData: side === UIOrderSide.Buy ? tokenAssetData : wethAssetData,
+        takerAssetAmount: side === OrderSide.Buy ? amount : amount.mul(price),
+        takerAssetData: side === OrderSide.Buy ? tokenAssetData : wethAssetData,
         makerFee: new BigNumber(MAKER_FEE),
         takerFee: new BigNumber(TAKER_FEE),
         salt: generatePseudoRandomSalt(),
