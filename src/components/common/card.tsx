@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-    title: string;
+    title?: string;
     action?: React.ReactNode;
     children: React.ReactNode;
 }
@@ -52,10 +52,12 @@ export const Card: React.FC<Props> = props => {
 
     return (
         <CardWrapper {...restProps}>
-            <CardHeader>
-                <CardTitle>{title}</CardTitle>
-                {action ? <CardAction>{action}</CardAction> : null}
-            </CardHeader>
+            {title || action ? (
+                <CardHeader>
+                    <CardTitle>{title}</CardTitle>
+                    {action ? <CardAction>{action}</CardAction> : null}
+                </CardHeader>
+            ) : null}
             <CardBody>{children}</CardBody>
         </CardWrapper>
     );
