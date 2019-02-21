@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { themeBreakPoints } from '../util/theme';
+
 import { Toolbar } from './common/toolbar';
 
 const General = styled.div`
@@ -12,9 +14,14 @@ const General = styled.div`
 
 const Content = styled.div`
     display: flex;
+    flex-direction: column;
     flex-grow: 1;
     overflow: auto;
     padding: 10px;
+
+    @media (min-width: ${themeBreakPoints.xl}) {
+        flex-direction: row;
+    }
 `;
 
 interface GeneralLayoutProps {

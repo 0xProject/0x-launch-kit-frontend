@@ -5,9 +5,10 @@ import styled from 'styled-components';
 
 import { getSelectedToken, getUserOrders } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderSide, StoreState, Tab, TabItem, Token, UIOrder } from '../../util/types';
+import { OrderSide, StoreState, TabItem, Token, UIOrder } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
+import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../common/table';
 
@@ -18,15 +19,16 @@ interface StateProps {
     selectedToken: Token | null;
 }
 
+enum Tab {
+    Filled,
+    Open,
+}
+
 interface State {
     tab: Tab;
 }
 
 type Props = StateProps;
-
-const NoOrders = styled.div`
-    padding: 10px 18px;
-`;
 
 const SideTD = styled(CustomTD)<{ side: OrderSide }>`
     color: ${props => (props.side === OrderSide.Buy ? '#3CB34F' : '#FF6534')};
@@ -87,10 +89,10 @@ class OrderHistory extends React.Component<Props, State> {
         if (!selectedToken) {
             content = <CardLoading />;
         } else if (!ordersToShow.length) {
-            content = <NoOrders>There are no orders to show</NoOrders>;
+            content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {
             content = (
-                <Table>
+                <Table isResponsive={true}>
                     <THead>
                         <TR>
                             <TH>Side</TH>
