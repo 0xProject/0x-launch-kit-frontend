@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactModal from 'react-modal';
 import { Provider } from 'react-redux';
-import { Redirect, Route, Switch } from 'react-router';
+import { Route, Switch } from 'react-router';
 import 'sanitize.css';
 
 import { AppContainer } from './components/app';
@@ -25,7 +25,7 @@ const Web3WrappedApp = (
                     <Switch>
                         <Route exact={true} path="/" component={Marketplace} />
                         <Route exact={true} path="/my-wallet" component={MyWallet} />
-                        <Route component={Marketplace}/>
+                        <Route component={Marketplace} />
                     </Switch>
                 </GeneralLayout>
             </AppContainer>
