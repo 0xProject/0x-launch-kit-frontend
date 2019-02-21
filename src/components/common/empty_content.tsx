@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     alignAbsoluteCenter?: boolean;
-    text?: string;
+    text: string;
 }
 
 const EmptyContentWrapper = styled.div<Props>`
