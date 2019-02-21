@@ -71,14 +71,12 @@ export const makeBuyOrder = ({
 
 export const uiOrder = (params = {}): UIOrder => {
     const rawOrder: any = {};
-    const filledN = new BigNumber(0);
-    const sizeN = new BigNumber(10);
     return {
-        filled: filledN,
+        filled: new BigNumber(0),
         price: new BigNumber(1),
         rawOrder,
         side: UIOrderSide.Sell,
-        size: sizeN,
+        size: new BigNumber(1),
         status: OrderStatus.Fillable,
         ...params,
     };

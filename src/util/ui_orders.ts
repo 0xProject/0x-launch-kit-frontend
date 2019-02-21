@@ -62,7 +62,7 @@ export const mergeByPrice = (orders: OrderBookItem[]): OrderBookItem[] => {
             /* Avoids Typescript Compilation on filled field */
             const orderToChange: any = order;
             const newSize =
-                orderToChange.size && orderToChange.filled
+                orderToChange.size && orderToChange.filled !== undefined
                     ? orderToChange.size.minus(orderToChange.filled)
                     : orderToChange.size;
             return {
