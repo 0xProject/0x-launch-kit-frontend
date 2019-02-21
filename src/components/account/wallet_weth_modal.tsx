@@ -3,8 +3,11 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
+import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { Button as ButtonBase } from '../common/button';
+import { CloseModalButton } from '../common/icons/close_modal_button';
+import { Tooltip } from '../common/tooltip';
 
 interface Props extends React.ComponentProps<typeof Modal> {
     wethBalance: BigNumber;
@@ -19,8 +22,8 @@ interface State {
 
 const Slider = styled.input`
     -webkit-appearance: none;
-    margin: 1em 0;
     cursor: pointer;
+    margin: 0 0 20px;
     width: 100%;
 
     &:focus {
@@ -28,71 +31,111 @@ const Slider = styled.input`
     }
 
     &::-webkit-slider-runnable-track {
-        height: 0.25em;
-
-        box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-        background: #3071a9;
+        background: ${themeColors.darkBlue};
         border-radius: 1.3px;
-        border: 0.2px solid #010101;
+        border: none;
+        height: 5px;
     }
 
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-        border: 0.5px solid rgba(0, 0, 0, 0.142);
-        height: 1em;
-        width: 1em;
+        background: #fff;
         border-radius: 1em;
-        background: white;
+        border: 0.5px solid rgba(0, 0, 0, 0.142);
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
         cursor: pointer;
-        margin-top: -0.4em;
+        height: 16px;
+        margin-top: -6px;
+        width: 16px;
     }
 `;
 
 const Button = styled(ButtonBase)`
     width: 100%;
-    font-weight: bold;
 `;
 
-const CloseButton = styled.span`
-    float: right;
-    cursor: pointer;
+const CloseButtonContainer = styled.div`
+    align-items: center;
+    display: flex;
+    height: 20px;
+    justify-content: flex-end;
+    margin-right: -10px;
+    margin-top: -10px;
 `;
 
 const Title = styled.h1`
-    clear: both;
+    color: #000;
     font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 25px;
+    text-align: center;
+`;
+
+const EthBoxes = styled.div`
+    column-gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 25px;
+`;
+
+const EthBox = styled.div`
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid ${themeColors.borderColor};
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 105px;
+    padding: 10px;
+    position: relative;
+`;
+
+const TooltipStyled = styled.div`
+    cursor: pointer;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+`;
+
+interface EthBoxProps {
+    isZero?: boolean;
+}
+
+const EthBoxValue = styled.h2<EthBoxProps>`
+    color: ${props => (props.isZero ? '#666' : themeColors.darkBlue)};
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 5px;
+    text-align: center;
+`;
+
+const EthBoxUnit = styled.div`
+    color: ${themeColors.textLight};
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.2;
     text-align: center;
 `;
 
 const SetMinEthWrapper = styled.div`
-    margin-bottom: 1rem;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 0 22px;
+    text-align: center;
 `;
 
 const SetMinEthButton = styled.a`
-    display: inline-block;
-    color: black;
-    text-decoration: none;
     border-bottom: 1px dotted black;
+    color: #666;
+    text-decoration: none;
 `;
-
-const EthBox = styled.div`
-    display: inline-block;
-    text-align: center;
-    border: 1px solid #dedede;
-    padding: 28px 40px;
-`;
-const WethBox = styled(EthBox)`
-    float: right;
-`;
-
-const EthBoxValue = styled.div`
-    font-size: 24px;
-    color: #666666;
-`;
-const EthBoxUnit = styled.div``;
 
 const minEth = unitsInTokenAmount('0.5', 18);
+const minSlidervalue = '0.00';
 
 class WethModal extends React.Component<Props, State> {
     public state = {
@@ -115,26 +158,31 @@ class WethModal extends React.Component<Props, State> {
 
         return (
             <Modal {...restProps}>
-                <CloseButton onClick={this.closeModal}>X</CloseButton>
+                <CloseButtonContainer>
+                    <CloseModalButton onClick={this.closeModal} />
+                </CloseButtonContainer>
                 <Title>Available Balance</Title>
-                <EthBox>
-                    <EthBoxValue>{selectedEthStr}</EthBoxValue>
-                    <EthBoxUnit>ETH</EthBoxUnit>
-                </EthBox>
-                <WethBox>
-                    <EthBoxValue>{selectedWethStr}</EthBoxValue>
-                    <EthBoxUnit>wETH</EthBoxUnit>
-                </WethBox>
-                <div>
-                    <Slider
-                        type="range"
-                        min="0"
-                        max={totalEthStr}
-                        step="0.01"
-                        value={selectedWethStr}
-                        onChange={this.updateSelectedWeth}
-                    />
-                </div>
+                <EthBoxes>
+                    <EthBox>
+                        <EthBoxValue isZero={selectedEthStr === minSlidervalue}>{selectedEthStr}</EthBoxValue>
+                        <EthBoxUnit>ETH</EthBoxUnit>
+                    </EthBox>
+                    <EthBox>
+                        <EthBoxValue isZero={selectedWethStr === minSlidervalue}>{selectedWethStr}</EthBoxValue>
+                        <EthBoxUnit>wETH</EthBoxUnit>
+                        <TooltipStyled>
+                            <Tooltip />
+                        </TooltipStyled>
+                    </EthBox>
+                </EthBoxes>
+                <Slider
+                    max={totalEthStr}
+                    min="0"
+                    onChange={this.updateSelectedWeth}
+                    step="0.01"
+                    type="range"
+                    value={selectedWethStr}
+                />
                 {isInsufficientEth ? (
                     <SetMinEthWrapper>
                         ETH required for fees.&nbsp;

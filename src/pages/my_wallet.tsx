@@ -1,10 +1,16 @@
 import React from 'react';
 
 import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../components/account';
+import { MainContent } from '../components/common/main_content';
+import { Sidebar } from '../components/common/sidebar';
 
 export const MyWallet = () => (
-    <div>
-        <WalletTokenBalancesContainer />
-        <WalletWethBalanceContainer />
-    </div>
+    <>
+        <Sidebar>
+            <WalletWethBalanceContainer />
+        </Sidebar>
+        <MainContent>
+            <WalletTokenBalancesContainer />
+        </MainContent>
+    </>
 );
