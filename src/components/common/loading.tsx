@@ -4,20 +4,20 @@ import styled from 'styled-components';
 
 export const Loading: React.FC = props => {
     return (
-        <div className="loading-indicator" {...props}>
+        <div {...props}>
             <FontAwesomeIcon icon="spinner" spin={true} />
         </div>
     );
 };
 
 const LoadingWrapper = styled.div`
+    min-height: 200px;
     position: relative;
-    min-height: 5rem;
 `;
 
 const CenteredLoading = styled(Loading)`
-    position: absolute;
     left: 50%;
+    position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
 `;

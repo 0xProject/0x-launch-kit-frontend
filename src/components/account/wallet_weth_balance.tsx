@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { updateWethBalance } from '../../store/actions';
 import { getEthBalance, getWeb3State, getWethBalance } from '../../store/selectors';
-import { themeColors, themeModalStyle } from '../../util/theme';
+import { themeColors, themeDimensions, themeModalStyle } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -33,7 +33,7 @@ interface State {
 }
 
 const Content = styled.div`
-    margin: 0 -20px;
+    margin: 0 -${themeDimensions.horizontalPadding};
     position: relative;
 `;
 
@@ -42,7 +42,7 @@ const Row = styled.div`
     border-bottom: solid 1px ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
-    padding: 15px 20px;
+    padding: 15px ${themeDimensions.horizontalPadding};
     position: relative;
     z-index: 1;
 
