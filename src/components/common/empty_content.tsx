@@ -1,12 +1,15 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface EmptyWrapperProps {
     alignAbsoluteCenter?: boolean;
+}
+
+interface Props extends HTMLAttributes<HTMLDivElement>, EmptyWrapperProps {
     text: string;
 }
 
-const EmptyContentWrapper = styled.div<Props>`
+const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
     align-items: center;
     display: flex;
     font-size: 16px;
