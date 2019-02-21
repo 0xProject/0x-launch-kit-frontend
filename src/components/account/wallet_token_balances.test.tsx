@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import '../../icons';
-import { TokenBalance } from '../../util/types';
+import { TokenBalance, Web3State } from '../../util/types';
 
 import { WalletTokenBalances } from './wallet_token_balances';
 
@@ -18,6 +18,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x1',
                     decimals: 18,
                     symbol: 'MOCK1',
+                    name: 'MOCK1',
                 },
                 isUnlocked: true,
             },
@@ -27,6 +28,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x2',
                     decimals: 18,
                     symbol: 'MOCK2',
+                    name: 'MOCK2',
                 },
                 isUnlocked: true,
             },
@@ -36,13 +38,16 @@ describe('WalletTokenBalances', () => {
                     address: '0x3',
                     decimals: 18,
                     symbol: 'MOCK3',
+                    name: 'MOCK3',
                 },
                 isUnlocked: true,
             },
         ];
 
         // when
-        const wrapper = mount(<WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={noop} />);
+        const wrapper = mount(
+            <WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={noop} web3State={Web3State.Done} />,
+        );
 
         // then
         expect(wrapper.find('tbody tr')).toHaveLength(3);
@@ -56,6 +61,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x1',
                     decimals: 18,
                     symbol: 'MOCK1',
+                    name: 'MOCK1',
                 },
                 isUnlocked: true,
             },
@@ -65,6 +71,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x2',
                     decimals: 18,
                     symbol: 'MOCK2',
+                    name: 'MOCK2',
                 },
                 isUnlocked: false,
             },
@@ -74,13 +81,16 @@ describe('WalletTokenBalances', () => {
                     address: '0x3',
                     decimals: 18,
                     symbol: 'MOCK3',
+                    name: 'MOCK3',
                 },
                 isUnlocked: true,
             },
         ];
 
         // when
-        const wrapper = mount(<WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={noop} />);
+        const wrapper = mount(
+            <WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={noop} web3State={Web3State.Done} />,
+        );
 
         // then
         const rows = wrapper.find('tbody tr');
@@ -97,6 +107,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x1',
                     decimals: 18,
                     symbol: 'MOCK1',
+                    name: 'MOCK1',
                 },
                 isUnlocked: true,
             },
@@ -106,6 +117,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x2',
                     decimals: 18,
                     symbol: 'MOCK2',
+                    name: 'MOCK2',
                 },
                 isUnlocked: false,
             },
@@ -115,6 +127,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x3',
                     decimals: 18,
                     symbol: 'MOCK3',
+                    name: 'MOCK3',
                 },
                 isUnlocked: true,
             },
@@ -122,7 +135,13 @@ describe('WalletTokenBalances', () => {
         const onUnlockToken = jest.fn();
 
         // when
-        const wrapper = mount(<WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={onUnlockToken} />);
+        const wrapper = mount(
+            <WalletTokenBalances
+                tokenBalances={tokenBalances}
+                onUnlockToken={onUnlockToken}
+                web3State={Web3State.Done}
+            />,
+        );
         wrapper
             .find('tbody tr')
             .at(1)
@@ -141,6 +160,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x1',
                     decimals: 18,
                     symbol: 'MOCK1',
+                    name: 'MOCK1',
                 },
                 isUnlocked: true,
             },
@@ -150,6 +170,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x2',
                     decimals: 18,
                     symbol: 'MOCK2',
+                    name: 'MOCK2',
                 },
                 isUnlocked: false,
             },
@@ -159,6 +180,7 @@ describe('WalletTokenBalances', () => {
                     address: '0x3',
                     decimals: 18,
                     symbol: 'MOCK3',
+                    name: 'MOCK3',
                 },
                 isUnlocked: true,
             },
@@ -166,7 +188,13 @@ describe('WalletTokenBalances', () => {
         const onUnlockToken = jest.fn();
 
         // when
-        const wrapper = mount(<WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={onUnlockToken} />);
+        const wrapper = mount(
+            <WalletTokenBalances
+                tokenBalances={tokenBalances}
+                onUnlockToken={onUnlockToken}
+                web3State={Web3State.Done}
+            />,
+        );
         wrapper
             .find('tbody tr')
             .at(0)
