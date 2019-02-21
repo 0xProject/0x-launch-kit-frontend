@@ -10,7 +10,6 @@ interface Props {
     max?: BigNumber;
     min?: BigNumber;
     onChange: (newValue: BigNumber) => void;
-    ref?: any;
     step?: BigNumber;
     value: BigNumber;
 }
@@ -63,7 +62,7 @@ export class BigNumberInput extends React.Component<Props, State> {
 
     public render = () => {
         const { currentValueStr } = this.state;
-        const { decimals, step, min, max, ref } = this.props;
+        const { decimals, step, min, max } = this.props;
 
         const stepStr = step && tokenAmountInUnits(step, decimals);
         const minStr = min && tokenAmountInUnits(min, decimals);
