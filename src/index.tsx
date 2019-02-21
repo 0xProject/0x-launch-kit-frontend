@@ -17,7 +17,7 @@ import { history, store } from './store/index';
 
 ReactModal.setAppElement('#root');
 
-const RedirectToHome = () => (<Redirect to="/" />);
+const RedirectToHome = () => <Redirect to="/" />;
 
 const Web3WrappedApp = (
     <Provider store={store}>
