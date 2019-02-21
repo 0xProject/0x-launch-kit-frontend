@@ -74,7 +74,7 @@ export class BigNumberInput extends React.Component<Props, State> {
                 max={maxStr}
                 min={minStr}
                 onChange={this._updateValue}
-                ref={ref => (this._textInput = ref)}
+                ref={_ref => (this._textInput = _ref)}
                 step={stepStr}
                 type={'number'}
                 value={currentValueStr}
