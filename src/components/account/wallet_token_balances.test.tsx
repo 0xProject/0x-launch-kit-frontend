@@ -120,9 +120,16 @@ describe('WalletTokenBalances', () => {
             },
         ];
         const onUnlockToken = jest.fn();
+        const onLockToken = jest.fn();
 
         // when
-        const wrapper = mount(<WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={onUnlockToken} />);
+        const wrapper = mount(
+            <WalletTokenBalances
+                tokenBalances={tokenBalances}
+                onUnlockToken={onUnlockToken}
+                onLockToken={onLockToken}
+            />,
+        );
         wrapper
             .find('tbody tr')
             .at(1)
@@ -164,9 +171,16 @@ describe('WalletTokenBalances', () => {
             },
         ];
         const onUnlockToken = jest.fn();
+        const onLockToken = jest.fn();
 
         // when
-        const wrapper = mount(<WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={onUnlockToken} />);
+        const wrapper = mount(
+            <WalletTokenBalances
+                tokenBalances={tokenBalances}
+                onUnlockToken={onUnlockToken}
+                onLockToken={onLockToken}
+            />,
+        );
         wrapper
             .find('tbody tr')
             .at(0)
