@@ -25,6 +25,7 @@ const Web3WrappedApp = (
                     <Switch>
                         <Route exact={true} path="/" component={Marketplace} />
                         <Route exact={true} path="/my-wallet" component={MyWallet} />
+                        <Route component={Marketplace} />
                     </Switch>
                 </GeneralLayout>
             </AppContainer>
