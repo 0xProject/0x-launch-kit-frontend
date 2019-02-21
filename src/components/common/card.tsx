@@ -43,7 +43,7 @@ const CardAction = styled.div`
 
 const CardBody = styled.div`
     margin: 0;
-    min-height: 170px;
+    min-height: 140px;
     padding: 10px 20px;
 `;
 
