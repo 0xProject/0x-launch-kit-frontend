@@ -77,6 +77,39 @@ export const unlockToken = (token: Token) => {
     };
 };
 
+export const lockToken = (token: Token) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const tokenBalances = getTokenBalances(state);
+
+        const contractWrappers = await getContractWrappers();
+        /* This should be 0, cero amount of tokens should be available if we lock them */
+        const numberOfTokensAvailableToUse = new BigNumber('0');
+
+        await contractWrappers.erc20Token.setProxyAllowanceAsync(
+            token.address,
+            ethAccount,
+            numberOfTokensAvailableToUse,
+        );
+
+        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
+            if (tokenBalance.token.address !== token.address) {
+                return tokenBalance;
+            }
+            /* We could check if the amount was correctly set before locking them (maybe) */
+            // const amountOfAllowedTokens = await contractWrappers.erc20Token.getProxyAllowanceAsync(token.address, ethAccount);
+            // const amountOfAllowedTokensConverted = tokenAmountInUnits(test, token.decimals)
+            return {
+                ...tokenBalance,
+                isUnlocked: false,
+            };
+        });
+
+        dispatch(setTokenBalances(updatedTokenBalances));
+    };
+};
+
 export const updateWethBalance = (newWethBalance: BigNumber) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
