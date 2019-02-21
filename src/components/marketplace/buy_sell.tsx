@@ -70,7 +70,7 @@ class BuySell extends React.Component<Props, State> {
         const { makerAmount, price, tab, orderType } = this.state;
 
         return (
-            <Card style={{ width: '30%' }}>
+            <Card>
                 <BuyTab isSelected={tab === Tab.Buy} onClick={this.changeTab(Tab.Buy)}>
                     Buy
                 </BuyTab>
