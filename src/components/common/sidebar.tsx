@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../util/theme';
+import { themeBreakPoints, themeDimensions } from '../../util/theme';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
@@ -9,9 +9,24 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const SidebarWrapper = styled.div`
     flex-shrink: 0;
-    margin-right: 10px;
     max-width: 100%;
-    width: ${themeDimensions.sidebarWidth};
+    width: 100%;
+
+    @media (min-width: ${themeBreakPoints.xl}) {
+        width: ${themeDimensions.sidebarWidth};
+    }
+
+    &:first-child {
+        @media (min-width: ${themeBreakPoints.xl}) {
+            margin-right: 10px;
+        }
+    }
+
+    &:last-child {
+        @media (min-width: ${themeBreakPoints.xl}) {
+            margin-left: 10px;
+        }
+    }
 `;
 
 export const Sidebar: React.FC<Props> = props => {
