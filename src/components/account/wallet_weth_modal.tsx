@@ -177,11 +177,11 @@ class WethModal extends React.Component<Props, State> {
                         {editing === Editing.Eth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <BigNumberInput
-                                    value={selectedEth}
-                                    onChange={this._updateEth}
-                                    min={new BigNumber(0)}
-                                    max={totalEth}
                                     decimals={18}
+                                    max={totalEth}
+                                    min={new BigNumber(0)}
+                                    onChange={this._updateEth}
+                                    value={selectedEth}
                                 />
                             </form>
                         ) : (
@@ -195,11 +195,11 @@ class WethModal extends React.Component<Props, State> {
                         {editing === Editing.Weth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <BigNumberInput
-                                    value={selectedWeth}
-                                    onChange={this._updateWeth}
-                                    min={new BigNumber(0)}
-                                    max={totalEth}
                                     decimals={18}
+                                    max={totalEth}
+                                    min={new BigNumber(0)}
+                                    onChange={this._updateWeth}
+                                    value={selectedWeth}
                                 />
                             </form>
                         ) : (
