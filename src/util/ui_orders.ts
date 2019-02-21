@@ -29,7 +29,6 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
                 : order.makerAssetAmount.div(order.takerAssetAmount);
         const status = orderInfo.orderStatus;
 
-        const emptySize = size.minus(filled);
         return {
             rawOrder: order,
             side,
@@ -37,7 +36,6 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
             filled,
             price,
             status,
-            emptySize,
         };
     });
 };
@@ -60,10 +58,17 @@ export const mergeByPrice = (orders: OrderBookItem[]): OrderBookItem[] => {
                 };
             });
         })
-        .map(order => ({
-            side: order.side,
-            price: order.price,
-            size: order.size,
-            emptySize: order.emptySize,
-        }));
+        .map(order => {
+            /* Avoids Typescript Compilation on filled field */
+            const orderToChange: any = order;
+            const newSize =
+                orderToChange.size && orderToChange.filled
+                    ? orderToChange.size.minus(orderToChange.filled)
+                    : orderToChange.size;
+            return {
+                side: order.side,
+                price: order.price,
+                size: newSize,
+            };
+        });
 };

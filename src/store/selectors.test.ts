@@ -190,13 +190,11 @@ describe('selectors', () => {
                     side: UIOrderSide.Sell,
                     size: new BigNumber(1),
                     price: new BigNumber('8.1'),
-                    emptySize: new BigNumber('0'),
                 },
                 {
                     side: UIOrderSide.Sell,
                     size: new BigNumber(2),
                     price: new BigNumber('8.0'),
-                    emptySize: new BigNumber('0'),
                 },
             ],
             buyOrders: [
@@ -204,13 +202,11 @@ describe('selectors', () => {
                     side: UIOrderSide.Buy,
                     size: new BigNumber(1),
                     price: new BigNumber('7.5'),
-                    emptySize: new BigNumber('0'),
                 },
                 {
                     side: UIOrderSide.Buy,
                     size: new BigNumber(2),
                     price: new BigNumber('7.3'),
-                    emptySize: new BigNumber('0'),
                 },
             ],
             spread: new BigNumber('0.5'),

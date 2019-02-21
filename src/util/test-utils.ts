@@ -80,7 +80,6 @@ export const uiOrder = (params = {}): UIOrder => {
         side: UIOrderSide.Sell,
         size: sizeN,
         status: OrderStatus.Fillable,
-        emptySize: filledN.minus(filledN),
         ...params,
     };
 };
