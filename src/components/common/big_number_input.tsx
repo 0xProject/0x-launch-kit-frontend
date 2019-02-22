@@ -4,12 +4,14 @@ import React from 'react';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 
 interface Props {
-    value: BigNumber;
+    autofocus?: boolean;
+    className?: string;
     decimals: number;
-    onChange: (newValue: BigNumber) => void;
-    min?: BigNumber;
     max?: BigNumber;
+    min?: BigNumber;
+    onChange: (newValue: BigNumber) => void;
     step?: BigNumber;
+    value: BigNumber;
 }
 
 interface State {
@@ -20,6 +22,8 @@ export class BigNumberInput extends React.Component<Props, State> {
     public readonly state = {
         currentValueStr: tokenAmountInUnits(this.props.value, this.props.decimals),
     };
+
+    private _textInput: any;
 
     public static getDerivedStateFromProps = (props: Props, state: State) => {
         const { decimals, value } = props;
@@ -34,9 +38,17 @@ export class BigNumberInput extends React.Component<Props, State> {
         }
     };
 
+    public componentDidMount = () => {
+        const { autofocus } = this.props;
+
+        if (autofocus) {
+            this._textInput.focus();
+        }
+    };
+
     public render = () => {
         const { currentValueStr } = this.state;
-        const { decimals, step, min, max } = this.props;
+        const { decimals, step, min, max, className } = this.props;
 
         const stepStr = step && tokenAmountInUnits(step, decimals);
         const minStr = min && tokenAmountInUnits(min, decimals);
@@ -44,12 +56,14 @@ export class BigNumberInput extends React.Component<Props, State> {
 
         return (
             <input
-                type="number"
-                value={currentValueStr}
-                onChange={this._updateValue}
-                step={stepStr}
-                min={minStr}
+                className={className}
                 max={maxStr}
+                min={minStr}
+                onChange={this._updateValue}
+                ref={_ref => (this._textInput = _ref)}
+                step={stepStr}
+                type={'number'}
+                value={currentValueStr}
             />
         );
     };

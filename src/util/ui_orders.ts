@@ -40,15 +40,15 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
     });
 };
 
-export const mergeByPrice = (orders: OrderBookItem[]): OrderBookItem[] => {
-    const initialValue: { [x: string]: OrderBookItem[] } = {};
-
+export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
+    const initialValue: { [x: string]: UIOrder[] } = {};
     const ordersByPrice = orders.reduce((acc, order) => {
         acc[order.price.toFixed(2)] = acc[order.price.toFixed(2)] || [];
         acc[order.price.toFixed(2)].push(order);
         return acc;
     }, initialValue);
 
+    /* Returns an array of OrderBookItem */
     return Object.keys(ordersByPrice)
         .map(price => {
             return ordersByPrice[price].reduce((acc, order) => {
@@ -58,9 +58,12 @@ export const mergeByPrice = (orders: OrderBookItem[]): OrderBookItem[] => {
                 };
             });
         })
-        .map(order => ({
-            side: order.side,
-            price: order.price,
-            size: order.size,
-        }));
+        .map(order => {
+            const newSize = order.size.minus(order.filled);
+            return {
+                side: order.side,
+                price: order.price,
+                size: newSize,
+            };
+        });
 };
