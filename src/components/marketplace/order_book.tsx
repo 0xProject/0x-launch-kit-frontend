@@ -37,6 +37,7 @@ const orderToRow = (order: OrderBookItem, index: number, count: number, selected
     return (
         <TR key={index}>
             <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{1}</CustomTD>
             <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{price}</CustomTD>
             <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
         </TR>
@@ -80,6 +81,7 @@ class OrderBookTable extends React.Component<Props, State> {
                     <THead>
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</TH>
                             <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
                         </TR>
@@ -90,6 +92,7 @@ class OrderBookTable extends React.Component<Props, State> {
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 Spread
                             </CustomTDTitle>
+                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
                             <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 {spread.toFixed(2)}
                             </CustomTD>
