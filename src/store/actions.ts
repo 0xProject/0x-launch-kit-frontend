@@ -84,13 +84,11 @@ export const lockToken = (token: Token) => {
         const tokenBalances = getTokenBalances(state);
 
         const contractWrappers = await getContractWrappers();
-        /* This should be 0, cero amount of tokens should be available if we lock them */
-        const numberOfUnlockedTokens = new BigNumber('0');
 
         await contractWrappers.erc20Token.setProxyAllowanceAsync(
             token.address,
             ethAccount,
-            numberOfUnlockedTokens,
+            new BigNumber('0'),
             TX_DEFAULTS,
         );
 
