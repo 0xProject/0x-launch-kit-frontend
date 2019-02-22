@@ -1,8 +1,8 @@
 import { BigNumber, OrderInfo, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
-import { makeBuyOrder, makeSellOrder, mockToken1 } from './test-utils';
-import { OrderBookItem, OrderSide } from './types';
+import { makeBuyOrder, makeSellOrder, mockToken1, uiOrder } from './test-utils';
+import { OrderSide, UIOrder } from './types';
 import { mergeByPrice, ordersToUIOrders } from './ui_orders';
 
 describe('ordersToUIOrders', () => {
@@ -231,7 +231,7 @@ describe('mergeByPrice', () => {
                 price: new BigNumber('1.01'),
                 size: new BigNumber('4.00'),
             },
-        ];
+        ].map(uiOrder);
 
         // when
         const result = mergeByPrice(orders);
@@ -269,7 +269,7 @@ describe('mergeByPrice', () => {
                 price: new BigNumber('1.02'),
                 size: new BigNumber('4.00'),
             },
-        ];
+        ].map(uiOrder);
 
         // when
         const result = mergeByPrice(orders);
@@ -293,10 +293,55 @@ describe('mergeByPrice', () => {
             },
         ]);
     });
+    it('should take the filled values into account', async () => {
+        // given
+        const orders = [
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('5.00'),
+                filled: new BigNumber('1.00'),
+            },
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.01'),
+                size: new BigNumber('3.00'),
+                filled: new BigNumber('1.50'),
+            },
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.02'),
+                size: new BigNumber('4.00'),
+                filled: new BigNumber('0.75'),
+            },
+        ].map(uiOrder);
+
+        // when
+        const result = mergeByPrice(orders);
+
+        // then
+        expect(result).toEqual([
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('4.00'),
+            },
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.01'),
+                size: new BigNumber('1.50'),
+            },
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.02'),
+                size: new BigNumber('3.25'),
+            },
+        ]);
+    });
 
     it('should work with an empty list', async () => {
         // given
-        const orders: OrderBookItem[] = [];
+        const orders: UIOrder[] = [];
 
         // when
         const result = mergeByPrice(orders);
