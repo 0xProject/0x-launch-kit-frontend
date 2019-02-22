@@ -126,6 +126,23 @@ const FieldStyled = styled.input`
     ${fieldStyle}
 `;
 
+const TokenContainer = styled.div`
+    display: flex;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 12;
+`;
+
+const TokenText = styled.span`
+    color: #333;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 21px;
+    text-align: right;
+`;
+
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
@@ -173,14 +190,18 @@ class BuySell extends React.Component<Props, State> {
                             onChange={this.updateMakerAmount}
                             value={makerAmount}
                         />
-                        {selectedTokenSymbol}
+                        <TokenContainer>
+                            <TokenText>{selectedTokenSymbol}</TokenText>
+                        </TokenContainer>
                     </FieldContainer>
                     <LabelContainer>
                         <Label>Token price</Label>
                     </LabelContainer>
                     <FieldContainer>
                         <FieldStyled type="number" value={price} min={0} onChange={this.updatePrice} />
-                        <span>wETH</span>
+                        <TokenContainer>
+                            <TokenText>wETH</TokenText>
+                        </TokenContainer>
                     </FieldContainer>
                     <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
                         {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
