@@ -10,6 +10,7 @@ export const themeColors = {
 
 export const themeDimensions = {
     borderRadius: '4px',
+    fieldHeight: '46px',
     horizontalPadding: '20px',
     sidebarWidth: '350px',
     verticalPadding: '10px',

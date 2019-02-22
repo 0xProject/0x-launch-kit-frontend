@@ -8,7 +8,9 @@ import { getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
+import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
+import { CardTabSelector } from '../common/card_tab_selector';
 
 enum Tab {
     Buy,
@@ -18,9 +20,11 @@ enum Tab {
 interface StateProps {
     selectedTokenSymbol: string;
 }
+
 interface DispatchProps {
     onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
 }
+
 type Props = StateProps & DispatchProps;
 
 enum OrderType {
@@ -40,6 +44,8 @@ const BuySellWrapper = styled(CardBase)`
 `;
 
 const Content = styled.div`
+    display: flex;
+    flex-direction: column;
     padding: 20px ${themeDimensions.horizontalPadding};
 `;
 
@@ -74,17 +80,76 @@ const TabButton = styled.div<{ isSelected: boolean }>`
     }
 `;
 
+const LabelContainer = styled.div`
+    align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+`;
+
+const Label = styled.label`
+    color: #000;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    margin: 0;
+`;
+
+const InnerTabs = styled(CardTabSelector)`
+    font-size: 14px;
+`;
+
+const FieldContainer = styled.div`
+    height: ${themeDimensions.fieldHeight};
+    margin-bottom: 25px;
+    position: relative;
+`;
+
+const fieldStyle = `
+    border: 1px solid ${themeColors.borderColor};
+    border-radius: ${themeDimensions.borderRadius};
+    color: #000;
+    font-size: 16px;
+    height: 100%;
+    padding-left: 14px;
+    padding-right: 60px;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+`;
+
+const BigInputNumberStyled = styled<any>(BigNumberInput)`
+    ${fieldStyle}
+`;
+
+const FieldStyled = styled.input`
+    ${fieldStyle}
+`;
+
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
+        orderType: OrderType.Limit,
         price: 0,
         tab: Tab.Buy,
-        orderType: OrderType.Limit,
     };
 
     public render = () => {
         const { selectedTokenSymbol } = this.props;
         const { makerAmount, price, tab, orderType } = this.state;
+
+        const buySellInnerTabs = [
+            {
+                active: orderType === OrderType.Market,
+                onClick: this._switchToMarket,
+                text: 'Market',
+            },
+            {
+                active: orderType === OrderType.Limit,
+                onClick: this._switchToLimit,
+                text: 'Limit',
+            },
+        ];
 
         return (
             <BuySellWrapper>
@@ -97,44 +162,29 @@ class BuySell extends React.Component<Props, State> {
                     </TabButton>
                 </TabsContainer>
                 <Content>
-                    <div>
-                        <label>
-                            I want to {tab === Tab.Buy ? 'buy' : 'sell'}
-                            <BigNumberInput
-                                value={makerAmount}
-                                min={new BigNumber(0)}
-                                onChange={this.updateMakerAmount}
-                                decimals={18}
-                            />
-                            {selectedTokenSymbol}
-                            <div style={{ display: 'inline-block' }}>
-                                &nbsp;&nbsp;&nbsp;
-                                <span
-                                    style={{ fontWeight: orderType === OrderType.Market ? 'bold' : 'normal' }}
-                                    onClick={this._switchToMarket}
-                                >
-                                    Market
-                                </span>
-                                /
-                                <span
-                                    style={{ fontWeight: orderType === OrderType.Limit ? 'bold' : 'normal' }}
-                                    onClick={this._switchToLimit}
-                                >
-                                    Limit
-                                </span>
-                            </div>
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            Token price
-                            <input type="number" value={price} min={0} onChange={this.updatePrice} />
-                            <span>wETH</span>
-                        </label>
-                    </div>
-                    <button onClick={tab === Tab.Buy ? this.buy : this.sell}>
+                    <LabelContainer>
+                        <Label>I want to {tab === Tab.Buy ? 'buy' : 'sell'}</Label>
+                        <InnerTabs tabs={buySellInnerTabs} />
+                    </LabelContainer>
+                    <FieldContainer>
+                        <BigInputNumberStyled
+                            decimals={18}
+                            min={new BigNumber(0)}
+                            onChange={this.updateMakerAmount}
+                            value={makerAmount}
+                        />
+                        {selectedTokenSymbol}
+                    </FieldContainer>
+                    <LabelContainer>
+                        <Label>Token price</Label>
+                    </LabelContainer>
+                    <FieldContainer>
+                        <FieldStyled type="number" value={price} min={0} onChange={this.updatePrice} />
+                        <span>wETH</span>
+                    </FieldContainer>
+                    <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
                         {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
-                    </button>
+                    </Button>
                 </Content>
             </BuySellWrapper>
         );

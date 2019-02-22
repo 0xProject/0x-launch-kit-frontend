@@ -30,7 +30,7 @@ interface State {
 const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
-    const priceColor = order.side === OrderSide.Buy ? themeColors.orange : themeColors.green;
+    const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
     const time: string = '';
     const timeColor = time ? '#000' : themeColors.lightGray;
 
