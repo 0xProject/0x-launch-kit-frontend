@@ -73,7 +73,5 @@ export const TokenIcon = (props: Props) => {
 };
 
 const getTokenIconNameBySymbol = (symbol: string): string => {
-    const symbolfirstChar = symbol.charAt(0).toUpperCase();
-    const restOfSymbol = symbol.substring(1, symbol.length);
-    return `${symbolfirstChar}${restOfSymbol}TokenIcon`;
+    return `${symbol.charAt(0).toUpperCase()}${symbol.slice(1)}TokenIcon`;
 };
