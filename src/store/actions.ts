@@ -77,6 +77,35 @@ export const unlockToken = (token: Token) => {
     };
 };
 
+export const lockToken = (token: Token) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const tokenBalances = getTokenBalances(state);
+
+        const contractWrappers = await getContractWrappers();
+
+        await contractWrappers.erc20Token.setProxyAllowanceAsync(
+            token.address,
+            ethAccount,
+            new BigNumber('0'),
+            TX_DEFAULTS,
+        );
+
+        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
+            if (tokenBalance.token.address !== token.address) {
+                return tokenBalance;
+            }
+            return {
+                ...tokenBalance,
+                isUnlocked: false,
+            };
+        });
+
+        dispatch(setTokenBalances(updatedTokenBalances));
+    };
+};
+
 export const updateWethBalance = (newWethBalance: BigNumber) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
