@@ -1,11 +1,11 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
-import styled from 'styled-components';
 
-import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 
 interface Props {
+    autofocus?: boolean;
+    className?: string;
     decimals: number;
     max?: BigNumber;
     min?: BigNumber;
@@ -17,24 +17,6 @@ interface Props {
 interface State {
     currentValueStr: string;
 }
-
-const InputEth = styled.input`
-    border-color: transparent;
-    color: ${themeColors.darkBlue};
-    font-size: 24px;
-    font-weight: 600;
-    height: 28px;
-    line-height: 1.2;
-    margin: 0 0 5px;
-    padding: 0;
-    text-align: center;
-
-    &:focus,
-    &:active {
-        border-bottom: dotted 1px ${themeColors.darkBlue};
-        outline: none;
-    }
-`;
 
 export class BigNumberInput extends React.Component<Props, State> {
     public readonly state = {
@@ -57,19 +39,24 @@ export class BigNumberInput extends React.Component<Props, State> {
     };
 
     public componentDidMount = () => {
-        this._textInput.focus();
+        const { autofocus } = this.props;
+
+        if (autofocus) {
+            this._textInput.focus();
+        }
     };
 
     public render = () => {
         const { currentValueStr } = this.state;
-        const { decimals, step, min, max } = this.props;
+        const { decimals, step, min, max, className } = this.props;
 
         const stepStr = step && tokenAmountInUnits(step, decimals);
         const minStr = min && tokenAmountInUnits(min, decimals);
         const maxStr = max && tokenAmountInUnits(max, decimals);
 
         return (
-            <InputEth
+            <input
+                className={className}
                 max={maxStr}
                 min={minStr}
                 onChange={this._updateValue}
