@@ -5,9 +5,10 @@ import styled from 'styled-components';
 
 import { submitOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
+import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
-import { Card } from '../common/card';
+import { CardBase } from '../common/card_base';
 
 enum Tab {
     Buy,
@@ -23,38 +24,54 @@ interface DispatchProps {
 type Props = StateProps & DispatchProps;
 
 enum OrderType {
-    Market,
     Limit,
+    Market,
 }
 
 interface State {
     makerAmount: BigNumber;
+    orderType: OrderType;
     price: number;
     tab: Tab;
-    orderType: OrderType;
 }
 
+const BuySellWrapper = styled(CardBase)`
+    margin-bottom: ${themeDimensions.verticalSeparation};
+`;
+
 const Content = styled.div`
-    padding: 10px 18px;
+    padding: 20px ${themeDimensions.horizontalPadding};
+`;
+
+const TabsContainer = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
 `;
 
 const TabButton = styled.div<{ isSelected: boolean }>`
-    display: inline-block;
+    align-items: center;
+    background-color: ${props => (props.isSelected ? 'transparent' : '#f9f9f9')};
+    border-bottom-color: ${props => (props.isSelected ? 'transparent' : themeColors.borderColor)};
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+    border-right-style: solid;
+    border-right-width: 1px;
+    color: ${props => (props.isSelected ? themeColors.green : themeColors.textLight)};
+    cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
+    display: flex;
+    font-weight: 600;
+    height: 47px;
+    justify-content: center;
     width: 50%;
-    cursor: pointer;
-    text-align: center;
-    padding: 1rem 0;
 
-    font-weight: ${props => (props.isSelected ? 'bold' : 'normal')}
-    background-color: ${props => (props.isSelected ? 'white' : '#f9f9f9')}
-    border-bottom: ${props => (props.isSelected ? '0' : '1px solid #dedede')}
-`;
-
-const BuyTab = styled(TabButton)`
-    border-right: ${props => (props.isSelected ? '0' : '1px solid #dedede')};
-`;
-const SellTab = styled(TabButton)`
-    border-left: ${props => (props.isSelected ? '0' : '1px solid #dedede')};
+    &:last-child {
+        border-left-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+        border-left-style: solid;
+        border-left-width: 1px;
+        border-right: none;
+    }
 `;
 
 class BuySell extends React.Component<Props, State> {
@@ -70,13 +87,15 @@ class BuySell extends React.Component<Props, State> {
         const { makerAmount, price, tab, orderType } = this.state;
 
         return (
-            <Card>
-                <BuyTab isSelected={tab === Tab.Buy} onClick={this.changeTab(Tab.Buy)}>
-                    Buy
-                </BuyTab>
-                <SellTab isSelected={tab === Tab.Sell} onClick={this.changeTab(Tab.Sell)}>
-                    Sell
-                </SellTab>
+            <BuySellWrapper>
+                <TabsContainer>
+                    <TabButton isSelected={tab === Tab.Buy} onClick={this.changeTab(Tab.Buy)}>
+                        Buy
+                    </TabButton>
+                    <TabButton isSelected={tab === Tab.Sell} onClick={this.changeTab(Tab.Sell)}>
+                        Sell
+                    </TabButton>
+                </TabsContainer>
                 <Content>
                     <div>
                         <label>
@@ -117,7 +136,7 @@ class BuySell extends React.Component<Props, State> {
                         {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
                     </button>
                 </Content>
-            </Card>
+            </BuySellWrapper>
         );
     };
 

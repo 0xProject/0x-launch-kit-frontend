@@ -9,9 +9,11 @@ export const themeColors = {
 };
 
 export const themeDimensions = {
-    sidebarWidth: '350px',
+    borderRadius: '4px',
     horizontalPadding: '20px',
+    sidebarWidth: '350px',
     verticalPadding: '10px',
+    verticalSeparation: '30px',
 };
 
 export const themeModalStyle = {

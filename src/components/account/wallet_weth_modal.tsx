@@ -12,20 +12,20 @@ import { Tooltip } from '../common/tooltip';
 
 enum Editing {
     Eth,
-    Weth,
     None,
+    Weth,
 }
 
 interface Props extends React.ComponentProps<typeof Modal> {
-    wethBalance: BigNumber;
-    totalEth: BigNumber;
     isSubmitting: boolean;
     onSubmit: (b: BigNumber) => any;
+    totalEth: BigNumber;
+    wethBalance: BigNumber;
 }
 
 interface State {
-    selectedWeth: BigNumber;
     editing: Editing;
+    selectedWeth: BigNumber;
 }
 
 const Slider = styled.input`

@@ -1,7 +1,9 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../util/theme';
+import { themeColors, themeDimensions } from '../../util/theme';
+
+import { CardBase } from './card_base';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     title?: string;
@@ -9,18 +11,13 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
 }
 
-const borderColor = '#DEDEDE';
-
-const CardWrapper = styled.div`
-    background-color: #fff;
-    border-radius: 4px;
-    border: 1px solid ${borderColor};
-    margin-bottom: 30px;
+const CardWrapper = styled(CardBase)`
+    margin-bottom: ${themeDimensions.verticalSeparation};
 `;
 
 const CardHeader = styled.div`
     align-items: center;
-    border-bottom: 1px solid ${borderColor};
+    border-bottom: 1px solid ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
