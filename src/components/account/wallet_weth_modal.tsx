@@ -142,6 +142,24 @@ const SetMinEthButton = styled.a`
     text-decoration: none;
 `;
 
+const InputEth = styled<any>(BigNumberInput)`
+    border-color: transparent;
+    color: ${themeColors.darkBlue};
+    font-size: 24px;
+    font-weight: 600;
+    height: 28px;
+    line-height: 1.2;
+    margin: 0 0 5px;
+    padding: 0;
+    text-align: center;
+
+    &:focus,
+    &:active {
+        border-bottom: dotted 1px ${themeColors.darkBlue};
+        outline: none;
+    }
+`;
+
 const minEth = unitsInTokenAmount('0.5', 18);
 const minSlidervalue = '0.00';
 
@@ -176,12 +194,13 @@ class WethModal extends React.Component<Props, State> {
                     <EthBox>
                         {editing === Editing.Eth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
-                                <BigNumberInput
-                                    value={selectedEth}
-                                    onChange={this._updateEth}
-                                    min={new BigNumber(0)}
-                                    max={totalEth}
+                                <InputEth
+                                    autofocus={true}
                                     decimals={18}
+                                    max={totalEth}
+                                    min={new BigNumber(0)}
+                                    onChange={this._updateEth}
+                                    value={selectedEth}
                                 />
                             </form>
                         ) : (
@@ -194,12 +213,13 @@ class WethModal extends React.Component<Props, State> {
                     <EthBox>
                         {editing === Editing.Weth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
-                                <BigNumberInput
-                                    value={selectedWeth}
-                                    onChange={this._updateWeth}
-                                    min={new BigNumber(0)}
-                                    max={totalEth}
+                                <InputEth
+                                    autofocus={true}
                                     decimals={18}
+                                    max={totalEth}
+                                    min={new BigNumber(0)}
+                                    onChange={this._updateWeth}
+                                    value={selectedWeth}
                                 />
                             </form>
                         ) : (
