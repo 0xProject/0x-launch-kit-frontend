@@ -69,7 +69,7 @@ const TDBalance = styled(TD)`
 const TDLock = styled(TD)<{ isUnlocked: boolean }>`
     min-width: 6em;
     text-align: center;
-    cursor: ${props => (props.isUnlocked ? 'default' : 'pointer')};
+    cursor: pointer;
     color: ${props => (props.isUnlocked ? '#c4c4c4' : 'black')};
 `;
 

@@ -190,4 +190,102 @@ describe('WalletTokenBalances', () => {
         // then
         expect(onUnlockToken).not.toHaveBeenCalled();
     });
+    it('should call the lock function when a unlocked token is clicked', () => {
+        const tokenBalances: TokenBalance[] = [
+            {
+                balance: new BigNumber(1),
+                token: {
+                    address: '0x1',
+                    decimals: 18,
+                    symbol: 'MOCK1',
+                },
+                isUnlocked: true,
+            },
+            {
+                balance: new BigNumber(1),
+                token: {
+                    address: '0x2',
+                    decimals: 18,
+                    symbol: 'MOCK2',
+                },
+                isUnlocked: false,
+            },
+            {
+                balance: new BigNumber(1),
+                token: {
+                    address: '0x3',
+                    decimals: 18,
+                    symbol: 'MOCK3',
+                },
+                isUnlocked: true,
+            },
+        ];
+        const onUnlockToken = jest.fn();
+        const onLockToken = jest.fn();
+
+        // when
+        const wrapper = mount(
+            <WalletTokenBalances
+                tokenBalances={tokenBalances}
+                onUnlockToken={onUnlockToken}
+                onLockToken={onLockToken}
+            />,
+        );
+        const rows = wrapper.find('tbody tr');
+        rows.at(0)
+            .find('[data-icon="lock-open"]')
+            .simulate('click');
+
+        // then
+        expect(onLockToken).toHaveBeenCalled();
+    });
+    it('should not call the lock function when a locked token is clicked', () => {
+        const tokenBalances: TokenBalance[] = [
+            {
+                balance: new BigNumber(1),
+                token: {
+                    address: '0x1',
+                    decimals: 18,
+                    symbol: 'MOCK1',
+                },
+                isUnlocked: true,
+            },
+            {
+                balance: new BigNumber(1),
+                token: {
+                    address: '0x2',
+                    decimals: 18,
+                    symbol: 'MOCK2',
+                },
+                isUnlocked: false,
+            },
+            {
+                balance: new BigNumber(1),
+                token: {
+                    address: '0x3',
+                    decimals: 18,
+                    symbol: 'MOCK3',
+                },
+                isUnlocked: true,
+            },
+        ];
+        const onUnlockToken = jest.fn();
+        const onLockToken = jest.fn();
+
+        // when
+        const wrapper = mount(
+            <WalletTokenBalances
+                tokenBalances={tokenBalances}
+                onUnlockToken={onUnlockToken}
+                onLockToken={onLockToken}
+            />,
+        );
+        const rows = wrapper.find('tbody tr');
+        rows.at(1)
+            .find('[data-icon="lock"]')
+            .simulate('click');
+
+        // then
+        expect(onLockToken).not.toHaveBeenCalled();
+    });
 });
