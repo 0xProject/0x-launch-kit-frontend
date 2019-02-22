@@ -186,12 +186,28 @@ describe('selectors', () => {
         // then
         expect(result).toEqual({
             sellOrders: [
-                { side: OrderSide.Sell, size: new BigNumber(1), price: new BigNumber('8.1') },
-                { side: OrderSide.Sell, size: new BigNumber(2), price: new BigNumber('8.0') },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber(1),
+                    price: new BigNumber('8.1'),
+                },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber(2),
+                    price: new BigNumber('8.0'),
+                },
             ],
             buyOrders: [
-                { side: OrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.5') },
-                { side: OrderSide.Buy, size: new BigNumber(2), price: new BigNumber('7.3') },
+                {
+                    side: OrderSide.Buy,
+                    size: new BigNumber(1),
+                    price: new BigNumber('7.5'),
+                },
+                {
+                    side: OrderSide.Buy,
+                    size: new BigNumber(2),
+                    price: new BigNumber('7.3'),
+                },
             ],
             spread: new BigNumber('0.5'),
         });
