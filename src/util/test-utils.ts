@@ -76,7 +76,7 @@ export const uiOrder = (params = {}): UIOrder => {
         price: new BigNumber(1),
         rawOrder,
         side: UIOrderSide.Sell,
-        size: new BigNumber(10),
+        size: new BigNumber(1),
         status: OrderStatus.Fillable,
         ...params,
     };
