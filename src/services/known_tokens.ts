@@ -1,5 +1,5 @@
-import { WETH_TOKEN_SYMBOL } from '../common/constants';
-import { KNOWN_TOKENS_META_DATA } from '../common/tokens_meta_data';
+import { RELAYER_NETWORK_ID, WETH_TOKEN_SYMBOL } from '../common/constants';
+import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 import {
     getWethTokenFromTokensMetaDataByNetworkId,
     mapTokensMetaDataToTokenByNetworkId,
@@ -8,13 +8,13 @@ import { Token } from '../util/types';
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
-    private readonly _wethToken: Token | null;
+    private readonly _wethToken: Token;
 
-    constructor(networkId: number) {
-        this._tokens = mapTokensMetaDataToTokenByNetworkId(networkId, KNOWN_TOKENS_META_DATA).filter(
+    constructor(networkId: number, knownTokensMetadata: TokenMetaData[]) {
+        this._tokens = mapTokensMetaDataToTokenByNetworkId(networkId, knownTokensMetadata).filter(
             token => token.symbol !== WETH_TOKEN_SYMBOL,
         );
-        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(networkId, KNOWN_TOKENS_META_DATA);
+        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(networkId, knownTokensMetadata);
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
@@ -36,9 +36,12 @@ export class KnownTokens {
 }
 
 let knownTokens: KnownTokens;
-export const getKnownTokens = (networkId: number = 50): KnownTokens => {
+export const getKnownTokens = (
+    networkId: number = RELAYER_NETWORK_ID,
+    knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA,
+): KnownTokens => {
     if (!knownTokens) {
-        knownTokens = new KnownTokens(networkId);
+        knownTokens = new KnownTokens(networkId, knownTokensMetadata);
     }
     return knownTokens;
 };
