@@ -98,7 +98,6 @@ export const lockToken = (token: Token) => {
             if (tokenBalance.token.address !== token.address) {
                 return tokenBalance;
             }
-            /* We could check if the amount was correctly set before locking them (maybe) */
             return {
                 ...tokenBalance,
                 isUnlocked: false,
