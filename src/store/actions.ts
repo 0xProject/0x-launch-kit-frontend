@@ -4,11 +4,11 @@ import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
-import { getKnownTokens } from '../services/known_tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { cancelSignedOrder } from '../util/cancel_order';
 import { getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../util/get_orders';
 import { getTokenBalance, tokenToTokenBalance } from '../util/get_token_balance';
+import { getKnownTokens } from '../util/known_tokens';
 import { BlockchainState, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
 
 import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance } from './selectors';

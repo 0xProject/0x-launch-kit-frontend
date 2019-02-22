@@ -20,6 +20,7 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (
 
 export const mapTokensMetaDataToTokenByNetworkId = (networkId: number, tokensMetaData: TokenMetaData[]): Token[] => {
     return tokensMetaData
+        .filter(tokenMetaData => tokenMetaData.addresses[networkId])
         .map(
             (tokenMetaData): Token => {
                 return {
@@ -29,6 +30,5 @@ export const mapTokensMetaDataToTokenByNetworkId = (networkId: number, tokensMet
                     name: tokenMetaData.name,
                 };
             },
-        )
-        .filter(token => token.address && token.address.length > 0);
+        );
 };
