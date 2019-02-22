@@ -5,9 +5,16 @@ import styled from 'styled-components';
 
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
+import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
 import { Tooltip } from '../common/tooltip';
+
+enum Editing {
+    Eth,
+    Weth,
+    None,
+}
 
 interface Props extends React.ComponentProps<typeof Modal> {
     wethBalance: BigNumber;
@@ -18,6 +25,7 @@ interface Props extends React.ComponentProps<typeof Modal> {
 
 interface State {
     selectedWeth: BigNumber;
+    editing: Editing;
 }
 
 const Slider = styled.input`
@@ -140,10 +148,12 @@ const minSlidervalue = '0.00';
 class WethModal extends React.Component<Props, State> {
     public state = {
         selectedWeth: this.props.wethBalance,
+        editing: Editing.None,
     };
 
     public render = () => {
         const { onSubmit, isSubmitting, totalEth, wethBalance, ...restProps } = this.props;
+        const { editing, selectedWeth } = this.state;
 
         const selectedEth = totalEth.sub(this.state.selectedWeth);
 
@@ -159,16 +169,44 @@ class WethModal extends React.Component<Props, State> {
         return (
             <Modal {...restProps}>
                 <CloseButtonContainer>
-                    <CloseModalButton onClick={this.closeModal} />
+                    <CloseModalButton onClick={this._closeModal} />
                 </CloseButtonContainer>
                 <Title>Available Balance</Title>
                 <EthBoxes>
                     <EthBox>
-                        <EthBoxValue isZero={selectedEthStr === minSlidervalue}>{selectedEthStr}</EthBoxValue>
+                        {editing === Editing.Eth ? (
+                            <form noValidate={true} onSubmit={this._disableEdit}>
+                                <BigNumberInput
+                                    value={selectedEth}
+                                    onChange={this._updateEth}
+                                    min={new BigNumber(0)}
+                                    max={totalEth}
+                                    decimals={18}
+                                />
+                            </form>
+                        ) : (
+                            <EthBoxValue isZero={selectedEthStr === minSlidervalue} onClick={this._enableEditEth}>
+                                {selectedEthStr}
+                            </EthBoxValue>
+                        )}
                         <EthBoxUnit>ETH</EthBoxUnit>
                     </EthBox>
                     <EthBox>
-                        <EthBoxValue isZero={selectedWethStr === minSlidervalue}>{selectedWethStr}</EthBoxValue>
+                        {editing === Editing.Weth ? (
+                            <form noValidate={true} onSubmit={this._disableEdit}>
+                                <BigNumberInput
+                                    value={selectedWeth}
+                                    onChange={this._updateWeth}
+                                    min={new BigNumber(0)}
+                                    max={totalEth}
+                                    decimals={18}
+                                />
+                            </form>
+                        ) : (
+                            <EthBoxValue isZero={selectedWethStr === minSlidervalue} onClick={this._enableEditWeth}>
+                                {selectedWethStr}
+                            </EthBoxValue>
+                        )}
                         <EthBoxUnit>wETH</EthBoxUnit>
                         <TooltipStyled>
                             <Tooltip />
@@ -178,7 +216,7 @@ class WethModal extends React.Component<Props, State> {
                 <Slider
                     max={totalEthStr}
                     min="0"
-                    onChange={this.updateSelectedWeth}
+                    onChange={this._updateSelectedWeth}
                     step="0.01"
                     type="range"
                     value={selectedWethStr}
@@ -186,7 +224,7 @@ class WethModal extends React.Component<Props, State> {
                 {isInsufficientEth ? (
                     <SetMinEthWrapper>
                         ETH required for fees.&nbsp;
-                        <SetMinEthButton href="" onClick={this.setMinEth}>
+                        <SetMinEthButton href="" onClick={this._setMinEth}>
                             0.5 ETH Recommended
                         </SetMinEthButton>
                     </SetMinEthWrapper>
@@ -204,7 +242,21 @@ class WethModal extends React.Component<Props, State> {
         this.props.onSubmit(this.state.selectedWeth);
     };
 
-    public updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
+    private readonly _updateEth = (newEth: BigNumber) => {
+        const { totalEth } = this.props;
+
+        this.setState({
+            selectedWeth: totalEth.sub(newEth),
+        });
+    };
+
+    private readonly _updateWeth = (newWeth: BigNumber) => {
+        this.setState({
+            selectedWeth: newWeth,
+        });
+    };
+
+    private readonly _updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
         const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, 18);
 
         this.setState({
@@ -212,17 +264,35 @@ class WethModal extends React.Component<Props, State> {
         });
     };
 
-    public closeModal = (e: any) => {
+    private readonly _closeModal = (e: any) => {
         if (this.props.onRequestClose) {
             this.props.onRequestClose(e);
         }
     };
 
-    public setMinEth: React.ReactEventHandler<HTMLAnchorElement> = e => {
+    private readonly _setMinEth: React.ReactEventHandler<HTMLAnchorElement> = e => {
         e.preventDefault();
 
         this.setState({
             selectedWeth: this.props.totalEth.sub(minEth),
+        });
+    };
+
+    private readonly _enableEditEth = () => {
+        this.setState({
+            editing: Editing.Eth,
+        });
+    };
+
+    private readonly _enableEditWeth = () => {
+        this.setState({
+            editing: Editing.Weth,
+        });
+    };
+
+    private readonly _disableEdit = () => {
+        this.setState({
+            editing: Editing.None,
         });
     };
 }
