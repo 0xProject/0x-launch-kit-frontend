@@ -68,7 +68,6 @@ class OrderBookTable extends React.Component<Props, State> {
     public render = () => {
         const { orderBook, selectedToken } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
-
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
 
