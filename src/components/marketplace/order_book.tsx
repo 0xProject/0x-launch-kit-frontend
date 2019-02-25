@@ -1,3 +1,4 @@
+import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -10,7 +11,6 @@ import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
-
 interface StateProps {
     orderBook: OrderBook;
     selectedToken: Token | null;
@@ -43,15 +43,17 @@ const orderToRow = (
 
     const mySize = mySizeOrders.reduce((sumSize, mySizeItem) => {
         if (mySizeItem.price.equals(order.price)) {
-            return tokenAmountInUnits(mySizeItem.size, selectedToken.decimals);
+            return sumSize.add(mySizeItem.size);
         }
         return sumSize;
-    }, '0.00');
+    }, new BigNumber(0));
+
+    const mySizeConverted = tokenAmountInUnits(mySize, selectedToken.decimals);
 
     return (
         <TR key={index}>
             <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{mySize}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{mySizeConverted}</CustomTD>
             <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{price}</CustomTD>
             <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
         </TR>
