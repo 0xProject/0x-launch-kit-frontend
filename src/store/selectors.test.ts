@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 
 import { closedOrder, openOrder } from '../util/test-utils';
-import { UIOrderSide } from '../util/types';
+import { OrderSide } from '../util/types';
 
 import * as selectors from './selectors';
 
@@ -26,9 +26,9 @@ describe('selectors', () => {
 
     it('should get open sell orders', () => {
         // given
-        const openSellOrder1 = openOrder({ side: UIOrderSide.Sell });
-        const openBuyOrder1 = openOrder({ side: UIOrderSide.Buy });
-        const openSellOrder2 = openOrder({ side: UIOrderSide.Sell });
+        const openSellOrder1 = openOrder({ side: OrderSide.Sell });
+        const openBuyOrder1 = openOrder({ side: OrderSide.Buy });
+        const openSellOrder2 = openOrder({ side: OrderSide.Sell });
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openBuyOrder1, closedOrder(), openSellOrder2],
@@ -44,9 +44,9 @@ describe('selectors', () => {
 
     it('should sort open sell orders by price (desc)', () => {
         // given
-        const openSellOrder1 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber(2) });
-        const openSellOrder2 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber(3) });
-        const openSellOrder3 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber(1) });
+        const openSellOrder1 = openOrder({ side: OrderSide.Sell, price: new BigNumber(2) });
+        const openSellOrder2 = openOrder({ side: OrderSide.Sell, price: new BigNumber(3) });
+        const openSellOrder3 = openOrder({ side: OrderSide.Sell, price: new BigNumber(1) });
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3],
@@ -62,9 +62,9 @@ describe('selectors', () => {
 
     it('should get open buy orders', () => {
         // given
-        const openSellOrder1 = openOrder({ side: UIOrderSide.Sell });
-        const openBuyOrder1 = openOrder({ side: UIOrderSide.Buy });
-        const openSellOrder2 = openOrder({ side: UIOrderSide.Sell });
+        const openSellOrder1 = openOrder({ side: OrderSide.Sell });
+        const openBuyOrder1 = openOrder({ side: OrderSide.Buy });
+        const openSellOrder2 = openOrder({ side: OrderSide.Sell });
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openBuyOrder1, closedOrder(), openSellOrder2],
@@ -81,9 +81,9 @@ describe('selectors', () => {
 
     it('should sort open buy orders by price (desc)', () => {
         // given
-        const openBuyOrder1 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber(2) });
-        const openBuyOrder2 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber(3) });
-        const openBuyOrder3 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber(1) });
+        const openBuyOrder1 = openOrder({ side: OrderSide.Buy, price: new BigNumber(2) });
+        const openBuyOrder2 = openOrder({ side: OrderSide.Buy, price: new BigNumber(3) });
+        const openBuyOrder3 = openOrder({ side: OrderSide.Buy, price: new BigNumber(1) });
         const state: any = {
             relayer: {
                 orders: [openBuyOrder1, openBuyOrder2, openBuyOrder3],
@@ -99,12 +99,12 @@ describe('selectors', () => {
 
     it('should get the spread between sell and buy orders', () => {
         // given
-        const openSellOrder1 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber('8.0') });
-        const openSellOrder2 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber('8.1') });
-        const openSellOrder3 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber('8.3') });
-        const openBuyOrder1 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber('7.5') });
-        const openBuyOrder2 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber('7.3') });
-        const openBuyOrder3 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber('7.4') });
+        const openSellOrder1 = openOrder({ side: OrderSide.Sell, price: new BigNumber('8.0') });
+        const openSellOrder2 = openOrder({ side: OrderSide.Sell, price: new BigNumber('8.1') });
+        const openSellOrder3 = openOrder({ side: OrderSide.Sell, price: new BigNumber('8.3') });
+        const openBuyOrder1 = openOrder({ side: OrderSide.Buy, price: new BigNumber('7.5') });
+        const openBuyOrder2 = openOrder({ side: OrderSide.Buy, price: new BigNumber('7.3') });
+        const openBuyOrder3 = openOrder({ side: OrderSide.Buy, price: new BigNumber('7.4') });
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3, openBuyOrder1, openBuyOrder2, openBuyOrder3],
@@ -120,9 +120,9 @@ describe('selectors', () => {
 
     it('should return a spread of 0 if there are no sell orders', () => {
         // given
-        const openBuyOrder1 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber('7.5') });
-        const openBuyOrder2 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber('7.3') });
-        const openBuyOrder3 = openOrder({ side: UIOrderSide.Buy, price: new BigNumber('7.4') });
+        const openBuyOrder1 = openOrder({ side: OrderSide.Buy, price: new BigNumber('7.5') });
+        const openBuyOrder2 = openOrder({ side: OrderSide.Buy, price: new BigNumber('7.3') });
+        const openBuyOrder3 = openOrder({ side: OrderSide.Buy, price: new BigNumber('7.4') });
         const state: any = {
             relayer: {
                 orders: [openBuyOrder1, openBuyOrder2, openBuyOrder3],
@@ -138,9 +138,9 @@ describe('selectors', () => {
 
     it('should return a spread of 0 if there are no buy orders', () => {
         // given
-        const openSellOrder1 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber('8.0') });
-        const openSellOrder2 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber('8.1') });
-        const openSellOrder3 = openOrder({ side: UIOrderSide.Sell, price: new BigNumber('8.3') });
+        const openSellOrder1 = openOrder({ side: OrderSide.Sell, price: new BigNumber('8.0') });
+        const openSellOrder2 = openOrder({ side: OrderSide.Sell, price: new BigNumber('8.1') });
+        const openSellOrder3 = openOrder({ side: OrderSide.Sell, price: new BigNumber('8.3') });
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3],
@@ -157,23 +157,23 @@ describe('selectors', () => {
     it('should return the order book', () => {
         // given
         const openSellOrder1 = openOrder({
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber(1),
             price: new BigNumber('8.0'),
         });
         const openSellOrder2 = openOrder({
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber(1),
             price: new BigNumber('8.1'),
         });
         const openSellOrder3 = openOrder({
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber(1),
             price: new BigNumber('8.0'),
         });
-        const openBuyOrder1 = openOrder({ side: UIOrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.5') });
-        const openBuyOrder2 = openOrder({ side: UIOrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.3') });
-        const openBuyOrder3 = openOrder({ side: UIOrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.3') });
+        const openBuyOrder1 = openOrder({ side: OrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.5') });
+        const openBuyOrder2 = openOrder({ side: OrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.3') });
+        const openBuyOrder3 = openOrder({ side: OrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.3') });
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3, openBuyOrder1, openBuyOrder2, openBuyOrder3],
@@ -189,24 +189,24 @@ describe('selectors', () => {
         expect(result).toEqual({
             sellOrders: [
                 {
-                    side: UIOrderSide.Sell,
+                    side: OrderSide.Sell,
                     size: new BigNumber(1),
                     price: new BigNumber('8.1'),
                 },
                 {
-                    side: UIOrderSide.Sell,
+                    side: OrderSide.Sell,
                     size: new BigNumber(2),
                     price: new BigNumber('8.0'),
                 },
             ],
             buyOrders: [
                 {
-                    side: UIOrderSide.Buy,
+                    side: OrderSide.Buy,
                     size: new BigNumber(1),
                     price: new BigNumber('7.5'),
                 },
                 {
-                    side: UIOrderSide.Buy,
+                    side: OrderSide.Buy,
                     size: new BigNumber(2),
                     price: new BigNumber('7.3'),
                 },
@@ -219,31 +219,31 @@ describe('selectors', () => {
     it('should return mySize orders list', () => {
         // given
         const openSellOrder = openOrder({
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber(1),
             price: new BigNumber('8.1'),
         });
-        const openBuyOrder = openOrder({ side: UIOrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.5') });
+        const openBuyOrder = openOrder({ side: OrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.5') });
 
         const userOrder1 = openOrder({
-            side: UIOrderSide.Buy,
+            side: OrderSide.Buy,
             size: new BigNumber(1),
             price: new BigNumber('1'),
         });
         const userOrder2 = openOrder({
-            side: UIOrderSide.Buy,
+            side: OrderSide.Buy,
             size: new BigNumber(1),
             price: new BigNumber('2'),
             filled: new BigNumber(0.5),
         });
         const userOrder3 = openOrder({
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber(10),
             price: new BigNumber('5'),
             filled: new BigNumber(5),
         });
         const userOrder4 = openOrder({
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber(1),
             price: new BigNumber('6'),
         });
@@ -261,22 +261,22 @@ describe('selectors', () => {
         // then
         expect(result).toEqual([
             {
-                side: UIOrderSide.Buy,
+                side: OrderSide.Buy,
                 size: new BigNumber(1),
                 price: new BigNumber('1'),
             },
             {
-                side: UIOrderSide.Buy,
+                side: OrderSide.Buy,
                 size: new BigNumber(0.5),
                 price: new BigNumber('2'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 size: new BigNumber(5),
                 price: new BigNumber('5'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 size: new BigNumber(1),
                 price: new BigNumber('6'),
             },

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getOrderBook, getSelectedToken, getUserOrders } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrder, UIOrderSide } from '../../util/types';
+import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
@@ -37,7 +37,7 @@ const orderToRow = (
 ) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
-    const priceColor = order.side === UIOrderSide.Buy ? themeColors.orange : themeColors.green;
+    const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
     const time: string = '';
     const timeColor = time ? '#000' : themeColors.lightGray;
 
@@ -83,12 +83,12 @@ class OrderBookTable extends React.Component<Props, State> {
             },
         ];
 
-        const mySizeSellArray = mySizeOrders.filter((order: { side: UIOrderSide }) => {
-            return order.side === UIOrderSide.Sell;
+        const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
+            return order.side === OrderSide.Sell;
         });
 
-        const mySizeBuyArray = mySizeOrders.filter((order: { side: UIOrderSide }) => {
-            return order.side === UIOrderSide.Buy;
+        const mySizeBuyArray = mySizeOrders.filter((order: { side: OrderSide }) => {
+            return order.side === OrderSide.Buy;
         });
 
         let content: React.ReactNode;
