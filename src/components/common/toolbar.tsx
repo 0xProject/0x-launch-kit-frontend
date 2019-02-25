@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
 
+import { Dropdown } from './dropdown';
 import { Logo } from './logo';
 
 const ToolbarWrapper = styled.div`
@@ -41,6 +42,7 @@ const ToolbarEnd = styled.div`
 export const Toolbar = () => (
     <ToolbarWrapper>
         <Logo />
+        <Dropdown header="<div>head</div>" body="<div>body</div>" />
         <ToolbarEnd>
             <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
             <WalletConnectionStatusContainer />
