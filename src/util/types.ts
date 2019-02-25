@@ -46,14 +46,14 @@ export interface StoreState {
     readonly relayer: RelayerState;
 }
 
-export enum UIOrderSide {
+export enum OrderSide {
     Sell,
     Buy,
 }
 
 export interface UIOrder {
     rawOrder: SignedOrder;
-    side: UIOrderSide;
+    side: OrderSide;
     size: BigNumber;
     filled: BigNumber;
     price: BigNumber;
@@ -61,7 +61,7 @@ export interface UIOrder {
 }
 
 export interface OrderBookItem {
-    side: UIOrderSide;
+    side: OrderSide;
     size: BigNumber;
     price: BigNumber;
 }
