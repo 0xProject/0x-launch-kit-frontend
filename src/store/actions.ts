@@ -1,15 +1,16 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
+import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
+import { getRelayer } from '../services/relayer';
+import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
-import { cancelSignedOrder } from '../util/cancel_order';
-import { getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../util/get_orders';
-import { getTokenBalance, tokenToTokenBalance } from '../util/get_token_balance';
-import { getKnownTokens, getTokenBySymbol, getWethToken } from '../util/known_tokens';
-import { BlockchainState, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
+import { getKnownTokens } from '../util/known_tokens';
+import { buildOrder } from '../util/orders';
+import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
 
 import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance } from './selectors';
 
@@ -114,7 +115,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
 
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
-        const wethAddress = getWethToken(networkId).address;
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const contractWrappers = await getContractWrappers();
 
@@ -156,14 +157,16 @@ export const initWallet = () => {
 
             const knownTokens = getKnownTokens(networkId);
 
-            const tokenBalances = await Promise.all(knownTokens.map(token => tokenToTokenBalance(token, ethAccount)));
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
 
-            const wethToken = getWethToken(networkId);
+            const wethToken = knownTokens.getWethToken();
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
-            const selectedToken = getTokenBySymbol(networkId, 'ZRX');
+            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
 
             dispatch(
                 initializeBlockchainData({
@@ -213,6 +216,41 @@ export const getUserOrders = () => {
 export const cancelOrder = (order: SignedOrder) => {
     return async (dispatch: any) => {
         await cancelSignedOrder(order);
+
+        dispatch(getAllOrders());
+        dispatch(getUserOrders());
+    };
+};
+
+export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const selectedToken = getSelectedToken(state) as Token;
+
+        const relayer = getRelayer();
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const contractWrappers = await getContractWrappers();
+
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
+
+        const order = buildOrder(
+            {
+                account: ethAccount,
+                amount,
+                price,
+                tokenAddress: selectedToken.address,
+                wethAddress,
+                exchangeAddress: contractWrappers.exchange.address,
+            },
+            side,
+        );
+
+        const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+        const signedOrder = await signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+
+        await relayer.client.submitOrderAsync(signedOrder);
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());

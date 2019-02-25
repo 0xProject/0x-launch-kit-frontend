@@ -33,10 +33,10 @@ const CardTabSelectorItem = styled.span<ItemProps>`
 `;
 
 export const CardTabSelector: React.FC<Props> = props => {
-    const { tabs } = props;
+    const { tabs, ...restProps } = props;
 
     return (
-        <CardTabSelectorWrapper>
+        <CardTabSelectorWrapper {...restProps}>
             {tabs.map((item, index) => {
                 return (
                     <CardTabSelectorItem key={index} onClick={item.onClick} active={item.active}>

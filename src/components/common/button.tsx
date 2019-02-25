@@ -5,7 +5,7 @@ import { themeColors } from '../../util/theme';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
-    disabled: boolean;
+    disabled?: boolean;
     theme?: string;
 }
 
