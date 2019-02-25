@@ -8,6 +8,7 @@ import { getTokenBalances, getWeb3State } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
+import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
 import { TH as THBase, THead } from '../common/table';
 
@@ -102,7 +103,10 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
             return (
                 <TR key={symbol}>
-                    <TDTokens>{symbol}</TDTokens>
+                    <TDTokens>
+                        <TokenIcon token={token} />
+                        {`${token.symbol.toUpperCase()} - ${token.name}`}
+                    </TDTokens>
                     <TDBalance>{formattedBalance}</TDBalance>
                     <LockCell isUnlocked={isUnlocked} onClick={onClick} />
                     <TD />

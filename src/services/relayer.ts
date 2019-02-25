@@ -3,20 +3,20 @@ import { HttpClient, SignedOrder } from '@0x/connect';
 import { RELAYER_URL } from '../common/constants';
 
 export class Relayer {
-    private readonly _client: HttpClient;
+    public readonly client: HttpClient;
 
     constructor(client: HttpClient) {
-        this._client = client;
+        this.client = client;
     }
 
     public async getAllOrdersAsync(assetData: string): Promise<SignedOrder[]> {
-        const sellOrders = await this._client
+        const sellOrders = await this.client
             .getOrdersAsync({
                 makerAssetData: assetData,
             })
             .then(page => page.records)
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-        const buyOrders = await this._client
+        const buyOrders = await this.client
             .getOrdersAsync({
                 takerAssetData: assetData,
             })
@@ -27,14 +27,14 @@ export class Relayer {
     }
 
     public async getUserOrdersAsync(account: string, assetData: string): Promise<SignedOrder[]> {
-        const userSellOrders = await this._client
+        const userSellOrders = await this.client
             .getOrdersAsync({
                 makerAddress: account,
                 makerAssetData: assetData,
             })
             .then(page => page.records)
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-        const userBuyOrders = await this._client
+        const userBuyOrders = await this.client
             .getOrdersAsync({
                 makerAddress: account,
                 takerAssetData: assetData,

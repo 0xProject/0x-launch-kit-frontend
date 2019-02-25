@@ -1,9 +1,9 @@
 import { BigNumber, ContractWrappers } from '0x.js';
 
-import { getContractWrappers } from '../services/contract_wrappers';
-import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
+import { Token, TokenBalance } from '../util/types';
 
-import { Token, TokenBalance } from './types';
+import { getContractWrappers } from './contract_wrappers';
+import { getWeb3WrapperOrThrow } from './web3_wrapper';
 
 const MAX_UINT = new BigNumber('115792089237316195423570985008687907853269984665640564039457584007913129639935');
 
