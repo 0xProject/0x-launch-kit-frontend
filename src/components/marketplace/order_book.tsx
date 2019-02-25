@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getOrderBook, getSelectedToken } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrderSide } from '../../util/types';
+import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
@@ -30,7 +30,7 @@ interface State {
 const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
-    const priceColor = order.side === UIOrderSide.Buy ? themeColors.orange : themeColors.green;
+    const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
     const time: string = '';
     const timeColor = time ? '#000' : themeColors.lightGray;
 

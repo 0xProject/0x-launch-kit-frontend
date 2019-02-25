@@ -2,7 +2,7 @@ import { BigNumber, OrderInfo, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
 import { makeBuyOrder, makeSellOrder, mockToken1, uiOrder } from './test-utils';
-import { UIOrderSide } from './types';
+import { OrderSide, UIOrder } from './types';
 import { mergeByPrice, ordersToUIOrders } from './ui_orders';
 
 describe('ordersToUIOrders', () => {
@@ -30,7 +30,7 @@ describe('ordersToUIOrders', () => {
         expect(uiOrders).toHaveLength(1);
         expect(uiOrders[0]).toEqual({
             rawOrder: orders[0],
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber('1'),
             filled: new BigNumber('0'),
             price: new BigNumber('50'),
@@ -62,7 +62,7 @@ describe('ordersToUIOrders', () => {
         expect(uiOrders).toHaveLength(1);
         expect(uiOrders[0]).toEqual({
             rawOrder: orders[0],
-            side: UIOrderSide.Buy,
+            side: OrderSide.Buy,
             size: new BigNumber('1'),
             filled: new BigNumber('0'),
             price: new BigNumber('100'),
@@ -103,7 +103,7 @@ describe('ordersToUIOrders', () => {
         expect(uiOrders).toHaveLength(2);
         expect(uiOrders[0]).toEqual({
             rawOrder: orders[0],
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber('1'),
             filled: new BigNumber('0'),
             price: new BigNumber('50'),
@@ -111,7 +111,7 @@ describe('ordersToUIOrders', () => {
         });
         expect(uiOrders[1]).toEqual({
             rawOrder: orders[1],
-            side: UIOrderSide.Buy,
+            side: OrderSide.Buy,
             size: new BigNumber('1'),
             filled: new BigNumber('0'),
             price: new BigNumber('100'),
@@ -143,7 +143,7 @@ describe('ordersToUIOrders', () => {
         expect(uiOrders).toHaveLength(1);
         expect(uiOrders[0]).toEqual({
             rawOrder: orders[0],
-            side: UIOrderSide.Sell,
+            side: OrderSide.Sell,
             size: new BigNumber('1'),
             filled: new BigNumber('0.5'),
             price: new BigNumber('50'),
@@ -175,7 +175,7 @@ describe('ordersToUIOrders', () => {
         expect(uiOrders).toHaveLength(1);
         expect(uiOrders[0]).toEqual({
             rawOrder: orders[0],
-            side: UIOrderSide.Buy,
+            side: OrderSide.Buy,
             size: new BigNumber('1'),
             filled: new BigNumber('0.75'),
             price: new BigNumber('100'),
@@ -217,17 +217,17 @@ describe('mergeByPrice', () => {
         // given
         const orders = [
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('5.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('3.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('4.00'),
             },
@@ -239,12 +239,12 @@ describe('mergeByPrice', () => {
         // then
         expect(result).toEqual([
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 size: new BigNumber('8.00'),
                 price: new BigNumber('1.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 size: new BigNumber('4.00'),
                 price: new BigNumber('1.01'),
             },
@@ -255,17 +255,17 @@ describe('mergeByPrice', () => {
         // given
         const orders = [
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('5.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('3.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.02'),
                 size: new BigNumber('4.00'),
             },
@@ -277,17 +277,17 @@ describe('mergeByPrice', () => {
         // then
         expect(result).toEqual([
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('5.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('3.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.02'),
                 size: new BigNumber('4.00'),
             },
@@ -297,19 +297,19 @@ describe('mergeByPrice', () => {
         // given
         const orders = [
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('5.00'),
                 filled: new BigNumber('1.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('3.00'),
                 filled: new BigNumber('1.50'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.02'),
                 size: new BigNumber('4.00'),
                 filled: new BigNumber('0.75'),
@@ -322,17 +322,17 @@ describe('mergeByPrice', () => {
         // then
         expect(result).toEqual([
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.00'),
                 size: new BigNumber('4.00'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.01'),
                 size: new BigNumber('1.50'),
             },
             {
-                side: UIOrderSide.Sell,
+                side: OrderSide.Sell,
                 price: new BigNumber('1.02'),
                 size: new BigNumber('3.25'),
             },
