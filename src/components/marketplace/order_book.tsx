@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getOrderBook, getSelectedToken } from '../../store/selectors';
+import { getOrderBook, getSelectedToken, getUserOrders } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrderSide } from '../../util/types';
+import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrder, UIOrderSide } from '../../util/types';
+import { filterByFillableStatus } from '../../util/ui_orders';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
@@ -14,6 +15,7 @@ import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } f
 interface StateProps {
     orderBook: OrderBook;
     selectedToken: Token | null;
+    userOrders: UIOrder[];
 }
 
 type Props = StateProps;
@@ -27,17 +29,44 @@ interface State {
     tab: Tab;
 }
 
-const orderToRow = (order: OrderBookItem, index: number, count: number, selectedToken: Token) => {
+const getMySizeArray = (userOrders: UIOrder[]): OrderBookItem[] => {
+    const filtered = filterByFillableStatus(userOrders);
+    const mySizeArray: any = [];
+    filtered.forEach(order => {
+        const mySizeItem = {
+            size: order.size.minus(order.filled),
+            side: order.side,
+            price: order.price,
+        };
+        mySizeArray.push(mySizeItem);
+    });
+    return mySizeArray;
+};
+
+const orderToRow = (
+    order: OrderBookItem,
+    index: number,
+    count: number,
+    selectedToken: Token,
+    mySizeArray: OrderBookItem[] = [],
+) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
     const priceColor = order.side === UIOrderSide.Buy ? themeColors.orange : themeColors.green;
     const time: string = '';
     const timeColor = time ? '#000' : themeColors.lightGray;
 
+    const mySize = mySizeArray.reduce((sumSize, mySizeItem) => {
+        if (mySizeItem.price.equals(order.price)) {
+            return tokenAmountInUnits(mySizeItem.size, selectedToken.decimals);
+        }
+        return sumSize;
+    }, '0.00');
+
     return (
         <TR key={index}>
             <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{1}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{mySize}</CustomTD>
             <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{price}</CustomTD>
             <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
         </TR>
@@ -50,7 +79,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, selectedToken } = this.props;
+        const { orderBook, selectedToken, userOrders } = this.props;
         const { sellOrders, buyOrders, spread } = orderBook;
 
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
@@ -68,6 +97,15 @@ class OrderBookTable extends React.Component<Props, State> {
                 text: 'History',
             },
         ];
+        const mySizeArray = getMySizeArray(userOrders);
+
+        const mySizeSellArray = mySizeArray.filter((order: { side: UIOrderSide }) => {
+            return order.side === UIOrderSide.Sell;
+        });
+
+        const mySizeBuyArray = mySizeArray.filter((order: { side: UIOrderSide }) => {
+            return order.side === UIOrderSide.Buy;
+        });
 
         let content: React.ReactNode;
 
@@ -87,7 +125,9 @@ class OrderBookTable extends React.Component<Props, State> {
                         </TR>
                     </THead>
                     <tbody>
-                        {sellOrders.map((order, index) => orderToRow(order, index, sellOrders.length, selectedToken))}
+                        {sellOrders.map((order, index) =>
+                            orderToRow(order, index, sellOrders.length, selectedToken, mySizeSellArray),
+                        )}
                         <TR>
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 Spread
@@ -100,7 +140,9 @@ class OrderBookTable extends React.Component<Props, State> {
                                 {}
                             </CustomTDLast>
                         </TR>
-                        {buyOrders.map((order, index) => orderToRow(order, index, buyOrders.length, selectedToken))}
+                        {buyOrders.map((order, index) =>
+                            orderToRow(order, index, buyOrders.length, selectedToken, mySizeBuyArray),
+                        )}
                     </tbody>
                 </Table>
             );
@@ -118,6 +160,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         orderBook: getOrderBook(state),
         selectedToken: getSelectedToken(state),
+        userOrders: getUserOrders(state),
     };
 };
 
