@@ -9,10 +9,17 @@ import { getRelayer } from '../services/relayer';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens, getTokenBySymbol, getWethToken } from '../util/known_tokens';
-import { buildOrder } from '../util/orders';
+import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
 
-import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance } from './selectors';
+import {
+    getEthAccount,
+    getOpenBuyOrders,
+    getOpenSellOrders,
+    getSelectedToken,
+    getTokenBalances,
+    getWethBalance,
+} from './selectors';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: BlockchainState) => resolve(blockchainData);
@@ -191,7 +198,7 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) => {
+export const submitLimitOrder = (amount: BigNumber, price: number, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
@@ -204,7 +211,7 @@ export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) =
 
         const wethAddress = getWethToken(networkId).address;
 
-        const order = buildOrder(
+        const order = buildLimitOrder(
             {
                 account: ethAccount,
                 amount,
@@ -221,6 +228,35 @@ export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) =
 
         await relayer.client.submitOrderAsync(signedOrder);
 
+        dispatch(getAllOrders());
+        dispatch(getUserOrders());
+    };
+};
+
+export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const selectedToken = getSelectedToken(state) as Token;
+
+        const relayer = getRelayer();
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const contractWrappers = await getContractWrappers();
+
+        const wethAddress = getWethToken(networkId).address;
+
+        const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+
+        const [ordersToFill, amounts] = buildMarketOrders(
+            {
+                amount,
+                orders,
+            },
+            side,
+        );
+
+        const tx = await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
         dispatch(getAllOrders());
         dispatch(getUserOrders());
     };

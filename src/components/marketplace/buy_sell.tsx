@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { submitOrder } from '../../store/actions';
+import { submitLimitOrder, submitMarketOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
 import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -18,7 +18,8 @@ interface StateProps {
     selectedTokenSymbol: string;
 }
 interface DispatchProps {
-    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
+    onSubmitLimitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
+    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
 }
 type Props = StateProps & DispatchProps;
 
@@ -106,13 +107,15 @@ class BuySell extends React.Component<Props, State> {
                             </div>
                         </label>
                     </div>
-                    <div>
-                        <label>
-                            Token price
-                            <input type="number" value={price} min={0} onChange={this.updatePrice} />
-                            <span>wETH</span>
-                        </label>
-                    </div>
+                    {orderType === OrderType.Limit && (
+                        <div>
+                            <label>
+                                Token price
+                                <input type="number" value={price} min={0} onChange={this.updatePrice} />
+                                <span>wETH</span>
+                            </label>
+                        </div>
+                    )}
                     <button onClick={tab === Tab.Buy ? this.buy : this.sell}>
                         {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
                     </button>
@@ -136,12 +139,20 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public buy = async () => {
-        await this.props.onSubmitOrder(this.state.makerAmount, this.state.price, OrderSide.Buy);
+        if (this.state.orderType === OrderType.Limit) {
+            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Buy);
+        } else {
+            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Buy);
+        }
         this._reset();
     };
 
     public sell = async () => {
-        await this.props.onSubmitOrder(this.state.makerAmount, this.state.price, OrderSide.Sell);
+        if (this.state.orderType === OrderType.Limit) {
+            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Sell);
+        } else {
+            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Sell);
+        }
         this._reset();
     };
 
@@ -174,7 +185,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const BuySellContainer = connect(
     mapStateToProps,
     {
-        onSubmitOrder: submitOrder,
+        onSubmitLimitOrder: submitLimitOrder,
+        onSubmitMarketOrder: submitMarketOrder,
     },
 )(BuySell);
 
