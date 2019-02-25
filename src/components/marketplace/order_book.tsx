@@ -5,7 +5,6 @@ import { getOrderBook, getSelectedToken, getUserOrders } from '../../store/selec
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, StoreState, TabItem, Token, UIOrder, UIOrderSide } from '../../util/types';
-import { filterByFillableStatus } from '../../util/ui_orders';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
@@ -29,26 +28,12 @@ interface State {
     tab: Tab;
 }
 
-const getMySizeArray = (userOrders: UIOrder[]): OrderBookItem[] => {
-    const filtered = filterByFillableStatus(userOrders);
-    const mySizeArray: any = [];
-    filtered.forEach(order => {
-        const mySizeItem = {
-            size: order.size.minus(order.filled),
-            side: order.side,
-            price: order.price,
-        };
-        mySizeArray.push(mySizeItem);
-    });
-    return mySizeArray;
-};
-
 const orderToRow = (
     order: OrderBookItem,
     index: number,
     count: number,
     selectedToken: Token,
-    mySizeArray: OrderBookItem[] = [],
+    mySizeOrders: OrderBookItem[] = [],
 ) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const price = order.price.toString();
@@ -56,7 +41,7 @@ const orderToRow = (
     const time: string = '';
     const timeColor = time ? '#000' : themeColors.lightGray;
 
-    const mySize = mySizeArray.reduce((sumSize, mySizeItem) => {
+    const mySize = mySizeOrders.reduce((sumSize, mySizeItem) => {
         if (mySizeItem.price.equals(order.price)) {
             return tokenAmountInUnits(mySizeItem.size, selectedToken.decimals);
         }
@@ -79,8 +64,8 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, selectedToken, userOrders } = this.props;
-        const { sellOrders, buyOrders, spread } = orderBook;
+        const { orderBook, selectedToken } = this.props;
+        const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
 
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -97,13 +82,12 @@ class OrderBookTable extends React.Component<Props, State> {
                 text: 'History',
             },
         ];
-        const mySizeArray = getMySizeArray(userOrders);
 
-        const mySizeSellArray = mySizeArray.filter((order: { side: UIOrderSide }) => {
+        const mySizeSellArray = mySizeOrders.filter((order: { side: UIOrderSide }) => {
             return order.side === UIOrderSide.Sell;
         });
 
-        const mySizeBuyArray = mySizeArray.filter((order: { side: UIOrderSide }) => {
+        const mySizeBuyArray = mySizeOrders.filter((order: { side: UIOrderSide }) => {
             return order.side === UIOrderSide.Buy;
         });
 

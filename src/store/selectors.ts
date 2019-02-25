@@ -34,6 +34,21 @@ export const getOpenBuyOrders = createSelector(
     },
 );
 
+export const getMySizeOrders = createSelector(
+    getUserOrders,
+    userOrders => {
+        return userOrders
+            .filter(userOrder => userOrder.status === OrderStatus.Fillable)
+            .map(order => {
+                return {
+                    size: order.size.minus(order.filled),
+                    side: order.side,
+                    price: order.price,
+                };
+            });
+    },
+);
+
 export const getSpread = createSelector(
     getOpenBuyOrders,
     getOpenSellOrders,
@@ -52,11 +67,13 @@ export const getSpread = createSelector(
 export const getOrderBook = createSelector(
     getOpenSellOrders,
     getOpenBuyOrders,
+    getMySizeOrders,
     getSpread,
-    (sellOrders, buyOrders, spread): OrderBook => {
+    (sellOrders, buyOrders, mySizeOrders, spread): OrderBook => {
         return {
             sellOrders: mergeByPrice(sellOrders),
             buyOrders: mergeByPrice(buyOrders),
+            mySizeOrders,
             spread,
         };
     },

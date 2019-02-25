@@ -69,5 +69,6 @@ export interface OrderBookItem {
 export interface OrderBook {
     buyOrders: OrderBookItem[];
     sellOrders: OrderBookItem[];
+    mySizeOrders: OrderBookItem[];
     spread: BigNumber;
 }

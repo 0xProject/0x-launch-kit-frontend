@@ -1,4 +1,4 @@
-import { assetDataUtils, OrderInfo, OrderStatus } from '0x.js';
+import { assetDataUtils, OrderInfo } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
 import { OrderBookItem, Token, UIOrder, UIOrderSide } from '../util/types';
@@ -37,12 +37,6 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
             price,
             status,
         };
-    });
-};
-
-export const filterByFillableStatus = (orders: UIOrder[]): UIOrder[] => {
-    return orders.filter(order => {
-        return order.status === OrderStatus.Fillable;
     });
 };
 
