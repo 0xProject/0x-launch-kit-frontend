@@ -268,18 +268,12 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
-        const selectedToken = getSelectedToken(state) as Token;
 
-        const relayer = getRelayer();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = await getContractWrappers();
-
-        const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
 
-        const [ordersToFill, amounts, filled] = buildMarketOrders(
+        const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
                 orders,
@@ -287,13 +281,8 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             side,
         );
 
-        if (filled) {
-            const tx = await contractWrappers.exchange.batchFillOrdersAsync(
-                ordersToFill,
-                amounts,
-                ethAccount,
-                TX_DEFAULTS,
-            );
+        if (canBeFilled) {
+            await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
             dispatch(getAllOrders());
             dispatch(getUserOrders());
         } else {

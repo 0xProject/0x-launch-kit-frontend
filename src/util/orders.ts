@@ -1,7 +1,7 @@
 import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order, SignedOrder } from '0x.js';
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
-import { OrderBookItem, OrderSide, UIOrder } from '../util/types';
+import { OrderSide, UIOrder } from '../util/types';
 
 interface BuildLimitOrderParams {
     account: string;
@@ -77,7 +77,7 @@ export const buildMarketOrders = (
         }
     }
 
-    const filled = filledAmount.eq(amount);
+    const canBeFilled = filledAmount.eq(amount);
 
-    return [ordersToFill, amounts, filled];
+    return [ordersToFill, amounts, canBeFilled];
 };

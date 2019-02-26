@@ -169,10 +169,10 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [, , filled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const [, , canBeFilled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
-        expect(filled).toBe(true);
+        expect(canBeFilled).toBe(true);
     });
 
     it('should indicate when the amount cannot be filled', async () => {
@@ -184,9 +184,9 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [, , filled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const [, , canBeFilled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
-        expect(filled).toBe(false);
+        expect(canBeFilled).toBe(false);
     });
 });
