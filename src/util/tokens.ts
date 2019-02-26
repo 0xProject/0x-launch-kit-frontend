@@ -2,7 +2,6 @@ import { BigNumber } from '0x.js';
 
 export const tokenAmountInUnits = (amount: BigNumber, decimals: number): string => {
     const decimalsPerToken = new BigNumber(10).pow(decimals);
-
     return amount.div(decimalsPerToken).toFixed(2);
 };
 
