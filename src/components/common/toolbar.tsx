@@ -7,6 +7,7 @@ import { WalletConnectionStatusContainer } from '../account';
 
 import { Logo } from './logo';
 import { MarketsDropdown } from './markets_dropdown';
+import { PriceChange } from './price_change';
 
 const separatorTopbar = `
     &:after {
@@ -77,6 +78,7 @@ export const Toolbar = () => (
         <ToolbarStart>
             <LogoHeader />
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
+            <PriceChange />
         </ToolbarStart>
         <ToolbarEnd>
             <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
