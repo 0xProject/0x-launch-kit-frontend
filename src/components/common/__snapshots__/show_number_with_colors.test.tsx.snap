@@ -10,3 +10,14 @@ exports[`ShowNumberWithColors should be initialized with value 123.0000 1`] = `
   </styled.span>
 </Fragment>
 `;
+
+exports[`ShowNumberWithColors should be initialized with value 123.2200 1`] = `
+<Fragment>
+  <styled.span>
+    123.22
+  </styled.span>
+  <styled.span>
+    00
+  </styled.span>
+</Fragment>
+`;
