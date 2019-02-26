@@ -8,10 +8,12 @@ import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
 import { ChevronDownIcon } from './icons/chevron_down_icon';
 import { MagnifierIcon } from './icons/magnifier_icon';
+import { Loading } from './loading';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 interface State {
+    isLoadingMarkets: boolean;
     selectedFilter: number;
     selectedMarketItem: number;
 }
@@ -126,6 +128,7 @@ const MagnifierIconWrapper = styled.div`
 const TableWrapper = styled.div`
     height: 420px;
     overflow: auto;
+    position: relative;
 `;
 
 const verticalCellPadding = `
@@ -168,6 +171,19 @@ const CustomTDLastStyled = styled(CustomTDLast)`
     ${verticalCellPadding};
 `;
 
+const DayChange = styled.span<{ status?: string }>`
+    ${props => (props.status === 'less' ? `color: ${themeColors.orange};` : '')}
+    ${props => (props.status === 'more' ? `color: ${themeColors.green};` : '')}
+`;
+
+const LoadingStyled = styled(Loading)`
+    left: 50%;
+    min-height: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+`;
+
 const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
 const MARKETS_LIST = [
     {
@@ -180,37 +196,37 @@ const MARKETS_LIST = [
     {
         name: 'ABC / ETH',
         price: '0.55',
-        previousDay: '123',
-        currentDay: '80',
-        dayVol: '515235.00',
+        previousDay: '90',
+        currentDay: '45',
+        dayVol: '435345.48',
     },
     {
         name: 'DEF / ETH',
         price: '0.675',
         previousDay: '900',
-        currentDay: '800',
-        dayVol: '515235.00',
+        currentDay: '900',
+        dayVol: '3453463.04',
     },
     {
         name: 'GHI / ETH',
         price: '0.643',
         previousDay: '78',
         currentDay: '90',
-        dayVol: '515235.00',
+        dayVol: '456.23',
     },
     {
         name: 'ZRX / DAI',
         price: '0.978687',
         previousDay: '12',
-        currentDay: '34',
-        dayVol: '515235.00',
+        currentDay: '26',
+        dayVol: '24534.56',
     },
     {
         name: 'ABC / ETH',
         price: '0.755',
         previousDay: '78',
-        currentDay: '98',
-        dayVol: '515235.00',
+        currentDay: '78',
+        dayVol: '515235.05',
     },
     {
         name: 'CDF / ETH',
@@ -224,36 +240,65 @@ const MARKETS_LIST = [
         price: '0.765',
         previousDay: '90',
         currentDay: '80',
-        dayVol: '515235.00',
+        dayVol: '3948573.34',
     },
     {
         name: 'OMG / ETH',
         price: '0.908',
         previousDay: '55',
-        currentDay: '66',
-        dayVol: '515235.00',
+        currentDay: '55',
+        dayVol: '3455.00',
     },
     {
         name: 'OMG / DAI',
         price: '0.765',
         previousDay: '99',
         currentDay: '101',
-        dayVol: '515235.00',
+        dayVol: '123235.00',
     },
     {
         name: 'ASD / ETH',
         price: '0.543',
         previousDay: '90',
         currentDay: '88',
+        dayVol: '1515235.00',
+    },
+    {
+        name: 'ZRX / DAI',
+        price: '0.978687',
+        previousDay: '12',
+        currentDay: '34',
+        dayVol: '24534.56',
+    },
+    {
+        name: 'ABC / ETH',
+        price: '0.755',
+        previousDay: '78',
+        currentDay: '98',
+        dayVol: '515235.05',
+    },
+    {
+        name: 'CDF / ETH',
+        price: '0.7547',
+        previousDay: '56',
+        currentDay: '78',
         dayVol: '515235.00',
+    },
+    {
+        name: 'GHI / ETH',
+        price: '0.765',
+        previousDay: '90',
+        currentDay: '80',
+        dayVol: '3948573.34',
     },
 ];
 
 export class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
+        isLoadingMarkets: true,
         // Note: this will give you a headache in the long run, so please use redux / mobx or something...
-        selectedMarketItem: 0,
         selectedFilter: 0,
+        selectedMarketItem: 0,
     };
 
     public render = () => {
@@ -275,7 +320,7 @@ export class MarketsDropdown extends React.Component<Props, State> {
                     {this._getTokensFilterTabs()}
                     {this._getSearchField()}
                 </MarketsFilters>
-                <TableWrapper>{this._getMarkets()}</TableWrapper>
+                <TableWrapper>{this.state.isLoadingMarkets ? <LoadingStyled /> : this._getMarkets()}</TableWrapper>
             </MarketsDropdownBody>
         );
 
@@ -283,7 +328,9 @@ export class MarketsDropdown extends React.Component<Props, State> {
     };
 
     public componentDidMount = () => {
-        return;
+        setTimeout(() => {
+            this.setState({ isLoadingMarkets: false });
+        }, 3000);
     };
 
     private readonly _getTokensFilterTabs = () => {
@@ -343,7 +390,7 @@ export class MarketsDropdown extends React.Component<Props, State> {
                                     {item.price}
                                 </CustomTDStyled>
                                 <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
-                                    {item.previousDay}
+                                    {this._getDayChange(item)}
                                 </CustomTDStyled>
                                 <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
                                     {item.dayVol}
@@ -358,5 +405,19 @@ export class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _setSelectedMarket: any = (index: number) => {
         this.setState({ selectedMarketItem: index });
+    };
+
+    private readonly _getDayChange: any = (item: any) => {
+        const previousDay: number = parseFloat(item.previousDay);
+        const currentDay: number = parseFloat(item.currentDay);
+        const percentChange: string = (((currentDay - previousDay) / previousDay) * 100).toFixed(2);
+
+        if (currentDay > previousDay) {
+            return <DayChange status={'more'}>+{percentChange}%</DayChange>;
+        } else if (currentDay < previousDay) {
+            return <DayChange status={'less'}>{percentChange}%</DayChange>;
+        }
+
+        return <DayChange>{percentChange}%</DayChange>;
     };
 }
