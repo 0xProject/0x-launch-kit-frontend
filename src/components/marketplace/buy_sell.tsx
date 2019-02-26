@@ -270,7 +270,7 @@ class BuySell extends React.Component<Props, State> {
         );
     };
 
-    public changeTab = (tab: OrderSide) => () => this.setState({ tab });
+    public changeTab = (tab: OrderSide) => () => this.setState({ tab }, () => this.updateOrderFee());
 
     public updateMakerAmount = (newValue: BigNumber) => {
         this.setState(

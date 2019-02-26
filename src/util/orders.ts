@@ -3,6 +3,8 @@ import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order } from '0x.j
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 import { OrderSide } from '../util/types';
 
+import { tokenAmountInUnits } from './tokens';
+
 interface BuildOrderParams {
     account: string;
     tokenAddress: string;
@@ -36,7 +38,11 @@ export const buildOrder = (params: BuildOrderParams, side: OrderSide): Order => 
     };
 };
 
-export const orderDetailsFeeEther = (orderPrice: BigNumber, orderType: OrderSide, decimals: number = 18): BigNumber => {
+export const orderDetailsFeeEther = (
+    orderPrice: BigNumber,
+    orderType: OrderSide,
+    tokenDecimals: number = 18,
+): BigNumber => {
     let fee = new BigNumber(1);
     if (orderType === OrderSide.Buy) {
         fee = new BigNumber(MAKER_FEE);
@@ -47,6 +53,7 @@ export const orderDetailsFeeEther = (orderPrice: BigNumber, orderType: OrderSide
     }
 
     // Fee is a percentage
-    const feeCalculated = orderPrice.mul(fee).div(100);
-    return new BigNumber(feeCalculated, decimals);
+    const orderPriceConverted = tokenAmountInUnits(orderPrice, tokenDecimals);
+
+    return fee.mul(orderPriceConverted).div(100);
 };
