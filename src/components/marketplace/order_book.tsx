@@ -1,3 +1,4 @@
+import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -9,6 +10,7 @@ import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
+import { ShowNumberWithColors } from '../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
@@ -36,8 +38,10 @@ const orderToRow = (order: OrderBookItem, index: number, count: number, selected
 
     return (
         <TR key={index}>
-            <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{price}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>
+                <ShowNumberWithColors num={new BigNumber(size)} />
+            </CustomTD>
+            <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{parseFloat(price).toFixed(7)}</CustomTD>
             <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
         </TR>
     );
@@ -91,7 +95,7 @@ class OrderBookTable extends React.Component<Props, State> {
                                 Spread
                             </CustomTDTitle>
                             <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                {spread.toFixed(2)}
+                                {spread.toFixed(7)}
                             </CustomTD>
                             <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 {}
