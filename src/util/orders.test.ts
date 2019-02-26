@@ -159,4 +159,34 @@ describe('buildMarketOrders', () => {
         expect(ordersToFill).toEqual([orders[1].rawOrder]);
         expect(amounts).toEqual([new BigNumber(5)]);
     });
+
+    it('should indicate when the amount can be filled', async () => {
+        // given
+        const amount = new BigNumber(5);
+        const orders = [
+            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.0'), size: new BigNumber(3) }),
+            uiOrder({ side: OrderSide.Buy, price: new BigNumber('2.0'), size: new BigNumber(6) }),
+        ];
+
+        // when
+        const [, , filled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+
+        // then
+        expect(filled).toBe(true);
+    });
+
+    it('should indicate when the amount cannot be filled', async () => {
+        // given
+        const amount = new BigNumber(10);
+        const orders = [
+            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.0'), size: new BigNumber(3) }),
+            uiOrder({ side: OrderSide.Buy, price: new BigNumber('2.0'), size: new BigNumber(6) }),
+        ];
+
+        // when
+        const [, , filled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+
+        // then
+        expect(filled).toBe(false);
+    });
 });

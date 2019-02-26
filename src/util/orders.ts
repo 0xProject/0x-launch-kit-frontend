@@ -41,7 +41,10 @@ export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide):
     };
 };
 
-export const buildMarketOrders = (params: BuildMarketOrderParams, side: OrderSide): [SignedOrder[], BigNumber[]] => {
+export const buildMarketOrders = (
+    params: BuildMarketOrderParams,
+    side: OrderSide,
+): [SignedOrder[], BigNumber[], boolean] => {
     const { amount, orders } = params;
 
     // sort orders from best to worse
@@ -74,5 +77,7 @@ export const buildMarketOrders = (params: BuildMarketOrderParams, side: OrderSid
         }
     }
 
-    return [ordersToFill, amounts];
+    const filled = filledAmount.eq(amount);
+
+    return [ordersToFill, amounts, filled];
 };

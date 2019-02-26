@@ -248,7 +248,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
 
-        const [ordersToFill, amounts] = buildMarketOrders(
+        const [ordersToFill, amounts, filled] = buildMarketOrders(
             {
                 amount,
                 orders,
@@ -256,8 +256,17 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             side,
         );
 
-        const tx = await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
+        if (filled) {
+            const tx = await contractWrappers.exchange.batchFillOrdersAsync(
+                ordersToFill,
+                amounts,
+                ethAccount,
+                TX_DEFAULTS,
+            );
+            dispatch(getAllOrders());
+            dispatch(getUserOrders());
+        } else {
+            window.alert('There are no enough orders to fill this amount');
+        }
     };
 };
