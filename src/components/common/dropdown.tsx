@@ -1,4 +1,3 @@
-import { any } from 'prop-types';
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
