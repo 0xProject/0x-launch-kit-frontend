@@ -343,7 +343,7 @@ export class MarketsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _setRef = (node: any) => {
-        this._closeDropdown = node._closeDropdown;
+        this._closeDropdown = node.closeDropdown;
     };
 
     private readonly _getTokensFilterTabs = () => {

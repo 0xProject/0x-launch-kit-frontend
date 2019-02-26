@@ -70,7 +70,7 @@ export class Dropdown extends React.Component<Props, State> {
         document.removeEventListener('mousedown', this._handleClickOutside);
     };
 
-    public _closeDropdown = () => {
+    public closeDropdown = () => {
         this.setState({ isOpen: false });
     };
 
@@ -80,7 +80,7 @@ export class Dropdown extends React.Component<Props, State> {
 
     private readonly _handleClickOutside = (event: any) => {
         if (this._wrapperRef && !this._wrapperRef.contains(event.target)) {
-            this._closeDropdown();
+            this.closeDropdown();
         }
     };
 
@@ -92,7 +92,7 @@ export class Dropdown extends React.Component<Props, State> {
         const { shouldCloseDropdownBodyOnClick = true } = this.props;
 
         if (shouldCloseDropdownBodyOnClick) {
-            this._closeDropdown();
+            this.closeDropdown();
         }
     };
 }
