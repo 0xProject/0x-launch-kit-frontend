@@ -282,7 +282,9 @@ export class MarketsDropdown extends React.Component<Props, State> {
         return <MarketsDropdownWrapper {...restProps} header={header} body={body} />;
     };
 
-    public componentDidMount = () => {};
+    public componentDidMount = () => {
+        return;
+    };
 
     private readonly _getTokensFilterTabs = () => {
         return (
