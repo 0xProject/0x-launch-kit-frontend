@@ -11,7 +11,14 @@ export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
 export const getWethBalance = (state: StoreState) => state.blockchain.wethBalance;
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
-export const getSelectedToken = (state: StoreState) => state.relayer.selectedToken;
+export const getSelectedToken = (state: StoreState) => {
+    const selectedToken = state.relayer.selectedToken;
+    if (selectedToken && selectedToken.symbol) {
+        selectedToken.symbol =
+            selectedToken.symbol.charAt(0).toUpperCase() + selectedToken.symbol.slice(1).toLowerCase();
+    }
+    return selectedToken;
+};
 
 export const getOpenOrders = createSelector(
     getOrders,
