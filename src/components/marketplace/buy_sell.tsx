@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { submitOrder } from '../../store/actions';
+import { openTransactionStepsModal } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
@@ -264,7 +264,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const BuySellContainer = connect(
     mapStateToProps,
     {
-        onSubmitOrder: submitOrder,
+        onSubmitOrder: openTransactionStepsModal,
     },
 )(BuySell);
 

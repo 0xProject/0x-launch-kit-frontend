@@ -10,7 +10,17 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildOrder } from '../util/orders';
-import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
+import {
+    BlockchainState,
+    OrderSide,
+    RelayerState,
+    Token,
+    TokenBalance,
+    TransactionStep,
+    TransactionStepKind,
+    UIOrder,
+    Web3State,
+} from '../util/types';
 
 import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance } from './selectors';
 
@@ -53,6 +63,24 @@ export const setUserOrders = createAction('SET_USER_ORDERS', resolve => {
 export const setSelectedToken = createAction('SET_SELECTED_TOKEN', resolve => {
     return (selectedToken: Token | null) => resolve(selectedToken);
 });
+
+export const setTransactionStepsModalVisibility = createAction('SET_TRANSACTIONSTEPSMODAL_VISIBILITY', resolve => {
+    return (visibility: boolean) => resolve(visibility);
+});
+
+export const setTransactionStepsModalPendingSteps = createAction('SET_TRANSACTIONSTEPSMODAL_PENDING_STEPS', resolve => {
+    return (pendingSteps: TransactionStep[]) => resolve(pendingSteps);
+});
+
+export const setTransactionStepsModalDoneSteps = createAction('SET_TRANSACTIONSTEPSMODAL_DONE_STEPS', resolve => {
+    return (doneSteps: TransactionStep[]) => resolve(doneSteps);
+});
+
+export const setTransactionStepsModalCurrentStep = createAction('SET_TRANSACTIONSTEPSMODAL_CURRENT_STEP', resolve => {
+    return (currentStep: TransactionStep) => resolve(currentStep);
+});
+
+export const transactionStepsModalAdvanceStep = createAction('TRANSACTIONSTEPSMODAL_ADVANCE_STEP');
 
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any) => {
@@ -254,5 +282,41 @@ export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) =
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
+    };
+};
+
+export const openTransactionStepsModal = (amount: BigNumber, price: number, side: OrderSide) => {
+    return async (dispatch: any) => {
+        const pendingSteps: TransactionStep[] = [];
+        // const state = getState();
+        // const wethBalance = getWethBalance(state);
+        // if (wethBalance.lt(amount)) {
+        //     steps.push({
+        //         kind: TransactionStepKind.WrapEth,
+        //         amount,
+        //     });
+        // }
+        //
+        // const selectedToken = getSelectedToken(state) as Token;
+        // const balances = getTokenBalances(state);
+        // const selectedTokenBalance = balances.find(
+        //     balance => balance.token.symbol === selectedToken.symbol,
+        // ) as TokenBalance;
+        // if (!selectedTokenBalance.isUnlocked) {
+        //     steps.push({
+        //         kind: TransactionStepKind.UnlockToken,
+        //         token: selectedToken,
+        //     });
+        // }
+        const step: TransactionStep = {
+            kind: TransactionStepKind.BuySellLimit,
+            amount,
+            price,
+            side,
+        };
+        dispatch(setTransactionStepsModalPendingSteps(pendingSteps));
+        dispatch(setTransactionStepsModalCurrentStep(step));
+        dispatch(setTransactionStepsModalDoneSteps([]));
+        dispatch(setTransactionStepsModalVisibility(true));
     };
 };

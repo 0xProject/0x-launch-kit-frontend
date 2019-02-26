@@ -12,6 +12,10 @@ export const getWethBalance = (state: StoreState) => state.blockchain.wethBalanc
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
 export const getSelectedToken = (state: StoreState) => state.relayer.selectedToken;
+export const getIsTransactionStepsModalVisible = (state: StoreState) => state.transactionStepsModal.isVisible;
+export const getTransactionStepsModalPendingSteps = (state: StoreState) => state.transactionStepsModal.pendingSteps;
+export const getTransactionStepsModalDoneSteps = (state: StoreState) => state.transactionStepsModal.doneSteps;
+export const getTransactionStepsModalCurrentStep = (state: StoreState) => state.transactionStepsModal.currentStep;
 
 export const getOpenOrders = createSelector(
     getOrders,

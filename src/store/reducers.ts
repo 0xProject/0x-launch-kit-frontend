@@ -4,7 +4,14 @@ import { History } from 'history';
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
-import { BlockchainState, RelayerState, StoreState, Web3State } from '../util/types';
+import {
+    BlockchainState,
+    RelayerState,
+    StoreState,
+    TransactionStep,
+    TransactionStepsModalState,
+    Web3State,
+} from '../util/types';
 
 import * as actions from './actions';
 
@@ -22,6 +29,13 @@ const initialRelayerState: RelayerState = {
     orders: [],
     userOrders: [],
     selectedToken: null,
+};
+
+const initialTransactionStepsModal: TransactionStepsModalState = {
+    isVisible: false,
+    doneSteps: [],
+    currentStep: null,
+    pendingSteps: [],
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -56,9 +70,50 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
     return state;
 }
 
+export function transactionStepsModal(
+    state: TransactionStepsModalState = initialTransactionStepsModal,
+    action: RootAction,
+): TransactionStepsModalState {
+    switch (action.type) {
+        case getType(actions.setTransactionStepsModalVisibility):
+            return { ...state, isVisible: action.payload };
+        case getType(actions.setTransactionStepsModalDoneSteps):
+            return { ...state, doneSteps: action.payload };
+        case getType(actions.setTransactionStepsModalPendingSteps):
+            return { ...state, pendingSteps: action.payload };
+        case getType(actions.setTransactionStepsModalCurrentStep):
+            return { ...state, currentStep: action.payload };
+        case getType(actions.transactionStepsModalAdvanceStep):
+            const { doneSteps, currentStep, pendingSteps } = state;
+            if (pendingSteps.length === 0 && currentStep !== null) {
+                return {
+                    ...state,
+                    doneSteps: doneSteps.concat([currentStep as TransactionStep]),
+                    currentStep: null,
+                };
+            } else if (pendingSteps.length > 1) {
+                return {
+                    ...state,
+                    pendingSteps: pendingSteps.slice(0, pendingSteps.length - 1),
+                    doneSteps: doneSteps.concat([currentStep as TransactionStep]),
+                    currentStep: pendingSteps.pop() as TransactionStep,
+                };
+            } else {
+                return {
+                    ...state,
+                    pendingSteps: [],
+                    currentStep: null,
+                    doneSteps: doneSteps.concat([currentStep as TransactionStep]),
+                };
+            }
+    }
+    return state;
+}
+
 export const createRootReducer = (history: History) =>
     combineReducers<StoreState>({
         router: connectRouter(history),
         blockchain,
         relayer,
+        transactionStepsModal,
     });

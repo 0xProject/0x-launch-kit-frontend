@@ -41,10 +41,43 @@ export interface RelayerState {
     readonly selectedToken: Token | null;
 }
 
+export enum TransactionStepKind {
+    WrapEth,
+    UnlockToken,
+    BuySellLimit,
+}
+
+export interface TransactionStepWrapEth {
+    kind: TransactionStepKind.WrapEth;
+    amount: BigNumber;
+}
+
+export interface TransactionStepUnlockToken {
+    kind: TransactionStepKind.UnlockToken;
+    token: Token;
+}
+
+export interface TransactionStepBuySellLimitOrder {
+    kind: TransactionStepKind.BuySellLimit;
+    amount: BigNumber;
+    price: number;
+    side: OrderSide;
+}
+
+export type TransactionStep = TransactionStepWrapEth | TransactionStepUnlockToken | TransactionStepBuySellLimitOrder;
+
+export interface TransactionStepsModalState {
+    readonly isVisible: boolean;
+    readonly doneSteps: TransactionStep[];
+    readonly currentStep: TransactionStep | null;
+    readonly pendingSteps: TransactionStep[];
+}
+
 export interface StoreState {
     readonly router: RouterState;
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
+    readonly transactionStepsModal: TransactionStepsModalState;
 }
 
 export enum OrderSide {
