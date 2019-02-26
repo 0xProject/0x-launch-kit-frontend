@@ -35,3 +35,18 @@ export const buildOrder = (params: BuildOrderParams, side: OrderSide): Order => 
         senderAddress: '0x0000000000000000000000000000000000000000',
     };
 };
+
+export const orderDetailsFeeEther = (orderPrice: BigNumber, orderType: OrderSide, decimals: number = 18): BigNumber => {
+    let fee = new BigNumber(1);
+    if (orderType === OrderSide.Buy) {
+        fee = new BigNumber(MAKER_FEE);
+    }
+
+    if (orderType === OrderSide.Sell) {
+        fee = new BigNumber(TAKER_FEE);
+    }
+
+    // Fee is a percentage
+    const feeCalculated = orderPrice.mul(fee).div(100);
+    return new BigNumber(feeCalculated, decimals);
+};

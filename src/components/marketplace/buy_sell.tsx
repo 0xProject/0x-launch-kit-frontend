@@ -5,17 +5,13 @@ import styled from 'styled-components';
 
 import { submitOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
+import { orderDetailsFeeEther } from '../../util/orders';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
-
-enum Tab {
-    Buy,
-    Sell,
-}
 
 interface StateProps {
     selectedTokenSymbol: string;
@@ -39,10 +35,11 @@ enum OrderDetailsType {
 
 interface State {
     makerAmount: BigNumber;
+    orderFee: BigNumber;
     orderType: OrderType;
     orderDetailType: OrderDetailsType;
     price: number;
-    tab: Tab;
+    tab: OrderSide;
 }
 
 const BuySellWrapper = styled(CardBase)`
@@ -180,10 +177,11 @@ const Value = styled.div`
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
+        orderFee: new BigNumber(0),
         orderType: OrderType.Limit,
         orderDetailType: OrderDetailsType.Eth,
         price: 0,
-        tab: Tab.Buy,
+        tab: OrderSide.Buy,
     };
 
     public render = () => {
@@ -219,16 +217,16 @@ class BuySell extends React.Component<Props, State> {
         return (
             <BuySellWrapper>
                 <TabsContainer>
-                    <TabButton isSelected={tab === Tab.Buy} onClick={this.changeTab(Tab.Buy)}>
+                    <TabButton isSelected={tab === OrderSide.Buy} onClick={this.changeTab(OrderSide.Buy)}>
                         Buy
                     </TabButton>
-                    <TabButton isSelected={tab === Tab.Sell} onClick={this.changeTab(Tab.Sell)}>
+                    <TabButton isSelected={tab === OrderSide.Sell} onClick={this.changeTab(OrderSide.Sell)}>
                         Sell
                     </TabButton>
                 </TabsContainer>
                 <Content>
                     <LabelContainer>
-                        <Label>I want to {tab === Tab.Buy ? 'buy' : 'sell'}</Label>
+                        <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
                         <InnerTabs tabs={buySellInnerTabs} />
                     </LabelContainer>
                     <FieldContainer>
@@ -259,30 +257,41 @@ class BuySell extends React.Component<Props, State> {
                     <Row>
                         <Label color={themeColors.textLight}>Fee</Label>
                         <Value>
-                            {orderDetailType === OrderDetailsType.Usd ? '$' : 'Eth'} {1}
+                            {orderDetailType === OrderDetailsType.Usd ? '$' : 'Eth'}{' '}
+                            {orderDetailType === OrderDetailsType.Usd ? '$' : this.state.orderFee.toString()}
                         </Value>
                     </Row>
 
-                    <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
-                        {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
+                    <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
+                        {tab === OrderSide.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
                     </Button>
                 </Content>
             </BuySellWrapper>
         );
     };
 
-    public changeTab = (tab: Tab) => () => this.setState({ tab });
+    public changeTab = (tab: OrderSide) => () => this.setState({ tab });
 
     public updateMakerAmount = (newValue: BigNumber) => {
-        this.setState({
-            makerAmount: newValue,
-        });
+        this.setState(
+            {
+                makerAmount: newValue,
+            },
+            () => this.updateOrderFee(),
+        );
     };
 
     public updatePrice: React.ReactEventHandler<HTMLInputElement> = e => {
         const price = parseFloat(e.currentTarget.value);
+        this.setState({ price }, () => this.updateOrderFee());
+    };
 
-        this.setState({ price });
+    public updateOrderFee = () => {
+        const orderPrice = this.state.makerAmount.mul(this.state.price);
+        const orderFee = orderDetailsFeeEther(orderPrice, this.state.tab);
+        this.setState({
+            orderFee,
+        });
     };
 
     public buy = async () => {
