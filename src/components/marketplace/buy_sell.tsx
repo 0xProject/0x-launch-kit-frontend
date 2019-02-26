@@ -35,7 +35,8 @@ enum OrderDetailsType {
 
 interface State {
     makerAmount: BigNumber;
-    orderFee: BigNumber;
+    orderFeeEther: BigNumber;
+    orderFeeDollar: BigNumber;
     orderType: OrderType;
     orderDetailType: OrderDetailsType;
     price: number;
@@ -177,7 +178,8 @@ const Value = styled.div`
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
-        orderFee: new BigNumber(0),
+        orderFeeEther: new BigNumber(0),
+        orderFeeDollar: new BigNumber(0),
         orderType: OrderType.Limit,
         orderDetailType: OrderDetailsType.Eth,
         price: 0,
@@ -257,8 +259,9 @@ class BuySell extends React.Component<Props, State> {
                     <Row>
                         <Label color={themeColors.textLight}>Fee</Label>
                         <Value>
-                            {orderDetailType === OrderDetailsType.Usd ? '$' : 'Eth'}{' '}
-                            {orderDetailType === OrderDetailsType.Usd ? '$' : this.state.orderFee.toString()}
+                            {orderDetailType === OrderDetailsType.Usd
+                                ? `$ ${this.state.orderFeeDollar.toString()}`
+                                : `${this.state.orderFeeEther.toString()} Eth`}
                         </Value>
                     </Row>
 
@@ -288,9 +291,9 @@ class BuySell extends React.Component<Props, State> {
 
     public updateOrderFee = () => {
         const orderPrice = this.state.makerAmount.mul(this.state.price);
-        const orderFee = orderDetailsFeeEther(orderPrice, this.state.tab);
+        const orderFeeEther = orderDetailsFeeEther(orderPrice, this.state.tab);
         this.setState({
-            orderFee,
+            orderFeeEther,
         });
     };
 
