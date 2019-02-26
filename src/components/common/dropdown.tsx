@@ -1,3 +1,4 @@
+import { any } from 'prop-types';
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
@@ -70,6 +71,10 @@ export class Dropdown extends React.Component<Props, State> {
         document.removeEventListener('mousedown', this._handleClickOutside);
     };
 
+    public _closeDropdown = () => {
+        this.setState({ isOpen: false });
+    };
+
     private readonly _setWrapperRef = (node: any) => {
         this._wrapperRef = node;
     };
@@ -78,10 +83,6 @@ export class Dropdown extends React.Component<Props, State> {
         if (this._wrapperRef && !this._wrapperRef.contains(event.target)) {
             this._closeDropdown();
         }
-    };
-
-    private readonly _closeDropdown = () => {
-        this.setState({ isOpen: false });
     };
 
     private readonly _toggleDropwdown = () => {

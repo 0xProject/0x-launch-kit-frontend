@@ -108,11 +108,16 @@ const SearchField = styled.input`
     font-size: 13px;
     height: ${searchFieldHeight};
     left: 0;
+    outline: none;
     padding: 0 15px 0 30px;
     position: absolute;
     top: 0;
     width: ${searchFieldWidth};
     z-index: 1;
+
+    &:focus {
+        border-color: #aaa;
+    }
 `;
 
 const MagnifierIconWrapper = styled.div`
@@ -295,11 +300,13 @@ const MARKETS_LIST = [
 
 export class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
-        isLoadingMarkets: true,
         // Note: this will give you a headache in the long run, so please use redux / mobx or something...
+        isLoadingMarkets: true,
         selectedFilter: 0,
         selectedMarketItem: 0,
     };
+
+    private _closeDropdown: any;
 
     public render = () => {
         const { ...restProps } = this.props;
@@ -324,13 +331,19 @@ export class MarketsDropdown extends React.Component<Props, State> {
             </MarketsDropdownBody>
         );
 
-        return <MarketsDropdownWrapper {...restProps} header={header} body={body} />;
+        return (
+            <MarketsDropdownWrapper
+                body={body}
+                header={header}
+                onClick={this._loadMarkets}
+                ref={this._setRef}
+                {...restProps}
+            />
+        );
     };
 
-    public componentDidMount = () => {
-        setTimeout(() => {
-            this.setState({ isLoadingMarkets: false });
-        }, 3000);
+    private readonly _setRef = (node: any) => {
+        this._closeDropdown = node._closeDropdown;
     };
 
     private readonly _getTokensFilterTabs = () => {
@@ -353,6 +366,13 @@ export class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _setTokensFilterTab: any = (index: number) => {
         this.setState({ selectedFilter: index });
+    };
+
+    private readonly _loadMarkets = () => {
+        // This is only for showing the 'loading' component, delete ASAP
+        setTimeout(() => {
+            this.setState({ isLoadingMarkets: false });
+        }, 2000);
     };
 
     private readonly _getSearchField = () => {
@@ -405,6 +425,7 @@ export class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _setSelectedMarket: any = (index: number) => {
         this.setState({ selectedMarketItem: index });
+        this._closeDropdown();
     };
 
     private readonly _getDayChange: any = (item: any) => {
