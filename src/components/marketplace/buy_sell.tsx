@@ -32,9 +32,15 @@ enum OrderType {
     Market,
 }
 
+enum OrderDetailsType {
+    Eth,
+    Usd,
+}
+
 interface State {
     makerAmount: BigNumber;
     orderType: OrderType;
+    orderDetailType: OrderDetailsType;
     price: number;
     tab: Tab;
 }
@@ -87,8 +93,8 @@ const LabelContainer = styled.div`
     margin-bottom: 10px;
 `;
 
-const Label = styled.label`
-    color: #000;
+const Label = styled.label<{ color?: string }>`
+    color: ${props => (props.color ? props.color : '#000')};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -143,17 +149,46 @@ const TokenText = styled.span`
     text-align: right;
 `;
 
+const Row = styled.div`
+    align-items: center;
+    border-bottom: solid 1px ${themeColors.borderColor};
+    display: flex;
+    justify-content: space-between;
+    padding: 15px ${themeDimensions.horizontalPadding};
+    position: relative;
+    z-index: 1;
+
+    &:first-child {
+        padding-top: 5px;
+    }
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 5px;
+    }
+`;
+
+const Value = styled.div`
+    color: #000;
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+`;
+
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
         orderType: OrderType.Limit,
+        orderDetailType: OrderDetailsType.Eth,
         price: 0,
         tab: Tab.Buy,
     };
 
     public render = () => {
         const { selectedTokenSymbol } = this.props;
-        const { makerAmount, price, tab, orderType } = this.state;
+        const { makerAmount, price, tab, orderType, orderDetailType } = this.state;
 
         const buySellInnerTabs = [
             {
@@ -165,6 +200,19 @@ class BuySell extends React.Component<Props, State> {
                 active: orderType === OrderType.Limit,
                 onClick: this._switchToLimit,
                 text: 'Limit',
+            },
+        ];
+
+        const ethUsdTabs = [
+            {
+                active: orderDetailType === OrderDetailsType.Eth,
+                onClick: this._switchToEth,
+                text: 'ETH',
+            },
+            {
+                active: orderDetailType === OrderDetailsType.Usd,
+                onClick: this._switchToUsd,
+                text: 'USD',
             },
         ];
 
@@ -203,6 +251,18 @@ class BuySell extends React.Component<Props, State> {
                             <TokenText>wETH</TokenText>
                         </TokenContainer>
                     </FieldContainer>
+
+                    <LabelContainer>
+                        <Label>Order Details</Label>
+                        <InnerTabs tabs={ethUsdTabs} />
+                    </LabelContainer>
+                    <Row>
+                        <Label color={themeColors.textLight}>Fee</Label>
+                        <Value>
+                            {orderDetailType === OrderDetailsType.Usd ? '$' : 'Eth'} {1}
+                        </Value>
+                    </Row>
+
                     <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
                         {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
                     </Button>
@@ -251,6 +311,18 @@ class BuySell extends React.Component<Props, State> {
     private readonly _switchToLimit = () => {
         this.setState({
             orderType: OrderType.Limit,
+        });
+    };
+
+    private readonly _switchToUsd = () => {
+        this.setState({
+            orderDetailType: OrderDetailsType.Usd,
+        });
+    };
+
+    private readonly _switchToEth = () => {
+        this.setState({
+            orderDetailType: OrderDetailsType.Eth,
         });
     };
 }
