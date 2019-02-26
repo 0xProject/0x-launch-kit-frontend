@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ShowNumberWithColors should be initialized with value 123.0000 1`] = `
+<Fragment>
+  <styled.span>
+    123
+  </styled.span>
+  <styled.span>
+    .0000
+  </styled.span>
+</Fragment>
+`;
