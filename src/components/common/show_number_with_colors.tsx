@@ -13,7 +13,7 @@ interface ShowNumberWithColorsProps {
 class ShowNumberWithColors extends React.Component<ShowNumberWithColorsProps, {}> {
     public static defaultProps = {
         leftColor: '#000',
-        rightColor: '#DEDEDE',
+        rightColor: '#B9B9B9',
     };
 
     public render = () => {
