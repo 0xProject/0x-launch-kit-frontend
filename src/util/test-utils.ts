@@ -7,12 +7,14 @@ export const mockToken1: Token = {
     address: '0xBA50C9066a29268904Bd074C1C6A17f3575a84e7',
     decimals: 18,
     symbol: 'MOCK1',
+    name: 'mockToken1',
 };
 
 const mockToken2: Token = {
     address: '0x1F7B687533F4Afa4fAA41c2D2fBca05Cc0C3Fd65',
     decimals: 18,
     symbol: 'MOCK2',
+    name: 'mockToken2',
 };
 
 export const makeSellOrder = ({

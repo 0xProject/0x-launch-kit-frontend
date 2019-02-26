@@ -5,9 +5,12 @@ import styled from 'styled-components';
 
 import { submitLimitOrder, submitMarketOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
+import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
-import { Card } from '../common/card';
+import { Button } from '../common/button';
+import { CardBase } from '../common/card_base';
+import { CardTabSelector } from '../common/card_tab_selector';
 
 enum Tab {
     Buy,
@@ -17,110 +20,199 @@ enum Tab {
 interface StateProps {
     selectedTokenSymbol: string;
 }
+
 interface DispatchProps {
     onSubmitLimitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
     onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
 }
+
 type Props = StateProps & DispatchProps;
 
 enum OrderType {
-    Market,
     Limit,
+    Market,
 }
 
 interface State {
     makerAmount: BigNumber;
+    orderType: OrderType;
     price: number;
     tab: Tab;
-    orderType: OrderType;
 }
 
+const BuySellWrapper = styled(CardBase)`
+    margin-bottom: ${themeDimensions.verticalSeparation};
+`;
+
 const Content = styled.div`
-    padding: 10px 18px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px ${themeDimensions.horizontalPadding};
+`;
+
+const TabsContainer = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
 `;
 
 const TabButton = styled.div<{ isSelected: boolean }>`
-    display: inline-block;
+    align-items: center;
+    background-color: ${props => (props.isSelected ? 'transparent' : '#f9f9f9')};
+    border-bottom-color: ${props => (props.isSelected ? 'transparent' : themeColors.borderColor)};
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+    border-right-style: solid;
+    border-right-width: 1px;
+    color: ${props => (props.isSelected ? themeColors.green : themeColors.textLight)};
+    cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
+    display: flex;
+    font-weight: 600;
+    height: 47px;
+    justify-content: center;
     width: 50%;
-    cursor: pointer;
-    text-align: center;
-    padding: 1rem 0;
 
-    font-weight: ${props => (props.isSelected ? 'bold' : 'normal')}
-    background-color: ${props => (props.isSelected ? 'white' : '#f9f9f9')}
-    border-bottom: ${props => (props.isSelected ? '0' : '1px solid #dedede')}
+    &:last-child {
+        border-left-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+        border-left-style: solid;
+        border-left-width: 1px;
+        border-right: none;
+    }
 `;
 
-const BuyTab = styled(TabButton)`
-    border-right: ${props => (props.isSelected ? '0' : '1px solid #dedede')};
+const LabelContainer = styled.div`
+    align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
 `;
-const SellTab = styled(TabButton)`
-    border-left: ${props => (props.isSelected ? '0' : '1px solid #dedede')};
+
+const Label = styled.label`
+    color: #000;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    margin: 0;
+`;
+
+const InnerTabs = styled(CardTabSelector)`
+    font-size: 14px;
+`;
+
+const FieldContainer = styled.div`
+    height: ${themeDimensions.fieldHeight};
+    margin-bottom: 25px;
+    position: relative;
+`;
+
+const fieldStyle = `
+    border: 1px solid ${themeColors.borderColor};
+    border-radius: ${themeDimensions.borderRadius};
+    color: #000;
+    font-size: 16px;
+    height: 100%;
+    padding-left: 14px;
+    padding-right: 60px;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+`;
+
+const BigInputNumberStyled = styled<any>(BigNumberInput)`
+    ${fieldStyle}
+`;
+
+const FieldStyled = styled.input`
+    ${fieldStyle}
+`;
+
+const TokenContainer = styled.div`
+    display: flex;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 12;
+`;
+
+const TokenText = styled.span`
+    color: #333;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 21px;
+    text-align: right;
 `;
 
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
+        orderType: OrderType.Limit,
         price: 0,
         tab: Tab.Buy,
-        orderType: OrderType.Limit,
     };
 
     public render = () => {
         const { selectedTokenSymbol } = this.props;
         const { makerAmount, price, tab, orderType } = this.state;
 
+        const buySellInnerTabs = [
+            {
+                active: orderType === OrderType.Market,
+                onClick: this._switchToMarket,
+                text: 'Market',
+            },
+            {
+                active: orderType === OrderType.Limit,
+                onClick: this._switchToLimit,
+                text: 'Limit',
+            },
+        ];
+
         return (
-            <Card>
-                <BuyTab isSelected={tab === Tab.Buy} onClick={this.changeTab(Tab.Buy)}>
-                    Buy
-                </BuyTab>
-                <SellTab isSelected={tab === Tab.Sell} onClick={this.changeTab(Tab.Sell)}>
-                    Sell
-                </SellTab>
+            <BuySellWrapper>
+                <TabsContainer>
+                    <TabButton isSelected={tab === Tab.Buy} onClick={this.changeTab(Tab.Buy)}>
+                        Buy
+                    </TabButton>
+                    <TabButton isSelected={tab === Tab.Sell} onClick={this.changeTab(Tab.Sell)}>
+                        Sell
+                    </TabButton>
+                </TabsContainer>
                 <Content>
-                    <div>
-                        <label>
-                            I want to {tab === Tab.Buy ? 'buy' : 'sell'}
-                            <BigNumberInput
-                                value={makerAmount}
-                                min={new BigNumber(0)}
-                                onChange={this.updateMakerAmount}
-                                decimals={18}
-                            />
-                            {selectedTokenSymbol}
-                            <div style={{ display: 'inline-block' }}>
-                                &nbsp;&nbsp;&nbsp;
-                                <span
-                                    style={{ fontWeight: orderType === OrderType.Market ? 'bold' : 'normal' }}
-                                    onClick={this._switchToMarket}
-                                >
-                                    Market
-                                </span>
-                                /
-                                <span
-                                    style={{ fontWeight: orderType === OrderType.Limit ? 'bold' : 'normal' }}
-                                    onClick={this._switchToLimit}
-                                >
-                                    Limit
-                                </span>
-                            </div>
-                        </label>
-                    </div>
+                    <LabelContainer>
+                        <Label>I want to {tab === Tab.Buy ? 'buy' : 'sell'}</Label>
+                        <InnerTabs tabs={buySellInnerTabs} />
+                    </LabelContainer>
+                    <FieldContainer>
+                        <BigInputNumberStyled
+                            decimals={18}
+                            min={new BigNumber(0)}
+                            onChange={this.updateMakerAmount}
+                            value={makerAmount}
+                        />
+                        <TokenContainer>
+                            <TokenText>{selectedTokenSymbol}</TokenText>
+                        </TokenContainer>
+                    </FieldContainer>
                     {orderType === OrderType.Limit && (
-                        <div>
-                            <label>
-                                Token price
-                                <input type="number" value={price} min={0} onChange={this.updatePrice} />
-                                <span>wETH</span>
-                            </label>
-                        </div>
+                        <>
+                            <LabelContainer>
+                                <Label>Token price</Label>
+                            </LabelContainer>
+                            <FieldContainer>
+                                <FieldStyled type="number" value={price} min={0} onChange={this.updatePrice} />
+                                <TokenContainer>
+                                    <TokenText>wETH</TokenText>
+                                </TokenContainer>
+                            </FieldContainer>
+                        </>
                     )}
-                    <button onClick={tab === Tab.Buy ? this.buy : this.sell}>
+                    <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
                         {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
-                    </button>
+                    </Button>
                 </Content>
-            </Card>
+            </BuySellWrapper>
         );
     };
 

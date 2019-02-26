@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getSelectedToken, getUserOrders } from '../../store/selectors';
+import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderSide, StoreState, TabItem, Token, UIOrder } from '../../util/types';
 import { Card } from '../common/card';
@@ -31,7 +32,7 @@ interface State {
 type Props = StateProps;
 
 const SideTD = styled(CustomTD)<{ side: OrderSide }>`
-    color: ${props => (props.side === OrderSide.Buy ? '#3CB34F' : '#FF6534')};
+    color: ${props => (props.side === OrderSide.Buy ? themeColors.green : themeColors.orange)};
 `;
 
 const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {

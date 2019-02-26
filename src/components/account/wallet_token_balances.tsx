@@ -3,11 +3,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { unlockToken } from '../../store/actions';
+import { lockToken, unlockToken } from '../../store/actions';
 import { getTokenBalances, getWeb3State } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
+import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
 import { TH as THBase, THead } from '../common/table';
 
@@ -17,6 +18,7 @@ interface StateProps {
 }
 interface DispatchProps {
     onUnlockToken: (token: Token) => void;
+    onLockToken: (token: Token) => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -68,7 +70,7 @@ const TDBalance = styled(TD)`
 const TDLock = styled(TD)<{ isUnlocked: boolean }>`
     min-width: 6em;
     text-align: center;
-    cursor: ${props => (props.isUnlocked ? 'default' : 'pointer')};
+    cursor: pointer;
     color: ${props => (props.isUnlocked ? '#c4c4c4' : 'black')};
 `;
 
@@ -87,7 +89,7 @@ const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
 
 class WalletTokenBalances extends React.PureComponent<Props> {
     public render = () => {
-        const { tokenBalances, onUnlockToken, web3State } = this.props;
+        const { tokenBalances, onUnlockToken, onLockToken, web3State } = this.props;
 
         const rows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
@@ -96,14 +98,15 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             const formattedBalance = tokenAmountInUnits(balance, token.decimals);
 
             const onClick = () => {
-                if (!isUnlocked) {
-                    onUnlockToken(token);
-                }
+                isUnlocked ? onLockToken(token) : onUnlockToken(token);
             };
 
             return (
                 <TR key={symbol}>
-                    <TDTokens>{symbol}</TDTokens>
+                    <TDTokens>
+                        <TokenIcon token={token} />
+                        {`${token.symbol.toUpperCase()} - ${token.name}`}
+                    </TDTokens>
                     <TDBalance>{formattedBalance}</TDBalance>
                     <LockCell isUnlocked={isUnlocked} onClick={onClick} />
                     <TD />
@@ -142,6 +145,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 };
 const mapDispatchToProps = {
     onUnlockToken: unlockToken,
+    onLockToken: lockToken,
 };
 
 const WalletTokenBalancesContainer = connect(

@@ -8,7 +8,7 @@ import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } fr
 import { getRelayer } from '../services/relayer';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
-import { getKnownTokens, getTokenBySymbol, getWethToken } from '../util/known_tokens';
+import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
 
@@ -85,6 +85,35 @@ export const unlockToken = (token: Token) => {
     };
 };
 
+export const lockToken = (token: Token) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const tokenBalances = getTokenBalances(state);
+
+        const contractWrappers = await getContractWrappers();
+
+        await contractWrappers.erc20Token.setProxyAllowanceAsync(
+            token.address,
+            ethAccount,
+            new BigNumber('0'),
+            TX_DEFAULTS,
+        );
+
+        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
+            if (tokenBalance.token.address !== token.address) {
+                return tokenBalance;
+            }
+            return {
+                ...tokenBalance,
+                isUnlocked: false,
+            };
+        });
+
+        dispatch(setTokenBalances(updatedTokenBalances));
+    };
+};
+
 export const updateWethBalance = (newWethBalance: BigNumber) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
@@ -93,7 +122,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
 
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
-        const wethAddress = getWethToken(networkId).address;
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const contractWrappers = await getContractWrappers();
 
@@ -135,14 +164,16 @@ export const initWallet = () => {
 
             const knownTokens = getKnownTokens(networkId);
 
-            const tokenBalances = await Promise.all(knownTokens.map(token => tokenToTokenBalance(token, ethAccount)));
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
 
-            const wethToken = getWethToken(networkId);
+            const wethToken = knownTokens.getWethToken();
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
-            const selectedToken = getTokenBySymbol(networkId, 'ZRX');
+            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
 
             dispatch(
                 initializeBlockchainData({
@@ -209,7 +240,7 @@ export const submitLimitOrder = (amount: BigNumber, price: number, side: OrderSi
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = await getContractWrappers();
 
-        const wethAddress = getWethToken(networkId).address;
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const order = buildLimitOrder(
             {
@@ -244,7 +275,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = await getContractWrappers();
 
-        const wethAddress = getWethToken(networkId).address;
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
 

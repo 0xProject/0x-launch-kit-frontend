@@ -11,6 +11,7 @@ export interface TabItem {
 export interface Token {
     address: string;
     decimals: number;
+    name: string;
     symbol: string;
 }
 
@@ -69,5 +70,6 @@ export interface OrderBookItem {
 export interface OrderBook {
     buyOrders: OrderBookItem[];
     sellOrders: OrderBookItem[];
+    mySizeOrders: OrderBookItem[];
     spread: BigNumber;
 }
