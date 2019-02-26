@@ -53,7 +53,7 @@ const orderToRow = (
     return (
         <TR key={index}>
             <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{mySizeConverted}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{mySizeConverted !== '0.00' ? mySizeConverted : '-'}</CustomTD>
             <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{price}</CustomTD>
             <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
         </TR>
