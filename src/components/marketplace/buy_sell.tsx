@@ -260,7 +260,7 @@ class BuySell extends React.Component<Props, State> {
                         <Label color={themeColors.textLight}>Fee</Label>
                         <Value>
                             {orderDetailType === OrderDetailsType.Usd
-                                ? `$ ${this.state.orderFeeDollar.toString()}`
+                                ? `$ ${this.state.orderFeeDollar.toFixed(2)}`
                                 : `${this.state.orderFeeEther.toString()} Eth`}
                         </Value>
                     </Row>

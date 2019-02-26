@@ -55,7 +55,6 @@ export const orderDetailsFeeEther = (
 
     // Fee is a percentage
     const orderPriceConverted = tokenAmountInUnits(orderPrice, tokenDecimals);
-
     return fee.mul(orderPriceConverted).div(100);
 };
 
@@ -63,9 +62,9 @@ export const orderDetailsFeeDollar = async (
     orderPrice: BigNumber,
     orderType: OrderSide,
     tokenDecimals: number = 18,
-): Promise<any> => {
+): Promise<BigNumber> => {
     const priceInEther = orderDetailsFeeEther(orderPrice, orderType, tokenDecimals);
     const priceInDollar = await GetEthereumPriceInUSD();
 
-    return priceInEther.mul(priceInDollar).toFixed(2);
+    return priceInEther.mul(priceInDollar);
 };
