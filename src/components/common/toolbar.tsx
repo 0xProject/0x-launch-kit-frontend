@@ -2,11 +2,26 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../util/theme';
+import { themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
 
-import { Dropdown } from './dropdown';
 import { Logo } from './logo';
+import { MarketsDropdown } from './markets_dropdown';
+
+const separatorTopbar = `
+    &:after {
+        background-color: ${themeColors.borderColor};
+        content: "";
+        height: 26px;
+        margin-left: 17px;
+        margin-right: 17px;
+        width: 1px;
+    }
+
+    &:last-child:after {
+        display: none;
+    }
+`;
 
 const ToolbarWrapper = styled.div`
     align-items: center;
@@ -19,6 +34,7 @@ const ToolbarWrapper = styled.div`
     justify-content: space-between;
     padding: 0 ${themeDimensions.horizontalPadding};
     position: sticky;
+    z-index: 123;
 `;
 
 const MyWalletLink = styled(Link)`
@@ -33,16 +49,35 @@ const MyWalletLink = styled(Link)`
     }
 `;
 
+const ToolbarStart = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+`;
+
 const ToolbarEnd = styled.div`
     align-items: center;
     display: flex;
     justify-content: flex-end;
 `;
 
+const LogoHeader = styled(Logo)`
+    ${separatorTopbar}
+`;
+
+const MarketsDropdownHeader = styled<any>(MarketsDropdown)`
+    align-items: center;
+    display: flex;
+
+    ${separatorTopbar}
+`;
+
 export const Toolbar = () => (
     <ToolbarWrapper>
-        <Logo />
-        <Dropdown header="<div>head</div>" body="<div>body</div>" />
+        <ToolbarStart>
+            <LogoHeader />
+            <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
+        </ToolbarStart>
         <ToolbarEnd>
             <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
             <WalletConnectionStatusContainer />

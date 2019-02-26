@@ -1,7 +1,17 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+export enum DropdownPositions {
+    Center,
+    Left,
+    Right,
+}
+
+interface DropdownWrapperBodyProps {
+    horizontalPosition?: DropdownPositions;
+}
+
+interface Props extends HTMLAttributes<HTMLDivElement>, DropdownWrapperBodyProps {
     body: React.ReactNode;
     header: React.ReactNode;
     shouldCloseDropdownBodyOnClick?: boolean;
@@ -16,9 +26,15 @@ const DropdownWrapperHeader = styled.div`
     position: relative;
 `;
 
-const DropdownWrapperBody = styled.div`
+const DropdownWrapperBody = styled.div<DropdownWrapperBodyProps>`
     position: absolute;
-    top: calc(100% + 10px);
+    top: calc(100% + 15px);
+
+    ${props => (props.horizontalPosition === DropdownPositions.Left ? 'left: 0;' : '')}
+
+    ${props => (props.horizontalPosition === DropdownPositions.Center ? 'left: 50%; transform: translateX(-50%);' : '')}
+
+    ${props => (props.horizontalPosition === DropdownPositions.Right ? 'right: 0;' : '')}
 `;
 
 interface State {
@@ -26,20 +42,21 @@ interface State {
 }
 
 export class Dropdown extends React.Component<Props, State> {
-    private _wrapperRef: any;
-
     public readonly state: State = {
         isOpen: false,
     };
+    private _wrapperRef: any;
 
     public render = () => {
-        const { header, body } = this.props;
+        const { header, body, horizontalPosition = DropdownPositions.Left, ...restProps } = this.props;
 
         return (
-            <DropdownWrapper ref={this._setWrapperRef}>
+            <DropdownWrapper ref={this._setWrapperRef} {...restProps}>
                 <DropdownWrapperHeader onClick={this._toggleDropwdown}>{header}</DropdownWrapperHeader>
                 {this.state.isOpen ? (
-                    <DropdownWrapperBody onClick={this._closeDropwdownBody}>{body}</DropdownWrapperBody>
+                    <DropdownWrapperBody horizontalPosition={horizontalPosition} onClick={this._closeDropwdownBody}>
+                        {body}
+                    </DropdownWrapperBody>
                 ) : null}
             </DropdownWrapper>
         );
