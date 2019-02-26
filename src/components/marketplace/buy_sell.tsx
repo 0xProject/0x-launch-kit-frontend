@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { submitOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
-import { orderDetailsFeeEther } from '../../util/orders';
+import { orderDetailsFeeDollar, orderDetailsFeeEther } from '../../util/orders';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -289,11 +289,13 @@ class BuySell extends React.Component<Props, State> {
         this.setState({ price }, () => this.updateOrderFee());
     };
 
-    public updateOrderFee = () => {
+    public updateOrderFee = async () => {
         const orderPrice = this.state.makerAmount.mul(this.state.price);
         const orderFeeEther = orderDetailsFeeEther(orderPrice, this.state.tab);
+        const orderFeeDollar = await orderDetailsFeeDollar(orderPrice, this.state.tab);
         this.setState({
             orderFeeEther,
+            orderFeeDollar,
         });
     };
 
