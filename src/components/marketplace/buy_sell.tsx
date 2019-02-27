@@ -122,10 +122,6 @@ const BigInputNumberStyled = styled<any>(BigNumberInput)`
     ${fieldStyle}
 `;
 
-const FieldStyled = styled.input`
-    ${fieldStyle}
-`;
-
 const TokenContainer = styled.div`
     display: flex;
     position: absolute;
@@ -153,7 +149,7 @@ class BuySell extends React.Component<Props, State> {
 
     public render = () => {
         const { selectedTokenSymbol } = this.props;
-        const { makerAmount, price, tab, orderType } = this.state;
+        const { makerAmount, tab, orderType } = this.state;
 
         const buySellInnerTabs = [
             {
