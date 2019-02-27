@@ -3,7 +3,7 @@ import { BigNumber } from '0x.js';
 import { CACHE_CHECK_INTERVAL, MARKET_PRICE_API_ENDPOINT } from '../common/constants';
 
 let ethPriceInUSD: BigNumber | null;
-let activeCache: boolean = false;
+let isActiveCache: boolean = false;
 
 export const getEthereumPriceInUSD = async (): Promise<BigNumber> => {
     if (!ethPriceInUSD) {
@@ -17,11 +17,11 @@ export const getEthereumPriceInUSD = async (): Promise<BigNumber> => {
 };
 
 const cacheETHPrice = () => {
-    if (!activeCache) {
+    if (!isActiveCache) {
         setInterval(async () => {
             ethPriceInUSD = null;
             await getEthereumPriceInUSD();
-            activeCache = true;
+            isActiveCache = true;
         }, CACHE_CHECK_INTERVAL);
     }
 };
