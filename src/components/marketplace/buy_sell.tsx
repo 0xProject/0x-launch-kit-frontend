@@ -149,7 +149,7 @@ class BuySell extends React.Component<Props, State> {
 
     public render = () => {
         const { selectedTokenSymbol } = this.props;
-        const { makerAmount, tab, orderType } = this.state;
+        const { makerAmount, price, tab, orderType } = this.state;
 
         const buySellInnerTabs = [
             {
@@ -195,10 +195,10 @@ class BuySell extends React.Component<Props, State> {
                     </LabelContainer>
                     <FieldContainer>
                         <BigInputNumberStyled
-                            decimals={18}
+                            decimals={0}
                             min={new BigNumber(0)}
                             onChange={this.updatePrice}
-                            value={makerAmount}
+                            value={price}
                         />
                         <TokenContainer>
                             <TokenText>wETH</TokenText>
