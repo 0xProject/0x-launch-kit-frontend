@@ -18,3 +18,6 @@ export const TAKER_FEE = process.env.REACT_APP_TAKER_FEE || '0.1';
 
 export const MARKET_PRICE_API_ENDPOINT =
     process.env.REACT_APP_MARKET_PRICE_API_ENDPOINT || 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
+
+export const CACHE_CHECK_INTERVAL: number =
+    Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10) || 60000;

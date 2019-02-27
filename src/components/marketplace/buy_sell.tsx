@@ -92,7 +92,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: ${props => (props.color ? props.color : '#000')};
+    color: ${props => props.color || '#000'};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;

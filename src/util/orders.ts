@@ -2,7 +2,7 @@ import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order } from '0x.j
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
-import { GetEthereumPriceInUSD } from './market_prices';
+import { getEthereumPriceInUSD } from './market_prices';
 import { tokenAmountInUnits } from './tokens';
 import { OrderSide } from './types';
 
@@ -64,7 +64,7 @@ export const orderDetailsFeeDollar = async (
     tokenDecimals: number = 18,
 ): Promise<BigNumber> => {
     const priceInEther = orderDetailsFeeEther(orderPrice, orderType, tokenDecimals);
-    const priceInDollar = await GetEthereumPriceInUSD();
+    const priceInDollar = await getEthereumPriceInUSD();
 
     return priceInEther.mul(priceInDollar);
 };
