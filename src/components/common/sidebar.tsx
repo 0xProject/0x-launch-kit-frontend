@@ -13,6 +13,7 @@ const SidebarWrapper = styled.div`
     width: 100%;
 
     @media (min-width: ${themeBreakPoints.xl}) {
+        min-width: ${themeDimensions.sidebarWidth};
         width: ${themeDimensions.sidebarWidth};
     }
 

@@ -1,11 +1,12 @@
 export const themeColors = {
-    orange: '#F6851B',
-    darkGray: '#474747',
+    borderColor: '#DEDEDE',
     darkBlue: '#002979',
+    darkGray: '#474747',
     green: '#3CB34F',
     lightGray: '#B9B9B9',
+    orange: '#F6851B',
+    rowActive: '#FBFDFF',
     textLight: '#999999',
-    borderColor: '#DEDEDE',
 };
 
 export const themeDimensions = {
