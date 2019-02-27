@@ -1,5 +1,6 @@
 import { BigNumber } from '0x.js';
 
+import * as dolarUtils from './market_prices';
 import { buildOrder, orderDetailsFeeDollar, orderDetailsFeeEther } from './orders';
 import { OrderSide } from './types';
 
@@ -77,18 +78,6 @@ describe('buildOrder', () => {
     });
 });
 describe('orderDetails', () => {
-    it('orderDetailsFeeEther should return a BigNumber ', () => {
-        // given
-        const orderPrice = new BigNumber('1');
-        const orderType = OrderSide.Buy;
-        const decimals = 18;
-
-        // when
-        const orderInEther = orderDetailsFeeEther(orderPrice, orderType, decimals);
-
-        // then
-        expect(orderInEther).toBeInstanceOf(BigNumber);
-    });
     it('orderDetailsFeeEther should calculate totalFee ', () => {
         // given
         const orderPrice = new BigNumber('1000000000000000000');
@@ -114,16 +103,22 @@ describe('orderDetails', () => {
         expect(orderInEther3.eq(resultExpected3)).toBe(true);
         expect(orderInEther4.eq(resultExpected4)).toBe(true);
     });
-    it('orderDetailsFeeDollar should return a BigNumber ', async () => {
+    it('orderDetailsFeeDollar should calculate the ethPrice in USD ', async () => {
         // given
-        const orderPrice = new BigNumber('1');
+        const orderPrice = new BigNumber('1000000000000000000');
         const orderType = OrderSide.Buy;
         const decimals = 18;
+        const DOLAR_PRICE = 10;
+        // @ts-ignore
+        dolarUtils.getEthereumPriceInUSD = jest.fn(() => {
+            return new BigNumber(DOLAR_PRICE);
+        });
 
         // when
         const orderInEther = await orderDetailsFeeDollar(orderPrice, orderType, decimals);
+        const resultExpected1 = new BigNumber('0.1');
 
         // then
-        expect(orderInEther).toBeInstanceOf(BigNumber);
+        expect(orderInEther.eq(resultExpected1)).toBe(true);
     });
 });
