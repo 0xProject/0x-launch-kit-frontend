@@ -42,6 +42,8 @@ export const THead = styled.thead`
     text-transform: uppercase;
 `;
 
+export const TBody = styled.tbody``;
+
 export const TR = styled.tr``;
 
 export const TH = styled.th<TableTDProps>`
@@ -81,6 +83,13 @@ export const CustomTD = styled.td<TableTDProps>`
     }
 `;
 
+export const CustomTDFirst = styled(CustomTD)`
+    &,
+    &:last-child {
+        padding-left: ${themeDimensions.horizontalPadding};
+    }
+`;
+
 export const CustomTDLast = styled(CustomTD)`
     &,
     &:last-child {
@@ -92,6 +101,13 @@ export const CustomTDTitle = styled(CustomTD)`
     color: ${props => (props.styles && props.styles.color ? props.styles.color : themeColors.lightGray)};
     font-size: 12px;
     text-transform: uppercase;
+`;
+
+export const THFirst = styled(TH)`
+    &,
+    &:last-child {
+        padding-left: ${themeDimensions.horizontalPadding};
+    }
 `;
 
 export const THLast = styled(TH)`
