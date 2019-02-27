@@ -22,7 +22,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
+    onSubmitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -35,7 +35,7 @@ enum OrderType {
 interface State {
     makerAmount: BigNumber;
     orderType: OrderType;
-    price: number;
+    price: BigNumber;
     tab: Tab;
 }
 
@@ -147,7 +147,7 @@ class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
         orderType: OrderType.Limit,
-        price: 0,
+        price: new BigNumber(0),
         tab: Tab.Buy,
     };
 
@@ -198,7 +198,12 @@ class BuySell extends React.Component<Props, State> {
                         <Label>Token price</Label>
                     </LabelContainer>
                     <FieldContainer>
-                        <FieldStyled type="number" value={price} min={0} onChange={this.updatePrice} />
+                        <BigInputNumberStyled
+                            decimals={18}
+                            min={new BigNumber(0)}
+                            onChange={this.updatePrice}
+                            value={makerAmount}
+                        />
                         <TokenContainer>
                             <TokenText>wETH</TokenText>
                         </TokenContainer>
@@ -219,9 +224,7 @@ class BuySell extends React.Component<Props, State> {
         });
     };
 
-    public updatePrice: React.ReactEventHandler<HTMLInputElement> = e => {
-        const price = parseFloat(e.currentTarget.value);
-
+    public updatePrice = (price: BigNumber) => {
         this.setState({ price });
     };
 
@@ -238,7 +241,7 @@ class BuySell extends React.Component<Props, State> {
     private readonly _reset = () => {
         this.setState({
             makerAmount: new BigNumber('0'),
-            price: 0,
+            price: new BigNumber(0),
         });
     };
 
