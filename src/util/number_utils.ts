@@ -9,7 +9,7 @@ export const padRightSplitted = (numBg: BigNumber, decimals: number = 4): { num:
     let diff = '';
     let num = numBgToFixed;
     if (!numBg.isZero() && decimalPlaces < decimals) {
-        diff = numBgToFixed.split(numBgToString).join('');
+        diff = numBgToFixed.replace(numBgToString, '');
         num = numBgToString;
     }
 
