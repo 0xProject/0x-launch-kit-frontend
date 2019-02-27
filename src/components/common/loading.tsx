@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
+
+interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 export const Loading: React.FC = props => {
     return (
@@ -22,8 +24,12 @@ const CenteredLoading = styled(Loading)`
     transform: translate(-50%, -50%);
 `;
 
-export const CardLoading: React.FC = () => (
-    <LoadingWrapper>
-        <CenteredLoading />
-    </LoadingWrapper>
-);
+export const CardLoading: React.FC<Props> = props => {
+    const { ...restProps } = props;
+
+    return (
+        <LoadingWrapper {...restProps}>
+            <CenteredLoading />
+        </LoadingWrapper>
+    );
+};
