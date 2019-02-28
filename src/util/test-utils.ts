@@ -8,6 +8,7 @@ export const mockToken1: Token = {
     decimals: 18,
     symbol: 'MOCK1',
     name: 'mockToken1',
+    primaryColor: '#fffffff',
 };
 
 const mockToken2: Token = {
@@ -15,6 +16,7 @@ const mockToken2: Token = {
     decimals: 18,
     symbol: 'MOCK2',
     name: 'mockToken2',
+    primaryColor: '#fffffff',
 };
 
 export const makeSellOrder = ({
