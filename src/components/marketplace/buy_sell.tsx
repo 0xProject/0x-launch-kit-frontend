@@ -18,7 +18,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
+    onSubmitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -39,7 +39,7 @@ interface State {
     orderFeeDollar: BigNumber;
     orderType: OrderType;
     orderDetailType: OrderDetailsType;
-    price: number;
+    price: BigNumber;
     tab: OrderSide;
 }
 
@@ -126,10 +126,6 @@ const BigInputNumberStyled = styled<any>(BigNumberInput)`
     ${fieldStyle}
 `;
 
-const FieldStyled = styled.input`
-    ${fieldStyle}
-`;
-
 const TokenContainer = styled.div`
     display: flex;
     position: absolute;
@@ -190,7 +186,7 @@ class BuySell extends React.Component<Props, State> {
         orderFeeDollar: new BigNumber(0),
         orderType: OrderType.Limit,
         orderDetailType: OrderDetailsType.Eth,
-        price: 0,
+        price: new BigNumber(0),
         tab: OrderSide.Buy,
     };
 
@@ -254,7 +250,12 @@ class BuySell extends React.Component<Props, State> {
                         <Label>Token price</Label>
                     </LabelContainer>
                     <FieldContainer>
-                        <FieldStyled type="number" value={price} min={0} onChange={this.updatePrice} />
+                        <BigInputNumberStyled
+                            decimals={0}
+                            min={new BigNumber(0)}
+                            onChange={this.updatePrice}
+                            value={price}
+                        />
                         <TokenContainer>
                             <TokenText>wETH</TokenText>
                         </TokenContainer>
@@ -293,8 +294,7 @@ class BuySell extends React.Component<Props, State> {
         );
     };
 
-    public updatePrice: React.ReactEventHandler<HTMLInputElement> = e => {
-        const price = parseFloat(e.currentTarget.value);
+    public updatePrice = (price: BigNumber) => {
         this.setState({ price }, () => this.updateOrderFee());
     };
 
@@ -328,7 +328,7 @@ class BuySell extends React.Component<Props, State> {
     private readonly _reset = () => {
         this.setState({
             makerAmount: new BigNumber('0'),
-            price: 0,
+            price: new BigNumber(0),
         });
     };
 

@@ -10,6 +10,7 @@ import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
+import { ShowNumberWithColors } from '../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 interface StateProps {
     orderBook: OrderBook;
@@ -52,10 +53,18 @@ const orderToRow = (
 
     return (
         <TR key={index}>
-            <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{mySizeConverted !== '0.00' ? mySizeConverted : '-'}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{price}</CustomTD>
-            <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
+            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
+                <ShowNumberWithColors num={new BigNumber(size)} />
+            </CustomTD>
+            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
+                {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
+            </CustomTD>
+            <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+                {parseFloat(price).toFixed(7)}
+            </CustomTD>
+            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: timeColor }}>
+                {time.length ? time : '-'}
+            </CustomTDLast>
         </TR>
     );
 };
@@ -118,8 +127,10 @@ class OrderBookTable extends React.Component<Props, State> {
                                 Spread
                             </CustomTDTitle>
                             <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
-                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                {spread.toFixed(2)}
+                            <CustomTD
+                                styles={{ tabular: true, textAlign: 'right', borderBottom: true, borderTop: true }}
+                            >
+                                {spread.toFixed(7)}
                             </CustomTD>
                             <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 {}
