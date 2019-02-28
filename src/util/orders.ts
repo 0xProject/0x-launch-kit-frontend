@@ -8,7 +8,7 @@ interface BuildOrderParams {
     tokenAddress: string;
     wethAddress: string;
     amount: BigNumber;
-    price: number;
+    price: BigNumber;
     exchangeAddress: string;
 }
 
