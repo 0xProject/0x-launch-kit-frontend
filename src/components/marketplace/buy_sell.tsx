@@ -13,11 +13,6 @@ import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
 
-enum Tab {
-    Buy,
-    Sell,
-}
-
 interface StateProps {
     selectedTokenSymbol: string;
 }
