@@ -38,3 +38,25 @@ export const getWeb3WrapperOrThrow = async (): Promise<Web3Wrapper> => {
 
     return web3WrapperOrNull;
 };
+
+/* Event to detect if user has changed the account */
+export const accountChangedSubscription = (onChangeCb: () => void) => {
+    const { ethereum } = window;
+    if (!web3Wrapper || !onChangeCb) {
+        return;
+    }
+    ethereum.on('accountsChanged', async (accounts: []) => {
+        onChangeCb();
+    });
+};
+
+/* Event to detect if user has changed the network */
+export const networkChangedSubscription = (onChangeCb: () => void) => {
+    const { ethereum } = window;
+    if (!web3Wrapper || !onChangeCb) {
+        return;
+    }
+    ethereum.on('networkChanged', async (network: number) => {
+        onChangeCb();
+    });
+};
