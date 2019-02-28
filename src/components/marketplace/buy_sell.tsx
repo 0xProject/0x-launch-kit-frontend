@@ -13,6 +13,11 @@ import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
 
+enum Tab {
+    Buy,
+    Sell,
+}
+
 interface StateProps {
     selectedTokenSymbol: string;
 }
@@ -147,6 +152,14 @@ const TokenText = styled.span`
     text-align: right;
 `;
 
+const TokenTextUppercase = styled(TokenText)`
+    text-transform: uppercase;
+`;
+
+const TokenTextButtonUppercase = styled.span`
+    text-transform: uppercase;
+`;
+
 const Row = styled.div`
     align-items: center;
     border-bottom: solid 1px ${themeColors.borderColor};
@@ -239,7 +252,7 @@ class BuySell extends React.Component<Props, State> {
                             value={makerAmount}
                         />
                         <TokenContainer>
-                            <TokenText>{selectedTokenSymbol}</TokenText>
+                            <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
                         </TokenContainer>
                     </FieldContainer>
                     <LabelContainer>
@@ -266,7 +279,8 @@ class BuySell extends React.Component<Props, State> {
                     </Row>
 
                     <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
-                        {tab === OrderSide.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
+                        {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
+                        <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
                     </Button>
                 </Content>
             </BuySellWrapper>
