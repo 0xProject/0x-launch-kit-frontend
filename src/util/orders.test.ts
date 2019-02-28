@@ -83,12 +83,15 @@ describe('orderDetails', () => {
         const makerAmount = new BigNumber(5000000000000000000);
         const takerAmount = new BigNumber(500000000000000000);
         const orderType = OrderSide.Buy;
+        const MAKER_FEE = '0.1';
+        const TAKER_FEE = '0.05';
 
         // when
-        const orderInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType);
+        const orderInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, MAKER_FEE, TAKER_FEE);
 
         // then
-        const resultExpected = new BigNumber(550000000000000000);
+        const resultExpected = new BigNumber(75000000000000000);
+
         expect(orderInEther.eq(resultExpected)).toBe(true);
     });
 
@@ -105,7 +108,7 @@ describe('orderDetails', () => {
 
         // when
         const orderInDollar = await orderDetailsFeeDollar(makerAmount, takerAmount, orderType);
-        const resultExpected = new BigNumber(5500000000000000000);
+        const resultExpected = new BigNumber(750000000000000000);
 
         // then
         expect(orderInDollar.eq(resultExpected)).toBe(true);

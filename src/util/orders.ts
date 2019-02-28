@@ -43,6 +43,8 @@ export const orderDetailsFeeEther = (
     makerAmount: BigNumber,
     takerAmount: BigNumber,
     orderType: OrderSide,
+    makerFeeConstant: string = MAKER_FEE,
+    takerFeeConstant: string = TAKER_FEE,
     tokenDecimals: number = 18,
 ): BigNumber => {
     let totalFee = new BigNumber(1);
@@ -51,11 +53,11 @@ export const orderDetailsFeeEther = (
     const makerAmountConverted = new BigNumber(tokenAmountInUnits(makerAmount, tokenDecimals));
     if (orderType === OrderSide.Buy) {
         // Calculate makerFee
-        const makerFeeWithoutPrice = makerAmountConverted.mul(MAKER_FEE);
+        const makerFeeWithoutPrice = makerAmountConverted.mul(makerFeeConstant);
         const makerFeeWithPrice = makerFeeWithoutPrice.mul(takerAmount.div(makerAmountConverted));
 
         // Calculate takerFee
-        const takerFee = takerAmount.mul(TAKER_FEE);
+        const takerFee = takerAmount.mul(takerFeeConstant);
 
         // Total plus
         totalFee = makerFeeWithPrice.plus(takerFee);
@@ -63,10 +65,10 @@ export const orderDetailsFeeEther = (
 
     if (orderType === OrderSide.Sell) {
         // Calculate makerFee
-        const makerFee = makerAmountConverted.mul(MAKER_FEE);
+        const makerFee = makerAmountConverted.mul(makerFeeConstant);
 
         // Calculate takerFee
-        const takerFeeWithoutPrice = takerAmount.mul(TAKER_FEE);
+        const takerFeeWithoutPrice = takerAmount.mul(takerFeeConstant);
         const takerFeeWithPrice = takerFeeWithoutPrice.mul(makerAmountConverted.div(takerAmount));
 
         // Total plus
@@ -82,7 +84,7 @@ export const orderDetailsFeeDollar = async (
     orderType: OrderSide,
     tokenDecimals: number = 18,
 ): Promise<any> => {
-    const priceInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, tokenDecimals);
+    const priceInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, undefined, undefined, tokenDecimals);
     const priceInDollar = await getEthereumPriceInUSD();
 
     return priceInEther.mul(priceInDollar);
