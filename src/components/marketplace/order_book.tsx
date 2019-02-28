@@ -53,12 +53,18 @@ const orderToRow = (
 
     return (
         <TR key={index}>
-            <CustomTD styles={{ textAlign: 'right' }}>
+            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{mySizeConverted !== '0.00' ? mySizeConverted : '-'}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right', color: priceColor }}>{parseFloat(price).toFixed(7)}</CustomTD>
-            <CustomTDLast styles={{ textAlign: 'right', color: timeColor }}>{time.length ? time : '-'}</CustomTDLast>
+            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
+                {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
+            </CustomTD>
+            <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+                {parseFloat(price).toFixed(7)}
+            </CustomTD>
+            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: timeColor }}>
+                {time.length ? time : '-'}
+            </CustomTDLast>
         </TR>
     );
 };
@@ -121,7 +127,9 @@ class OrderBookTable extends React.Component<Props, State> {
                                 Spread
                             </CustomTDTitle>
                             <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
-                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                            <CustomTD
+                                styles={{ tabular: true, textAlign: 'right', borderBottom: true, borderTop: true }}
+                            >
                                 {spread.toFixed(7)}
                             </CustomTD>
                             <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
