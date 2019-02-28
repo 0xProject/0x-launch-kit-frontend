@@ -14,6 +14,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 interface State {
     isLoadingNotifications: boolean;
+    newNotifications: boolean;
 }
 
 enum NotificationsStatus {
@@ -27,6 +28,17 @@ const NotificationsDropdownWrapper = styled(Dropdown)``;
 const NotificationsDropdownHeader = styled.div`
     align-items: center;
     display: flex;
+    position: relative;
+`;
+
+const NewNotificationsBadge = styled.div`
+    background: #ff6534;
+    border-radius: 50%;
+    height: 7px;
+    position: absolute;
+    right: -4px;
+    top: 12px;
+    width: 7px;
 `;
 
 const NotificationsDropdownBody = styled(CardBase)`
@@ -45,10 +57,6 @@ const NotificationItem = styled.div<{ active?: boolean }>`
     justify-content: space-between;
     padding: 20px ${themeDimensions.horizontalPadding};
 
-    &:hover {
-        background-color: ${themeColors.rowActive};
-    }
-
     &:last-child {
         border-bottom: none;
     }
@@ -56,6 +64,11 @@ const NotificationItem = styled.div<{ active?: boolean }>`
 
 const NotificationContent = styled.div`
     flex-grow: 1;
+    padding-right: 25px;
+`;
+
+const NotificationIcon = styled.div`
+    flex-shrink: 0;
 `;
 
 const NotificationDropdownTitle = styled.h1`
@@ -144,6 +157,7 @@ const NOTIFICATIONS_LIST = [
 class NotificationsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
         isLoadingNotifications: true,
+        newNotifications: true,
     };
 
     public render = () => {
@@ -155,13 +169,14 @@ class NotificationsDropdown extends React.Component<Props, State> {
                     <NotificationTitle>{item.title}</NotificationTitle>
                     <NotificationText>{item.text}</NotificationText>
                 </NotificationContent>
-                {this._getNotificationIcon(item.status)}
+                <NotificationIcon>{this._getNotificationIcon(item.status)}</NotificationIcon>
             </NotificationItem>
         ));
 
         const header = (
             <NotificationsDropdownHeader>
                 <BellIcon />
+                {this.state.newNotifications ? <NewNotificationsBadge /> : null}
             </NotificationsDropdownHeader>
         );
 
@@ -196,10 +211,12 @@ class NotificationsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _loadNotifications = () => {
+        this.setState({ newNotifications: false });
+
         // This is only for showing the 'loading' component, delete ASAP
         setTimeout(() => {
             this.setState({ isLoadingNotifications: false });
-        }, 0);
+        }, 1000);
     };
 }
 
