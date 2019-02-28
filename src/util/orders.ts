@@ -51,7 +51,7 @@ export const orderDetailsFeeEther = (
 
     // Convert the makerAmount
     const makerAmountConverted = new BigNumber(tokenAmountInUnits(makerAmount, tokenDecimals));
-    if (orderType === OrderSide.Buy) {
+    if (orderType === OrderSide.Sell) {
         // Calculate makerFee
         const makerFeeWithoutPrice = makerAmountConverted.mul(makerFeeConstant);
         const makerFeeWithPrice = makerFeeWithoutPrice.mul(takerAmount.div(makerAmountConverted));
@@ -63,7 +63,7 @@ export const orderDetailsFeeEther = (
         totalFee = makerFeeWithPrice.plus(takerFee);
     }
 
-    if (orderType === OrderSide.Sell) {
+    if (orderType === OrderSide.Buy) {
         // Calculate makerFee
         const makerFee = makerAmountConverted.mul(makerFeeConstant);
 

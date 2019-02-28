@@ -82,7 +82,7 @@ describe('orderDetails', () => {
         // given
         const makerAmount = new BigNumber(5000000000000000000);
         const takerAmount = new BigNumber(500000000000000000);
-        const orderType = OrderSide.Buy;
+        const orderType = OrderSide.Sell;
         const MAKER_FEE = '0.1';
         const TAKER_FEE = '0.05';
 
@@ -98,7 +98,7 @@ describe('orderDetails', () => {
         // given
         const makerAmount = new BigNumber(5000000000000000000);
         const takerAmount = new BigNumber(500000000000000000);
-        const orderType = OrderSide.Sell;
+        const orderType = OrderSide.Buy;
         const MAKER_FEE = '0.1';
         const TAKER_FEE = '0.05';
 
@@ -114,7 +114,7 @@ describe('orderDetails', () => {
         // given
         const makerAmount = new BigNumber(5000000000000000000);
         const takerAmount = new BigNumber(500000000000000000);
-        const orderType = OrderSide.Buy;
+        const orderType = OrderSide.Sell;
         const DOLAR_PRICE = 10;
         // @ts-ignore
         dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
