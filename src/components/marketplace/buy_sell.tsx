@@ -299,16 +299,8 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public updateOrderFee = async () => {
-        const orderFeeEther = orderDetailsFeeEther(
-            this.state.makerAmount,
-            new BigNumber(this.state.price),
-            this.state.tab,
-        );
-        const orderFeeDollar = await orderDetailsFeeDollar(
-            this.state.makerAmount,
-            new BigNumber(this.state.price),
-            this.state.tab,
-        );
+        const orderFeeEther = orderDetailsFeeEther(this.state.makerAmount, this.state.price, this.state.tab);
+        const orderFeeDollar = await orderDetailsFeeDollar(this.state.makerAmount, this.state.price, this.state.tab);
         this.setState({
             orderFeeEther,
             orderFeeDollar,
