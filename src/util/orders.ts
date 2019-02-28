@@ -40,30 +40,49 @@ export const buildOrder = (params: BuildOrderParams, side: OrderSide): Order => 
 };
 
 export const orderDetailsFeeEther = (
-    orderPrice: BigNumber,
+    makerAmount: BigNumber,
+    takerAmount: BigNumber,
     orderType: OrderSide,
     tokenDecimals: number = 18,
 ): BigNumber => {
-    let fee = new BigNumber(1);
+    let totalFee = new BigNumber(1);
+
+    // Convert the makerAmount
+    const makerAmountConverted = new BigNumber(tokenAmountInUnits(makerAmount, tokenDecimals));
     if (orderType === OrderSide.Buy) {
-        fee = new BigNumber(MAKER_FEE);
+        // Calculate makerFee
+        const makerFeeWithoutPrice = makerAmountConverted.mul(MAKER_FEE);
+        const makerFeeWithPrice = makerFeeWithoutPrice.mul(takerAmount.div(makerAmountConverted));
+
+        // Calculate takerFee
+        const takerFee = takerAmount.mul(TAKER_FEE);
+
+        // Total plus
+        totalFee = makerFeeWithPrice.plus(takerFee);
     }
 
     if (orderType === OrderSide.Sell) {
-        fee = new BigNumber(TAKER_FEE);
+        // Calculate makerFee
+        const makerFee = makerAmountConverted.mul(MAKER_FEE);
+
+        // Calculate takerFee
+        const takerFeeWithoutPrice = takerAmount.mul(TAKER_FEE);
+        const takerFeeWithPrice = takerFeeWithoutPrice.mul(makerAmountConverted.div(takerAmount));
+
+        // Total plus
+        totalFee = takerFeeWithPrice.plus(makerFee);
     }
 
-    // Fee is a percentage
-    const orderPriceConverted = tokenAmountInUnits(orderPrice, tokenDecimals);
-    return fee.mul(orderPriceConverted).div(100);
+    return totalFee;
 };
 
 export const orderDetailsFeeDollar = async (
-    orderPrice: BigNumber,
+    makerAmount: BigNumber,
+    takerAmount: BigNumber,
     orderType: OrderSide,
     tokenDecimals: number = 18,
-): Promise<BigNumber> => {
-    const priceInEther = orderDetailsFeeEther(orderPrice, orderType, tokenDecimals);
+): Promise<any> => {
+    const priceInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, tokenDecimals);
     const priceInDollar = await getEthereumPriceInUSD();
 
     return priceInEther.mul(priceInDollar);
