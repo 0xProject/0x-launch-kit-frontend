@@ -135,7 +135,7 @@ const TokenContainer = styled.div`
     z-index: 12;
 `;
 
-const tokenTextStyle = `
+const TokenText = styled.span`
     color: #333;
     font-size: 14px;
     font-weight: normal;
@@ -143,12 +143,7 @@ const tokenTextStyle = `
     text-align: right;
 `;
 
-const TokenText = styled.span`
-    ${tokenTextStyle}
-`;
-
-const TokenTextUppercase = styled.span`
-    ${tokenTextStyle}
+const TokenTextUppercase = styled(TokenText)`
     text-transform: uppercase;
 `;
 
