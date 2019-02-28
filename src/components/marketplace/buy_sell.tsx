@@ -143,6 +143,14 @@ const TokenText = styled.span`
     text-align: right;
 `;
 
+const TokenTextUppercase = styled(TokenText)`
+    text-transform: uppercase;
+`;
+
+const TokenTextButtonUppercase = styled.span`
+    text-transform: uppercase;
+`;
+
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
@@ -191,7 +199,7 @@ class BuySell extends React.Component<Props, State> {
                             value={makerAmount}
                         />
                         <TokenContainer>
-                            <TokenText>{selectedTokenSymbol}</TokenText>
+                            <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
                         </TokenContainer>
                     </FieldContainer>
                     <LabelContainer>
@@ -204,7 +212,8 @@ class BuySell extends React.Component<Props, State> {
                         </TokenContainer>
                     </FieldContainer>
                     <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
-                        {tab === Tab.Buy ? 'Buy' : 'Sell'} {selectedTokenSymbol}
+                        {tab === Tab.Buy ? 'Buy' : 'Sell'}{' '}
+                        <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
                     </Button>
                 </Content>
             </BuySellWrapper>
