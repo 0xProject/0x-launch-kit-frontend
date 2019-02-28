@@ -78,7 +78,7 @@ describe('buildOrder', () => {
     });
 });
 describe('orderDetails', () => {
-    it('orderDetailsFeeEther should calculate totalFee ', () => {
+    it('orderDetailsFeeEther should calculate totalFee for buy order ', () => {
         // given
         const makerAmount = new BigNumber(5000000000000000000);
         const takerAmount = new BigNumber(500000000000000000);
@@ -92,6 +92,21 @@ describe('orderDetails', () => {
         // then
         const resultExpected = new BigNumber(75000000000000000);
 
+        expect(orderInEther.eq(resultExpected)).toBe(true);
+    });
+    it('orderDetailsFeeEther should calculate totalFee for sell order ', () => {
+        // given
+        const makerAmount = new BigNumber(5000000000000000000);
+        const takerAmount = new BigNumber(500000000000000000);
+        const orderType = OrderSide.Sell;
+        const MAKER_FEE = '0.1';
+        const TAKER_FEE = '0.05';
+
+        // when
+        const orderInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, MAKER_FEE, TAKER_FEE);
+
+        // then
+        const resultExpected = new BigNumber(0.75);
         expect(orderInEther.eq(resultExpected)).toBe(true);
     });
 
