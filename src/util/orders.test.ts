@@ -1,6 +1,6 @@
 import { BigNumber } from '0x.js';
 
-import * as dolarUtils from './market_prices';
+import * as dollarUtils from './market_prices';
 import { buildOrder, orderDetailsFeeDollar, orderDetailsFeeEther } from './orders';
 import { OrderSide } from './types';
 
@@ -99,7 +99,7 @@ describe('orderDetails', () => {
         const orderType = OrderSide.Buy;
         const DOLAR_PRICE = 10;
         // @ts-ignore
-        dolarUtils.getEthereumPriceInUSD = jest.fn(() => {
+        dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
             return new BigNumber(DOLAR_PRICE);
         });
 
