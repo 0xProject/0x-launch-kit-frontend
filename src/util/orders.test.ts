@@ -123,7 +123,7 @@ describe('orderDetails', () => {
 
         // when
         const orderInDollar = await orderDetailsFeeDollar(makerAmount, takerAmount, orderType);
-        const resultExpected = new BigNumber(750000000000000000);
+        const resultExpected = new BigNumber(5500000000000000000);
 
         // then
         expect(orderInDollar.eq(resultExpected)).toBe(true);
