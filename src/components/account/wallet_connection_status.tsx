@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import CopyText from 'react-copy-text';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -59,32 +59,7 @@ const goToURL = () => {
     alert('go to url');
 };
 
-interface State {
-    textToCopy: string;
-}
-
 class WalletConnectionStatus extends React.PureComponent<Props> {
-    public readonly state: State = {
-        textToCopy: '',
-    };
-
-    private readonly _dropdownItems = [
-        {
-            onClick: () => {
-                this.setState({ textToCopy: this.props.ethAccount ? this.props.ethAccount : '' });
-            },
-            text: 'Copy Address to Clipboard',
-        },
-        {
-            onClick: connectToWallet,
-            text: 'Connect a different Wallet',
-        },
-        {
-            onClick: goToURL,
-            text: 'Manage Account',
-        },
-    ];
-
     public render = () => {
         const { ethAccount, ...restProps } = this.props;
         const status: string = ethAccount ? 'active' : '';
@@ -101,18 +76,15 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
 
         const body = (
             <DropdownItems>
-                {this._dropdownItems.map((item, index) => {
-                    return <DropdownTextItem onClick={item.onClick} key={index} text={item.text} />;
-                })}
+                <CopyToClipboard text={ethAccount ? ethAccount : ''}>
+                    <DropdownTextItem text="Copy Address to Clipboard" />
+                </CopyToClipboard>
+                <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
+                <DropdownTextItem onClick={goToURL} text="Manage Account" />
             </DropdownItems>
         );
 
-        return (
-            <>
-                <Dropdown body={body} header={header} horizontalPosition={DropdownPositions.Right} {...restProps} />
-                <CopyText text={this.state.textToCopy} />
-            </>
-        );
+        return <Dropdown body={body} header={header} horizontalPosition={DropdownPositions.Right} {...restProps} />;
     };
 }
 

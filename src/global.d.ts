@@ -4,4 +4,4 @@ interface Window {
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 }
 
-declare module 'react-copy-text';
+declare module 'react-copy-to-clipboard';
