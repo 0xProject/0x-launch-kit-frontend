@@ -2,9 +2,9 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setStepsModalTransactionPromise, stepsModalAdvanceStep, submitOrder } from '../../store/actions';
-import { getStepsModalCurrentStep } from '../../store/selectors';
-import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../util/types';
+import { setStepsModalTransactionPromise, stepsModalAdvanceStep, submitOrder } from '../../../store/actions';
+import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 interface OwnProps {
     advanceStep: () => any;

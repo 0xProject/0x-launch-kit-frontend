@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { stepsModalAdvanceStep } from '../../store/actions';
-import { getStepsModalCurrentStep, getStepsModalTransactionPromise } from '../../store/selectors';
-import { StepLoading, StoreState } from '../../util/types';
+import { stepsModalAdvanceStep } from '../../../store/actions';
+import { getStepsModalCurrentStep, getStepsModalTransactionPromise } from '../../../store/selectors';
+import { StepLoading, StoreState } from '../../../util/types';
 
 interface StateProps {
     step: StepLoading;

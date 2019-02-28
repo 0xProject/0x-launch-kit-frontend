@@ -2,9 +2,9 @@ import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
 
-import { resetSteps, setStepsModalVisibility } from '../../store/actions';
-import { getIsStepsModalVisible, getStepsModalCurrentStep } from '../../store/selectors';
-import { Step, StepKind, StoreState } from '../../util/types';
+import { resetSteps, setStepsModalVisibility } from '../../../store/actions';
+import { getIsStepsModalVisible, getStepsModalCurrentStep } from '../../../store/selectors';
+import { Step, StepKind, StoreState } from '../../../util/types';
 
 import { LoadingStepContainer } from './loading_step';
 import { SignOrderStepContainer } from './sign_order_step';
