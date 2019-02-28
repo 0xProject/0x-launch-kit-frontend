@@ -1,25 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { stepsModalAdvanceStep } from '../../store/actions';
 import { getStepsModalCurrentStep, getStepsModalTransactionPromise } from '../../store/selectors';
 import { StepLoading, StoreState } from '../../util/types';
-
-interface OwnProps {
-    onSuccess: () => any;
-}
 
 interface StateProps {
     step: StepLoading;
     promise: Promise<any>;
 }
 
-type Props = OwnProps & StateProps;
+interface DispatchProps {
+    advanceStep: () => any;
+}
+
+type Props = StateProps & DispatchProps;
 
 class LoadingStep extends React.Component<Props> {
     public componentDidMount = async () => {
-        const { onSuccess, promise } = this.props;
-        await promise;
-        onSuccess();
+        const { advanceStep, promise } = this.props;
+        if (promise) {
+            await promise;
+            advanceStep();
+        }
     };
 
     public render = () => {
@@ -40,6 +43,11 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const LoadingStepContainer = connect(mapStateToProps)(LoadingStep);
+const LoadingStepContainer = connect(
+    mapStateToProps,
+    {
+        advanceStep: stepsModalAdvanceStep,
+    },
+)(LoadingStep);
 
 export { LoadingStep, LoadingStepContainer };

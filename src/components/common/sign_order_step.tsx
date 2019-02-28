@@ -2,12 +2,12 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setStepsModalTransactionPromise, submitOrder } from '../../store/actions';
+import { setStepsModalTransactionPromise, stepsModalAdvanceStep, submitOrder } from '../../store/actions';
 import { getStepsModalCurrentStep } from '../../store/selectors';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../util/types';
 
 interface OwnProps {
-    onSuccess: () => any;
+    advanceStep: () => any;
 }
 
 interface StateProps {
@@ -15,7 +15,8 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
+    advanceStep: () => any;
+    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide, advanceStep: () => any) => any;
     setPromise: (promise: Promise<any>) => void;
 }
 
@@ -23,9 +24,13 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class SignOrderStep extends React.Component<Props> {
     public componentDidMount = () => {
-        const { step, onSubmitOrder, onSuccess, setPromise } = this.props;
-        setPromise(onSubmitOrder(step.amount, step.price, step.side));
-        onSuccess();
+        const { step, onSubmitOrder, advanceStep, setPromise } = this.props;
+        setPromise(
+            new Promise(resolve => {
+                onSubmitOrder(step.amount, step.price, step.side, resolve);
+                advanceStep();
+            }),
+        );
     };
 
     public render = () => {
@@ -44,6 +49,7 @@ const SignOrderStepContainer = connect(
     {
         onSubmitOrder: submitOrder,
         setPromise: setStepsModalTransactionPromise,
+        advanceStep: stepsModalAdvanceStep,
     },
 )(SignOrderStep);
 

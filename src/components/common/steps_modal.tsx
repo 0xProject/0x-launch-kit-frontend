@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
 
-import { resetSteps, setStepsModalVisibility, stepsModalAdvanceStep } from '../../store/actions';
+import { resetSteps, setStepsModalVisibility } from '../../store/actions';
 import { getIsStepsModalVisible, getStepsModalCurrentStep } from '../../store/selectors';
 import { Step, StepKind, StoreState } from '../../util/types';
 
@@ -17,7 +17,6 @@ interface StateProps {
 
 interface DispatchProps {
     setModalVisibility: (flag: boolean) => any;
-    advanceStep: () => any;
     reset: () => void;
 }
 
@@ -25,30 +24,21 @@ type Props = StateProps & DispatchProps;
 
 class StepsModal extends React.Component<Props> {
     public render = () => {
-        const { isStepsModalVisible, currentStep, advanceStep, setModalVisibility, reset } = this.props;
+        const { isStepsModalVisible, currentStep, setModalVisibility, reset } = this.props;
 
         const close = () => {
             setModalVisibility(false);
             reset();
         };
 
-        let modalContent = null;
-        if (currentStep && currentStep.kind === StepKind.BuySellLimit) {
-            modalContent = <SignOrderStepContainer onSuccess={advanceStep} />;
-        } else if (currentStep && currentStep.kind === StepKind.Loading) {
-            modalContent = <LoadingStepContainer onSuccess={advanceStep} />;
-        } else if (currentStep && currentStep.kind === StepKind.Success) {
-            modalContent = <SuccessStepContainer onSuccess={advanceStep} />;
-        } else if (currentStep === null) {
-            modalContent = <p>Done!</p>;
-        }
-
         return (
             <Modal isOpen={isStepsModalVisible}>
                 <button type="button" onClick={close}>
                     x
                 </button>
-                {modalContent}
+                {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
+                {currentStep && currentStep.kind === StepKind.Loading && <LoadingStepContainer />}
+                {currentStep && currentStep.kind === StepKind.Success && <SuccessStepContainer />}
             </Modal>
         );
     };
@@ -64,7 +54,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const StepsModalContainer = connect(
     mapStateToProps,
     {
-        advanceStep: stepsModalAdvanceStep,
         setModalVisibility: setStepsModalVisibility,
         reset: resetSteps,
     },

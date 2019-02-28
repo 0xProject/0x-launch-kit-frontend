@@ -74,6 +74,7 @@ export interface StepLoading {
 export interface StepSuccess {
     kind: StepKind.Success;
     message: string;
+    visibleSeconds?: number;
 }
 
 export type Step = StepWrapEth | StepUnlockToken | StepBuySellLimitOrder | StepLoading | StepSuccess;

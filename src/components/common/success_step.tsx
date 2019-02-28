@@ -1,31 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { stepsModalAdvanceStep } from '../../store/actions';
 import { getStepsModalCurrentStep } from '../../store/selectors';
 import { StepSuccess, StoreState } from '../../util/types';
-
-interface OwnProps {
-    onSuccess: () => any;
-    visibleSeconds?: number;
-}
 
 interface StateProps {
     step: StepSuccess;
 }
 
-type Props = OwnProps & StateProps;
+interface DispatchProps {
+    advanceStep: () => any;
+}
 
-const DEFAULT_VISIBLE_SECONDS = 3;
+type Props = StateProps & DispatchProps;
 
 class SuccessStep extends React.Component<Props> {
     public componentDidMount = async () => {
-        const { visibleSeconds, onSuccess } = this.props;
-        const seconds = visibleSeconds || DEFAULT_VISIBLE_SECONDS;
-        setTimeout(() => onSuccess(), seconds * 1000);
+        const { step, advanceStep } = this.props;
+        const seconds = step.visibleSeconds;
+        if (seconds) {
+            setTimeout(() => advanceStep(), seconds * 1000);
+        }
     };
 
     public render = () => {
-        return <p>Success</p>;
+        return <p>Success!</p>;
     };
 }
 
@@ -35,6 +35,11 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const SuccessStepContainer = connect(mapStateToProps)(SuccessStep);
+const SuccessStepContainer = connect(
+    mapStateToProps,
+    {
+        advanceStep: stepsModalAdvanceStep,
+    },
+)(SuccessStep);
 
 export { SuccessStep, SuccessStepContainer };

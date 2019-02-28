@@ -87,15 +87,15 @@ export function stepsModal(state: StepsModalState = initialStepsModal, action: R
             } else if (pendingSteps.length > 1) {
                 return {
                     ...state,
-                    pendingSteps: pendingSteps.slice(0, pendingSteps.length - 1),
+                    pendingSteps: pendingSteps.slice(1, pendingSteps.length),
                     doneSteps: doneSteps.concat([currentStep as Step]),
-                    currentStep: pendingSteps.pop() as Step,
+                    currentStep: pendingSteps[0] as Step,
                 };
             } else {
                 return {
                     ...state,
                     pendingSteps: [],
-                    currentStep: null,
+                    currentStep: pendingSteps.pop() as Step,
                     doneSteps: doneSteps.concat([currentStep as Step]),
                 };
             }

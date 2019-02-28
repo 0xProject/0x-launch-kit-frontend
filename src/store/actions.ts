@@ -254,7 +254,7 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) => {
+export const submitOrder = (amount: BigNumber, price: number, side: OrderSide, onSuccess?: () => any) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
@@ -286,6 +286,11 @@ export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) =
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
+
+        // @TODO: refactor this
+        if (onSuccess) {
+            onSuccess();
+        }
     };
 };
 
@@ -299,39 +304,22 @@ export const resetSteps = () => {
 
 export const startBuySellLimitSteps = (amount: BigNumber, price: number, side: OrderSide) => {
     return async (dispatch: any) => {
-        let pendingSteps: Step[] = [];
-        // const state = getState();
-        // const wethBalance = getWethBalance(state);
-        // if (wethBalance.lt(amount)) {
-        //     steps.push({
-        //         kind: StepKind.WrapEth,
-        //         amount,
-        //     });
-        // }
-        //
-        // const selectedToken = getSelectedToken(state) as Token;
-        // const balances = getTokenBalances(state);
-        // const selectedTokenBalance = balances.find(
-        //     balance => balance.token.symbol === selectedToken.symbol,
-        // ) as TokenBalance;
-        // if (!selectedTokenBalance.isUnlocked) {
-        //     steps.push({
-        //         kind: StepKind.UnlockToken,
-        //         token: selectedToken,
-        //     });
-        // }
         const step: Step = {
             kind: StepKind.BuySellLimit,
             amount,
             price,
             side,
         };
-        pendingSteps = pendingSteps.concat([
+        const pendingSteps: Step[] = [
             {
                 kind: StepKind.Loading,
                 message: 'Submitting order...',
             },
-        ]);
+            {
+                kind: StepKind.Success,
+                message: 'Order successfully created',
+            },
+        ];
         dispatch(setStepsModalPendingSteps(pendingSteps));
         dispatch(setStepsModalCurrentStep(step));
         dispatch(setStepsModalDoneSteps([]));
