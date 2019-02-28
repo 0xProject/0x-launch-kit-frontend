@@ -28,5 +28,6 @@ export const getTokenBalance = async (token: Token, address: string): Promise<Bi
     const web3Wrapper = await getWeb3WrapperOrThrow();
     const networkId = await web3Wrapper.getNetworkIdAsync();
     const contractWrappers = new ContractWrappers(web3Wrapper.getProvider(), { networkId });
+    // TODO : Check here issue when changing from localhost to ropsten network, there is an exception on the line below
     return contractWrappers.erc20Token.getBalanceAsync(token.address, address);
 };

@@ -16,6 +16,7 @@ const initialBlockchainState: BlockchainState = {
     tokenBalances: [],
     ethBalance: new BigNumber(0),
     wethBalance: new BigNumber(0),
+    networkId: 42,
 };
 
 const initialRelayerState: RelayerState = {

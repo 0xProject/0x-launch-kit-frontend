@@ -6,8 +6,12 @@ import { TX_DEFAULTS } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
-import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
-import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
+import {
+    accountChangedSubscription,
+    getWeb3DataWrapper,
+    getWeb3WrapperOrThrow,
+    networkChangedSubscription,
+} from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildOrder } from '../util/orders';
 import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
@@ -149,41 +153,28 @@ export const initWallet = () => {
     return async (dispatch: any) => {
         dispatch(setWeb3State(Web3State.Loading));
 
-        const web3Wrapper = await getWeb3Wrapper();
+        const web3Data = await getWeb3DataWrapper();
+        /* Subscriptions register **/
+        accountChangedSubscription((updatedWeb3Data: any) => {
+            dispatch(initializeBlockchainData(updatedWeb3Data.blockchainState));
+            dispatch(initializeRelayerData(updatedWeb3Data.relayerState));
+            dispatch(getAllOrders());
+            dispatch(getUserOrders());
+        })
+            .then()
+            .catch();
+        networkChangedSubscription((updatedWeb3Data: any) => {
+            dispatch(initializeBlockchainData(updatedWeb3Data.blockchainState));
+            dispatch(initializeRelayerData(updatedWeb3Data.relayerState));
+            dispatch(getAllOrders());
+            dispatch(getUserOrders());
+        })
+            .then()
+            .catch();
 
-        if (web3Wrapper) {
-            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-            const networkId = await web3Wrapper.getNetworkIdAsync();
-
-            const knownTokens = getKnownTokens(networkId);
-
-            const tokenBalances = await Promise.all(
-                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-            );
-
-            const wethToken = knownTokens.getWethToken();
-
-            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-            const wethBalance = await getTokenBalance(wethToken, ethAccount);
-
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
-
-            dispatch(
-                initializeBlockchainData({
-                    web3State: Web3State.Done,
-                    ethAccount,
-                    ethBalance,
-                    wethBalance,
-                    tokenBalances,
-                }),
-            );
-            dispatch(
-                initializeRelayerData({
-                    orders: [],
-                    userOrders: [],
-                    selectedToken,
-                }),
-            );
+        if (web3Data) {
+            dispatch(initializeBlockchainData(web3Data.blockchainState));
+            dispatch(initializeRelayerData(web3Data.relayerState));
             dispatch(getAllOrders());
             dispatch(getUserOrders());
         } else {

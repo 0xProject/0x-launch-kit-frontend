@@ -27,12 +27,18 @@ export enum Web3State {
     Loading,
 }
 
+export interface Web3DataWrapper {
+    readonly blockchainState: BlockchainState;
+    readonly relayerState: RelayerState;
+}
+
 export interface BlockchainState {
     readonly ethAccount: string;
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
     readonly wethBalance: BigNumber;
+    readonly networkId: number;
 }
 
 export interface RelayerState {
