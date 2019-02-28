@@ -67,12 +67,9 @@ export const networkChangedSubscription = async (onChangeCb: (web3Data: Web3Data
     if (!web3Wrapper || !onChangeCb) {
         return;
     }
-    web3Data = await getWeb3DataWrapper();
     ethereum.on('networkChanged', async (network: number) => {
-        web3Data = await getWeb3DataWrapper();
         onChangeCb(web3Data);
     });
-    return web3Data;
 };
 
 export const getWeb3DataWrapper = async (): Promise<null | Web3DataWrapper> => {

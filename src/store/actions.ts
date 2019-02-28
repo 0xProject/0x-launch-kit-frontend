@@ -164,10 +164,8 @@ export const initWallet = () => {
             .then()
             .catch();
         networkChangedSubscription((updatedWeb3Data: any) => {
-            dispatch(initializeBlockchainData(updatedWeb3Data.blockchainState));
-            dispatch(initializeRelayerData(updatedWeb3Data.relayerState));
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            /* Performs a reload to avoid a bug with MetaMask: "MetaMask - RPC Error: Internal JSON-RPC" **/
+            window.location.reload();
         })
             .then()
             .catch();
