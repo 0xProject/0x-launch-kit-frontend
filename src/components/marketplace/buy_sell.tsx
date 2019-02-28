@@ -92,7 +92,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: ${props => (props.color ? props.color : '#000')};
+    color: ${props => props.color || '#000'};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -260,7 +260,7 @@ class BuySell extends React.Component<Props, State> {
                         <Label color={themeColors.textLight}>Fee</Label>
                         <Value>
                             {orderDetailType === OrderDetailsType.Usd
-                                ? `$ ${this.state.orderFeeDollar.toString()}`
+                                ? `$ ${this.state.orderFeeDollar.toFixed(2)}`
                                 : `${this.state.orderFeeEther.toString()} Eth`}
                         </Value>
                     </Row>

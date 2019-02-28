@@ -2,7 +2,7 @@ import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order } from '0x.j
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
-import { GetEthereumPriceInUSD } from './market_prices';
+import { getEthereumPriceInUSD } from './market_prices';
 import { tokenAmountInUnits } from './tokens';
 import { OrderSide } from './types';
 
