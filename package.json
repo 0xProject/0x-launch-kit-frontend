@@ -13,6 +13,7 @@
         "history": "^4.7.2",
         "http-proxy-middleware": "^0.19.1",
         "react": "^16.7.0",
+        "react-copy-text": "^1.0.1",
         "react-dom": "^16.7.0",
         "react-modal": "^3.8.1",
         "react-redux": "^6.0.0",

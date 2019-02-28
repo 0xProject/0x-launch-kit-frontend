@@ -3,3 +3,5 @@ interface Window {
     web3: any;
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 }
+
+declare module 'react-copy-text';
