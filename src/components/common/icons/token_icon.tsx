@@ -1,3 +1,4 @@
+import randomColor from 'randomcolor';
 import React from 'react';
 
 import { ReactComponent as AeTokenIcon } from '../../../assets/icons/ae.svg';
@@ -69,9 +70,39 @@ export const TokenIcon = (props: Props) => {
     const { token } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(token.symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
-    return Icon ? React.createElement(Icon, null, null) : null;
+    return Icon
+        ? React.createElement(Icon, null, null)
+        : fallbackIcon({
+              fill: (token && token.primaryColor) || randomColor(),
+              title: token.symbol && token.symbol.toUpperCase(),
+          });
 };
 
 const getTokenIconNameBySymbol = (symbol: string): string => {
     return `${symbol.charAt(0).toUpperCase()}${symbol.slice(1)}TokenIcon`;
 };
+
+const fallbackIcon = ({
+    style = {},
+    title = '',
+    fill = '#ffd',
+    width = '26',
+    className = '',
+    height = '26',
+    viewBox = '0 0 100 100',
+}) => (
+    <svg
+        width={width}
+        style={style}
+        height={height}
+        viewBox={viewBox}
+        className={className}
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+    >
+        <circle cx="50" cy="50" r="45" fill={fill} />
+        <text x="50%" y="50%" textAnchor="middle" fill="white" fontSize="32px" fontFamily="Arial" dy=".3em">
+            {title}
+        </text>
+    </svg>
+);
