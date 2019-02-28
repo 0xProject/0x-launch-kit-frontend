@@ -4,14 +4,7 @@ import { History } from 'history';
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
-import {
-    BlockchainState,
-    RelayerState,
-    Step,
-    StepsModalState,
-    StoreState,
-    Web3State,
-} from '../util/types';
+import { BlockchainState, RelayerState, Step, StepsModalState, StoreState, Web3State } from '../util/types';
 
 import * as actions from './actions';
 
@@ -36,6 +29,7 @@ const initialStepsModal: StepsModalState = {
     doneSteps: [],
     currentStep: null,
     pendingSteps: [],
+    transactionPromise: null,
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -70,10 +64,7 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
     return state;
 }
 
-export function stepsModal(
-    state: StepsModalState = initialStepsModal,
-    action: RootAction,
-): StepsModalState {
+export function stepsModal(state: StepsModalState = initialStepsModal, action: RootAction): StepsModalState {
     switch (action.type) {
         case getType(actions.setStepsModalVisibility):
             return { ...state, isVisible: action.payload };
@@ -83,6 +74,8 @@ export function stepsModal(
             return { ...state, pendingSteps: action.payload };
         case getType(actions.setStepsModalCurrentStep):
             return { ...state, currentStep: action.payload };
+        case getType(actions.setStepsModalTransactionPromise):
+            return { ...state, transactionPromise: action.payload };
         case getType(actions.stepsModalAdvanceStep):
             const { doneSteps, currentStep, pendingSteps } = state;
             if (pendingSteps.length === 0 && currentStep !== null) {

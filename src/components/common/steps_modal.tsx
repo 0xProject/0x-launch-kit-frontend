@@ -2,39 +2,49 @@ import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
 
-import { setTransactionStepsModalVisibility, transactionStepsModalAdvanceStep } from '../../store/actions';
-import { getIsTransactionStepsModalVisible, getTransactionStepsModalCurrentStep } from '../../store/selectors';
-import { StoreState, TransactionStep, TransactionStepKind } from '../../util/types';
+import { resetSteps, setStepsModalVisibility, stepsModalAdvanceStep } from '../../store/actions';
+import { getIsStepsModalVisible, getStepsModalCurrentStep } from '../../store/selectors';
+import { Step, StepKind, StoreState } from '../../util/types';
 
+import { LoadingStepContainer } from './loading_step';
 import { SignOrderStepContainer } from './sign_order_step';
+import { SuccessStepContainer } from './success_step';
 
 interface StateProps {
-    isTransactionStepsModalVisible: boolean;
-    currentStep: TransactionStep | null;
+    isStepsModalVisible: boolean;
+    currentStep: Step | null;
 }
 
 interface DispatchProps {
     setModalVisibility: (flag: boolean) => any;
     advanceStep: () => any;
+    reset: () => void;
 }
 
 type Props = StateProps & DispatchProps;
 
-class TransactionStepsModal extends React.Component<Props> {
+class StepsModal extends React.Component<Props> {
     public render = () => {
-        const { isTransactionStepsModalVisible, currentStep, advanceStep, setModalVisibility } = this.props;
+        const { isStepsModalVisible, currentStep, advanceStep, setModalVisibility, reset } = this.props;
 
-        const close = () => setModalVisibility(false);
+        const close = () => {
+            setModalVisibility(false);
+            reset();
+        };
 
         let modalContent = null;
-        if (currentStep !== null && currentStep.kind === TransactionStepKind.BuySellLimit) {
+        if (currentStep && currentStep.kind === StepKind.BuySellLimit) {
             modalContent = <SignOrderStepContainer onSuccess={advanceStep} />;
+        } else if (currentStep && currentStep.kind === StepKind.Loading) {
+            modalContent = <LoadingStepContainer onSuccess={advanceStep} />;
+        } else if (currentStep && currentStep.kind === StepKind.Success) {
+            modalContent = <SuccessStepContainer onSuccess={advanceStep} />;
         } else if (currentStep === null) {
             modalContent = <p>Done!</p>;
         }
 
         return (
-            <Modal isOpen={isTransactionStepsModalVisible}>
+            <Modal isOpen={isStepsModalVisible}>
                 <button type="button" onClick={close}>
                     x
                 </button>
@@ -46,17 +56,18 @@ class TransactionStepsModal extends React.Component<Props> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        isTransactionStepsModalVisible: getIsTransactionStepsModalVisible(state),
-        currentStep: getTransactionStepsModalCurrentStep(state),
+        isStepsModalVisible: getIsStepsModalVisible(state),
+        currentStep: getStepsModalCurrentStep(state),
     };
 };
 
-const TransactionStepsModalContainer = connect(
+const StepsModalContainer = connect(
     mapStateToProps,
     {
-        advanceStep: transactionStepsModalAdvanceStep,
-        setModalVisibility: setTransactionStepsModalVisibility,
+        advanceStep: stepsModalAdvanceStep,
+        setModalVisibility: setStepsModalVisibility,
+        reset: resetSteps,
     },
-)(TransactionStepsModal);
+)(StepsModal);
 
-export { TransactionStepsModal, TransactionStepsModalContainer };
+export { StepsModal, StepsModalContainer };

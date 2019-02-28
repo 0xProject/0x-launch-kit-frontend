@@ -45,6 +45,8 @@ export enum StepKind {
     WrapEth,
     UnlockToken,
     BuySellLimit,
+    Loading,
+    Success,
 }
 
 export interface StepWrapEth {
@@ -64,13 +66,24 @@ export interface StepBuySellLimitOrder {
     side: OrderSide;
 }
 
-export type Step = StepWrapEth | StepUnlockToken | StepBuySellLimitOrder;
+export interface StepLoading {
+    kind: StepKind.Loading;
+    message: string;
+}
+
+export interface StepSuccess {
+    kind: StepKind.Success;
+    message: string;
+}
+
+export type Step = StepWrapEth | StepUnlockToken | StepBuySellLimitOrder | StepLoading | StepSuccess;
 
 export interface StepsModalState {
     readonly isVisible: boolean;
     readonly doneSteps: Step[];
     readonly currentStep: Step | null;
     readonly pendingSteps: Step[];
+    readonly transactionPromise: Promise<any> | null;
 }
 
 export interface StoreState {

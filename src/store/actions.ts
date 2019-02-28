@@ -77,7 +77,11 @@ export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', 
 });
 
 export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
-    return (currentStep: Step) => resolve(currentStep);
+    return (currentStep: Step | null) => resolve(currentStep);
+});
+
+export const setStepsModalTransactionPromise = createAction('SET_STEPSMODAL_TRANSACTION_PROMISE', resolve => {
+    return (transactionPromise: Promise<any> | null) => resolve(transactionPromise);
 });
 
 export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
@@ -285,9 +289,17 @@ export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) =
     };
 };
 
-export const openStepsModal = (amount: BigNumber, price: number, side: OrderSide) => {
+export const resetSteps = () => {
     return async (dispatch: any) => {
-        const pendingSteps: Step[] = [];
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalCurrentStep(null));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startBuySellLimitSteps = (amount: BigNumber, price: number, side: OrderSide) => {
+    return async (dispatch: any) => {
+        let pendingSteps: Step[] = [];
         // const state = getState();
         // const wethBalance = getWethBalance(state);
         // if (wethBalance.lt(amount)) {
@@ -314,6 +326,12 @@ export const openStepsModal = (amount: BigNumber, price: number, side: OrderSide
             price,
             side,
         };
+        pendingSteps = pendingSteps.concat([
+            {
+                kind: StepKind.Loading,
+                message: 'Submitting order...',
+            },
+        ]);
         dispatch(setStepsModalPendingSteps(pendingSteps));
         dispatch(setStepsModalCurrentStep(step));
         dispatch(setStepsModalDoneSteps([]));
