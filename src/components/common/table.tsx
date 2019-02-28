@@ -6,6 +6,7 @@ interface TableStyleProps {
     borderBottom?: boolean;
     borderTop?: boolean;
     color?: string;
+    tabular?: boolean;
     textAlign?: string;
 }
 
@@ -71,6 +72,7 @@ export const CustomTD = styled.td<TableTDProps>`
         props.styles && props.styles.borderBottom ? `1px solid ${themeColors.borderColor}` : 'none'};
     border-top: ${props => (props.styles && props.styles.borderTop ? `1px solid ${themeColors.borderColor}` : 'none')};
     color: ${props => (props.styles && props.styles.color ? props.styles.color : '#000')};
+    font-feature-settings: 'tnum' ${props => (props.styles && props.styles.tabular ? '1' : '0')};
     font-size: 14px;
     font-weight: normal;
     line-height: 1.2;
