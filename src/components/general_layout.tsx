@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { themeBreakPoints } from '../util/theme';
 
+import { StepsModalContainer } from './common/steps_modal';
 import { Toolbar } from './common/toolbar';
-import { TransactionStepsModalContainer } from './common/transaction_steps_modal';
 
 const General = styled.div`
     background: #f5f5f5;
@@ -36,7 +36,7 @@ export const GeneralLayout = (props: React.Props<any> | GeneralLayoutProps) => {
         <General>
             <Toolbar />
             <Content>{children}</Content>
-            <TransactionStepsModalContainer />
+            <StepsModalContainer />
         </General>
     );
 };

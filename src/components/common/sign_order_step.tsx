@@ -3,15 +3,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { submitOrder } from '../../store/actions';
-import { getTransactionStepsModalCurrentStep } from '../../store/selectors';
-import { OrderSide, StoreState, TransactionStepBuySellLimitOrder } from '../../util/types';
+import { getStepsModalCurrentStep } from '../../store/selectors';
+import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../util/types';
 
 interface OwnProps {
     onSuccess: () => any;
 }
 
 interface StateProps {
-    step: TransactionStepBuySellLimitOrder;
+    step: StepBuySellLimitOrder;
 }
 
 interface DispatchProps {
@@ -34,7 +34,7 @@ class SignOrderStep extends React.Component<Props> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        step: getTransactionStepsModalCurrentStep(state) as TransactionStepBuySellLimitOrder,
+        step: getStepsModalCurrentStep(state) as StepBuySellLimitOrder,
     };
 };
 

@@ -7,9 +7,9 @@ import { ActionType, getType } from 'typesafe-actions';
 import {
     BlockchainState,
     RelayerState,
+    Step,
+    StepsModalState,
     StoreState,
-    TransactionStep,
-    TransactionStepsModalState,
     Web3State,
 } from '../util/types';
 
@@ -31,7 +31,7 @@ const initialRelayerState: RelayerState = {
     selectedToken: null,
 };
 
-const initialTransactionStepsModal: TransactionStepsModalState = {
+const initialStepsModal: StepsModalState = {
     isVisible: false,
     doneSteps: [],
     currentStep: null,
@@ -70,40 +70,40 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
     return state;
 }
 
-export function transactionStepsModal(
-    state: TransactionStepsModalState = initialTransactionStepsModal,
+export function stepsModal(
+    state: StepsModalState = initialStepsModal,
     action: RootAction,
-): TransactionStepsModalState {
+): StepsModalState {
     switch (action.type) {
-        case getType(actions.setTransactionStepsModalVisibility):
+        case getType(actions.setStepsModalVisibility):
             return { ...state, isVisible: action.payload };
-        case getType(actions.setTransactionStepsModalDoneSteps):
+        case getType(actions.setStepsModalDoneSteps):
             return { ...state, doneSteps: action.payload };
-        case getType(actions.setTransactionStepsModalPendingSteps):
+        case getType(actions.setStepsModalPendingSteps):
             return { ...state, pendingSteps: action.payload };
-        case getType(actions.setTransactionStepsModalCurrentStep):
+        case getType(actions.setStepsModalCurrentStep):
             return { ...state, currentStep: action.payload };
-        case getType(actions.transactionStepsModalAdvanceStep):
+        case getType(actions.stepsModalAdvanceStep):
             const { doneSteps, currentStep, pendingSteps } = state;
             if (pendingSteps.length === 0 && currentStep !== null) {
                 return {
                     ...state,
-                    doneSteps: doneSteps.concat([currentStep as TransactionStep]),
+                    doneSteps: doneSteps.concat([currentStep as Step]),
                     currentStep: null,
                 };
             } else if (pendingSteps.length > 1) {
                 return {
                     ...state,
                     pendingSteps: pendingSteps.slice(0, pendingSteps.length - 1),
-                    doneSteps: doneSteps.concat([currentStep as TransactionStep]),
-                    currentStep: pendingSteps.pop() as TransactionStep,
+                    doneSteps: doneSteps.concat([currentStep as Step]),
+                    currentStep: pendingSteps.pop() as Step,
                 };
             } else {
                 return {
                     ...state,
                     pendingSteps: [],
                     currentStep: null,
-                    doneSteps: doneSteps.concat([currentStep as TransactionStep]),
+                    doneSteps: doneSteps.concat([currentStep as Step]),
                 };
             }
     }
@@ -115,5 +115,5 @@ export const createRootReducer = (history: History) =>
         router: connectRouter(history),
         blockchain,
         relayer,
-        transactionStepsModal,
+        stepsModal,
     });
