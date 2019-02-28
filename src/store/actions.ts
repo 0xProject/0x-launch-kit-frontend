@@ -155,20 +155,20 @@ export const initWallet = () => {
 
         const web3Data = await getWeb3DataWrapper();
         /* Subscriptions register **/
-        accountChangedSubscription((updatedWeb3Data: any) => {
-            dispatch(initializeBlockchainData(updatedWeb3Data.blockchainState));
-            dispatch(initializeRelayerData(updatedWeb3Data.relayerState));
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
-        })
-            .then()
-            .catch();
-        networkChangedSubscription((updatedWeb3Data: any) => {
+        accountChangedSubscription(async () => {
+            const updatedWeb3Data = await getWeb3DataWrapper();
+            if (updatedWeb3Data) {
+                dispatch(initializeBlockchainData(updatedWeb3Data.blockchainState));
+                dispatch(initializeRelayerData(updatedWeb3Data.relayerState));
+                dispatch(getAllOrders());
+                dispatch(getUserOrders());
+            }
+        });
+
+        networkChangedSubscription(() => {
             /* Performs a reload to avoid a bug with MetaMask: "MetaMask - RPC Error: Internal JSON-RPC" **/
             window.location.reload();
-        })
-            .then()
-            .catch();
+        });
 
         if (web3Data) {
             dispatch(initializeBlockchainData(web3Data.blockchainState));

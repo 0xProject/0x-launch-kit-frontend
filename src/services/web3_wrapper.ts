@@ -48,27 +48,24 @@ const initWeb3 = async () => {
 };
 
 /* Event to detect if user has changed the account */
-export const accountChangedSubscription = async (onChangeCb: (web3Data: Web3DataWrapper | null) => void) => {
+export const accountChangedSubscription = (onChangeCb: () => void) => {
     const { ethereum } = window;
     if (!web3Wrapper || !onChangeCb) {
         return;
     }
-    web3Data = await getWeb3DataWrapper();
     ethereum.on('accountsChanged', async (accounts: []) => {
-        web3Data = await getWeb3DataWrapper();
-        onChangeCb(web3Data);
+        onChangeCb();
     });
-    return web3Data;
 };
 
 /* Event to detect if user has changed the network */
-export const networkChangedSubscription = async (onChangeCb: (web3Data: Web3DataWrapper | null) => void) => {
+export const networkChangedSubscription = (onChangeCb: () => void) => {
     const { ethereum } = window;
     if (!web3Wrapper || !onChangeCb) {
         return;
     }
     ethereum.on('networkChanged', async (network: number) => {
-        onChangeCb(web3Data);
+        onChangeCb();
     });
 };
 
