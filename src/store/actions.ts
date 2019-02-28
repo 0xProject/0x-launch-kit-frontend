@@ -162,6 +162,8 @@ export const initWallet = () => {
                 dispatch(initializeRelayerData(updatedWeb3Data.relayerState));
                 dispatch(getAllOrders());
                 dispatch(getUserOrders());
+            } else {
+                dispatch(setWeb3State(Web3State.Error));
             }
         });
 
