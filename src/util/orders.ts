@@ -83,7 +83,7 @@ export const orderDetailsFeeDollar = async (
     tokenDecimals: number = 18,
 ): Promise<any> => {
     const priceInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, tokenDecimals);
-    const priceInDollar = await GetEthereumPriceInUSD();
+    const priceInDollar = await getEthereumPriceInUSD();
 
     return priceInEther.mul(priceInDollar).toFixed(2);
 };
