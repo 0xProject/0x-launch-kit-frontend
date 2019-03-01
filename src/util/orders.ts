@@ -79,5 +79,7 @@ export const buildMarketOrders = (
 
     const canBeFilled = filledAmount.eq(amount);
 
-    return [ordersToFill, amounts, canBeFilled];
+    const roundedAmounts = amounts.map(a => a.ceil());
+
+    return [ordersToFill, roundedAmounts, canBeFilled];
 };

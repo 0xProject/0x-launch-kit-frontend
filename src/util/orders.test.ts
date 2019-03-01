@@ -189,4 +189,20 @@ describe('buildMarketOrders', () => {
         // then
         expect(canBeFilled).toBe(false);
     });
+
+    it('should round amounts up', () => {
+        // given
+        const amount = new BigNumber(5);
+        const orders = [
+            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.01'), size: new BigNumber(3) }),
+            uiOrder({ side: OrderSide.Buy, price: new BigNumber('2.0'), size: new BigNumber(4) }),
+        ];
+
+        // when
+        const [ordersToFill, amounts] = buildMarketOrders({ amount, orders }, OrderSide.Buy);
+
+        // then
+        expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
+        expect(amounts).toEqual([new BigNumber(4), new BigNumber(4)]);
+    });
 });
