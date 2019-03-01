@@ -32,6 +32,6 @@ export const buildOrder = (params: BuildOrderParams, side: OrderSide): Order => 
         makerFee: new BigNumber(MAKER_FEE),
         takerFee: new BigNumber(TAKER_FEE),
         salt: generatePseudoRandomSalt(),
-        senderAddress: '0x0000000000000000000000000000000000000000',
+        senderAddress: account,
     };
 };

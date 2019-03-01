@@ -12,7 +12,7 @@ describe('buildOrder', () => {
         const wethAddress = '0x0000000000000000000000000000000000000003';
         const exchangeAddress = '0x0000000000000000000000000000000000000004';
         const amount = new BigNumber('100');
-        const price = 0.1;
+        const price = new BigNumber('0.1');
 
         // when
         const order = buildOrder(
@@ -39,6 +39,7 @@ describe('buildOrder', () => {
         expect(order.takerAssetData).toEqual(
             '0xf47261b00000000000000000000000000000000000000000000000000000000000000002',
         );
+        expect(order.senderAddress).toEqual(account);
     });
 
     it('should build a sell order', async () => {
@@ -48,7 +49,7 @@ describe('buildOrder', () => {
         const wethAddress = '0x0000000000000000000000000000000000000003';
         const exchangeAddress = '0x0000000000000000000000000000000000000004';
         const amount = new BigNumber('100');
-        const price = 0.1;
+        const price = new BigNumber('0.1');
 
         // when
         const order = buildOrder(
@@ -75,5 +76,6 @@ describe('buildOrder', () => {
         expect(order.takerAssetData).toEqual(
             '0xf47261b00000000000000000000000000000000000000000000000000000000000000003',
         );
+        expect(order.senderAddress).toEqual(account);
     });
 });
