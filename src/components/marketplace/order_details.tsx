@@ -106,7 +106,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>
                         {orderDetailType === OrderDetailsType.Usd
                             ? `$ ${this.state.zeroXPriceInUSD.toFixed(2)}`
-                            : `${MAKER_FEE} Zrx`}
+                            : `${MAKER_FEE} ZRX`}
                     </Value>
                 </Row>
             </>
