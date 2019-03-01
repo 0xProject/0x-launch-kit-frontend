@@ -1,4 +1,3 @@
-import randomColor from 'randomcolor';
 import React from 'react';
 
 import { ReactComponent as AeTokenIcon } from '../../../assets/icons/ae.svg';
@@ -29,6 +28,7 @@ import { ReactComponent as SpankTokenIcon } from '../../../assets/icons/spank.sv
 import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
+import { DEFAULT_FALLBACK_ICON_COLOR } from '../../../common/constants';
 import { Token } from '../../../util/types';
 
 interface Props {
@@ -73,7 +73,7 @@ export const TokenIcon = (props: Props) => {
     return Icon
         ? React.createElement(Icon, null, null)
         : fallbackIcon({
-              fill: (token && token.primaryColor) || randomColor(),
+              fill: (token && token.primaryColor) || DEFAULT_FALLBACK_ICON_COLOR,
               title: token.symbol && token.symbol.toUpperCase(),
           });
 };
@@ -91,15 +91,7 @@ const fallbackIcon = ({
     height = '26',
     viewBox = '0 0 100 100',
 }) => (
-    <svg
-        width={width}
-        style={style}
-        height={height}
-        viewBox={viewBox}
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-    >
+    <svg width={width} style={style} height={height} viewBox={viewBox} className={className}>
         <circle cx="50" cy="50" r="45" fill={fill} />
         <text x="50%" y="50%" textAnchor="middle" fill="white" fontSize="32px" fontFamily="Arial" dy=".3em">
             {title}
