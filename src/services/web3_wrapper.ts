@@ -17,9 +17,9 @@ export const getWeb3Wrapper = async () => {
             // Request account access if needed
             await provider.enable();
 
-            /* Subscriptions register **/
+            // Subscriptions register
             ethereum.on('accountsChanged', async (accounts: []) => {
-                /* Performs a reload to avoid a bug with MetaMask: "MetaMask - RPC Error: Internal JSON-RPC" **/
+                // Reload to avoid MetaMask bug: "MetaMask - RPC Error: Internal JSON-RPC"
                 location.reload();
             });
             ethereum.on('networkChanged', async (network: number) => {
