@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { themeColors, themeDimensions } from '../../util/theme';
 import { CardBase } from '../common/card_base';
@@ -65,6 +65,20 @@ const NotificationItem = styled.div<{ active?: boolean }>`
 const NotificationContent = styled.div`
     flex-grow: 1;
     padding-right: 25px;
+`;
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const NotificationIconSpin = styled.div`
+    animation: ${rotate} 1.5s linear infinite;
 `;
 
 const NotificationIcon = styled.div`
@@ -207,7 +221,11 @@ class NotificationsDropdown extends React.Component<Props, State> {
             return <NotificationCheckmarkIcon />;
         }
 
-        return <NotificationProcessingIcon />;
+        return (
+            <NotificationIconSpin>
+                <NotificationProcessingIcon />
+            </NotificationIconSpin>
+        );
     };
 
     private readonly _loadNotifications = () => {
