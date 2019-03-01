@@ -16,7 +16,7 @@ interface StateProps {
 
 interface DispatchProps {
     advanceStep: () => any;
-    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide, advanceStep: () => any) => any;
+    onSubmitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide, advanceStep: () => any) => any;
     setPromise: (promise: Promise<any>) => void;
 }
 

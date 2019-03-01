@@ -62,7 +62,7 @@ export interface StepUnlockToken {
 export interface StepBuySellLimitOrder {
     kind: StepKind.BuySellLimit;
     amount: BigNumber;
-    price: number;
+    price: BigNumber;
     side: OrderSide;
 }
 

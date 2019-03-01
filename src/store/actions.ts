@@ -302,7 +302,7 @@ export const resetSteps = () => {
     };
 };
 
-export const startBuySellLimitSteps = (amount: BigNumber, price: number, side: OrderSide) => {
+export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
     return async (dispatch: any) => {
         const step: Step = {
             kind: StepKind.BuySellLimit,
