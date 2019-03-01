@@ -114,6 +114,8 @@ describe('orderDetails', () => {
         const makerAmount = new BigNumber(5000000000000000000);
         const takerAmount = new BigNumber(1);
         const orderType = OrderSide.Sell;
+        const MAKER_FEE = '0.1';
+        const TAKER_FEE = '0.05';
         const DOLAR_PRICE = 10;
         // @ts-ignore
         dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
@@ -121,7 +123,7 @@ describe('orderDetails', () => {
         });
 
         // when
-        const orderInDollar = await orderDetailsFeeDollar(makerAmount, takerAmount, orderType);
+        const orderInDollar = await orderDetailsFeeDollar(makerAmount, takerAmount, orderType, MAKER_FEE, TAKER_FEE);
         const resultExpected = new BigNumber(1.5);
 
         // then
