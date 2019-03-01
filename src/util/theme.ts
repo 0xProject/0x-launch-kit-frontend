@@ -5,6 +5,7 @@ export const themeColors = {
     green: '#3CB34F',
     lightGray: '#B9B9B9',
     orange: '#F6851B',
+    gray: '#808080',
     rowActive: '#FBFDFF',
     textLight: '#999999',
 };

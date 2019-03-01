@@ -15,5 +15,3 @@ export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS
 
 export const MAKER_FEE = process.env.REACT_APP_MAKER_FEE || '0';
 export const TAKER_FEE = process.env.REACT_APP_TAKER_FEE || '0';
-
-export const DEFAULT_FALLBACK_ICON_COLOR = '#808080';

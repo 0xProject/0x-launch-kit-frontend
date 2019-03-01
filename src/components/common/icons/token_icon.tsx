@@ -29,7 +29,7 @@ import { ReactComponent as SpankTokenIcon } from '../../../assets/icons/spank.sv
 import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
-import { DEFAULT_FALLBACK_ICON_COLOR } from '../../../common/constants';
+import { themeColors } from '../../../util/theme';
 import { Token } from '../../../util/types';
 
 interface Props {
@@ -90,7 +90,7 @@ export const TokenIcon = (props: Props) => {
     const TokenIconComponentName = getTokenIconNameBySymbol(token.symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
     return (
-        <IconContainer color={token.primaryColor || DEFAULT_FALLBACK_ICON_COLOR}>
+        <IconContainer color={token.primaryColor || themeColors.gray}>
             {Icon ? <Icon /> : <Label>{token.symbol && token.symbol.toUpperCase()}</Label>}
         </IconContainer>
     );
