@@ -209,6 +209,7 @@ class NotificationsDropdown extends React.Component<Props, State> {
                 header={header}
                 horizontalPosition={DropdownPositions.Right}
                 onClick={this._loadNotifications}
+                shouldCloseDropdownBodyOnClick={false}
                 {...restProps}
             />
         );
