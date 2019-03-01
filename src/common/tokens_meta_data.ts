@@ -29,6 +29,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         symbol: 'mkr',
         name: 'Maker',
         addresses: {
+            42: '0x7B6B10CAa9E8E9552bA72638eA5b47c25afea1f3',
             50: '0x10add991de718a69dec2117cb6aa28098836511b',
         },
     },
@@ -37,6 +38,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         symbol: 'rep',
         name: 'Augur',
         addresses: {
+            42: '0x8CB3971b8EB709C14616BD556Ff6683019E90d9C',
             50: '0x6dfff22588be9b3ef8cf0ad6dc9b84796f9fb45f',
         },
     },
@@ -45,6 +47,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         symbol: 'dgd',
         name: 'DigixDao',
         addresses: {
+            42: '0xA4f468c9c692eb6B4b8b06270dAe7A2CfeedcDe9',
             50: '0xcfc18cec799fbd1793b5c43e773c98d4d61cc2db',
         },
     },
@@ -53,6 +56,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         symbol: 'mln',
         name: 'Melon',
         addresses: {
+            42: '0x17e394D1Df6cE29d042195Ea38411A98ff3Ead94',
             50: '0x8d61158a366019ac78db4149d75fff9dda51160d',
         },
     },

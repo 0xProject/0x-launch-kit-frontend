@@ -229,7 +229,7 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitLimitOrder = (amount: BigNumber, price: number, side: OrderSide) => {
+export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);

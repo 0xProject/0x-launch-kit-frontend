@@ -40,7 +40,8 @@ const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     const filled = tokenAmountInUnits(order.filled, selectedToken.decimals);
     const price = order.price.toString();
-    const status = order.status === OrderStatus.Fillable ? 'Open' : 'Filled';
+    const isOrderFillable = order.status === OrderStatus.Fillable;
+    const status = isOrderFillable ? 'Open' : 'Filled';
 
     return (
         <TR key={index}>
@@ -49,9 +50,7 @@ const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
             <CustomTD>{filled}</CustomTD>
             <CustomTD>{price}</CustomTD>
             <CustomTD>{status}</CustomTD>
-            <CustomTD>
-                <CancelOrderButtonContainer order={order} />
-            </CustomTD>
+            <CustomTD>{isOrderFillable ? <CancelOrderButtonContainer order={order} /> : ''}</CustomTD>
         </TR>
     );
 };

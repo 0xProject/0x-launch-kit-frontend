@@ -7,7 +7,7 @@ interface BuildLimitOrderParams {
     account: string;
     amount: BigNumber;
     exchangeAddress: string;
-    price: number;
+    price: BigNumber;
     tokenAddress: string;
     wethAddress: string;
 }
