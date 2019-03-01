@@ -9,7 +9,7 @@ import { getRelayer } from '../services/relayer';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
-import { buildOrder } from '../util/orders';
+import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import {
     BlockchainState,
     OrderSide,
@@ -22,7 +22,14 @@ import {
     Web3State,
 } from '../util/types';
 
-import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance } from './selectors';
+import {
+    getEthAccount,
+    getOpenBuyOrders,
+    getOpenSellOrders,
+    getSelectedToken,
+    getTokenBalances,
+    getWethBalance,
+} from './selectors';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: BlockchainState) => resolve(blockchainData);
@@ -254,7 +261,7 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide, onSuccess?: () => any) => {
+export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide, onSuccess?: () => any) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
@@ -267,7 +274,7 @@ export const submitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide
 
         const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
-        const order = buildOrder(
+        const order = buildLimitOrder(
             {
                 account: ethAccount,
                 amount,
@@ -324,5 +331,32 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         dispatch(setStepsModalCurrentStep(step));
         dispatch(setStepsModalDoneSteps([]));
         dispatch(setStepsModalVisibility(true));
+    };
+};
+
+export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+
+        const contractWrappers = await getContractWrappers();
+
+        const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+
+        const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
+            {
+                amount,
+                orders,
+            },
+            side,
+        );
+
+        if (canBeFilled) {
+            await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
+            dispatch(getAllOrders());
+            dispatch(getUserOrders());
+        } else {
+            window.alert('There are no enough orders to fill this amount');
+        }
     };
 };

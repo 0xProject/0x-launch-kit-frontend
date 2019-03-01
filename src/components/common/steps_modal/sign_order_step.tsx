@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setStepsModalTransactionPromise, stepsModalAdvanceStep, submitOrder } from '../../../store/actions';
+import { setStepsModalTransactionPromise, stepsModalAdvanceStep, submitLimitOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
@@ -47,7 +47,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const SignOrderStepContainer = connect(
     mapStateToProps,
     {
-        onSubmitOrder: submitOrder,
+        onSubmitOrder: submitLimitOrder,
         setPromise: setStepsModalTransactionPromise,
         advanceStep: stepsModalAdvanceStep,
     },

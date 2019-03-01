@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { startBuySellLimitSteps } from '../../store/actions';
+import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
@@ -22,7 +22,8 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
+    onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
+    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -198,20 +199,24 @@ class BuySell extends React.Component<Props, State> {
                             <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
                         </TokenContainer>
                     </FieldContainer>
-                    <LabelContainer>
-                        <Label>Token price</Label>
-                    </LabelContainer>
-                    <FieldContainer>
-                        <BigInputNumberStyled
-                            decimals={0}
-                            min={new BigNumber(0)}
-                            onChange={this.updatePrice}
-                            value={price}
-                        />
-                        <TokenContainer>
-                            <TokenText>wETH</TokenText>
-                        </TokenContainer>
-                    </FieldContainer>
+                    {orderType === OrderType.Limit && (
+                        <>
+                            <LabelContainer>
+                                <Label>Token price</Label>
+                            </LabelContainer>
+                            <FieldContainer>
+                                <BigInputNumberStyled
+                                    decimals={0}
+                                    min={new BigNumber(0)}
+                                    onChange={this.updatePrice}
+                                    value={price}
+                                />
+                                <TokenContainer>
+                                    <TokenText>wETH</TokenText>
+                                </TokenContainer>
+                            </FieldContainer>
+                        </>
+                    )}
                     <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
                         {tab === Tab.Buy ? 'Buy' : 'Sell'}{' '}
                         <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
@@ -234,12 +239,20 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public buy = async () => {
-        await this.props.onSubmitOrder(this.state.makerAmount, this.state.price, OrderSide.Buy);
+        if (this.state.orderType === OrderType.Limit) {
+            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Buy);
+        } else {
+            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Buy);
+        }
         this._reset();
     };
 
     public sell = async () => {
-        await this.props.onSubmitOrder(this.state.makerAmount, this.state.price, OrderSide.Sell);
+        if (this.state.orderType === OrderType.Limit) {
+            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Sell);
+        } else {
+            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Sell);
+        }
         this._reset();
     };
 
@@ -272,7 +285,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const BuySellContainer = connect(
     mapStateToProps,
     {
-        onSubmitOrder: startBuySellLimitSteps,
+        onSubmitLimitOrder: startBuySellLimitSteps,
+        onSubmitMarketOrder: submitMarketOrder,
     },
 )(BuySell);
 

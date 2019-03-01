@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { themeBreakPoints } from '../util/theme';
 
-import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { Footer } from './common/footer';
+import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { Toolbar } from './common/toolbar';
 
 const General = styled.div`
