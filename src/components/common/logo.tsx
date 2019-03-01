@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-const LogoWrapper = styled(Link)`
+interface Props extends HTMLAttributes<HTMLDivElement> {}
+
+const LogoLink = styled<any>(Link)`
     align-items: center;
     display: flex;
     height: 33px;
@@ -27,9 +29,13 @@ const LogoSVG = () => (
     </svg>
 );
 
-export const Logo = () => (
-    <LogoWrapper to="/">
-        <LogoSVG />
-        <LogoText>Launch Kit</LogoText>
-    </LogoWrapper>
-);
+export const Logo: React.FC<Props> = props => {
+    const { ...restProps } = props;
+
+    return (
+        <LogoLink to="/" {...restProps}>
+            <LogoSVG />
+            <LogoText>Launch Kit</LogoText>
+        </LogoLink>
+    );
+};

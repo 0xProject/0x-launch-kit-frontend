@@ -6,6 +6,7 @@ interface TableStyleProps {
     borderBottom?: boolean;
     borderTop?: boolean;
     color?: string;
+    tabular?: boolean;
     textAlign?: string;
 }
 
@@ -42,6 +43,8 @@ export const THead = styled.thead`
     text-transform: uppercase;
 `;
 
+export const TBody = styled.tbody``;
+
 export const TR = styled.tr``;
 
 export const TH = styled.th<TableTDProps>`
@@ -69,6 +72,7 @@ export const CustomTD = styled.td<TableTDProps>`
         props.styles && props.styles.borderBottom ? `1px solid ${themeColors.borderColor}` : 'none'};
     border-top: ${props => (props.styles && props.styles.borderTop ? `1px solid ${themeColors.borderColor}` : 'none')};
     color: ${props => (props.styles && props.styles.color ? props.styles.color : '#000')};
+    font-feature-settings: 'tnum' ${props => (props.styles && props.styles.tabular ? '1' : '0')};
     font-size: 14px;
     font-weight: normal;
     line-height: 1.2;
@@ -78,6 +82,13 @@ export const CustomTD = styled.td<TableTDProps>`
 
     &:last-child {
         padding-right: 0;
+    }
+`;
+
+export const CustomTDFirst = styled(CustomTD)`
+    &,
+    &:last-child {
+        padding-left: ${themeDimensions.horizontalPadding};
     }
 `;
 
@@ -92,6 +103,13 @@ export const CustomTDTitle = styled(CustomTD)`
     color: ${props => (props.styles && props.styles.color ? props.styles.color : themeColors.lightGray)};
     font-size: 12px;
     text-transform: uppercase;
+`;
+
+export const THFirst = styled(TH)`
+    &,
+    &:last-child {
+        padding-left: ${themeDimensions.horizontalPadding};
+    }
 `;
 
 export const THLast = styled(TH)`

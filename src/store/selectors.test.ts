@@ -177,6 +177,8 @@ describe('selectors', () => {
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3, openBuyOrder1, openBuyOrder2, openBuyOrder3],
+                mySizeOrders: [],
+                userOrders: [],
             },
         };
 
@@ -209,7 +211,75 @@ describe('selectors', () => {
                     price: new BigNumber('7.3'),
                 },
             ],
+            mySizeOrders: [],
             spread: new BigNumber('0.5'),
         });
+    });
+
+    it('should return mySize orders list', () => {
+        // given
+        const openSellOrder = openOrder({
+            side: OrderSide.Sell,
+            size: new BigNumber(1),
+            price: new BigNumber('8.1'),
+        });
+        const openBuyOrder = openOrder({ side: OrderSide.Buy, size: new BigNumber(1), price: new BigNumber('7.5') });
+
+        const userOrder1 = openOrder({
+            side: OrderSide.Buy,
+            size: new BigNumber(1),
+            price: new BigNumber('1'),
+        });
+        const userOrder2 = openOrder({
+            side: OrderSide.Buy,
+            size: new BigNumber(1),
+            price: new BigNumber('2'),
+            filled: new BigNumber(0.5),
+        });
+        const userOrder3 = openOrder({
+            side: OrderSide.Sell,
+            size: new BigNumber(10),
+            price: new BigNumber('5'),
+            filled: new BigNumber(5),
+        });
+        const userOrder4 = openOrder({
+            side: OrderSide.Sell,
+            size: new BigNumber(1),
+            price: new BigNumber('6'),
+        });
+
+        const state: any = {
+            relayer: {
+                orders: [openSellOrder, openBuyOrder],
+                userOrders: [userOrder1, userOrder2, userOrder3, userOrder4],
+            },
+        };
+
+        // when
+        const result = selectors.getMySizeOrders(state);
+
+        // then
+        expect(result).toEqual([
+            {
+                side: OrderSide.Buy,
+                size: new BigNumber(1),
+                price: new BigNumber('1'),
+            },
+            {
+                side: OrderSide.Buy,
+                size: new BigNumber(0.5),
+                price: new BigNumber('2'),
+            },
+            {
+                side: OrderSide.Sell,
+                size: new BigNumber(5),
+                price: new BigNumber('5'),
+            },
+            {
+                side: OrderSide.Sell,
+                size: new BigNumber(1),
+                price: new BigNumber('6'),
+            },
+        ]);
     });
 });

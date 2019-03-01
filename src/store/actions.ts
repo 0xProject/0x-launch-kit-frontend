@@ -254,7 +254,7 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitOrder = (amount: BigNumber, price: number, side: OrderSide, onSuccess?: () => any) => {
+export const submitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide, onSuccess?: () => any) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
