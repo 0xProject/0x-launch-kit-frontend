@@ -7,12 +7,7 @@ import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
-import {
-    accountChangedSubscription,
-    getWeb3Wrapper,
-    getWeb3WrapperOrThrow,
-    networkChangedSubscription,
-} from '../services/web3_wrapper';
+import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildOrder } from '../util/orders';
 import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
@@ -172,15 +167,6 @@ export const initWallet = () => {
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
             const selectedToken = knownTokens.getTokenBySymbol('ZRX');
-
-            /* Subscriptions register **/
-            networkChangedSubscription(() => {
-                /* Performs a reload to avoid a bug with MetaMask: "MetaMask - RPC Error: Internal JSON-RPC" **/
-                window.location.reload();
-            });
-            accountChangedSubscription(() => {
-                window.location.reload();
-            });
 
             dispatch(
                 initializeBlockchainData({
