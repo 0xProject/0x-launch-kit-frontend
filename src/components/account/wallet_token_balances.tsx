@@ -47,9 +47,12 @@ const TBody = styled.tbody`
     }
 `;
 
-const FontAwesomeIconStyles = styled(FontAwesomeIcon)<{ isUnlocked: boolean }>`
-    color: ${props => (props.isUnlocked ? '#c4c4c4' : '#000')};
+const FontAwesomeIconStyles = styled(FontAwesomeIcon)`
     cursor: pointer;
+`;
+
+const CustomTDLock = styled(CustomTDLast)<{ isUnlocked?: boolean }>`
+    color: ${props => (props.isUnlocked ? '#c4c4c4' : '#000')};
 `;
 
 interface LockCellProps {
@@ -60,9 +63,9 @@ interface LockCellProps {
 
 const LockCell = ({ styles, isUnlocked, onClick }: LockCellProps) => {
     return (
-        <CustomTDLast styles={styles} onClick={onClick}>
-            <FontAwesomeIconStyles isUnlocked={isUnlocked} icon={isUnlocked ? 'lock-open' : 'lock'} />
-        </CustomTDLast>
+        <CustomTDLock isUnlocked={isUnlocked} styles={styles} onClick={onClick}>
+            <FontAwesomeIconStyles icon={isUnlocked ? 'lock-open' : 'lock'} />
+        </CustomTDLock>
     );
 };
 
