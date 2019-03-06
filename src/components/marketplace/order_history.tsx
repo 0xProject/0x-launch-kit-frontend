@@ -62,12 +62,9 @@ class OrderHistory extends React.Component<Props, State> {
 
     public render = () => {
         const { orders, selectedToken } = this.props;
-
         const openOrders = orders.filter(order => order.status === OrderStatus.Fillable);
         const filledOrders = orders.filter(order => order.status === OrderStatus.FullyFilled);
-
         const ordersToShow = this.state.tab === Tab.Open ? openOrders : filledOrders;
-
         const setTabOpen = () => this.setState({ tab: Tab.Open });
         const setTabFilled = () => this.setState({ tab: Tab.Filled });
 
