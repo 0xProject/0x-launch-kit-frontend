@@ -1,5 +1,4 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
-import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../common/constants';
@@ -10,7 +9,16 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
-import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
+import {
+    BlockchainState,
+    Notification,
+    OrderSide,
+    RelayerState,
+    Token,
+    TokenBalance,
+    UIOrder,
+    Web3State,
+} from '../util/types';
 
 import {
     getEthAccount,
@@ -59,6 +67,14 @@ export const setUserOrders = createAction('SET_USER_ORDERS', resolve => {
 
 export const setSelectedToken = createAction('SET_SELECTED_TOKEN', resolve => {
     return (selectedToken: Token | null) => resolve(selectedToken);
+});
+
+export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
+    return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
+});
+
+export const addNotification = createAction('ADD_NOTIFICATION', resolve => {
+    return (newNotification: Notification) => resolve(newNotification);
 });
 
 export const unlockToken = (token: Token) => {
@@ -220,12 +236,24 @@ export const getUserOrders = () => {
     };
 };
 
-export const cancelOrder = (order: SignedOrder) => {
-    return async (dispatch: any) => {
-        await cancelSignedOrder(order);
+export const cancelOrder = (order: UIOrder) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const selectedToken = getSelectedToken(state) as Token;
+
+        await cancelSignedOrder(order.rawOrder);
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
+
+        dispatch(
+            addNotification({
+                kind: 'CancelOrderNotification',
+                amount: order.size,
+                token: selectedToken,
+                timestamp: new Date(),
+            }),
+        );
     };
 };
 

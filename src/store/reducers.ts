@@ -4,7 +4,7 @@ import { History } from 'history';
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
-import { BlockchainState, RelayerState, StoreState, Web3State } from '../util/types';
+import { BlockchainState, RelayerState, StoreState, UIState, Web3State } from '../util/types';
 
 import * as actions from './actions';
 
@@ -22,6 +22,11 @@ const initialRelayerState: RelayerState = {
     orders: [],
     userOrders: [],
     selectedToken: null,
+};
+
+const initialUIState: UIState = {
+    notifications: [],
+    hasUnreadNotifications: false,
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -56,9 +61,24 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
     return state;
 }
 
+export function ui(state: UIState = initialUIState, action: RootAction): UIState {
+    switch (action.type) {
+        case getType(actions.setHasUnreadNotifications):
+            return { ...state, hasUnreadNotifications: action.payload };
+        case getType(actions.addNotification):
+            return {
+                ...state,
+                notifications: [action.payload, ...state.notifications],
+                hasUnreadNotifications: true,
+            };
+    }
+    return state;
+}
+
 export const createRootReducer = (history: History) =>
     combineReducers<StoreState>({
         router: connectRouter(history),
         blockchain,
         relayer,
+        ui,
     });

@@ -1,4 +1,3 @@
-import { SignedOrder } from '@0x/connect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +11,7 @@ interface OwnProps {
 }
 
 interface DispatchProps {
-    onCancelOrder: (order: SignedOrder) => Promise<any>;
+    onCancelOrder: (order: UIOrder) => Promise<any>;
 }
 
 type Props = OwnProps & DispatchProps;
@@ -52,7 +51,7 @@ class CancelOrderButton extends React.Component<Props, State> {
         this.setState({ isLoading: true });
         try {
             const { order, onCancelOrder } = this.props;
-            await onCancelOrder(order.rawOrder);
+            await onCancelOrder(order);
         } catch (err) {
             alert(`Could not cancel the specified order`);
         } finally {

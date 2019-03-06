@@ -12,6 +12,8 @@ export const getWethBalance = (state: StoreState) => state.blockchain.wethBalanc
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
 export const getSelectedToken = (state: StoreState) => state.relayer.selectedToken;
+export const getNotifications = (state: StoreState) => state.ui.notifications;
+export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnreadNotifications;
 
 export const getOpenOrders = createSelector(
     getOrders,

@@ -42,10 +42,16 @@ export interface RelayerState {
     readonly selectedToken: Token | null;
 }
 
+export interface UIState {
+    readonly notifications: Notification[];
+    readonly hasUnreadNotifications: boolean;
+}
+
 export interface StoreState {
     readonly router: RouterState;
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
+    readonly ui: UIState;
 }
 
 export enum OrderSide {
@@ -74,3 +80,23 @@ export interface OrderBook {
     mySizeOrders: OrderBookItem[];
     spread: BigNumber;
 }
+
+interface BaseNotification {
+    timestamp: Date;
+}
+
+interface CancelOrderNotification extends BaseNotification {
+    kind: 'CancelOrderNotification';
+    amount: BigNumber;
+    token: Token;
+}
+
+interface MarketNotification extends BaseNotification {
+    kind: 'MarketNotification';
+    amount: BigNumber;
+    token: Token;
+    tx: Promise<any>;
+    side: OrderSide;
+}
+
+export type Notification = CancelOrderNotification | MarketNotification;
