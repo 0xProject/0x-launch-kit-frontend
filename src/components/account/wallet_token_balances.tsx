@@ -33,10 +33,6 @@ const TokenIconStyled = styled(TokenIcon)`
     margin: 0 auto;
 `;
 
-const TDLock = styled(CustomTD)`
-    min-width: 50px;
-`;
-
 const CustomTDTokenName = styled(CustomTD)`
     white-space: nowrap;
 `;

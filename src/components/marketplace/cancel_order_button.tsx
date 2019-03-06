@@ -1,5 +1,4 @@
 import { SignedOrder } from '@0x/connect';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
