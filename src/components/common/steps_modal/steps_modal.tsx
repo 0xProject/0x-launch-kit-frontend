@@ -6,9 +6,7 @@ import { resetSteps, setStepsModalVisibility } from '../../../store/actions';
 import { getIsStepsModalVisible, getStepsModalCurrentStep } from '../../../store/selectors';
 import { Step, StepKind, StoreState } from '../../../util/types';
 
-import { LoadingStepContainer } from './loading_step';
 import { SignOrderStepContainer } from './sign_order_step';
-import { SuccessStepContainer } from './success_step';
 
 interface StateProps {
     isStepsModalVisible: boolean;
@@ -37,8 +35,6 @@ class StepsModal extends React.Component<Props> {
                     x
                 </button>
                 {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
-                {currentStep && currentStep.kind === StepKind.Loading && <LoadingStepContainer />}
-                {currentStep && currentStep.kind === StepKind.Success && <SuccessStepContainer />}
             </Modal>
         );
     };

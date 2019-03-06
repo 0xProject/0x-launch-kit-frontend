@@ -42,11 +42,7 @@ export interface RelayerState {
 }
 
 export enum StepKind {
-    WrapEth,
-    UnlockToken,
     BuySellLimit,
-    Loading,
-    Success,
 }
 
 export interface StepBuySellLimitOrder {
@@ -56,19 +52,7 @@ export interface StepBuySellLimitOrder {
     side: OrderSide;
 }
 
-export interface StepLoading {
-    kind: StepKind.Loading;
-    message: string;
-    isLoading: boolean;
-}
-
-export interface StepSuccess {
-    kind: StepKind.Success;
-    message: string;
-    visibleSeconds?: number;
-}
-
-export type Step = StepBuySellLimitOrder | StepLoading | StepSuccess;
+export type Step = StepBuySellLimitOrder;
 
 export interface StepsModalState {
     readonly isVisible: boolean;

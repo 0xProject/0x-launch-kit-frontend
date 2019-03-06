@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getRelayer } from '../../../services/relayer';
-import { advanceStepAndScheduleStepLoadingUpdate, getAllOrders, getUserOrders } from '../../../store/actions';
+import { getAllOrders, getUserOrders, stepsModalAdvanceStep } from '../../../store/actions';
 import { getEthAccount, getSelectedToken, getStepsModalCurrentStep } from '../../../store/selectors';
 import { createSignedOrder } from '../../../util/signed_order';
 import { StepBuySellLimitOrder, StoreState, Token } from '../../../util/types';
@@ -21,23 +21,49 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-class SignOrderStep extends React.Component<Props> {
+enum StepStatus {
+    Initial,
+    Loading,
+    Done,
+}
+
+interface State {
+    status: StepStatus;
+}
+
+class SignOrderStep extends React.Component<Props, State> {
+    public state = {
+        status: StepStatus.Initial,
+    };
+
     public componentDidMount = async () => {
-        const { step, advanceStep, ethAccount, selectedToken } = this.props;
-        const { amount, price, side } = step;
-        const signedOrder = await createSignedOrder(amount, price, side, ethAccount, selectedToken);
-        // @TODO: the method advances the step although the promise may fail.
-        // Split step advancment and promise-resolution effects.
-        advanceStep(getRelayer().client.submitOrderAsync(signedOrder));
+        await this._getSignedOrder();
     };
 
     public render = () => {
-        return <p>Confirm on metamask</p>;
+        const { status } = this.state;
+        switch (status) {
+            case StepStatus.Loading:
+                return <p>Loading...</p>;
+            case StepStatus.Done:
+                return <p>Success!</p>;
+            default:
+                return <p>Please confirm on MM.</p>;
+        }
     };
 
     public componentWillUnmount = () => {
         this.props.getAllOrders();
         this.props.getUserOrders();
+    };
+
+    private readonly _getSignedOrder = async () => {
+        const { ethAccount, selectedToken, step } = this.props;
+        const { amount, price, side } = step;
+        const signedOrder = await createSignedOrder(amount, price, side, ethAccount, selectedToken);
+        this.setState({ status: StepStatus.Loading });
+        await getRelayer().client.submitOrderAsync(signedOrder);
+        this.setState({ status: StepStatus.Done });
     };
 }
 
@@ -52,7 +78,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const SignOrderStepContainer = connect(
     mapStateToProps,
     {
-        advanceStep: advanceStepAndScheduleStepLoadingUpdate,
+        advanceStep: stepsModalAdvanceStep,
         getAllOrders,
         getUserOrders,
     },

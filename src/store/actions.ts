@@ -15,7 +15,6 @@ import {
     RelayerState,
     Step,
     StepKind,
-    StepLoading,
     Token,
     TokenBalance,
     UIOrder,
@@ -27,7 +26,6 @@ import {
     getOpenBuyOrders,
     getOpenSellOrders,
     getSelectedToken,
-    getStepsModalCurrentStep,
     getTokenBalances,
     getWethBalance,
 } from './selectors';
@@ -274,38 +272,11 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
             price,
             side,
         };
-        const pendingSteps: Step[] = [
-            {
-                kind: StepKind.Loading,
-                message: 'Submitting order...',
-                isLoading: true,
-            },
-            {
-                kind: StepKind.Success,
-                message: 'Order successfully created',
-            },
-        ];
+        const pendingSteps: Step[] = [];
         dispatch(setStepsModalPendingSteps(pendingSteps));
         dispatch(setStepsModalCurrentStep(step));
         dispatch(setStepsModalDoneSteps([]));
         dispatch(setStepsModalVisibility(true));
-    };
-};
-
-export const advanceStepAndScheduleStepLoadingUpdate = (promise: Promise<any>) => {
-    return async (dispatch: any, getState: any) => {
-        dispatch(stepsModalAdvanceStep());
-
-        const state = getState();
-        const currentStep = getStepsModalCurrentStep(state) as Step;
-        if (currentStep.kind === StepKind.Loading) {
-            await promise;
-            const updatedLoadingStep: StepLoading = {
-                ...(currentStep as StepLoading),
-                isLoading: false,
-            };
-            dispatch(setStepsModalCurrentStep(updatedLoadingStep));
-        }
     };
 };
 
