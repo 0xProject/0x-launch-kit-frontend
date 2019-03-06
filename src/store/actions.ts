@@ -1,14 +1,15 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
+import { getRelayer } from '../services/relayer';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
-import { buildMarketOrders } from '../util/orders';
+import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import {
     BlockchainState,
     OrderSide,
@@ -277,6 +278,43 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         dispatch(setStepsModalCurrentStep(step));
         dispatch(setStepsModalDoneSteps([]));
         dispatch(setStepsModalVisibility(true));
+    };
+};
+
+export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const selectedToken = getSelectedToken(state) as Token;
+
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const contractWrappers = await getContractWrappers();
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
+
+        const order = buildLimitOrder(
+            {
+                account: ethAccount,
+                amount,
+                price,
+                tokenAddress: selectedToken.address,
+                wethAddress,
+                exchangeAddress: contractWrappers.exchange.address,
+            },
+            side,
+        );
+
+        const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+        return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+    };
+};
+
+export const submitLimitOrder = (signedOrder: SignedOrder) => {
+    return async (dispatch: any) => {
+        const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+        dispatch(getAllOrders());
+        dispatch(getUserOrders());
+        return submitResult;
     };
 };
 

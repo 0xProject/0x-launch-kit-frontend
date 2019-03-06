@@ -1,21 +1,19 @@
+import { BigNumber } from '0x.js';
+import { SignedOrder } from '@0x/connect';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getRelayer } from '../../../services/relayer';
-import { getAllOrders, getUserOrders } from '../../../store/actions';
-import { getEthAccount, getSelectedToken, getStepsModalCurrentStep } from '../../../store/selectors';
-import { createSignedOrder } from '../../../util/signed_order';
-import { StepBuySellLimitOrder, StoreState, Token } from '../../../util/types';
+import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
+import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 interface StateProps {
     step: StepBuySellLimitOrder;
-    ethAccount: string;
-    selectedToken: Token;
 }
 
 interface DispatchProps {
-    getAllOrders: () => any;
-    getUserOrders: () => any;
+    createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<SignedOrder>;
+    submitLimitOrder: (singedOrder: SignedOrder) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -51,17 +49,11 @@ class SignOrderStep extends React.Component<Props, State> {
         }
     };
 
-    public componentWillUnmount = () => {
-        this.props.getAllOrders();
-        this.props.getUserOrders();
-    };
-
     private readonly _getSignedOrder = async () => {
-        const { ethAccount, selectedToken, step } = this.props;
-        const { amount, price, side } = step;
-        const signedOrder = await createSignedOrder(amount, price, side, ethAccount, selectedToken);
+        const { amount, price, side } = this.props.step;
+        const signedOrder = await this.props.createSignedOrder(amount, price, side);
         this.setState({ status: StepStatus.Loading });
-        await getRelayer().client.submitOrderAsync(signedOrder);
+        await this.props.submitLimitOrder(signedOrder);
         this.setState({ status: StepStatus.Done });
     };
 }
@@ -69,16 +61,17 @@ class SignOrderStep extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         step: getStepsModalCurrentStep(state) as StepBuySellLimitOrder,
-        ethAccount: getEthAccount(state),
-        selectedToken: getSelectedToken(state) as Token,
     };
 };
 
 const SignOrderStepContainer = connect(
     mapStateToProps,
-    {
-        getAllOrders,
-        getUserOrders,
+    (dispatch: any) => {
+        return {
+            submitLimitOrder: (signedOrder: SignedOrder) => dispatch(submitLimitOrder(signedOrder)),
+            createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
+                dispatch(createSignedOrder(amount, price, side)),
+        };
     },
 )(SignOrderStep);
 
