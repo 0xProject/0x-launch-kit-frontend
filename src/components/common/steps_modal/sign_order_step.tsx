@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getRelayer } from '../../../services/relayer';
-import { getAllOrders, getUserOrders, stepsModalAdvanceStep } from '../../../store/actions';
+import { getAllOrders, getUserOrders } from '../../../store/actions';
 import { getEthAccount, getSelectedToken, getStepsModalCurrentStep } from '../../../store/selectors';
 import { createSignedOrder } from '../../../util/signed_order';
 import { StepBuySellLimitOrder, StoreState, Token } from '../../../util/types';
@@ -14,7 +14,6 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    advanceStep: (promise: Promise<any>) => any;
     getAllOrders: () => any;
     getUserOrders: () => any;
 }
@@ -78,7 +77,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const SignOrderStepContainer = connect(
     mapStateToProps,
     {
-        advanceStep: stepsModalAdvanceStep,
         getAllOrders,
         getUserOrders,
     },
