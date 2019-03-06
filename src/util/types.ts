@@ -13,6 +13,7 @@ export interface Token {
     decimals: number;
     name: string;
     symbol: string;
+    primaryColor: string;
 }
 
 export interface TokenBalance {
