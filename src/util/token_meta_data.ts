@@ -15,6 +15,7 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (
         symbol: tokenMetadata.symbol,
         decimals: tokenMetadata.decimals,
         name: tokenMetadata.name,
+        primaryColor: tokenMetadata.primaryColor,
     };
 };
 
@@ -28,6 +29,7 @@ export const mapTokensMetaDataToTokenByNetworkId = (networkId: number, tokensMet
                     symbol: tokenMetaData.symbol,
                     decimals: tokenMetaData.decimals,
                     name: tokenMetaData.name,
+                    primaryColor: tokenMetaData.primaryColor,
                 };
             },
         );

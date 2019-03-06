@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
+import { NotificationsDropdown } from '../account/notifications_dropdown';
 
 import { Logo } from './logo';
 import { MarketsDropdown } from './markets_dropdown';
@@ -39,15 +40,18 @@ const ToolbarWrapper = styled.div`
 `;
 
 const MyWalletLink = styled(Link)`
+    align-items: center;
     color: #333333;
+    display: flex;
     font-size: 16px;
     font-weight: 500;
-    margin: 0 35px 0 0;
     text-decoration: none;
 
     &:hover {
         text-decoration: underline;
     }
+
+    ${separatorTopbar}
 `;
 
 const ToolbarStart = styled.div`
@@ -73,6 +77,13 @@ const MarketsDropdownHeader = styled<any>(MarketsDropdown)`
     ${separatorTopbar}
 `;
 
+const WalletDropdown = styled(WalletConnectionStatusContainer)`
+    align-items: center;
+    display: flex;
+
+    ${separatorTopbar}
+`;
+
 export const Toolbar = () => (
     <ToolbarWrapper>
         <ToolbarStart>
@@ -82,7 +93,8 @@ export const Toolbar = () => (
         </ToolbarStart>
         <ToolbarEnd>
             <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
-            <WalletConnectionStatusContainer />
+            <WalletDropdown />
+            <NotificationsDropdown />
         </ToolbarEnd>
     </ToolbarWrapper>
 );
