@@ -69,6 +69,7 @@ export interface StepBuySellLimitOrder {
 export interface StepLoading {
     kind: StepKind.Loading;
     message: string;
+    isLoading: boolean;
 }
 
 export interface StepSuccess {
@@ -84,7 +85,6 @@ export interface StepsModalState {
     readonly doneSteps: Step[];
     readonly currentStep: Step | null;
     readonly pendingSteps: Step[];
-    readonly transactionPromise: Promise<any> | null;
 }
 
 export interface StoreState {

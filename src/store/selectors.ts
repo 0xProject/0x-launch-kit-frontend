@@ -16,7 +16,6 @@ export const getIsStepsModalVisible = (state: StoreState) => state.stepsModal.is
 export const getStepsModalPendingSteps = (state: StoreState) => state.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.stepsModal.currentStep;
-export const getStepsModalTransactionPromise = (state: StoreState) => state.stepsModal.transactionPromise;
 
 export const getOpenOrders = createSelector(
     getOrders,

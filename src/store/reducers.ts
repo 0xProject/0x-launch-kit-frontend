@@ -29,7 +29,6 @@ const initialStepsModal: StepsModalState = {
     doneSteps: [],
     currentStep: null,
     pendingSteps: [],
-    transactionPromise: null,
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -74,8 +73,6 @@ export function stepsModal(state: StepsModalState = initialStepsModal, action: R
             return { ...state, pendingSteps: action.payload };
         case getType(actions.setStepsModalCurrentStep):
             return { ...state, currentStep: action.payload };
-        case getType(actions.setStepsModalTransactionPromise):
-            return { ...state, transactionPromise: action.payload };
         case getType(actions.stepsModalAdvanceStep):
             const { doneSteps, currentStep, pendingSteps } = state;
             if (pendingSteps.length === 0 && currentStep !== null) {

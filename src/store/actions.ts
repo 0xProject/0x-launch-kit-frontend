@@ -1,21 +1,21 @@
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import { BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
-import { getRelayer } from '../services/relayer';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
-import { buildLimitOrder, buildMarketOrders } from '../util/orders';
+import { buildMarketOrders } from '../util/orders';
 import {
     BlockchainState,
     OrderSide,
     RelayerState,
     Step,
     StepKind,
+    StepLoading,
     Token,
     TokenBalance,
     UIOrder,
@@ -27,6 +27,7 @@ import {
     getOpenBuyOrders,
     getOpenSellOrders,
     getSelectedToken,
+    getStepsModalCurrentStep,
     getTokenBalances,
     getWethBalance,
 } from './selectors';
@@ -85,10 +86,6 @@ export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', 
 
 export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
     return (currentStep: Step | null) => resolve(currentStep);
-});
-
-export const setStepsModalTransactionPromise = createAction('SET_STEPSMODAL_TRANSACTION_PROMISE', resolve => {
-    return (transactionPromise: Promise<any> | null) => resolve(transactionPromise);
 });
 
 export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
@@ -261,46 +258,6 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide, onSuccess?: () => any) => {
-    return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const ethAccount = getEthAccount(state);
-        const selectedToken = getSelectedToken(state) as Token;
-
-        const relayer = getRelayer();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const contractWrappers = await getContractWrappers();
-
-        const wethAddress = getKnownTokens(networkId).getWethToken().address;
-
-        const order = buildLimitOrder(
-            {
-                account: ethAccount,
-                amount,
-                price,
-                tokenAddress: selectedToken.address,
-                wethAddress,
-                exchangeAddress: contractWrappers.exchange.address,
-            },
-            side,
-        );
-
-        const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-        const signedOrder = await signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
-
-        await relayer.client.submitOrderAsync(signedOrder);
-
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
-
-        // @TODO: refactor this
-        if (onSuccess) {
-            onSuccess();
-        }
-    };
-};
-
 export const resetSteps = () => {
     return async (dispatch: any) => {
         dispatch(setStepsModalPendingSteps([]));
@@ -321,6 +278,7 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
             {
                 kind: StepKind.Loading,
                 message: 'Submitting order...',
+                isLoading: true,
             },
             {
                 kind: StepKind.Success,
@@ -331,6 +289,23 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         dispatch(setStepsModalCurrentStep(step));
         dispatch(setStepsModalDoneSteps([]));
         dispatch(setStepsModalVisibility(true));
+    };
+};
+
+export const advanceStepAndScheduleStepLoadingUpdate = (promise: Promise<any>) => {
+    return async (dispatch: any, getState: any) => {
+        dispatch(stepsModalAdvanceStep());
+
+        const state = getState();
+        const currentStep = getStepsModalCurrentStep(state) as Step;
+        if (currentStep.kind === StepKind.Loading) {
+            await promise;
+            const updatedLoadingStep: StepLoading = {
+                ...(currentStep as StepLoading),
+                isLoading: false,
+            };
+            dispatch(setStepsModalCurrentStep(updatedLoadingStep));
+        }
     };
 };
 

@@ -2,12 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { stepsModalAdvanceStep } from '../../../store/actions';
-import { getStepsModalCurrentStep, getStepsModalTransactionPromise } from '../../../store/selectors';
+import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { StepLoading, StoreState } from '../../../util/types';
 
 interface StateProps {
     step: StepLoading;
-    promise: Promise<any>;
 }
 
 interface DispatchProps {
@@ -17,12 +16,12 @@ interface DispatchProps {
 type Props = StateProps & DispatchProps;
 
 class LoadingStep extends React.Component<Props> {
-    public componentDidMount = async () => {
-        const { advanceStep, promise } = this.props;
-        if (promise) {
-            await promise;
+    public shouldComponentUpdate = (nextProps: Props) => {
+        const { step, advanceStep } = nextProps;
+        if (!step.isLoading) {
             advanceStep();
         }
+        return false;
     };
 
     public render = () => {
@@ -30,7 +29,6 @@ class LoadingStep extends React.Component<Props> {
         return (
             <div>
                 <p>{step.message}</p>
-                <p>Loading</p>
             </div>
         );
     };
@@ -39,7 +37,6 @@ class LoadingStep extends React.Component<Props> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         step: getStepsModalCurrentStep(state) as StepLoading,
-        promise: getStepsModalTransactionPromise(state) as Promise<any>,
     };
 };
 
