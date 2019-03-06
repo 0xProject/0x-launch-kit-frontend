@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdown } from '../account/notifications_dropdown';
 
@@ -78,10 +78,22 @@ const MarketsDropdownHeader = styled<any>(MarketsDropdown)`
 `;
 
 const WalletDropdown = styled(WalletConnectionStatusContainer)`
-    align-items: center;
-    display: flex;
+    display: none;
 
-    ${separatorTopbar}
+    @media (min-width: ${themeBreakPoints.sm}) {
+        align-items: center;
+        display: flex;
+
+        ${separatorTopbar}
+    }
+`;
+
+const PriceChangeStyled = styled(PriceChange)`
+    display: none;
+
+    @media (min-width: ${themeBreakPoints.lg}) {
+        display: flex;
+    }
 `;
 
 export const Toolbar = () => (
@@ -89,7 +101,7 @@ export const Toolbar = () => (
         <ToolbarStart>
             <LogoHeader />
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-            <PriceChange />
+            <PriceChangeStyled />
         </ToolbarStart>
         <ToolbarEnd>
             <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
