@@ -231,7 +231,6 @@ export const updateStore = () => {
             dispatch(getUserOrders());
             dispatch(setTokenBalances(tokenBalances));
         }
-
     };
 };
 
