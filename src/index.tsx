@@ -16,7 +16,6 @@ import * as serviceWorker from './serviceWorker';
 import { history, store } from './store/index';
 
 ReactModal.setAppElement('#root');
-
 const RedirectToHome = () => <Redirect to="/" />;
 
 const Web3WrappedApp = (
