@@ -36,7 +36,7 @@ const orderToRow = (
     selectedToken: Token,
     mySizeOrders: OrderBookItem[] = [],
 ) => {
-    const size = tokenAmountInUnits(order.size, selectedToken.decimals);
+    const size = tokenAmountInUnits(order.size, selectedToken.decimals, 7);
     const price = order.price.toString();
     const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
     const time: string = '';
