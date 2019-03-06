@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
-import { NotificationsDropdown } from '../account/notifications_dropdown';
+import { NotificationsDropdown } from '../notifications/notifications_dropdown';
 
 import { Logo } from './logo';
 import { MarketsDropdown } from './markets_dropdown';
