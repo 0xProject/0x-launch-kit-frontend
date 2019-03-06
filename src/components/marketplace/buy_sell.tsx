@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { submitOrder } from '../../store/actions';
+import { submitLimitOrder, submitMarketOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
@@ -22,7 +22,8 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitOrder: (amount: BigNumber, price: number, side: OrderSide) => Promise<any>;
+    onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
+    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -35,7 +36,7 @@ enum OrderType {
 interface State {
     makerAmount: BigNumber;
     orderType: OrderType;
-    price: number;
+    price: BigNumber;
     tab: Tab;
 }
 
@@ -122,10 +123,6 @@ const BigInputNumberStyled = styled<any>(BigNumberInput)`
     ${fieldStyle}
 `;
 
-const FieldStyled = styled.input`
-    ${fieldStyle}
-`;
-
 const TokenContainer = styled.div`
     display: flex;
     position: absolute;
@@ -155,7 +152,7 @@ class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
         orderType: OrderType.Limit,
-        price: 0,
+        price: new BigNumber(0),
         tab: Tab.Buy,
     };
 
@@ -202,15 +199,24 @@ class BuySell extends React.Component<Props, State> {
                             <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
                         </TokenContainer>
                     </FieldContainer>
-                    <LabelContainer>
-                        <Label>Token price</Label>
-                    </LabelContainer>
-                    <FieldContainer>
-                        <FieldStyled type="number" value={price} min={0} onChange={this.updatePrice} />
-                        <TokenContainer>
-                            <TokenText>wETH</TokenText>
-                        </TokenContainer>
-                    </FieldContainer>
+                    {orderType === OrderType.Limit && (
+                        <>
+                            <LabelContainer>
+                                <Label>Token price</Label>
+                            </LabelContainer>
+                            <FieldContainer>
+                                <BigInputNumberStyled
+                                    decimals={0}
+                                    min={new BigNumber(0)}
+                                    onChange={this.updatePrice}
+                                    value={price}
+                                />
+                                <TokenContainer>
+                                    <TokenText>wETH</TokenText>
+                                </TokenContainer>
+                            </FieldContainer>
+                        </>
+                    )}
                     <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
                         {tab === Tab.Buy ? 'Buy' : 'Sell'}{' '}
                         <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
@@ -228,26 +234,32 @@ class BuySell extends React.Component<Props, State> {
         });
     };
 
-    public updatePrice: React.ReactEventHandler<HTMLInputElement> = e => {
-        const price = parseFloat(e.currentTarget.value);
-
+    public updatePrice = (price: BigNumber) => {
         this.setState({ price });
     };
 
     public buy = async () => {
-        await this.props.onSubmitOrder(this.state.makerAmount, this.state.price, OrderSide.Buy);
+        if (this.state.orderType === OrderType.Limit) {
+            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Buy);
+        } else {
+            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Buy);
+        }
         this._reset();
     };
 
     public sell = async () => {
-        await this.props.onSubmitOrder(this.state.makerAmount, this.state.price, OrderSide.Sell);
+        if (this.state.orderType === OrderType.Limit) {
+            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Sell);
+        } else {
+            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Sell);
+        }
         this._reset();
     };
 
     private readonly _reset = () => {
         this.setState({
             makerAmount: new BigNumber('0'),
-            price: 0,
+            price: new BigNumber(0),
         });
     };
 
@@ -273,7 +285,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const BuySellContainer = connect(
     mapStateToProps,
     {
-        onSubmitOrder: submitOrder,
+        onSubmitLimitOrder: submitLimitOrder,
+        onSubmitMarketOrder: submitMarketOrder,
     },
 )(BuySell);
 

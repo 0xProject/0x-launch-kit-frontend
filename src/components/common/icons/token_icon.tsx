@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import { ReactComponent as AeTokenIcon } from '../../../assets/icons/ae.svg';
 import { ReactComponent as AgiTokenIcon } from '../../../assets/icons/agi.svg';
@@ -28,6 +29,7 @@ import { ReactComponent as SpankTokenIcon } from '../../../assets/icons/spank.sv
 import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
+import { themeColors } from '../../../util/theme';
 import { Token } from '../../../util/types';
 
 interface Props {
@@ -65,11 +67,33 @@ const TokenIcons = {
     ZrxTokenIcon,
 };
 
+const IconContainer = styled.div<{ color: string }>`
+    align-items: center;
+    background-color: ${props => (props.color ? props.color : 'transparent')};
+    border-radius: 50%;
+    display: flex;
+    height: 1.6em;
+    justify-content: center;
+    width: 1.6em;
+`;
+
+const Label = styled.label`
+    color: #ffffff;
+    font-size: 0.7em;
+    font-weight: 500;
+    line-height: normal;
+    margin: 0;
+`;
+
 export const TokenIcon = (props: Props) => {
     const { token } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(token.symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
-    return Icon ? React.createElement(Icon, null, null) : null;
+    return (
+        <IconContainer color={token.primaryColor || themeColors.gray}>
+            {Icon ? <Icon /> : <Label>{token.symbol && token.symbol.toUpperCase()}</Label>}
+        </IconContainer>
+    );
 };
 
 const getTokenIconNameBySymbol = (symbol: string): string => {
