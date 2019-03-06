@@ -213,27 +213,6 @@ export const getUserOrders = () => {
     };
 };
 
-export const updateStore = () => {
-    return async (dispatch: any) => {
-        const web3Wrapper = await getWeb3Wrapper();
-
-        if (web3Wrapper) {
-            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-            const networkId = await web3Wrapper.getNetworkIdAsync();
-
-            const knownTokens = getKnownTokens(networkId);
-
-            const tokenBalances = await Promise.all(
-                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-            );
-
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
-            dispatch(setTokenBalances(tokenBalances));
-        }
-    };
-};
-
 export const cancelOrder = (order: SignedOrder) => {
     return async (dispatch: any) => {
         await cancelSignedOrder(order);
@@ -275,5 +254,26 @@ export const submitOrder = (amount: BigNumber, price: number, side: OrderSide) =
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
+    };
+};
+
+export const updateStore = () => {
+    return async (dispatch: any) => {
+        const web3Wrapper = await getWeb3Wrapper();
+
+        if (web3Wrapper) {
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+
+            const knownTokens = getKnownTokens(networkId);
+
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
+
+            dispatch(getAllOrders());
+            dispatch(getUserOrders());
+            dispatch(setTokenBalances(tokenBalances));
+        }
     };
 };

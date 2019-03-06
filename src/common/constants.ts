@@ -15,3 +15,6 @@ export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS
 
 export const MAKER_FEE = process.env.REACT_APP_MAKER_FEE || '0';
 export const TAKER_FEE = process.env.REACT_APP_TAKER_FEE || '0';
+
+export const UI_UPDATE_CHECK_INTERVAL: number =
+    Number.parseInt(process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL as string, 10) || 1000;
