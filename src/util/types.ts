@@ -49,16 +49,6 @@ export enum StepKind {
     Success,
 }
 
-export interface StepWrapEth {
-    kind: StepKind.WrapEth;
-    amount: BigNumber;
-}
-
-export interface StepUnlockToken {
-    kind: StepKind.UnlockToken;
-    token: Token;
-}
-
 export interface StepBuySellLimitOrder {
     kind: StepKind.BuySellLimit;
     amount: BigNumber;
@@ -78,7 +68,7 @@ export interface StepSuccess {
     visibleSeconds?: number;
 }
 
-export type Step = StepWrapEth | StepUnlockToken | StepBuySellLimitOrder | StepLoading | StepSuccess;
+export type Step = StepBuySellLimitOrder | StepLoading | StepSuccess;
 
 export interface StepsModalState {
     readonly isVisible: boolean;
