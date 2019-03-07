@@ -18,21 +18,23 @@ interface DispatchProps {
 type Props = OwnProps & DispatchProps;
 
 class App extends React.Component<Props> {
-    public state = {
-        isActiveCheckUpdates: false,
-    };
+    private _updateStoreInterval: number | undefined;
 
     public componentWillMount = () => {
         this.props.onInitWallet();
         /* Enables realtime updates of the store using pooling */
-        if (!this.state.isActiveCheckUpdates) {
-            setInterval(async () => {
+        if (!this._updateStoreInterval) {
+            this._updateStoreInterval = window.setInterval(async () => {
                 this.props.onUpdateStore();
                 this.setState({
                     isActiveCheckUpdates: true,
                 });
             }, UI_UPDATE_CHECK_INTERVAL);
         }
+    };
+
+    public componentWillUnmount = () => {
+        clearInterval(this._updateStoreInterval);
     };
 
     public render = () => this.props.children;
