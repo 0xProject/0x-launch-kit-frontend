@@ -31,6 +31,9 @@ type Props = PropsDivElement & PropsToken & DispatchProps;
 interface State {
     isLoadingMarkets: boolean;
     selectedFilter: number;
+    filteredTokens: Token[];
+    alreadyAssignedProps: boolean;
+    search: string;
 }
 
 interface TokenFiltersTabProps {
@@ -253,9 +256,22 @@ class MarketsDropdown extends React.Component<Props, State> {
         // Note: this will give you a headache in the long run, so please use redux / mobx or something...
         isLoadingMarkets: true,
         selectedFilter: 0,
+        filteredTokens: [],
+        alreadyAssignedProps: false,
+        search: '',
     };
 
     private _closeDropdown: any;
+
+    public static getDerivedStateFromProps(nextProps: Props, previousState: State): any {
+        // Check for initialization
+        if (!previousState.alreadyAssignedProps && nextProps.tokens && nextProps.tokens.length > 0) {
+            previousState.filteredTokens = nextProps.tokens;
+            previousState.alreadyAssignedProps = true;
+            return previousState;
+        }
+        return null;
+    }
 
     public render = () => {
         const { tokens, selectedToken, ...restProps } = this.props;
@@ -336,13 +352,27 @@ class MarketsDropdown extends React.Component<Props, State> {
         return (
             <SearchWrapper>
                 <MagnifierIconWrapper>{MagnifierIcon()}</MagnifierIconWrapper>
-                <SearchField />
+                <SearchField onChange={this._handleChange} value={this.state.search} />
             </SearchWrapper>
         );
     };
 
+    private readonly _handleChange = (e: any) => {
+        const search = e.currentTarget.value;
+        const value = search.toLowerCase();
+        const filteredTokens = this.props.tokens.filter((token: Token) => {
+            const symbol = token.symbol.toLowerCase();
+            return symbol.indexOf(value) !== -1;
+        });
+
+        this.setState({
+            filteredTokens,
+            search,
+        });
+    };
+
     private readonly _getMarkets = () => {
-        const { tokens, selectedToken } = this.props;
+        const { selectedToken } = this.props;
 
         return (
             <Table>
@@ -355,7 +385,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                     </TR>
                 </THead>
                 <TBody>
-                    {tokens.map((token, index) => {
+                    {this.state.filteredTokens.map((token, index) => {
                         const { symbol } = token;
                         let isActive = false;
                         if (selectedToken) {
