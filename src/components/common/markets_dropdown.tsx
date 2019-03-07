@@ -13,6 +13,7 @@ import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
 import { ChevronDownIcon } from './icons/chevron_down_icon';
 import { MagnifierIcon } from './icons/magnifier_icon';
+import { TokenIcon } from './icons/token_icon';
 import { Loading } from './loading';
 import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst, THLast, TR } from './table';
 
@@ -436,25 +437,26 @@ class MarketsDropdown extends React.Component<Props, State> {
                     </TR>
                 </THead>
                 <TBody>
-                    {tokens.map((item, index) => {
-                        const { symbol } = item;
+                    {tokens.map((token, index) => {
+                        const { symbol } = token;
                         let active = false;
                         if (selectedToken) {
                             active = symbol === selectedToken.symbol;
                         }
                         return (
-                            <TRStyled active={active} key={symbol} onClick={this._setSelectedMarket.bind(this, item)}>
+                            <TRStyled active={active} key={symbol} onClick={this._setSelectedMarket.bind(this, token)}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    {item.symbol.toUpperCase()}
+                                    <TokenIcon token={token} />
+                                    {symbol.toUpperCase()}
                                 </CustomTDFirstStyled>
                                 <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {this._getPrice(item)}
+                                    {this._getPrice(token)}
                                 </CustomTDStyled>
                                 <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
-                                    {this._getDayChange(item)}
+                                    {this._getDayChange(token)}
                                 </CustomTDStyled>
                                 <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {this._getDayVolumen(item)}
+                                    {this._getDayVolumen(token)}
                                 </CustomTDLastStyled>
                             </TRStyled>
                         );
