@@ -1,10 +1,10 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { cancelOrder } from '../../store/actions';
 import { UIOrder } from '../../util/types';
+import { CloseIcon } from '../common/icons/close_icon';
 
 interface OwnProps {
     order: UIOrder;
@@ -21,15 +21,22 @@ interface State {
 }
 
 const Button = styled.button`
+    align-items: center;
     background: none;
     border: none;
-    color: #c4c4c4;
-    display: inline-block;
-    height: 1em;
+    display: flex;
+    height: 17px;
+    justify-content: center;
     outline: 0;
+    padding: 0;
+    width: 25px;
 
     &:hover {
         cursor: pointer;
+    }
+
+    &[disabled] {
+        cursor: default;
     }
 `;
 
@@ -41,8 +48,8 @@ class CancelOrderButton extends React.Component<Props, State> {
     public render = () => {
         const { isLoading } = this.state;
         return (
-            <Button type="button" disabled={isLoading} onClick={this._cancelOrder}>
-                <FontAwesomeIcon icon="times" />
+            <Button title="Cancel order" type="button" disabled={isLoading} onClick={this._cancelOrder}>
+                <CloseIcon />
             </Button>
         );
     };
