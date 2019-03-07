@@ -2,6 +2,7 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { getOrderBook, getSelectedToken, getUserOrders } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
@@ -36,7 +37,7 @@ const orderToRow = (
     selectedToken: Token,
     mySizeOrders: OrderBookItem[] = [],
 ) => {
-    const size = tokenAmountInUnits(order.size, selectedToken.decimals, 7);
+    const size = tokenAmountInUnits(order.size, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const price = order.price.toString();
     const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
     const time: string = '';
@@ -49,7 +50,7 @@ const orderToRow = (
         return sumSize;
     }, new BigNumber(0));
 
-    const mySizeConverted = tokenAmountInUnits(mySize, selectedToken.decimals);
+    const mySizeConverted = tokenAmountInUnits(mySize, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
 
     return (
         <TR key={index}>
@@ -60,7 +61,7 @@ const orderToRow = (
                 {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
             </CustomTD>
             <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
-                {parseFloat(price).toFixed(7)}
+                {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
             </CustomTD>
             <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: timeColor }}>
                 {time.length ? time : '-'}
@@ -130,7 +131,7 @@ class OrderBookTable extends React.Component<Props, State> {
                             <CustomTD
                                 styles={{ tabular: true, textAlign: 'right', borderBottom: true, borderTop: true }}
                             >
-                                {spread.toFixed(7)}
+                                {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
                             </CustomTD>
                             <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 {}
