@@ -22,8 +22,8 @@ jobs:
                   name: Lint checks
                   command: yarn run lint
             - run:
-                  name: Coveralls
-                  command: COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} && yarn run coveralls
-            - run:
                   name: Tests
                   command: yarn run test-once
+            - run:
+                  name: Coveralls
+                  command: COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} && yarn run coveralls
