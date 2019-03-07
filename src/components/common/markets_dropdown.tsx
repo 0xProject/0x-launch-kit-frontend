@@ -2,20 +2,19 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { themeColors, themeDimensions } from '../../util/theme';
 import { StoreState, Token } from '../../util/types';
 
 import { setSelectedToken } from '../../store/actions';
+
 import { getSelectedToken, getTokens } from '../../store/selectors';
-
-import { themeColors, themeDimensions } from '../../util/theme';
-
-import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst, THLast, TR } from '../common/table';
 
 import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
 import { ChevronDownIcon } from './icons/chevron_down_icon';
 import { MagnifierIcon } from './icons/magnifier_icon';
 import { Loading } from './loading';
+import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst, THLast, TR } from './table';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
