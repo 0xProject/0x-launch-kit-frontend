@@ -60,7 +60,7 @@ const NotificationDropdownTitle = styled.h1`
 
 class NotificationsDropdown extends React.Component<Props, {}> {
     public render = () => {
-        const { notifications, hasUnreadNotifications, ...restProps } = this.props;
+        const { notifications, hasUnreadNotifications, onMarkNotificationsAsRead, ...restProps } = this.props;
 
         const notificationsList = notifications.map((item, index) => <NotificationItem key={index} item={item} />);
 
@@ -83,7 +83,7 @@ class NotificationsDropdown extends React.Component<Props, {}> {
                 body={body}
                 header={header}
                 horizontalPosition={DropdownPositions.Right}
-                onClick={this.props.onMarkNotificationsAsRead}
+                onClick={onMarkNotificationsAsRead}
                 shouldCloseDropdownBodyOnClick={false}
                 {...restProps}
             />
