@@ -71,10 +71,6 @@ export const setSelectedToken = createAction('SET_SELECTED_TOKEN', resolve => {
     return (selectedToken: Token | null) => resolve(selectedToken);
 });
 
-export const setStepsModalVisibility = createAction('SET_STEPSMODAL_VISIBILITY', resolve => {
-    return (visibility: boolean) => resolve(visibility);
-});
-
 export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
     return (pendingSteps: Step[]) => resolve(pendingSteps);
 });
@@ -271,7 +267,6 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         dispatch(setStepsModalPendingSteps(pendingSteps));
         dispatch(setStepsModalCurrentStep(step));
         dispatch(setStepsModalDoneSteps([]));
-        dispatch(setStepsModalVisibility(true));
     };
 };
 

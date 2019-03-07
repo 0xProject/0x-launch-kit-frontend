@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
 
-import { setStepsModalVisibility, stepsModalReset } from '../../../store/actions';
+import { stepsModalReset } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { Step, StepKind, StoreState } from '../../../util/types';
 
@@ -42,7 +42,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const StepsModalContainer = connect(
     mapStateToProps,
     {
-        setModalVisibility: setStepsModalVisibility,
         reset: stepsModalReset,
     },
 )(StepsModal);
