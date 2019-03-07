@@ -20,10 +20,10 @@ jobs:
                       - ~/.cache/yarn
             - run:
                   name: Lint checks
-                  command: npm run lint
+                  command: yarn run lint
             - run:
                   name: Coveralls
-                  command: COVERALLS_REPO_TOKEN=asdfasdf bundle exec rspec spec
+                  command: COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} && yarn run coveralls
             - run:
                   name: Tests
-                  command: npm run test-once
+                  command: yarn run test-once
