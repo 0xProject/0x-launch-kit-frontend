@@ -89,6 +89,8 @@ export function stepsModal(state: StepsModalState = initialStepsModal, action: R
                     currentStep: pendingSteps[0] as Step,
                 };
             }
+        case getType(actions.stepsModalReset):
+            return initialStepsModal;
     }
     return state;
 }

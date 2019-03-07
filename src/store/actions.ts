@@ -89,6 +89,8 @@ export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STE
 
 export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 
+export const stepsModalReset = createAction('STEPSMODAL_RESET');
+
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
@@ -254,14 +256,6 @@ export const cancelOrder = (order: SignedOrder) => {
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
-    };
-};
-
-export const resetSteps = () => {
-    return async (dispatch: any) => {
-        dispatch(setStepsModalPendingSteps([]));
-        dispatch(setStepsModalCurrentStep(null));
-        dispatch(setStepsModalDoneSteps([]));
     };
 };
 
