@@ -1,7 +1,14 @@
 import React, { HTMLAttributes } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { StoreState, Token } from '../../util/types';
+
+import { setSelectedToken } from '../../store/actions';
+import { getSelectedToken, getTokens } from '../../store/selectors';
+
 import { themeColors, themeDimensions } from '../../util/theme';
+
 import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst, THLast, TR } from '../common/table';
 
 import { CardBase } from './card_base';
@@ -10,12 +17,22 @@ import { ChevronDownIcon } from './icons/chevron_down_icon';
 import { MagnifierIcon } from './icons/magnifier_icon';
 import { Loading } from './loading';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
+
+interface DispatchProps {
+    setSelectedToken: (token: Token) => Promise<any>;
+}
+
+interface PropsToken {
+    tokens: Token[];
+    selectedToken: Token | null;
+}
+
+type Props = PropsDivElement & PropsToken & DispatchProps;
 
 interface State {
     isLoadingMarkets: boolean;
     selectedFilter: number;
-    selectedMarketItem: number;
 }
 
 interface TokenFiltersTabProps {
@@ -193,6 +210,7 @@ const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
 const MARKETS_LIST = [
     {
         name: 'ZRX / ETH',
+        symbol: 'zrx',
         price: '0.25',
         previousDay: '100',
         currentDay: '150',
@@ -200,6 +218,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'ABC / ETH',
+        symbol: 'mkr',
         price: '0.55',
         previousDay: '90',
         currentDay: '45',
@@ -207,6 +226,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'DEF / ETH',
+        symbol: 'rep',
         price: '0.675',
         previousDay: '900',
         currentDay: '900',
@@ -214,6 +234,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'GHI / ETH',
+        symbol: 'dgd',
         price: '0.643',
         previousDay: '78',
         currentDay: '90',
@@ -221,6 +242,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'ZRX / DAI',
+        symbol: 'mln',
         price: '0.978687',
         previousDay: '12',
         currentDay: '26',
@@ -228,6 +250,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'ABC / ETH',
+        symbol: 'zrx',
         price: '0.755',
         previousDay: '78',
         currentDay: '78',
@@ -235,6 +258,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'CDF / ETH',
+        symbol: 'zrx',
         price: '0.7547',
         previousDay: '56',
         currentDay: '78',
@@ -242,6 +266,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'GHI / ETH',
+        symbol: 'zrx',
         price: '0.765',
         previousDay: '90',
         currentDay: '80',
@@ -249,6 +274,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'OMG / ETH',
+        symbol: 'zrx',
         price: '0.908',
         previousDay: '55',
         currentDay: '55',
@@ -256,6 +282,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'OMG / DAI',
+        symbol: 'zrx',
         price: '0.765',
         previousDay: '99',
         currentDay: '101',
@@ -263,6 +290,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'ASD / ETH',
+        symbol: 'zrx',
         price: '0.543',
         previousDay: '90',
         currentDay: '88',
@@ -270,6 +298,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'ZRX / DAI',
+        symbol: 'zrx',
         price: '0.978687',
         previousDay: '12',
         currentDay: '34',
@@ -277,6 +306,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'ABC / ETH',
+        symbol: 'zrx',
         price: '0.755',
         previousDay: '78',
         currentDay: '98',
@@ -284,6 +314,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'CDF / ETH',
+        symbol: 'zrx',
         price: '0.7547',
         previousDay: '56',
         currentDay: '78',
@@ -291,6 +322,7 @@ const MARKETS_LIST = [
     },
     {
         name: 'GHI / ETH',
+        symbol: 'zrx',
         price: '0.765',
         previousDay: '90',
         currentDay: '80',
@@ -298,24 +330,31 @@ const MARKETS_LIST = [
     },
 ];
 
-export class MarketsDropdown extends React.Component<Props, State> {
+class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
         // Note: this will give you a headache in the long run, so please use redux / mobx or something...
         isLoadingMarkets: true,
         selectedFilter: 0,
-        selectedMarketItem: 0,
     };
 
     private _closeDropdown: any;
 
     public render = () => {
-        const { ...restProps } = this.props;
+        const { tokens, selectedToken, ...restProps } = this.props;
+
+        const token = tokens.find(obj => {
+            if (selectedToken) {
+                const symbol = selectedToken.symbol;
+                return obj.symbol === symbol;
+            }
+            return false;
+        });
+
+        const tokenName = (token && token.name) || '';
 
         const header = (
             <MarketsDropdownHeader>
-                <MarketsDropdownHeaderText>
-                    {MARKETS_LIST[this.state.selectedMarketItem].name}
-                </MarketsDropdownHeaderText>
+                <MarketsDropdownHeaderText>{tokenName}</MarketsDropdownHeaderText>
                 <ChevronDownIcon />
             </MarketsDropdownHeader>
         );
@@ -385,6 +424,8 @@ export class MarketsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _getMarkets = () => {
+        const { tokens, selectedToken } = this.props;
+
         return (
             <Table>
                 <THead>
@@ -396,24 +437,25 @@ export class MarketsDropdown extends React.Component<Props, State> {
                     </TR>
                 </THead>
                 <TBody>
-                    {MARKETS_LIST.map((item, index) => {
+                    {tokens.map((item, index) => {
+                        const { symbol } = item;
+                        let active = false;
+                        if (selectedToken) {
+                            active = symbol === selectedToken.symbol;
+                        }
                         return (
-                            <TRStyled
-                                active={index === this.state.selectedMarketItem}
-                                key={index}
-                                onClick={this._setSelectedMarket.bind(this, index)}
-                            >
+                            <TRStyled active={active} key={symbol} onClick={this._setSelectedMarket.bind(this, item)}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    {item.name}
+                                    {item.symbol.toUpperCase()}
                                 </CustomTDFirstStyled>
                                 <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {item.price}
+                                    {this._getPrice(item)}
                                 </CustomTDStyled>
                                 <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
                                     {this._getDayChange(item)}
                                 </CustomTDStyled>
                                 <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {item.dayVol}
+                                    {this._getDayVolumen(item)}
                                 </CustomTDLastStyled>
                             </TRStyled>
                         );
@@ -423,14 +465,22 @@ export class MarketsDropdown extends React.Component<Props, State> {
         );
     };
 
-    private readonly _setSelectedMarket: any = (index: number) => {
-        this.setState({ selectedMarketItem: index });
+    private readonly _setSelectedMarket: any = async (token: Token) => {
+        await this.props.setSelectedToken(token);
         this._closeDropdown();
     };
 
-    private readonly _getDayChange: any = (item: any) => {
-        const previousDay: number = parseFloat(item.previousDay);
-        const currentDay: number = parseFloat(item.currentDay);
+    private readonly _getDayChange: any = (item: Token) => {
+        const tokenDummy = MARKETS_LIST.find(obj => {
+            return obj.symbol === item.symbol;
+        });
+
+        if (!tokenDummy) {
+            return <DayChange />;
+        }
+
+        const previousDay: number = parseFloat(tokenDummy.previousDay);
+        const currentDay: number = parseFloat(tokenDummy.currentDay);
         const percentChange: string = (((currentDay - previousDay) / previousDay) * 100).toFixed(2);
 
         if (currentDay > previousDay) {
@@ -441,4 +491,38 @@ export class MarketsDropdown extends React.Component<Props, State> {
 
         return <DayChange>{percentChange}%</DayChange>;
     };
+
+    private readonly _getDayVolumen: any = (item: Token) => {
+        const tokenDummy = MARKETS_LIST.find(obj => {
+            return obj.symbol === item.symbol;
+        });
+        return tokenDummy ? tokenDummy.dayVol : '';
+    };
+
+    private readonly _getPrice: any = (item: Token) => {
+        const tokenDummy = MARKETS_LIST.find(obj => {
+            return obj.symbol === item.symbol;
+        });
+        return tokenDummy ? tokenDummy.price : '';
+    };
 }
+
+const mapStateToProps = (state: StoreState): PropsToken => {
+    return {
+        tokens: getTokens(state),
+        selectedToken: getSelectedToken(state),
+    };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        setSelectedToken: (token: Token) => dispatch(setSelectedToken(token)),
+    };
+};
+
+const MarketsDropdownContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(MarketsDropdown);
+
+export { MarketsDropdown, MarketsDropdownContainer };
