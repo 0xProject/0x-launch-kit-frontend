@@ -25,7 +25,6 @@ const initialRelayerState: RelayerState = {
 };
 
 const initialStepsModal: StepsModalState = {
-    isVisible: false,
     doneSteps: [],
     currentStep: null,
     pendingSteps: [],
@@ -65,8 +64,6 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
 
 export function stepsModal(state: StepsModalState = initialStepsModal, action: RootAction): StepsModalState {
     switch (action.type) {
-        case getType(actions.setStepsModalVisibility):
-            return { ...state, isVisible: action.payload };
         case getType(actions.setStepsModalDoneSteps):
             return { ...state, doneSteps: action.payload };
         case getType(actions.setStepsModalPendingSteps):

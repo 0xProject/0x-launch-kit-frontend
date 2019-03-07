@@ -56,7 +56,6 @@ export interface StepBuySellLimitOrder {
 export type Step = StepBuySellLimitOrder;
 
 export interface StepsModalState {
-    readonly isVisible: boolean;
     readonly doneSteps: Step[];
     readonly currentStep: Step | null;
     readonly pendingSteps: Step[];
