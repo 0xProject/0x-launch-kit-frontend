@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AddBlockDetector } from '../components/common/addblock_detector';
+import { AdBlockDetector } from '../components/common/adblock_detector';
 import { MainContent } from '../components/common/main_content';
 import { Sidebar } from '../components/common/sidebar';
 import { BuySellContainer } from '../components/marketplace/buy_sell';
@@ -11,7 +11,7 @@ class Marketplace extends React.PureComponent {
     public render = () => {
         return (
             <>
-                <AddBlockDetector>
+                <AdBlockDetector>
                     <Sidebar>
                         <BuySellContainer />
                     </Sidebar>
@@ -21,7 +21,7 @@ class Marketplace extends React.PureComponent {
                     <Sidebar>
                         <OrderBookTableContainer />
                     </Sidebar>
-                </AddBlockDetector>
+                </AdBlockDetector>
             </>
         );
     };
