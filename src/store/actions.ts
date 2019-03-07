@@ -304,10 +304,15 @@ export const updateStore = () => {
             const tokenBalances = await Promise.all(
                 knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
             );
+            const wethToken = knownTokens.getWethToken();
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
             dispatch(getAllOrders());
             dispatch(getUserOrders());
             dispatch(setTokenBalances(tokenBalances));
+            dispatch(setEthBalance(ethBalance));
+            dispatch(setWethBalance(wethBalance));
         }
     };
 };
