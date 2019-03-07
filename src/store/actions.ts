@@ -282,7 +282,7 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
 };
 
 export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
-    return async (getState: any) => {
+    return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const selectedToken = getSelectedToken(state) as Token;
