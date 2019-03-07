@@ -10,23 +10,23 @@ class AddBlockDetector extends React.Component<Props, State> {
     }
 
     public componentDidMount = async () => {
-        const addBlockDetected = await this.detectAddBlock();
-        if (addBlockDetected) {
+        const isAddBlockDetected = await this.detectAddBlock();
+        if (isAddBlockDetected) {
             alert('Ad-Block DETECTED, please disable it in order to use our dApp!');
             window.location.reload();
         }
     };
 
     public detectAddBlock = () => {
-        return new Promise((resolve, reject) => {
-            /* Creates a bait for adblock **/
+        return new Promise<boolean>((resolve, reject) => {
+            /* Creates a bait for ad block **/
             const elem = document.createElement('div');
             elem.className = 'adclass';
             document.body.appendChild(elem);
-            let addBlockDetected;
+            let isAddBlockDetected;
             window.setTimeout(() => {
-                addBlockDetected = !(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
-                resolve(addBlockDetected);
+                isAddBlockDetected = !(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
+                resolve(isAddBlockDetected);
             }, 0);
         });
     };
