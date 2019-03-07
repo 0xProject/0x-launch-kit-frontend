@@ -3,9 +3,6 @@ import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order, SignedOrder
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 import { OrderSide, UIOrder } from '../util/types';
 
-import { getEthereumPriceInUSD } from './market_prices';
-import { tokenAmountInUnits } from './tokens';
-
 interface BuildLimitOrderParams {
     account: string;
     amount: BigNumber;
@@ -85,63 +82,4 @@ export const buildMarketOrders = (
     const roundedAmounts = amounts.map(a => a.ceil());
 
     return [ordersToFill, roundedAmounts, canBeFilled];
-};
-
-export const orderDetailsFeeEther = (
-    makerAmount: BigNumber,
-    takerAmount: BigNumber,
-    orderType: OrderSide,
-    makerFeeConstant: string = MAKER_FEE,
-    takerFeeConstant: string = TAKER_FEE,
-    tokenDecimals: number = 18,
-): BigNumber => {
-    let totalFee = new BigNumber(1);
-
-    // Convert the makerAmount
-    const makerAmountConverted = new BigNumber(tokenAmountInUnits(makerAmount, tokenDecimals));
-    if (orderType === OrderSide.Sell) {
-        // Calculate makerFee
-        const makerFeeWithoutPrice = makerAmountConverted.mul(makerFeeConstant);
-        const makerFeeWithPrice = makerFeeWithoutPrice.mul(takerAmount.div(makerAmountConverted));
-
-        // Calculate takerFee
-        const takerFee = takerAmount.mul(takerFeeConstant);
-
-        // Total plus
-        totalFee = makerFeeWithPrice.plus(takerFee);
-    }
-
-    if (orderType === OrderSide.Buy) {
-        // Calculate makerFee
-        const makerFee = makerAmountConverted.mul(makerFeeConstant);
-
-        // Calculate takerFee
-        const takerFeeWithoutPrice = takerAmount.mul(takerFeeConstant);
-        const takerFeeWithPrice = takerFeeWithoutPrice.mul(makerAmountConverted.div(takerAmount));
-
-        // Total plus
-        totalFee = takerFeeWithPrice.plus(makerFee);
-    }
-
-    return totalFee;
-};
-
-export const orderDetailsFeeDollar = async (
-    makerAmount: BigNumber,
-    takerAmount: BigNumber,
-    orderType: OrderSide,
-    makerFeeConstant: string = MAKER_FEE,
-    takerFeeConstant: string = TAKER_FEE,
-    tokenDecimals: number = 18,
-): Promise<any> => {
-    const priceInEther = orderDetailsFeeEther(
-        makerAmount,
-        takerAmount,
-        orderType,
-        makerFeeConstant,
-        takerFeeConstant,
-        tokenDecimals,
-    );
-    const priceInDollar = await getEthereumPriceInUSD();
-    return priceInEther.mul(priceInDollar);
 };

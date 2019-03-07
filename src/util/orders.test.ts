@@ -1,7 +1,6 @@
 import { BigNumber } from '0x.js';
 
-import * as dollarUtils from './market_prices';
-import { buildLimitOrder, buildMarketOrders, orderDetailsFeeDollar, orderDetailsFeeEther } from './orders';
+import { buildLimitOrder, buildMarketOrders } from './orders';
 import { uiOrder } from './test-utils';
 import { OrderSide } from './types';
 
@@ -78,60 +77,6 @@ describe('buildLimitOrder', () => {
         );
     });
 });
-describe('orderDetails', () => {
-    it('orderDetailsFeeEther should calculate totalFee for buy order ', () => {
-        // given
-        const makerAmount = new BigNumber(5000000000000000000);
-        const takerAmount = new BigNumber(1);
-        const orderType = OrderSide.Buy;
-        const MAKER_FEE = '0.1';
-        const TAKER_FEE = '0.05';
-
-        // when
-        const orderInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, MAKER_FEE, TAKER_FEE);
-
-        // then
-        const resultExpected = new BigNumber(0.75);
-        expect(orderInEther.eq(resultExpected)).toBe(true);
-    });
-    it('orderDetailsFeeEther should calculate totalFee for sell order ', () => {
-        // given
-        const makerAmount = new BigNumber(5000000000000000000);
-        const takerAmount = new BigNumber(1);
-        const orderType = OrderSide.Sell;
-        const MAKER_FEE = '0.1';
-        const TAKER_FEE = '0.05';
-
-        // when
-        const orderInEther = orderDetailsFeeEther(makerAmount, takerAmount, orderType, MAKER_FEE, TAKER_FEE);
-
-        // then
-        const resultExpected = new BigNumber(0.15);
-        expect(orderInEther.eq(resultExpected)).toBe(true);
-    });
-
-    it('orderDetailsFeeDollar should calculate the ethPrice in USD ', async () => {
-        // given
-        const makerAmount = new BigNumber(5000000000000000000);
-        const takerAmount = new BigNumber(1);
-        const orderType = OrderSide.Sell;
-        const MAKER_FEE = '0.1';
-        const TAKER_FEE = '0.05';
-        const DOLAR_PRICE = 10;
-        // @ts-ignore
-        dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
-            return new BigNumber(DOLAR_PRICE);
-        });
-
-        // when
-        const orderInDollar = await orderDetailsFeeDollar(makerAmount, takerAmount, orderType, MAKER_FEE, TAKER_FEE);
-        const resultExpected = new BigNumber(1.5);
-
-        // then
-        expect(orderInDollar.eq(resultExpected)).toBe(true);
-    });
-});
-
 describe('buildMarketOrders', () => {
     it('should fill one order and partially fill another', async () => {
         // given

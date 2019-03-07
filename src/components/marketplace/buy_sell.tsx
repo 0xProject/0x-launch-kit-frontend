@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { submitLimitOrder, submitMarketOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
-import { orderDetailsFeeDollar, orderDetailsFeeEther } from '../../util/orders';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -33,8 +32,6 @@ enum OrderType {
 
 interface State {
     makerAmount: BigNumber;
-    orderFeeEther: BigNumber;
-    orderFeeDollar: BigNumber;
     orderType: OrderType;
     price: BigNumber;
     tab: OrderSide;
@@ -151,8 +148,6 @@ const TokenTextButtonUppercase = styled.span`
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
-        orderFeeEther: new BigNumber(0),
-        orderFeeDollar: new BigNumber(0),
         orderType: OrderType.Limit,
         price: new BigNumber(0),
         tab: OrderSide.Buy,
@@ -229,28 +224,16 @@ class BuySell extends React.Component<Props, State> {
         );
     };
 
-    public changeTab = (tab: OrderSide) => () => this.setState({ tab }, () => this.updateOrderFee());
+    public changeTab = (tab: OrderSide) => () => this.setState({ tab });
 
     public updateMakerAmount = (newValue: BigNumber) => {
-        this.setState(
-            {
-                makerAmount: newValue,
-            },
-            () => this.updateOrderFee(),
-        );
+        this.setState({
+            makerAmount: newValue,
+        });
     };
 
     public updatePrice = (price: BigNumber) => {
-        this.setState({ price }, () => this.updateOrderFee());
-    };
-
-    public updateOrderFee = async () => {
-        const orderFeeEther = orderDetailsFeeEther(this.state.makerAmount, this.state.price, this.state.tab);
-        const orderFeeDollar = await orderDetailsFeeDollar(this.state.makerAmount, this.state.price, this.state.tab);
-        this.setState({
-            orderFeeEther,
-            orderFeeDollar,
-        });
+        this.setState({ price });
     };
 
     public buy = async () => {
