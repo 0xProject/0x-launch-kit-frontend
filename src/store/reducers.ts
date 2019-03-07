@@ -81,19 +81,12 @@ export function stepsModal(state: StepsModalState = initialStepsModal, action: R
                     doneSteps: doneSteps.concat([currentStep as Step]),
                     currentStep: null,
                 };
-            } else if (pendingSteps.length > 1) {
-                return {
-                    ...state,
-                    pendingSteps: pendingSteps.slice(1, pendingSteps.length),
-                    doneSteps: doneSteps.concat([currentStep as Step]),
-                    currentStep: pendingSteps[0] as Step,
-                };
             } else {
                 return {
                     ...state,
-                    pendingSteps: [],
-                    currentStep: pendingSteps.pop() as Step,
+                    pendingSteps: pendingSteps.slice(1),
                     doneSteps: doneSteps.concat([currentStep as Step]),
+                    currentStep: pendingSteps[0] as Step,
                 };
             }
     }
