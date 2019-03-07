@@ -274,17 +274,9 @@ class MarketsDropdown extends React.Component<Props, State> {
     }
 
     public render = () => {
-        const { tokens, selectedToken, ...restProps } = this.props;
+        const { selectedToken, ...restProps } = this.props;
 
-        const token = tokens.find(obj => {
-            if (selectedToken) {
-                const symbol = selectedToken.symbol;
-                return obj.symbol === symbol;
-            }
-            return false;
-        });
-
-        const tokenName = (token && token.name) || '';
+        const tokenName = (selectedToken && selectedToken.name) || '';
 
         const header = (
             <MarketsDropdownHeader>
