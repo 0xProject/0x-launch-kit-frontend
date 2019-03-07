@@ -68,7 +68,7 @@ describe('OrderBookTable', () => {
             .at(0)
             .find('td')
             .at(1);
-        expect(mySizeRowValue.text()).toEqual('1.00');
+        expect(mySizeRowValue.text()).toEqual('1.0000');
     });
     it('Should render a row of mySize with the total amount for one order', () => {
         const orderBook = {
@@ -135,7 +135,7 @@ describe('OrderBookTable', () => {
             .at(0)
             .find('td')
             .at(1);
-        expect(mySizeRowValue.text()).toEqual('2.00');
+        expect(mySizeRowValue.text()).toEqual('2.0000');
     });
     it('Check if my size renders an item with more than two decimals', () => {
         const orderBook = {
@@ -201,9 +201,9 @@ describe('OrderBookTable', () => {
             price: new BigNumber('0.5'),
         });
 
-        const resultExpected1 = '1.1234567';
-        const resultExpected2 = '1.123456';
-        const resultExpected3 = '1.12345';
+        const resultExpected1 = '1.1235';
+        const resultExpected2 = '1.1235';
+        const resultExpected3 = '1.1235';
         const resultExpected4 = '1.1234';
         const resultExpected5 = '1.123';
         const resultExpected6 = '1.12';
