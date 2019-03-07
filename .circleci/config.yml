@@ -20,7 +20,10 @@ jobs:
                       - ~/.cache/yarn
             - run:
                   name: Lint checks
-                  command: npm run lint
+                  command: yarn run lint
             - run:
                   name: Tests
-                  command: npm run test-once
+                  command: yarn run test-once
+            - run:
+                  name: Coveralls
+                  command: COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} && yarn run coveralls
