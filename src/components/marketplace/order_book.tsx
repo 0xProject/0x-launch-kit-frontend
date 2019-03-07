@@ -12,6 +12,7 @@ import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
+
 interface StateProps {
     orderBook: OrderBook;
     selectedToken: Token | null;

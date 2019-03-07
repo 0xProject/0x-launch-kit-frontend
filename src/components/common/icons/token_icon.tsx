@@ -72,9 +72,9 @@ const IconContainer = styled.div<{ color: string }>`
     background-color: ${props => (props.color ? props.color : 'transparent')};
     border-radius: 50%;
     display: flex;
-    height: 1.6em;
+    height: 26px;
     justify-content: center;
-    width: 1.6em;
+    width: 26px;
 `;
 
 const Label = styled.label`
@@ -86,11 +86,11 @@ const Label = styled.label`
 `;
 
 export const TokenIcon = (props: Props) => {
-    const { token } = props;
+    const { token, ...restProps } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(token.symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
     return (
-        <IconContainer color={token.primaryColor || themeColors.gray}>
+        <IconContainer color={token.primaryColor || themeColors.gray} {...restProps}>
             {Icon ? <Icon /> : <Label>{token.symbol && token.symbol.toUpperCase()}</Label>}
         </IconContainer>
     );
