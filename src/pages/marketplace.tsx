@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AddBlockDetector } from '../components/common/addblock_detector';
 import { MainContent } from '../components/common/main_content';
 import { Sidebar } from '../components/common/sidebar';
 import { BuySellContainer } from '../components/marketplace/buy_sell';
@@ -10,15 +11,17 @@ class Marketplace extends React.PureComponent {
     public render = () => {
         return (
             <>
-                <Sidebar>
-                    <BuySellContainer />
-                </Sidebar>
-                <MainContent>
-                    <OrderHistoryContainer />
-                </MainContent>
-                <Sidebar>
-                    <OrderBookTableContainer />
-                </Sidebar>
+                <AddBlockDetector>
+                    <Sidebar>
+                        <BuySellContainer />
+                    </Sidebar>
+                    <MainContent>
+                        <OrderHistoryContainer />
+                    </MainContent>
+                    <Sidebar>
+                        <OrderBookTableContainer />
+                    </Sidebar>
+                </AddBlockDetector>
             </>
         );
     };
