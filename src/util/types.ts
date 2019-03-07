@@ -42,6 +42,17 @@ export interface RelayerState {
     readonly selectedToken: Token | null;
 }
 
+export interface UIState {
+    readonly stepsModal: StepsModalState;
+}
+
+export interface StoreState {
+    readonly router: RouterState;
+    readonly blockchain: BlockchainState;
+    readonly relayer: RelayerState;
+    readonly ui: UIState;
+}
+
 export enum StepKind {
     BuySellLimit,
 }
@@ -59,13 +70,6 @@ export interface StepsModalState {
     readonly doneSteps: Step[];
     readonly currentStep: Step | null;
     readonly pendingSteps: Step[];
-}
-
-export interface StoreState {
-    readonly router: RouterState;
-    readonly blockchain: BlockchainState;
-    readonly relayer: RelayerState;
-    readonly stepsModal: StepsModalState;
 }
 
 export enum OrderSide {

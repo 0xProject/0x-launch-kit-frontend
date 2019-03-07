@@ -21,9 +21,9 @@ type Props = StateProps & DispatchProps;
 class StepsModal extends React.Component<Props> {
     public render = () => {
         const { currentStep, reset } = this.props;
-        const isVisible = currentStep !== null;
+        const isOpen = currentStep !== null;
         return (
-            <Modal isOpen={isVisible}>
+            <Modal isOpen={isOpen}>
                 <button type="button" onClick={reset}>
                     x
                 </button>

@@ -4,7 +4,7 @@ import { History } from 'history';
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
-import { BlockchainState, RelayerState, Step, StepsModalState, StoreState, Web3State } from '../util/types';
+import { BlockchainState, RelayerState, Step, StepsModalState, StoreState, UIState, Web3State } from '../util/types';
 
 import * as actions from './actions';
 
@@ -24,10 +24,14 @@ const initialRelayerState: RelayerState = {
     selectedToken: null,
 };
 
-const initialStepsModal: StepsModalState = {
+const initialStepsModalState: StepsModalState = {
     doneSteps: [],
     currentStep: null,
     pendingSteps: [],
+};
+
+const initialUIState: UIState = {
+    stepsModal: initialStepsModalState,
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -62,7 +66,7 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
     return state;
 }
 
-export function stepsModal(state: StepsModalState = initialStepsModal, action: RootAction): StepsModalState {
+export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
     switch (action.type) {
         case getType(actions.setStepsModalDoneSteps):
             return { ...state, doneSteps: action.payload };
@@ -87,9 +91,16 @@ export function stepsModal(state: StepsModalState = initialStepsModal, action: R
                 };
             }
         case getType(actions.stepsModalReset):
-            return initialStepsModal;
+            return initialStepsModalState;
     }
     return state;
+}
+
+export function ui(state: UIState = initialUIState, action: RootAction): UIState {
+    return {
+        ...state,
+        stepsModal: stepsModal(state.stepsModal, action),
+    };
 }
 
 export const createRootReducer = (history: History) =>
@@ -97,5 +108,5 @@ export const createRootReducer = (history: History) =>
         router: connectRouter(history),
         blockchain,
         relayer,
-        stepsModal,
+        ui,
     });
