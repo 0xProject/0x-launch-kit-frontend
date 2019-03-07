@@ -99,4 +99,11 @@ interface MarketNotification extends BaseNotification {
     side: OrderSide;
 }
 
-export type Notification = CancelOrderNotification | MarketNotification;
+interface LimitNotification extends BaseNotification {
+    kind: 'LimitNotification';
+    amount: BigNumber;
+    token: Token;
+    side: OrderSide;
+}
+
+export type Notification = CancelOrderNotification | MarketNotification | LimitNotification;

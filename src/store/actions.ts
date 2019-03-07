@@ -289,6 +289,16 @@ export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: Orde
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
+
+        dispatch(
+            addNotification({
+                kind: 'LimitNotification',
+                amount,
+                token: selectedToken,
+                side,
+                timestamp: new Date(),
+            }),
+        );
     };
 };
 
@@ -296,8 +306,10 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const selectedToken = getSelectedToken(state) as Token;
 
         const contractWrappers = await getContractWrappers();
+        const web3Wrapper = await getWeb3WrapperOrThrow();
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
 
@@ -310,9 +322,27 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
         );
 
         if (canBeFilled) {
-            await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
+            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(
+                ordersToFill,
+                amounts,
+                ethAccount,
+                TX_DEFAULTS,
+            );
             dispatch(getAllOrders());
             dispatch(getUserOrders());
+
+            const tx = web3Wrapper.awaitTransactionMinedAsync(txHash);
+
+            dispatch(
+                addNotification({
+                    kind: 'MarketNotification',
+                    amount,
+                    token: selectedToken,
+                    side,
+                    tx,
+                    timestamp: new Date(),
+                }),
+            );
         } else {
             window.alert('There are no enough orders to fill this amount');
         }

@@ -121,6 +121,9 @@ class NotificationItem extends React.Component<Props, State> {
             case 'CancelOrderNotification':
                 operation = 'Cancelled Order';
                 break;
+            case 'LimitNotification':
+                operation = item.side === OrderSide.Buy ? 'Limit Buy' : 'Limit Sell';
+                break;
             default: {
                 const _exhaustiveCheck: never = item;
                 operation = _exhaustiveCheck;
