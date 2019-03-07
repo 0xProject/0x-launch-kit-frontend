@@ -2,12 +2,10 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { setSelectedToken } from '../../store/actions';
+import { getSelectedToken, getTokens } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { StoreState, Token } from '../../util/types';
-
-import { setSelectedToken } from '../../store/actions';
-
-import { getSelectedToken, getTokens } from '../../store/selectors';
 
 import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
@@ -248,86 +246,6 @@ const MARKETS_LIST = [
         currentDay: '26',
         dayVol: '24534.56',
     },
-    {
-        name: 'ABC / ETH',
-        symbol: 'zrx',
-        price: '0.755',
-        previousDay: '78',
-        currentDay: '78',
-        dayVol: '515235.05',
-    },
-    {
-        name: 'CDF / ETH',
-        symbol: 'zrx',
-        price: '0.7547',
-        previousDay: '56',
-        currentDay: '78',
-        dayVol: '515235.00',
-    },
-    {
-        name: 'GHI / ETH',
-        symbol: 'zrx',
-        price: '0.765',
-        previousDay: '90',
-        currentDay: '80',
-        dayVol: '3948573.34',
-    },
-    {
-        name: 'OMG / ETH',
-        symbol: 'zrx',
-        price: '0.908',
-        previousDay: '55',
-        currentDay: '55',
-        dayVol: '3455.00',
-    },
-    {
-        name: 'OMG / DAI',
-        symbol: 'zrx',
-        price: '0.765',
-        previousDay: '99',
-        currentDay: '101',
-        dayVol: '123235.00',
-    },
-    {
-        name: 'ASD / ETH',
-        symbol: 'zrx',
-        price: '0.543',
-        previousDay: '90',
-        currentDay: '88',
-        dayVol: '1515235.00',
-    },
-    {
-        name: 'ZRX / DAI',
-        symbol: 'zrx',
-        price: '0.978687',
-        previousDay: '12',
-        currentDay: '34',
-        dayVol: '24534.56',
-    },
-    {
-        name: 'ABC / ETH',
-        symbol: 'zrx',
-        price: '0.755',
-        previousDay: '78',
-        currentDay: '98',
-        dayVol: '515235.05',
-    },
-    {
-        name: 'CDF / ETH',
-        symbol: 'zrx',
-        price: '0.7547',
-        previousDay: '56',
-        currentDay: '78',
-        dayVol: '515235.00',
-    },
-    {
-        name: 'GHI / ETH',
-        symbol: 'zrx',
-        price: '0.765',
-        previousDay: '90',
-        currentDay: '80',
-        dayVol: '3948573.34',
-    },
 ];
 
 class MarketsDropdown extends React.Component<Props, State> {
@@ -439,12 +357,16 @@ class MarketsDropdown extends React.Component<Props, State> {
                 <TBody>
                     {tokens.map((token, index) => {
                         const { symbol } = token;
-                        let active = false;
+                        let isActive = false;
                         if (selectedToken) {
-                            active = symbol === selectedToken.symbol;
+                            isActive = symbol === selectedToken.symbol;
                         }
                         return (
-                            <TRStyled active={active} key={symbol} onClick={this._setSelectedMarket.bind(this, token)}>
+                            <TRStyled
+                                active={isActive}
+                                key={symbol}
+                                onClick={this._setSelectedMarket.bind(this, token)}
+                            >
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
                                     <TokenIcon token={token} />
                                     {symbol.toUpperCase()}
