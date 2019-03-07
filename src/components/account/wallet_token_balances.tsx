@@ -10,7 +10,7 @@ import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
-import { TH as THBase, THead } from '../common/table';
+import { CustomTD, CustomTDLast, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
     tokenBalances: TokenBalance[];
@@ -23,67 +23,49 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-const TR = styled.tr`
-    &:last-child {
-        border-bottom: 1px solid #e7e7e7;
-    }
+const TokenTD = styled(CustomTD)`
+    padding-bottom: 10px;
+    padding-top: 10px;
+    width: 50px;
 `;
 
-const TH = styled(THBase)`
-    padding: 10px 0;
-
-    &:first-child {
-        padding-left: 18px;
-    }
+const TokenIconStyled = styled(TokenIcon)`
+    margin: 0 auto;
 `;
 
-const THBalance = styled(TH)`
-    text-align: right;
-`;
-
-const THLock = styled(TH)`
-    text-align: center;
-`;
-
-const TD = styled.td`
-    padding: 10px 0;
+const CustomTDTokenName = styled(CustomTD)`
     white-space: nowrap;
+`;
 
-    &:first-child {
-        padding-left: 18px;
+const TokenName = styled.span`
+    font-weight: 700;
+`;
+
+const TBody = styled.tbody`
+    > tr:last-child > td {
+        border-bottom: none;
     }
-
-    &:last-child {
-        width: 100%;
-    }
 `;
 
-const TDTokens = styled(TD)`
-    min-width: 10em;
-`;
-
-const TDBalance = styled(TD)`
-    min-width: 10em;
-    text-align: right;
-`;
-
-const TDLock = styled(TD)<{ isUnlocked: boolean }>`
-    min-width: 6em;
-    text-align: center;
+const FontAwesomeIconStyles = styled(FontAwesomeIcon)`
     cursor: pointer;
-    color: ${props => (props.isUnlocked ? '#c4c4c4' : 'black')};
+`;
+
+const CustomTDLock = styled(CustomTDLast)<{ isUnlocked?: boolean }>`
+    color: ${props => (props.isUnlocked ? '#c4c4c4' : '#000')};
 `;
 
 interface LockCellProps {
     isUnlocked: boolean;
     onClick: any;
+    styles?: any;
 }
 
-const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
+const LockCell = ({ styles, isUnlocked, onClick }: LockCellProps) => {
     return (
-        <TDLock isUnlocked={isUnlocked} onClick={onClick}>
-            <FontAwesomeIcon icon={isUnlocked ? 'lock-open' : 'lock'} />
-        </TDLock>
+        <CustomTDLock isUnlocked={isUnlocked} styles={styles} onClick={onClick}>
+            <FontAwesomeIconStyles icon={isUnlocked ? 'lock-open' : 'lock'} />
+        </CustomTDLock>
     );
 };
 
@@ -94,22 +76,27 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const rows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
-
             const formattedBalance = tokenAmountInUnits(balance, token.decimals);
-
             const onClick = () => {
                 isUnlocked ? onLockToken(token) : onUnlockToken(token);
             };
 
             return (
                 <TR key={symbol}>
-                    <TDTokens>
-                        <TokenIcon token={token} />
-                        {`${token.symbol.toUpperCase()} - ${token.name}`}
-                    </TDTokens>
-                    <TDBalance>{formattedBalance}</TDBalance>
-                    <LockCell isUnlocked={isUnlocked} onClick={onClick} />
-                    <TD />
+                    <TokenTD>
+                        <TokenIconStyled token={token} />
+                    </TokenTD>
+                    <CustomTDTokenName styles={{ borderBottom: true }}>
+                        <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
+                    </CustomTDTokenName>
+                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedBalance}</CustomTD>
+                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                    <LockCell
+                        isUnlocked={isUnlocked}
+                        onClick={onClick}
+                        styles={{ borderBottom: true, textAlign: 'center' }}
+                    />
                 </TR>
             );
         });
@@ -119,17 +106,19 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             content = <CardLoading />;
         } else {
             content = (
-                <table>
+                <Table isResponsive={true}>
                     <THead>
                         <TR>
                             <TH>Token</TH>
-                            <THBalance>Available Qty.</THBalance>
-                            <THLock>Locked?</THLock>
-                            <TH />
+                            <TH>{}</TH>
+                            <TH styles={{ textAlign: 'center' }}>Available Qty.</TH>
+                            <TH styles={{ textAlign: 'center' }}>Price (USD)</TH>
+                            <TH styles={{ textAlign: 'center' }}>% Change</TH>
+                            <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
                         </TR>
                     </THead>
-                    <tbody>{rows}</tbody>
-                </table>
+                    <TBody>{rows}</TBody>
+                </Table>
             );
         }
 
