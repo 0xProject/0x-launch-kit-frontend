@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
 import { getZeroXPriceInUSD } from '../../util/market_prices';
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeColors } from '../../util/theme';
 import { CardTabSelector } from '../common/card_tab_selector';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {}
@@ -19,25 +19,25 @@ const Row = styled.div`
     border-bottom: solid 1px ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
-    padding: 15px ${themeDimensions.horizontalPadding};
+    padding: 15px 0;
     position: relative;
     z-index: 1;
 
     &:first-child {
-        padding-top: 5px;
+        border-top: solid 1px ${themeColors.borderColor};
     }
 
+    &:last-of-type,
     &:last-child {
         border-bottom: none;
-        padding-bottom: 5px;
     }
 `;
 
 const Value = styled.div`
     color: #000;
     flex-shrink: 0;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 400;
     line-height: 1.2;
     white-space: nowrap;
 `;
@@ -49,16 +49,24 @@ const LabelContainer = styled.div`
     margin-bottom: 10px;
 `;
 
-const Label = styled.label<{ color?: string }>`
-    color: ${props => props.color || '#000'};
+const Label = styled.label`
+    color: '#000';
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
     margin: 0;
 `;
 
-const InnerTabs = styled(CardTabSelector)`
+const LabelRow = styled.label`
+    color: ${themeColors.textLight};
     font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+    margin: 0;
+`;
+
+const InnerTabs = styled(CardTabSelector)`
+    font-size: 12px;
 `;
 
 enum OrderDetailsType {
@@ -100,15 +108,16 @@ class OrderDetails extends React.Component<Props, State> {
                     <Label>Order Details</Label>
                     <InnerTabs tabs={ethUsdTabs} />
                 </LabelContainer>
-                <Row>
-                    <Label color={themeColors.textLight}>Fee</Label>
-                    <Value />
-                    <Value>
-                        {orderDetailType === OrderDetailsType.Usd
-                            ? `$ ${this.state.zeroXPriceInUSD.toFixed(2)}`
-                            : `${MAKER_FEE} ZRX`}
-                    </Value>
-                </Row>
+                <div>
+                    <Row>
+                        <LabelRow>Fee</LabelRow>
+                        <Value>
+                            {orderDetailType === OrderDetailsType.Usd
+                                ? `$ ${this.state.zeroXPriceInUSD.toFixed(2)}`
+                                : `${MAKER_FEE} ZRX`}
+                        </Value>
+                    </Row>
+                </div>
             </>
         );
     };
