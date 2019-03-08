@@ -10,7 +10,17 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
-import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
+import {
+    BlockchainState,
+    OrderSide,
+    RelayerState,
+    Step,
+    StepKind,
+    Token,
+    TokenBalance,
+    UIOrder,
+    Web3State,
+} from '../util/types';
 
 import {
     getEthAccount,
@@ -60,6 +70,22 @@ export const setUserOrders = createAction('SET_USER_ORDERS', resolve => {
 export const setSelectedToken = createAction('SET_SELECTED_TOKEN', resolve => {
     return (selectedToken: Token | null) => resolve(selectedToken);
 });
+
+export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
+    return (pendingSteps: Step[]) => resolve(pendingSteps);
+});
+
+export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', resolve => {
+    return (doneSteps: Step[]) => resolve(doneSteps);
+});
+
+export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
+    return (currentStep: Step | null) => resolve(currentStep);
+});
+
+export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
+
+export const stepsModalReset = createAction('STEPSMODAL_RESET');
 
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any) => {
@@ -227,17 +253,30 @@ export const cancelOrder = (order: SignedOrder) => {
     };
 };
 
-export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch: any) => {
+        const step: Step = {
+            kind: StepKind.BuySellLimit,
+            amount,
+            price,
+            side,
+        };
+        const pendingSteps: Step[] = [];
+        dispatch(setStepsModalPendingSteps(pendingSteps));
+        dispatch(setStepsModalCurrentStep(step));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const selectedToken = getSelectedToken(state) as Token;
 
-        const relayer = getRelayer();
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = await getContractWrappers();
-
         const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const order = buildLimitOrder(
@@ -253,11 +292,15 @@ export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: Orde
         );
 
         const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-        const signedOrder = await signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+        return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+    };
+};
 
-        await relayer.client.submitOrderAsync(signedOrder);
-
+export const submitLimitOrder = (signedOrder: SignedOrder) => {
+    return async (dispatch: any) => {
+        const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
         dispatch(getOrderbookAndUserOrders());
+        return submitResult;
     };
 };
 
