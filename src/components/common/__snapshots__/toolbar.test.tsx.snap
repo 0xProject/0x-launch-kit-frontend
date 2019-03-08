@@ -7,7 +7,7 @@ exports[`Toolbar Toolbar to match snapshot 1`] = `
     <Styled(Connect(MarketsDropdown))
       shouldCloseDropdownBodyOnClick={false}
     />
-    <PriceChange />
+    <Styled(PriceChange) />
   </styled.div>
   <styled.div>
     <Styled(Link)

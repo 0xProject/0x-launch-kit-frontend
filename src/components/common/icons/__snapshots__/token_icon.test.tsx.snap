@@ -2,7 +2,7 @@
 
 exports[`TokenIcon TokenIcon MLN to match snapshot 1`] = `
 <div
-  className="sc-bdVaJa Ipmmu"
+  className="sc-bdVaJa erQgzz"
   color="#232332"
 >
   <svg>
@@ -13,7 +13,7 @@ exports[`TokenIcon TokenIcon MLN to match snapshot 1`] = `
 
 exports[`TokenIcon TokenIcon ZRX to match snapshot 1`] = `
 <div
-  className="sc-bdVaJa Ipmmu"
+  className="sc-bdVaJa erQgzz"
   color="#232332"
 >
   <svg>
@@ -24,7 +24,7 @@ exports[`TokenIcon TokenIcon ZRX to match snapshot 1`] = `
 
 exports[`TokenIcon Without token 1`] = `
 <div
-  className="sc-bdVaJa Ipmmu"
+  className="sc-bdVaJa erQgzz"
   color="#232332"
 >
   <label
