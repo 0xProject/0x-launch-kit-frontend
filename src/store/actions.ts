@@ -290,3 +290,29 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
         }
     };
 };
+
+export const updateStore = () => {
+    return async (dispatch: any) => {
+        const web3Wrapper = await getWeb3Wrapper();
+
+        if (web3Wrapper) {
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+
+            const knownTokens = getKnownTokens(networkId);
+
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
+            const wethToken = knownTokens.getWethToken();
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            const wethBalance = await getTokenBalance(wethToken, ethAccount);
+
+            dispatch(getAllOrders());
+            dispatch(getUserOrders());
+            dispatch(setTokenBalances(tokenBalances));
+            dispatch(setEthBalance(ethBalance));
+            dispatch(setWethBalance(wethBalance));
+        }
+    };
+};

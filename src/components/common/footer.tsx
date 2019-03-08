@@ -9,6 +9,7 @@ const FooterWrapper = styled.div`
     align-items: center;
     display: flex;
     justify-content: center;
+    height: 38px;
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
 `;
 

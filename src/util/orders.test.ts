@@ -1,9 +1,8 @@
 import { BigNumber } from '0x.js';
 
-import { OrderSide } from '../util/types';
-
 import { buildLimitOrder, buildMarketOrders } from './orders';
 import { uiOrder } from './test-utils';
+import { OrderSide } from './types';
 
 describe('buildLimitOrder', () => {
     it('should build a buy order', async () => {
@@ -13,7 +12,7 @@ describe('buildLimitOrder', () => {
         const wethAddress = '0x0000000000000000000000000000000000000003';
         const exchangeAddress = '0x0000000000000000000000000000000000000004';
         const amount = new BigNumber('100');
-        const price = 0.1;
+        const price = new BigNumber(0.1);
 
         // when
         const order = buildLimitOrder(
@@ -49,7 +48,7 @@ describe('buildLimitOrder', () => {
         const wethAddress = '0x0000000000000000000000000000000000000003';
         const exchangeAddress = '0x0000000000000000000000000000000000000004';
         const amount = new BigNumber('100');
-        const price = 0.1;
+        const price = new BigNumber(0.1);
 
         // when
         const order = buildLimitOrder(
@@ -78,7 +77,6 @@ describe('buildLimitOrder', () => {
         );
     });
 });
-
 describe('buildMarketOrders', () => {
     it('should fill one order and partially fill another', async () => {
         // given
