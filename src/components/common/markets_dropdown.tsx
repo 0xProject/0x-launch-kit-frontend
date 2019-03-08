@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { setSelectedToken, getOrderbookAndUserOrders } from '../../store/actions';
+import { getOrderbookAndUserOrders, setSelectedToken } from '../../store/actions';
 import { getSelectedToken, getTokens } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { StoreState, Token } from '../../util/types';
