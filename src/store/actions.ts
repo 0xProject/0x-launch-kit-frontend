@@ -217,8 +217,7 @@ export const initWallet = () => {
                     selectedToken,
                 }),
             );
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }
@@ -250,8 +249,7 @@ export const cancelOrder = (order: SignedOrder) => {
     return async (dispatch: any) => {
         await cancelSignedOrder(order);
 
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
+        dispatch(getOrderbookAndUserOrders());
     };
 };
 
@@ -301,8 +299,7 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
 export const submitLimitOrder = (signedOrder: SignedOrder) => {
     return async (dispatch: any) => {
         const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
+        dispatch(getOrderbookAndUserOrders());
         return submitResult;
     };
 };
@@ -326,8 +323,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
         if (canBeFilled) {
             await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
         } else {
             window.alert('There are no enough orders to fill this amount');
         }
@@ -351,11 +347,17 @@ export const updateStore = () => {
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
         }
+    };
+};
+
+export const getOrderbookAndUserOrders = () => {
+    return async (dispatch: any) => {
+        dispatch(getAllOrders());
+        dispatch(getUserOrders());
     };
 };
