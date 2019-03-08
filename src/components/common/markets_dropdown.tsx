@@ -12,7 +12,6 @@ import { Dropdown } from './dropdown';
 import { ChevronDownIcon } from './icons/chevron_down_icon';
 import { MagnifierIcon } from './icons/magnifier_icon';
 import { TokenIcon } from './icons/token_icon';
-import { Loading } from './loading';
 import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst, THLast, TR } from './table';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
@@ -30,7 +29,6 @@ interface PropsToken {
 type Props = PropsDivElement & PropsToken & DispatchProps;
 
 interface State {
-    isLoadingMarkets: boolean;
     selectedFilter: number;
     filteredTokens: Token[];
     alreadyAssignedProps: boolean;
@@ -200,14 +198,6 @@ const DayChange = styled.span<{ status?: string }>`
     ${props => (props.status === 'more' ? `color: ${themeColors.green};` : '')}
 `;
 
-const LoadingStyled = styled(Loading)`
-    left: 50%;
-    min-height: 0;
-    position: absolute;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
-`;
-
 const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
 const MARKETS_LIST = [
     {
@@ -255,7 +245,6 @@ const MARKETS_LIST = [
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
         // Note: this will give you a headache in the long run, so please use redux / mobx or something...
-        isLoadingMarkets: true,
         selectedFilter: 0,
         filteredTokens: [],
         alreadyAssignedProps: false,
@@ -296,19 +285,11 @@ class MarketsDropdown extends React.Component<Props, State> {
                     {this._getTokensFilterTabs()}
                     {this._getSearchField()}
                 </MarketsFilters>
-                <TableWrapper>{this.state.isLoadingMarkets ? <LoadingStyled /> : this._getMarkets()}</TableWrapper>
+                <TableWrapper>{this._getMarkets()}</TableWrapper>
             </MarketsDropdownBody>
         );
 
-        return (
-            <MarketsDropdownWrapper
-                body={body}
-                header={header}
-                onClick={this._loadMarkets}
-                ref={this._setRef}
-                {...restProps}
-            />
-        );
+        return <MarketsDropdownWrapper body={body} header={header} ref={this._setRef} {...restProps} />;
     };
 
     private readonly _setRef = (node: any) => {
@@ -335,13 +316,6 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _setTokensFilterTab: any = (index: number) => {
         this.setState({ selectedFilter: index });
-    };
-
-    private readonly _loadMarkets = () => {
-        // This is only for showing the 'loading' component, delete ASAP
-        setTimeout(() => {
-            this.setState({ isLoadingMarkets: false });
-        }, 2000);
     };
 
     private readonly _getSearchField = () => {
