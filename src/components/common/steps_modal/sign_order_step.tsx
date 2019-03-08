@@ -2,6 +2,7 @@ import { BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import React from 'react';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
@@ -28,6 +29,15 @@ interface State {
     status: StepStatus;
 }
 
+const Title = styled.h1`
+    color: #000;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 25px;
+    text-align: center;
+`;
+
 class SignOrderStep extends React.Component<Props, State> {
     public state = {
         status: StepStatus.Initial,
@@ -39,14 +49,33 @@ class SignOrderStep extends React.Component<Props, State> {
 
     public render = () => {
         const { status } = this.state;
+        let content;
         switch (status) {
             case StepStatus.Loading:
-                return <p>Loading...</p>;
+                // @TODO: add spinner
+                content = <p>Submitting order.</p>;
+                break;
             case StepStatus.Done:
-                return <p>Success!</p>;
+                // @TODO: add green-done image
+                content = (
+                    <p>
+                        Order successfully placed!
+                        <br />
+                        (may not be filled immediately)
+                    </p>
+                );
+                break;
             default:
-                return <p>Please confirm on MM.</p>;
+                // @TODO: add Metamas image
+                content = <p>Confirm signature on Metamask to submit order.</p>;
+                break;
         }
+        return (
+            <>
+                <Title>Order Setup</Title>
+                {content}
+            </>
+        );
     };
 
     private readonly _getSignedOrder = async () => {
