@@ -12,6 +12,7 @@ import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import {
     BlockchainState,
     Notification,
+    NotificationKind,
     OrderSide,
     RelayerState,
     Step,
@@ -266,7 +267,7 @@ export const cancelOrder = (order: UIOrder) => {
 
         dispatch(
             addNotification({
-                kind: 'CancelOrderNotification',
+                kind: NotificationKind.CancelOrder,
                 amount: order.size,
                 token: selectedToken,
                 timestamp: new Date(),
@@ -329,7 +330,7 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
         dispatch(getUserOrders());
         dispatch(
             addNotification({
-                kind: 'LimitNotification',
+                kind: NotificationKind.Limit,
                 amount,
                 token: selectedToken,
                 side,
@@ -374,7 +375,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
             dispatch(
                 addNotification({
-                    kind: 'MarketNotification',
+                    kind: NotificationKind.Market,
                     amount,
                     token: selectedToken,
                     side,

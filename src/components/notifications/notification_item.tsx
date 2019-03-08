@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { Notification, OrderSide } from '../../util/types';
+import { Notification, NotificationKind, OrderSide } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
 import { NotificationProcessingIcon } from '../common/icons/notification_processing_icon';
@@ -83,7 +83,7 @@ class NotificationItem extends React.Component<Props, State> {
     public componentDidMount = () => {
         const { item } = this.props;
 
-        if (item.kind === 'MarketNotification') {
+        if (item.kind === NotificationKind.Market) {
             this.setState({
                 active: true,
                 pending: true,
@@ -115,13 +115,13 @@ class NotificationItem extends React.Component<Props, State> {
         let operation: string;
 
         switch (item.kind) {
-            case 'MarketNotification':
+            case NotificationKind.Market:
                 operation = item.side === OrderSide.Buy ? 'Market Buy' : 'Market Sell';
                 break;
-            case 'CancelOrderNotification':
+            case NotificationKind.CancelOrder:
                 operation = 'Cancelled Order';
                 break;
-            case 'LimitNotification':
+            case NotificationKind.Limit:
                 operation = item.side === OrderSide.Buy ? 'Limit Buy' : 'Limit Sell';
                 break;
             default: {
@@ -145,7 +145,7 @@ class NotificationItem extends React.Component<Props, State> {
                     <NotificationProcessingIcon />
                 </NotificationIconSpin>
             );
-        } else if (item.kind === 'CancelOrderNotification') {
+        } else if (item.kind === NotificationKind.CancelOrder) {
             return <NotificationCancelIcon />;
         } else {
             return <NotificationCheckmarkIcon />;

@@ -101,18 +101,25 @@ export interface OrderBook {
     spread: BigNumber;
 }
 
+export enum NotificationKind {
+    CancelOrder = 'CancelOrder',
+    Market = 'Market',
+    Limit = 'Limit',
+}
+
 interface BaseNotification {
+    kind: NotificationKind;
     timestamp: Date;
 }
 
 interface CancelOrderNotification extends BaseNotification {
-    kind: 'CancelOrderNotification';
+    kind: NotificationKind.CancelOrder;
     amount: BigNumber;
     token: Token;
 }
 
 interface MarketNotification extends BaseNotification {
-    kind: 'MarketNotification';
+    kind: NotificationKind.Market;
     amount: BigNumber;
     token: Token;
     tx: Promise<any>;
@@ -120,7 +127,7 @@ interface MarketNotification extends BaseNotification {
 }
 
 interface LimitNotification extends BaseNotification {
-    kind: 'LimitNotification';
+    kind: NotificationKind.Limit;
     amount: BigNumber;
     token: Token;
     side: OrderSide;
