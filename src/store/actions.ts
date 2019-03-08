@@ -317,7 +317,7 @@ export const updateStore = () => {
     };
 };
 
-export const updateOrders = () => {
+export const getOrderbookAndUserOrders = () => {
     return async (dispatch: any) => {
         dispatch(getAllOrders());
         dispatch(getUserOrders());
