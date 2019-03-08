@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { themeBreakPoints } from '../util/theme';
 
 import { Footer } from './common/footer';
+import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { Toolbar } from './common/toolbar';
 
 const General = styled.div`
@@ -37,6 +38,7 @@ export const GeneralLayout = (props: React.Props<any> | GeneralLayoutProps) => {
             <Toolbar />
             <Content>{children}</Content>
             <Footer />
+            <StepsModalContainer />
         </General>
     );
 };

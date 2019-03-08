@@ -1,4 +1,4 @@
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import { BigNumber, MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../common/constants';
@@ -14,6 +14,8 @@ import {
     Notification,
     OrderSide,
     RelayerState,
+    Step,
+    StepKind,
     Token,
     TokenBalance,
     UIOrder,
@@ -76,6 +78,22 @@ export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATI
 export const addNotification = createAction('ADD_NOTIFICATION', resolve => {
     return (newNotification: Notification) => resolve(newNotification);
 });
+
+export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
+    return (pendingSteps: Step[]) => resolve(pendingSteps);
+});
+
+export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', resolve => {
+    return (doneSteps: Step[]) => resolve(doneSteps);
+});
+
+export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
+    return (currentStep: Step | null) => resolve(currentStep);
+});
+
+export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
+
+export const stepsModalReset = createAction('STEPSMODAL_RESET');
 
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any) => {
@@ -257,17 +275,30 @@ export const cancelOrder = (order: UIOrder) => {
     };
 };
 
-export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch: any) => {
+        const step: Step = {
+            kind: StepKind.BuySellLimit,
+            amount,
+            price,
+            side,
+        };
+        const pendingSteps: Step[] = [];
+        dispatch(setStepsModalPendingSteps(pendingSteps));
+        dispatch(setStepsModalCurrentStep(step));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const selectedToken = getSelectedToken(state) as Token;
 
-        const relayer = getRelayer();
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = await getContractWrappers();
-
         const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const order = buildLimitOrder(
@@ -283,13 +314,19 @@ export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: Orde
         );
 
         const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-        const signedOrder = await signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+        return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+    };
+};
 
-        await relayer.client.submitOrderAsync(signedOrder);
+export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const selectedToken = getSelectedToken(state) as Token;
+
+        const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
 
         dispatch(getAllOrders());
         dispatch(getUserOrders());
-
         dispatch(
             addNotification({
                 kind: 'LimitNotification',
@@ -299,6 +336,8 @@ export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: Orde
                 timestamp: new Date(),
             }),
         );
+
+        return submitResult;
     };
 };
 
@@ -345,6 +384,32 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             );
         } else {
             window.alert('There are no enough orders to fill this amount');
+        }
+    };
+};
+
+export const updateStore = () => {
+    return async (dispatch: any) => {
+        const web3Wrapper = await getWeb3Wrapper();
+
+        if (web3Wrapper) {
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+
+            const knownTokens = getKnownTokens(networkId);
+
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
+            const wethToken = knownTokens.getWethToken();
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            const wethBalance = await getTokenBalance(wethToken, ethAccount);
+
+            dispatch(getAllOrders());
+            dispatch(getUserOrders());
+            dispatch(setTokenBalances(tokenBalances));
+            dispatch(setEthBalance(ethBalance));
+            dispatch(setWethBalance(wethBalance));
         }
     };
 };

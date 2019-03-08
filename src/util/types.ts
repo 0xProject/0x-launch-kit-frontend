@@ -45,6 +45,7 @@ export interface RelayerState {
 export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
+    readonly stepsModal: StepsModalState;
 }
 
 export interface StoreState {
@@ -52,6 +53,25 @@ export interface StoreState {
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
     readonly ui: UIState;
+}
+
+export enum StepKind {
+    BuySellLimit,
+}
+
+export interface StepBuySellLimitOrder {
+    kind: StepKind.BuySellLimit;
+    amount: BigNumber;
+    price: BigNumber;
+    side: OrderSide;
+}
+
+export type Step = StepBuySellLimitOrder;
+
+export interface StepsModalState {
+    readonly doneSteps: Step[];
+    readonly currentStep: Step | null;
+    readonly pendingSteps: Step[];
 }
 
 export enum OrderSide {

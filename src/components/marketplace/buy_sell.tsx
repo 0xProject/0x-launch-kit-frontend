@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { submitLimitOrder, submitMarketOrder } from '../../store/actions';
+import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
@@ -12,10 +12,7 @@ import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
 
-enum Tab {
-    Buy,
-    Sell,
-}
+import { OrderDetails } from './order_details';
 
 interface StateProps {
     selectedTokenSymbol: string;
@@ -37,7 +34,7 @@ interface State {
     makerAmount: BigNumber;
     orderType: OrderType;
     price: BigNumber;
-    tab: Tab;
+    tab: OrderSide;
 }
 
 const BuySellWrapper = styled(CardBase)`
@@ -88,8 +85,8 @@ const LabelContainer = styled.div`
     margin-bottom: 10px;
 `;
 
-const Label = styled.label`
-    color: #000;
+const Label = styled.label<{ color?: string }>`
+    color: ${props => props.color || '#000'};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -153,7 +150,7 @@ class BuySell extends React.Component<Props, State> {
         makerAmount: new BigNumber(0),
         orderType: OrderType.Limit,
         price: new BigNumber(0),
-        tab: Tab.Buy,
+        tab: OrderSide.Buy,
     };
 
     public render = () => {
@@ -176,16 +173,16 @@ class BuySell extends React.Component<Props, State> {
         return (
             <BuySellWrapper>
                 <TabsContainer>
-                    <TabButton isSelected={tab === Tab.Buy} onClick={this.changeTab(Tab.Buy)}>
+                    <TabButton isSelected={tab === OrderSide.Buy} onClick={this.changeTab(OrderSide.Buy)}>
                         Buy
                     </TabButton>
-                    <TabButton isSelected={tab === Tab.Sell} onClick={this.changeTab(Tab.Sell)}>
+                    <TabButton isSelected={tab === OrderSide.Sell} onClick={this.changeTab(OrderSide.Sell)}>
                         Sell
                     </TabButton>
                 </TabsContainer>
                 <Content>
                     <LabelContainer>
-                        <Label>I want to {tab === Tab.Buy ? 'buy' : 'sell'}</Label>
+                        <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
                         <InnerTabs tabs={buySellInnerTabs} />
                     </LabelContainer>
                     <FieldContainer>
@@ -217,8 +214,9 @@ class BuySell extends React.Component<Props, State> {
                             </FieldContainer>
                         </>
                     )}
-                    <Button theme="secondary" onClick={tab === Tab.Buy ? this.buy : this.sell}>
-                        {tab === Tab.Buy ? 'Buy' : 'Sell'}{' '}
+                    {orderType === OrderType.Limit ? <OrderDetails /> : null}
+                    <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
+                        {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
                         <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
                     </Button>
                 </Content>
@@ -226,7 +224,7 @@ class BuySell extends React.Component<Props, State> {
         );
     };
 
-    public changeTab = (tab: Tab) => () => this.setState({ tab });
+    public changeTab = (tab: OrderSide) => () => this.setState({ tab });
 
     public updateMakerAmount = (newValue: BigNumber) => {
         this.setState({
@@ -285,7 +283,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const BuySellContainer = connect(
     mapStateToProps,
     {
-        onSubmitLimitOrder: submitLimitOrder,
+        onSubmitLimitOrder: startBuySellLimitSteps,
         onSubmitMarketOrder: submitMarketOrder,
     },
 )(BuySell);
