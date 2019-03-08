@@ -32,6 +32,11 @@ export const getZeroXPriceInUSD = async (): Promise<BigNumber> => {
     return zeroXPriceInUSD;
 };
 
+export const getZeroXPriceInWeth = async (): Promise<BigNumber> => {
+    /* TODO - this should calculate the 0x token price based on the order book sells amounts (using the smallest one), if there is no 0x sell order, it should return the coinmarket value of 0x **/
+    return new BigNumber(1);
+};
+
 const cachePrices = () => {
     if (!isActiveCache) {
         setInterval(async () => {

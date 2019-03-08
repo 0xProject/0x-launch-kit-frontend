@@ -5,6 +5,11 @@ export const tokenAmountInUnits = (amount: BigNumber, decimals: number, toFixedD
     return amount.div(decimalsPerToken).toFixed(toFixedDecimals);
 };
 
+export const tokenAmountInUnitsToBigNumber = (amount: BigNumber, decimals: number): BigNumber => {
+    const decimalsPerToken = new BigNumber(10).pow(decimals);
+    return amount.div(decimalsPerToken);
+};
+
 export const unitsInTokenAmount = (units: string, decimals: number): BigNumber => {
     const decimalsPerToken = new BigNumber(10).pow(decimals);
 
