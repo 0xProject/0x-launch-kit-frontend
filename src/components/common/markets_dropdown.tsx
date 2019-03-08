@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { setSelectedToken } from '../../store/actions';
+import { setSelectedToken, updateOrders } from '../../store/actions';
 import { getSelectedToken, getTokens } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { StoreState, Token } from '../../util/types';
@@ -19,6 +19,7 @@ interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
 interface DispatchProps {
     setSelectedToken: (token: Token) => Promise<any>;
+    updateOrders: () => any;
 }
 
 interface PropsToken {
@@ -415,6 +416,7 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _setSelectedMarket: any = async (token: Token) => {
         await this.props.setSelectedToken(token);
+        this.props.updateOrders();
         this._closeDropdown();
     };
 
@@ -465,6 +467,7 @@ const mapStateToProps = (state: StoreState): PropsToken => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         setSelectedToken: (token: Token) => dispatch(setSelectedToken(token)),
+        updateOrders: () => dispatch(updateOrders()),
     };
 };
 

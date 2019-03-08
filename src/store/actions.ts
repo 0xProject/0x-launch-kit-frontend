@@ -316,3 +316,10 @@ export const updateStore = () => {
         }
     };
 };
+
+export const updateOrders = () => {
+    return async (dispatch: any) => {
+        dispatch(getAllOrders());
+        dispatch(getUserOrders());
+    };
+};
