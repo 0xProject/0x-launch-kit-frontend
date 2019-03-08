@@ -371,7 +371,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             dispatch(getAllOrders());
             dispatch(getUserOrders());
 
-            const tx = web3Wrapper.awaitTransactionMinedAsync(txHash);
+            const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
             dispatch(
                 addNotification({
