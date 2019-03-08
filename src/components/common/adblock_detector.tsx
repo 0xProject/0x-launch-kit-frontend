@@ -1,19 +1,13 @@
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
 
-interface Props extends HTMLAttributes<HTMLButtonElement> {}
-
-interface State {}
-
-class AdBlockDetector extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-    }
-
+/* TODO -- This could be refactored using Hooks **/
+class AdBlockDetector extends React.Component {
     public componentDidMount = async () => {
         const isAddBlockDetected = await this.detectAdBlock();
         if (isAddBlockDetected) {
-            alert('Ad-Block DETECTED, please disable it in order to use our dApp!');
-            window.location.reload();
+            alert(
+                'We detected you are using an ad blocker. Keep in mind that this dApp may not work correctly with it enabled',
+            );
         }
     };
 
@@ -31,9 +25,6 @@ class AdBlockDetector extends React.Component<Props, State> {
         });
     };
 
-    public render = () => {
-        const { children } = this.props;
-        return children;
-    };
+    public render = () => null;
 }
 export { AdBlockDetector };
