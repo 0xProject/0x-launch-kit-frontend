@@ -277,13 +277,13 @@ class MarketsDropdown extends React.Component<Props, State> {
     public render = () => {
         const { selectedToken, ...restProps } = this.props;
 
-        const tokenName = (selectedToken && selectedToken.name) || '';
+        const tokenSymbol = (selectedToken && selectedToken.symbol) || '';
 
         const header = (
             <MarketsDropdownHeader>
                 <MarketsDropdownHeaderText>
                     {selectedToken ? <TokenIcon token={selectedToken} /> : ''}
-                    {tokenName}
+                    {tokenSymbol}
                 </MarketsDropdownHeaderText>
                 <ChevronDownIcon />
             </MarketsDropdownHeader>
