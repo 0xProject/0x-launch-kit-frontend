@@ -44,7 +44,7 @@ const NotificationsDropdownBody = styled(CardBase)`
     width: 400px;
 `;
 const NotificationsList = styled.div`
-    height: 420px;
+    max-height: 420px;
     overflow: auto;
 `;
 
