@@ -10,12 +10,15 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
+import { unitsInTokenAmount } from '../util/tokens';
 import {
     BlockchainState,
     OrderSide,
     RelayerState,
     Step,
     StepKind,
+    StepWrapEth,
+    StoreState,
     Token,
     TokenBalance,
     UIOrder,
@@ -178,6 +181,23 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
+export const addWethToBalance = (amount: BigNumber) => {
+    return async (dispatch: any, getState: any) => {
+        const wethToken = getKnownTokens().getWethToken();
+        const wethAmount = unitsInTokenAmount(amount.toString(), wethToken.decimals);
+
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
+
+        const contractWrappers = await getContractWrappers();
+        const tx = await contractWrappers.etherToken.depositAsync(wethAddress, wethAmount, ethAccount);
+        return web3Wrapper.awaitTransactionSuccessAsync(tx);
+    };
+};
+
 export const initWallet = () => {
     return async (dispatch: any) => {
         dispatch(setWeb3State(Web3State.Loading));
@@ -242,7 +262,7 @@ export const getUserOrders = () => {
         const ethAccount = getEthAccount(state);
         const myUIOrders = await getUserOrdersAsUIOrders(selectedToken, ethAccount);
 
-        dispatch(setUserOrders(myUIOrders));
+        return dispatch(setUserOrders(myUIOrders));
     };
 };
 
@@ -256,18 +276,48 @@ export const cancelOrder = (order: SignedOrder) => {
 };
 
 export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
-    return async (dispatch: any) => {
-        const step: Step = {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        const pendingSteps: Step[] = [];
+        let currentStep: Step = {
             kind: StepKind.BuySellLimit,
             amount,
             price,
             side,
         };
-        const pendingSteps: Step[] = [];
+
+        const wrapEthStep = getWrapEthStepIfNeeded(price, side, state);
+        if (wrapEthStep) {
+            pendingSteps.push(currentStep);
+            currentStep = wrapEthStep;
+        }
+
         dispatch(setStepsModalPendingSteps(pendingSteps));
-        dispatch(setStepsModalCurrentStep(step));
+        dispatch(setStepsModalCurrentStep(currentStep));
         dispatch(setStepsModalDoneSteps([]));
     };
+};
+
+const getWrapEthStepIfNeeded = (wethAmount: BigNumber, side: OrderSide, state: StoreState): StepWrapEth | null => {
+    // Weth needed only when creating a buy order
+    if (side === OrderSide.Sell) {
+        return null;
+    }
+    const wethTokenDecimals = getKnownTokens().getWethToken().decimals;
+    const wethAmountInUnits = unitsInTokenAmount(wethAmount.toString(), wethTokenDecimals);
+    const wethBalance = getWethBalance(state);
+
+    // Need to wrap eth only if weth balance is not enough
+    const deltaWeth = wethBalance.sub(wethAmountInUnits);
+    if (deltaWeth.lessThan(0)) {
+        return {
+            kind: StepKind.WrapEth,
+            amount: deltaWeth.abs().div(new BigNumber(10).pow(wethTokenDecimals)),
+        };
+    } else {
+        return null;
+    }
 };
 
 export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {

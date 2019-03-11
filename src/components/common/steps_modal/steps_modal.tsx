@@ -10,6 +10,7 @@ import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
 
 import { SignOrderStepContainer } from './sign_order_step';
+import { WrapEthStepContainer } from './wrap_eth_step';
 
 interface StateProps {
     currentStep: Step | null;
@@ -40,6 +41,7 @@ class StepsModal extends React.Component<Props> {
                     <CloseModalButton onClick={reset} />
                 </CloseButtonContainer>
                 {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
+                {currentStep && currentStep.kind === StepKind.WrapEth && <WrapEthStepContainer />}
             </Modal>
         );
     };
