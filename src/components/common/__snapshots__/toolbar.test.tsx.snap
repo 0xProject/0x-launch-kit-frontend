@@ -9,9 +9,14 @@ exports[`Toolbar Toolbar to match snapshot 1`] = `
     />
     <Styled(PriceChange) />
   </styled.div>
-  <ErrorCard
-    icon={1}
-    text="Metmask Locked"
-  />
+  <styled.div>
+    <Styled(Link)
+      to="/my-wallet"
+    >
+      My Wallet
+    </Styled(Link)>
+    <Styled(Connect(WalletConnectionStatus)) />
+    <NotificationsDropdown />
+  </styled.div>
 </styled.div>
 `;
