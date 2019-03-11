@@ -229,7 +229,7 @@ class BuySell extends React.Component<Props, State> {
                         </Button>
                     </Content>
                 </BuySellWrapper>
-                <ErrorCard text={errorsBuySell.ethLack} icon={ErrorIcons.Sad} />
+                {txError ? <ErrorCard text={errorsBuySell.ethLack} icon={ErrorIcons.Sad} /> : null}
             </>
         );
     };
