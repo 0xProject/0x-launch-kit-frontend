@@ -4,8 +4,9 @@ import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
 import * as dollarUtils from '../../util/market_prices';
+import { OrderSide } from '../../util/types';
 
-import { OrderDetails } from './order_details';
+import { OrderDetailsContainer as OrderDetails } from './order_details';
 
 enum OrderType {
     Limit,
@@ -52,6 +53,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
+                operationType={OrderSide.Buy}
             />,
         );
 

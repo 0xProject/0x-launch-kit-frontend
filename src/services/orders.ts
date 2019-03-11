@@ -45,15 +45,15 @@ export const cancelSignedOrder = async (order: SignedOrder) => {
 };
 
 export const getAllOrdersToFillMarketOrder = (amount: BigNumber, side: OrderSide, state: StoreState): SignedOrder[] => {
-     const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
-     let ordersToFillReturn: SignedOrder[];
-     const [ordersToFill, , canBeFilled] = buildMarketOrders(
+    const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+    let ordersToFillReturn: SignedOrder[];
+    const [ordersToFill, , canBeFilled] = buildMarketOrders(
         {
             amount,
             orders,
         },
         side,
     );
-     canBeFilled ? ordersToFillReturn = ordersToFill : ordersToFillReturn = [];
-     return ordersToFillReturn;
+    canBeFilled ? (ordersToFillReturn = ordersToFill) : (ordersToFillReturn = []);
+    return ordersToFillReturn;
 };
