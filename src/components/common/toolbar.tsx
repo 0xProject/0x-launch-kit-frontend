@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { errorsWallet } from '../../util/error_messages';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdown } from '../account/notifications_dropdown';
+import { ErrorCard, ErrorIcons } from '../common/error_card';
 
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
@@ -96,17 +98,25 @@ const PriceChangeStyled = styled(PriceChange)`
     }
 `;
 
-export const Toolbar = () => (
-    <ToolbarWrapper>
-        <ToolbarStart>
-            <LogoHeader />
-            <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-            <PriceChangeStyled />
-        </ToolbarStart>
-        <ToolbarEnd>
-            <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
-            <WalletDropdown />
-            <NotificationsDropdown />
-        </ToolbarEnd>
-    </ToolbarWrapper>
-);
+export const Toolbar = () => {
+    const mmLocked = true;
+
+    return (
+        <ToolbarWrapper>
+            <ToolbarStart>
+                <LogoHeader />
+                <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
+                <PriceChangeStyled />
+            </ToolbarStart>
+            {mmLocked ? (
+                <ErrorCard text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
+            ) : (
+                <ToolbarEnd>
+                    <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
+                    <WalletDropdown />
+                    <NotificationsDropdown />
+                </ToolbarEnd>
+            )}
+        </ToolbarWrapper>
+    );
+};
