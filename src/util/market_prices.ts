@@ -14,6 +14,7 @@ import { OrderSide } from './types';
 
 let ethPriceInUSD: BigNumber | null;
 let zeroXPriceInUSD: BigNumber | null;
+let zeroXPriceInWeth: BigNumber | null;
 let isActiveCache: boolean = false;
 
 export const getEthereumPriceInUSD = async (): Promise<BigNumber> => {
@@ -38,33 +39,39 @@ export const getZeroXPriceInUSD = async (): Promise<BigNumber> => {
     return zeroXPriceInUSD;
 };
 
+/* Gets all the available sell orders of 0x and takes the lowest price, is there are no 0x sells orders available, the price is calculated using coin market */
 export const getZeroXPriceInWeth = async (): Promise<BigNumber> => {
-    /* Gets all the available sell orders of 0x and takes the lowest price, is there are no 0x sells orders available, the price is calculated using coin market */
-    const web3Wrapper = await getWeb3Wrapper();
-    let zeroXPrice = new BigNumber('0');
-    if (web3Wrapper) {
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const knownTokens = getKnownTokens(networkId);
-        const zeroXToken = knownTokens.getTokenBySymbol('ZRX');
-        let sellOrders = await getAllOrdersAsUIOrders(zeroXToken);
-        if (sellOrders && sellOrders.length > 0) {
-            sellOrders = sellOrders
-                .filter(order => order.side === OrderSide.Sell)
-                .sort((o1, o2) => o1.price.comparedTo(o2.price));
-            /* Check if there is any order that could fill the needs of 0x */
-            const orderWithEnoughZeroX = sellOrders.find(sellOrder => {
-                return sellOrder.size.cmp(MAKER_FEE) === 1;
-            });
-            zeroXPrice = orderWithEnoughZeroX ? orderWithEnoughZeroX.price : zeroXPrice;
+    if (!zeroXPriceInWeth) {
+        /* Default case returns the value from coin market */
+        zeroXPriceInWeth = await getZeroXPriceInWethFromMarket();
+        const web3Wrapper = await getWeb3Wrapper();
+        if (web3Wrapper) {
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+            const knownTokens = getKnownTokens(networkId);
+            const zeroXToken = knownTokens.getTokenBySymbol('ZRX');
+            let sellOrders = await getAllOrdersAsUIOrders(zeroXToken);
+            if (sellOrders.length > 0) {
+                sellOrders = sellOrders
+                    .filter(order => order.side === OrderSide.Sell)
+                    .sort((o1, o2) => o1.price.comparedTo(o2.price));
+                /* Check if there is any order that could fill the needs of 0x */
+                const orderWithEnoughZeroX = sellOrders.find(sellOrder => {
+                    return sellOrder.size.greaterThanOrEqualTo(MAKER_FEE);
+                });
+                if (orderWithEnoughZeroX) {
+                    zeroXPriceInWeth = orderWithEnoughZeroX.price;
+                }
+            }
         }
-        if (!zeroXPrice) {
-            const zeroXInUSD = await getZeroXPriceInUSD();
-            const ethInUSD = await getEthereumPriceInUSD();
-            zeroXPrice = zeroXInUSD.mul(ethInUSD);
-        }
+        cachePrices();
     }
+    return zeroXPriceInWeth;
+};
 
-    return zeroXPrice;
+export const getZeroXPriceInWethFromMarket = async (): Promise<BigNumber> => {
+    const zeroXInUSD = await getZeroXPriceInUSD();
+    const ethInUSD = await getEthereumPriceInUSD();
+    return zeroXInUSD.div(ethInUSD);
 };
 
 const cachePrices = () => {
@@ -73,6 +80,7 @@ const cachePrices = () => {
             ethPriceInUSD = null;
             await getEthereumPriceInUSD();
             await getZeroXPriceInUSD();
+            await getZeroXPriceInWeth();
             isActiveCache = true;
         }, CACHE_CHECK_INTERVAL);
     }
