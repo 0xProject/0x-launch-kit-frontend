@@ -4,7 +4,16 @@ import { History } from 'history';
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
-import { BlockchainState, RelayerState, Step, StepsModalState, StoreState, UIState, Web3State } from '../util/types';
+import {
+    BlockchainState,
+    FetchPriceZRXState,
+    RelayerState,
+    Step,
+    StepsModalState,
+    StoreState,
+    UIState,
+    Web3State,
+} from '../util/types';
 
 import * as actions from './actions';
 
@@ -103,10 +112,53 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
     };
 }
 
+const initialFetchPriceZRXState = {
+    price: new BigNumber(0),
+    error: null,
+    isFetching: false,
+    lastFetched: 0,
+};
+
+export const fetchPriceZRX = (
+    state: FetchPriceZRXState = initialFetchPriceZRXState,
+    action: RootAction,
+): FetchPriceZRXState => {
+    switch (action.type) {
+        case getType(actions.fetchPriceZRXError): {
+            return {
+                ...state,
+                isFetching: false,
+            };
+        }
+
+        case getType(actions.fetchPriceZRXStart): {
+            return {
+                ...state,
+                isFetching: true,
+            };
+        }
+
+        case getType(actions.fetchPriceZRXUpdate): {
+            return {
+                ...state,
+                price: (action.payload && action.payload.price) || new BigNumber(0),
+                error: null,
+                isFetching: false,
+                lastFetched: Date.now(),
+            };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
 export const createRootReducer = (history: History) =>
     combineReducers<StoreState>({
         router: connectRouter(history),
         blockchain,
         relayer,
         ui,
+        fetchPriceZRX,
     });

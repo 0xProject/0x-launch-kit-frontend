@@ -1,18 +1,30 @@
 import { BigNumber } from '0x.js';
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
+import { updateFetchPriceZRX } from '../../store/actions';
+import { getFetchPriceZRX } from '../../store/selectors';
 import { getZeroXPriceInUSD } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
+import { StoreState } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
-
-interface Props extends HTMLAttributes<HTMLButtonElement> {}
 
 interface State {
     orderDetailType: OrderDetailsType;
     zeroXPriceInUSD: BigNumber;
 }
+
+interface StateProps {
+    fetchPriceZRX: BigNumber;
+}
+
+interface DispatchProps {
+    onUpdateFetchPriceZRX: () => Promise<any>;
+}
+
+type PropsOrderDetails = StateProps & DispatchProps;
 
 const Row = styled.div`
     align-items: center;
@@ -66,7 +78,7 @@ enum OrderDetailsType {
     Usd,
 }
 
-class OrderDetails extends React.Component<Props, State> {
+class OrderDetails extends React.Component<PropsOrderDetails, State> {
     // TODO: Refactor with hooks (needs react version update)
 
     public state = {
@@ -126,4 +138,19 @@ class OrderDetails extends React.Component<Props, State> {
     };
 }
 
-export { OrderDetails };
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        fetchPriceZRX: getFetchPriceZRX(state),
+    };
+};
+
+const mapDispatchToProps = {
+    onUpdateFetchPriceZRX: updateFetchPriceZRX,
+};
+
+const OrderDetailsContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(OrderDetails);
+
+export { OrderDetails, OrderDetailsContainer };

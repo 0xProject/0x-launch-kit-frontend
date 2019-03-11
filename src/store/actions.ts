@@ -2,7 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS } from '../common/constants';
+import { FETCH_PRICE_ZRX_TIME_TO_STALE, TX_DEFAULTS, ZEROX_MARKET_PRICE_API_ENDPOINT } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
@@ -12,6 +12,7 @@ import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import {
     BlockchainState,
+    FetchPriceZRX,
     OrderSide,
     RelayerState,
     Step,
@@ -86,6 +87,18 @@ export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STE
 export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
+
+export const fetchPriceZRXAbort = createAction('FETCH_PRICE_ZRX_ABORT');
+
+export const fetchPriceZRXError = createAction('FETCH_PRICE_ZRX_ERROR', resolve => {
+    return (data: Error) => resolve(data);
+});
+
+export const fetchPriceZRXStart = createAction('FETCH_PRICE_ZRX_START');
+
+export const fetchPriceZRXUpdate = createAction('FETCH_PRICE_ZRX_UPDATE', resolve => {
+    return (data: FetchPriceZRX) => resolve(data);
+});
 
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any) => {
@@ -219,6 +232,7 @@ export const initWallet = () => {
             );
             dispatch(getAllOrders());
             dispatch(getUserOrders());
+            dispatch(updateFetchPriceZRX());
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }
@@ -334,6 +348,39 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     };
 };
 
+export const updateFetchPriceZRX = () => {
+    return async (dispatch: any, getState: any) => {
+        const timeSinceLastFetch = getState().fetchPriceZRX.lastFetched;
+
+        const isDataStale = Date.now() - timeSinceLastFetch > FETCH_PRICE_ZRX_TIME_TO_STALE;
+        if (isDataStale) {
+            dispatch(fetchPriceZRXStart());
+
+            // Run the async fetch
+            try {
+                const data = await fetch(ZEROX_MARKET_PRICE_API_ENDPOINT);
+                if (data.status !== 200) {
+                    throw new Error('Failed to fetch prices');
+                }
+                const content = await data.json();
+                const priceUsd: string = (content as any)[0].price_usd;
+                dispatch(
+                    fetchPriceZRXUpdate({
+                        price: new BigNumber(priceUsd),
+                        error: null,
+                        isFetching: false,
+                        lastFetched: Date.now(),
+                    }),
+                );
+            } catch (err) {
+                dispatch(fetchPriceZRXError(err));
+            }
+        } else {
+            dispatch(fetchPriceZRXAbort());
+        }
+    };
+};
+
 export const updateStore = () => {
     return async (dispatch: any) => {
         const web3Wrapper = await getWeb3Wrapper();
@@ -356,6 +403,7 @@ export const updateStore = () => {
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
+            dispatch(updateFetchPriceZRX());
         }
     };
 };

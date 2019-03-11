@@ -15,6 +15,7 @@ export const getSelectedToken = (state: StoreState) => state.relayer.selectedTok
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
+export const getFetchPriceZRX = (state: StoreState) => state.fetchPriceZRX.price;
 
 export const getOpenOrders = createSelector(
     getOrders,

@@ -12,7 +12,7 @@ import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
 
-import { OrderDetails } from './order_details';
+import { OrderDetailsContainer } from './order_details';
 
 interface StateProps {
     selectedTokenSymbol: string;
@@ -214,7 +214,7 @@ class BuySell extends React.Component<Props, State> {
                             </FieldContainer>
                         </>
                     )}
-                    {orderType === OrderType.Limit ? <OrderDetails /> : null}
+                    {orderType === OrderType.Limit ? <OrderDetailsContainer /> : null}
                     <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
                         {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
                         <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
