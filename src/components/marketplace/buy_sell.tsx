@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { startBuySellLimitSteps, submitLimitOrder, submitMarketOrder } from '../../store/actions';
+import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
 import { getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState, Token } from '../../util/types';
