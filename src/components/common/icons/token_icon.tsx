@@ -34,6 +34,7 @@ import { Token } from '../../../util/types';
 
 interface Props {
     token: Token;
+    isInline?: boolean;
 }
 
 const TokenIcons = {
@@ -67,14 +68,17 @@ const TokenIcons = {
     ZrxTokenIcon,
 };
 
-const IconContainer = styled.div<{ color: string }>`
+const IconContainer = styled.div<{ color: string; isInline?: boolean }>`
     align-items: center;
     background-color: ${props => (props.color ? props.color : 'transparent')};
     border-radius: 50%;
-    display: flex;
+    display: ${props => (props.isInline ? 'inline-block' : 'flex')};
     height: 26px;
     justify-content: center;
     width: 26px;
+    ${props => (props.isInline ? 'text-align: center;' : '')}
+    ${props => (props.isInline ? 'margin-right: 10px;' : '')}
+    ${props => (props.isInline ? 'vertical-align: bottom;' : '')}
 `;
 
 const Label = styled.label`
