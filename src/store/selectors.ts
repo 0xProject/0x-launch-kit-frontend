@@ -8,7 +8,9 @@ export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
 export const getTokenBalances = (state: StoreState) => state.blockchain.tokenBalances;
 export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
 export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
-export const getWethBalance = (state: StoreState) => state.blockchain.wethBalance;
+export const getWethTokenBalance = (state: StoreState) => state.blockchain.wethTokenBalance;
+export const getWethBalance = (state: StoreState) =>
+    state.blockchain.wethTokenBalance ? state.blockchain.wethTokenBalance.balance : new BigNumber(0);
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
 export const getSelectedToken = (state: StoreState) => state.relayer.selectedToken;
