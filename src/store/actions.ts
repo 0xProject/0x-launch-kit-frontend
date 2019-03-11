@@ -2,7 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS } from '../common/constants';
+import { TX_DEFAULTS, WETH_TOKEN_SYMBOL, ZRX_TOKEN_SYMBOL } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
@@ -17,6 +17,7 @@ import {
     RelayerState,
     Step,
     StepKind,
+    StepUnlockToken,
     StepWrapEth,
     StoreState,
     Token,
@@ -91,25 +92,50 @@ export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
 
 export const unlockToken = (token: Token) => {
+    return async (dispatch: any, getState: any): Promise<any> => {
+        const state = getState();
+        const tokenBalance = getTokenBalances(state).find(
+            balance => balance.token.address === token.address,
+        ) as TokenBalance;
+        if (!tokenBalance.isUnlocked) {
+            const ethAccount = getEthAccount(state);
+            const contractWrappers = await getContractWrappers();
+            return contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+        } else {
+            return Promise.resolve();
+        }
+    };
+};
+
+export const unlockTokenAndUpdateTokenBalance = (token: Token) => {
+    return async (dispatch: any, getState: any): Promise<any> => {
+        const txHash = await dispatch(unlockToken(token));
+
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        await web3Wrapper.awaitTransactionSuccessAsync(txHash);
+
+        const state = getState();
+        const tokenBalance = getTokenBalances(state).find(
+            balance => balance.token.address === token.address,
+        ) as TokenBalance;
+        const updatedTokenBalance = {
+            ...tokenBalance,
+            isUnlocked: true,
+        };
+        dispatch(updateTokenBalance(updatedTokenBalance));
+    };
+};
+
+export const updateTokenBalance = (updatedTokenBalance: TokenBalance) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
-        const ethAccount = getEthAccount(state);
-        const tokenBalances = getTokenBalances(state);
-
-        const contractWrappers = await getContractWrappers();
-        await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
-
-        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
-            if (tokenBalance.token.address !== token.address) {
+        const updatedTokenBalances = getTokenBalances(state).map(tokenBalance => {
+            if (tokenBalance.token.address !== updatedTokenBalance.token.address) {
                 return tokenBalance;
+            } else {
+                return updatedTokenBalance;
             }
-
-            return {
-                ...tokenBalance,
-                isUnlocked: true,
-            };
         });
-
         dispatch(setTokenBalances(updatedTokenBalances));
     };
 };
@@ -219,7 +245,7 @@ export const initWallet = () => {
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+            const selectedToken = knownTokens.getTokenBySymbol(ZRX_TOKEN_SYMBOL);
 
             dispatch(
                 initializeBlockchainData({
@@ -292,6 +318,16 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
             pendingSteps.push(currentStep);
             currentStep = wrapEthStep;
         }
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            pendingSteps.push(currentStep);
+            currentStep = unlockZrxStep;
+        }
+        const unlockSelectedToken = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedToken) {
+            pendingSteps.push(currentStep);
+            currentStep = unlockSelectedToken;
+        }
 
         dispatch(setStepsModalPendingSteps(pendingSteps));
         dispatch(setStepsModalCurrentStep(currentStep));
@@ -317,6 +353,45 @@ const getWrapEthStepIfNeeded = (wethAmount: BigNumber, side: OrderSide, state: S
         };
     } else {
         return null;
+    }
+};
+
+const getUnlockZrxStepIfNeeded = (state: StoreState): StepUnlockToken | null => {
+    const tokenBalances = getTokenBalances(state);
+    const zrxTokenBalance: TokenBalance = tokenBalances.find(
+        tokenBalance => tokenBalance.token.symbol === ZRX_TOKEN_SYMBOL,
+    ) as TokenBalance;
+    if (zrxTokenBalance.isUnlocked) {
+        return null;
+    } else {
+        return {
+            kind: StepKind.UnlockToken,
+            token: zrxTokenBalance.token,
+        };
+    }
+};
+
+const getUnlockSelectedTokenStepIfNeeded = (side: OrderSide, state: StoreState): StepUnlockToken | null => {
+    const tokenBalances = getTokenBalances(state);
+    let selectedTokenBalance: TokenBalance;
+    if (side === OrderSide.Sell) {
+        const selectedToken = getSelectedToken(state) as Token;
+        selectedTokenBalance = tokenBalances.find(
+            tokenBalance => tokenBalance.token.symbol === selectedToken.symbol,
+        ) as TokenBalance;
+    } else {
+        selectedTokenBalance = tokenBalances.find(
+            tokenBalance => tokenBalance.token.symbol === WETH_TOKEN_SYMBOL,
+        ) as TokenBalance;
+    }
+
+    if (selectedTokenBalance.isUnlocked) {
+        return null;
+    } else {
+        return {
+            kind: StepKind.UnlockToken,
+            token: selectedTokenBalance.token,
+        };
     }
 };
 

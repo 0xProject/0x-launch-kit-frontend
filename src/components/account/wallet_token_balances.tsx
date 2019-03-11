@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { lockToken, unlockToken } from '../../store/actions';
+import { lockToken, unlockTokenAndUpdateTokenBalance } from '../../store/actions';
 import { getTokenBalances, getWeb3State } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
@@ -133,7 +133,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 const mapDispatchToProps = {
-    onUnlockToken: unlockToken,
+    onUnlockToken: unlockTokenAndUpdateTokenBalance,
     onLockToken: lockToken,
 };
 
