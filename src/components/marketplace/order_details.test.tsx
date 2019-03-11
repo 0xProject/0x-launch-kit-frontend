@@ -6,7 +6,7 @@ import * as CONSTANTS from '../../common/constants';
 import * as dollarUtils from '../../util/market_prices';
 import { OrderSide } from '../../util/types';
 
-import { OrderDetailsContainer as OrderDetails } from './order_details';
+import { OrderDetails } from './order_details';
 
 enum OrderType {
     Limit,
@@ -54,6 +54,7 @@ describe('OrderDetails', () => {
                 tokenPrice={tokenPrice}
                 selectedToken={token}
                 operationType={OrderSide.Buy}
+                state={null}
             />,
         );
 

@@ -366,4 +366,4 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const OrderDetailsContainer = connect(mapStateToProps)(OrderDetails);
 
-export { OrderDetailsContainer };
+export { OrderDetails, OrderDetailsContainer };
