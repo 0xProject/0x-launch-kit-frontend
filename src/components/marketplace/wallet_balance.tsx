@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
+import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { Tooltip } from '../common/tooltip';
@@ -98,6 +99,14 @@ const WalletErrorContainer = styled.div`
     position: relative;
 `;
 
+const WalletErrorText = styled.p`
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 23px;
+    margin: 0;
+    padding: 20px 0;
+`;
+
 const WalletErrorFiller = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
     ${props => (props.bottom ? `bottom: ${props.bottom};` : '')}
     ${props => (props.left ? `left: ${props.left};` : '')}
@@ -105,6 +114,10 @@ const WalletErrorFiller = styled.div<{ top?: string; bottom?: string; left?: str
     ${props => (props.top ? `top: ${props.top};` : '')}
     position: absolute;
     z-index: 1;
+`;
+
+const ButtonStyled = styled(Button)`
+    width: 100%;
 `;
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -133,8 +146,8 @@ const fillerSmall = () => {
 
 const getWalletStatus = () => {
     // return WalletStatus.Ok;
-    return WalletStatus.NotConnected;
-    // return WalletStatus.NoWallet;
+    // return WalletStatus.NotConnected;
+    return WalletStatus.NoWallet;
 };
 
 const getWalletName = () => {
@@ -151,7 +164,13 @@ const getWallet = () => {
 };
 
 const getWalletTitle = () => {
-    return 'Wallet Balance';
+    let title = 'Wallet Balance';
+
+    if (getWalletStatus() === WalletStatus.NoWallet) {
+        title = 'No wallet found';
+    }
+
+    return title;
 };
 
 const getWalletContent = () => {
@@ -200,6 +219,15 @@ const getWalletContent = () => {
                     {fillerSmall()}
                 </WalletErrorFiller>
             </WalletErrorContainer>
+        );
+    }
+
+    if (getWalletStatus() === WalletStatus.NoWallet) {
+        content = (
+            <>
+                <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
+                <ButtonStyled theme={'tertiary'}>Get Chrome Extension</ButtonStyled>
+            </>
         );
     }
 
