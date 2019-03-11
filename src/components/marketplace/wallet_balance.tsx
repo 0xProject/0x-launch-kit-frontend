@@ -1,8 +1,10 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
+import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
 import { Card } from '../common/card';
+import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { Tooltip } from '../common/tooltip';
 
 const LabelTitleWrapper = styled.div`
@@ -82,6 +84,29 @@ const TooltipStyled = styled(Tooltip)`
     margin-left: 10px;
 `;
 
+const ErrorCardStyled = styled(ErrorCard)`
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    z-index: 5;
+`;
+
+const WalletErrorContainer = styled.div`
+    height: 140px;
+    position: relative;
+`;
+
+const WalletErrorFiller = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
+    ${props => (props.bottom ? `bottom: ${props.bottom};` : '')}
+    ${props => (props.left ? `left: ${props.left};` : '')}
+    ${props => (props.right ? `right: ${props.right};` : '')}
+    ${props => (props.top ? `top: ${props.top};` : '')}
+    position: absolute;
+    z-index: 1;
+`;
+
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 enum WalletStatus {
@@ -90,8 +115,26 @@ enum WalletStatus {
     NoWallet = 3,
 }
 
+const fillerBig = () => {
+    return (
+        <svg width="67" height="14" viewBox="0 0 67 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="67" height="14" rx="4" fill="#F9F9F9" />
+        </svg>
+    );
+};
+
+const fillerSmall = () => {
+    return (
+        <svg width="56" height="14" viewBox="0 0 56 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="56" height="14" rx="4" fill="#F9F9F9" />
+        </svg>
+    );
+};
+
 const getWalletStatus = () => {
-    return WalletStatus.Ok;
+    // return WalletStatus.Ok;
+    return WalletStatus.NotConnected;
+    // return WalletStatus.NoWallet;
 };
 
 const getWalletName = () => {
@@ -112,26 +155,53 @@ const getWalletTitle = () => {
 };
 
 const getWalletContent = () => {
-    let content: any;
+    let content: any = null;
 
-    content = (
-        <>
-            <LabelTitleWrapper>
-                <LabelTitle>Token</LabelTitle>
-                <LabelTitle>Amount</LabelTitle>
-            </LabelTitleWrapper>
-            <LabelWrapper>
-                <Label>ZRX</Label>
-                <Value>233.344</Value>
-            </LabelWrapper>
-            <LabelWrapper>
-                <Label>
-                    ETH <TooltipStyled type="full" />
-                </Label>
-                <Value>10.00</Value>
-            </LabelWrapper>
-        </>
-    );
+    if (getWalletStatus() === WalletStatus.Ok) {
+        content = (
+            <>
+                <LabelTitleWrapper>
+                    <LabelTitle>Token</LabelTitle>
+                    <LabelTitle>Amount</LabelTitle>
+                </LabelTitleWrapper>
+                <LabelWrapper>
+                    <Label>ZRX</Label>
+                    <Value>233.344</Value>
+                </LabelWrapper>
+                <LabelWrapper>
+                    <Label>
+                        ETH <TooltipStyled type="full" />
+                    </Label>
+                    <Value>10.00</Value>
+                </LabelWrapper>
+            </>
+        );
+    }
+
+    if (getWalletStatus() === WalletStatus.NotConnected) {
+        content = (
+            <WalletErrorContainer>
+                <ErrorCardStyled
+                    fontSize={FontSize.Large}
+                    icon={ErrorIcons.Lock}
+                    text={errorsWallet.mmConnect}
+                    textAlign="center"
+                />
+                <WalletErrorFiller top="0" left="0">
+                    {fillerBig()}
+                </WalletErrorFiller>
+                <WalletErrorFiller top="0" right="0">
+                    {fillerBig()}
+                </WalletErrorFiller>
+                <WalletErrorFiller bottom="0" left="0">
+                    {fillerSmall()}
+                </WalletErrorFiller>
+                <WalletErrorFiller bottom="0" right="0">
+                    {fillerSmall()}
+                </WalletErrorFiller>
+            </WalletErrorContainer>
+        );
+    }
 
     return content;
 };

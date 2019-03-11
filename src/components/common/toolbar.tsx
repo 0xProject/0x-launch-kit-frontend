@@ -6,7 +6,7 @@ import { errorsWallet } from '../../util/error_messages';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdown } from '../account/notifications_dropdown';
-import { ErrorCard, ErrorIcons } from '../common/error_card';
+import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
@@ -100,6 +100,7 @@ const PriceChangeStyled = styled(PriceChange)`
 
 export const Toolbar = () => {
     const mmLocked = false;
+    const mmNotInstalled = false;
 
     return (
         <ToolbarWrapper>
@@ -109,14 +110,18 @@ export const Toolbar = () => {
                 <PriceChangeStyled />
             </ToolbarStart>
             {mmLocked ? (
-                <ErrorCard text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
-            ) : (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
+            ) : null}
+            {mmNotInstalled ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
+            ) : null}
+            {!mmLocked && !mmNotInstalled ? (
                 <ToolbarEnd>
                     <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
                     <WalletDropdown />
                     <NotificationsDropdown />
                 </ToolbarEnd>
-            )}
+            ) : null}
         </ToolbarWrapper>
     );
 };
