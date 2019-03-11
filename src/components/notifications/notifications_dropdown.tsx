@@ -58,6 +58,11 @@ const NotificationDropdownTitle = styled.h1`
     padding: 15px ${themeDimensions.horizontalPadding};
 `;
 
+const NoNotifications = styled.div`
+    text-align: center;
+    line-height: 3em;
+`;
+
 class NotificationsDropdown extends React.Component<Props, {}> {
     public render = () => {
         const { notifications, hasUnreadNotifications, onMarkNotificationsAsRead, ...restProps } = this.props;
@@ -74,7 +79,13 @@ class NotificationsDropdown extends React.Component<Props, {}> {
         const body = (
             <NotificationsDropdownBody>
                 <NotificationDropdownTitle>Notifications</NotificationDropdownTitle>
-                <NotificationsList>{notificationsList}</NotificationsList>
+                <NotificationsList>
+                    {notifications.length === 0 ? (
+                        <NoNotifications>No notifications</NoNotifications>
+                    ) : (
+                        notificationsList
+                    )}
+                </NotificationsList>
             </NotificationsDropdownBody>
         );
 
