@@ -7,7 +7,7 @@ import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
 import { Logo } from './logo';
-import { MarketsDropdown } from './markets_dropdown';
+import { MarketsDropdownContainer } from './markets_dropdown';
 import { PriceChange } from './price_change';
 
 const separatorTopbar = `
@@ -70,7 +70,7 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
-const MarketsDropdownHeader = styled<any>(MarketsDropdown)`
+const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     align-items: center;
     display: flex;
 

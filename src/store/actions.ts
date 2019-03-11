@@ -226,8 +226,7 @@ export const initWallet = () => {
                     selectedToken,
                 }),
             );
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }
@@ -262,9 +261,7 @@ export const cancelOrder = (order: UIOrder) => {
 
         await cancelSignedOrder(order.rawOrder);
 
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
-
+        dispatch(getOrderbookAndUserOrders());
         dispatch(
             addNotification({
                 kind: NotificationKind.CancelOrder,
@@ -326,8 +323,7 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
 
         const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
 
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
+        dispatch(getOrderbookAndUserOrders());
         dispatch(
             addNotification({
                 kind: NotificationKind.Limit,
@@ -368,8 +364,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
                 ethAccount,
                 TX_DEFAULTS,
             );
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
 
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
@@ -406,11 +401,17 @@ export const updateStore = () => {
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
         }
+    };
+};
+
+export const getOrderbookAndUserOrders = () => {
+    return async (dispatch: any) => {
+        dispatch(getAllOrders());
+        dispatch(getUserOrders());
     };
 };

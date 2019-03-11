@@ -1,7 +1,7 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { createSelector } from 'reselect';
 
-import { OrderBook, OrderSide, StoreState } from '../util/types';
+import { OrderBook, OrderSide, StoreState, Token } from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
@@ -87,4 +87,14 @@ export const getOrderBook = createSelector(
 export const getSelectedTokenSymbol = createSelector(
     getSelectedToken,
     token => (token ? token.symbol : ''),
+);
+
+export const getTokens = createSelector(
+    getTokenBalances,
+    (tokenBalances): Token[] => {
+        return tokenBalances.map((tokenBalance, index) => {
+            const { token } = tokenBalance;
+            return token;
+        });
+    },
 );
