@@ -1,8 +1,10 @@
-import { assetDataUtils } from '0x.js';
+import { assetDataUtils, BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
 import { TX_DEFAULTS } from '../common/constants';
-import { Token } from '../util/types';
+import { getOpenBuyOrders, getOpenSellOrders } from '../store/selectors';
+import { buildMarketOrders } from '../util/orders';
+import { OrderSide, StoreState, Token } from '../util/types';
 import { ordersToUIOrders } from '../util/ui_orders';
 
 import { getContractWrappers } from './contract_wrappers';
@@ -40,4 +42,18 @@ export const cancelSignedOrder = async (order: SignedOrder) => {
     const web3Wrapper = await getWeb3WrapperOrThrow();
     const tx = await contractWrappers.exchange.cancelOrderAsync(order, TX_DEFAULTS);
     return web3Wrapper.awaitTransactionSuccessAsync(tx);
+};
+
+export const getAllOrdersToFillMarketOrder = (amount: BigNumber, side: OrderSide, state: StoreState): SignedOrder[] => {
+     const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+     let ordersToFillReturn: SignedOrder[];
+     const [ordersToFill, , canBeFilled] = buildMarketOrders(
+        {
+            amount,
+            orders,
+        },
+        side,
+    );
+     canBeFilled ? ordersToFillReturn = ordersToFill : ordersToFillReturn = [];
+     return ordersToFillReturn;
 };

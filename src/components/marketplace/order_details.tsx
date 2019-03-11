@@ -1,15 +1,16 @@
 import { BigNumber } from '0x.js';
-import React, { HTMLAttributes } from 'react';
+import { SignedOrder } from '@0x/connect';
+import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
+import { getAllOrdersToFillMarketOrder } from '../../services/orders';
 import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnitsToBigNumber } from '../../util/tokens';
-import { Token } from '../../util/types';
+import { OrderSide, StoreState, Token } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
-
-interface Props extends HTMLAttributes<HTMLButtonElement> {}
 
 enum OrderType {
     Limit,
@@ -24,15 +25,28 @@ interface State {
         totalCostInWeth: BigNumber;
         totalCostInUSD: BigNumber;
     };
-    marketOrder: {};
+    marketOrder: {
+        orderDetailType: OrderDetailsType;
+        zeroXFeeInUSD: BigNumber;
+        zeroXFeeInWeth: BigNumber;
+        totalCostInWeth: BigNumber;
+        totalCostInUSD: BigNumber;
+    };
 }
 
-interface Props {
+interface PropsInterface {
     orderType: OrderType;
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
     selectedToken: Token | null;
+    operationType: OrderSide;
 }
+
+interface StateProps {
+    state: StoreState | null;
+}
+
+type Props = StateProps & PropsInterface;
 
 const Row = styled.div`
     align-items: center;
@@ -142,10 +156,47 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public updateMarketOrderState = async () => {
-        /* TODO */
-        const { tokenAmount, tokenPrice } = this.props;
-        await this._calculateTotalCostMarketInWeth(tokenAmount, tokenPrice);
-        return null;
+        const { tokenAmount, selectedToken, orderType, operationType, state } = this.props;
+        if (selectedToken) {
+            /* Reduces decimals of the token amount */
+            const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
+
+            const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
+            try {
+                const results = await Promise.all(promisesArray);
+                const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+                let ordersToFill: SignedOrder[];
+                let totalFee = new BigNumber(0);
+                /* Gets all the orders needed to fill the order **/
+                if (state) {
+                    /* TODO - Check if there are orders with a makerFee > 0 */
+                    ordersToFill = getAllOrdersToFillMarketOrder(tokenAmount, operationType, state);
+                    totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
+                        return totalFeeSum.add(currentOrder.makerFee);
+                    }, new BigNumber(0));
+                }
+
+                /* TODO - Calculates total cost in wETH */
+                const zeroXFeeInWeth = totalFee;
+                const totalCostInWeth = new BigNumber(0);
+
+                /* TODO - Calculates total cost in USD */
+                const zeroXFeeInUSD = zeroXFeeInWeth.mul(zeroXPriceInUSD);
+                const totalCostInUSD = new BigNumber(0);
+
+                this.setState({
+                    marketOrder: {
+                        ...this.state.marketOrder,
+                        zeroXFeeInWeth,
+                        zeroXFeeInUSD,
+                        totalCostInWeth,
+                        totalCostInUSD,
+                    },
+                });
+            } catch (error) {
+                throw error;
+            }
+        }
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) => {
@@ -154,7 +205,8 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.selectedToken !== prevProps.selectedToken
+            newProps.selectedToken !== prevProps.selectedToken ||
+            newProps.operationType !== prevProps.operationType
         ) {
             if (newProps.orderType === OrderType.Limit) {
                 await this.updateLimitOrderState();
@@ -185,15 +237,6 @@ class OrderDetails extends React.Component<Props, State> {
             render = this._renderMarketOrder();
         }
         return render;
-    };
-
-    private readonly _calculateTotalCostMarketInWeth = async (
-        tokenAmount: BigNumber,
-        tokenPrice: BigNumber,
-    ): Promise<BigNumber> => {
-        const totalCost = new BigNumber(0);
-        /* TODO **/
-        return totalCost;
     };
 
     private readonly _renderLimitOrder = () => {
@@ -280,4 +323,12 @@ class OrderDetails extends React.Component<Props, State> {
     };
 }
 
-export { OrderDetails };
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        state,
+    };
+};
+
+const OrderDetailsContainer = connect(mapStateToProps)(OrderDetails);
+
+export { OrderDetailsContainer };
