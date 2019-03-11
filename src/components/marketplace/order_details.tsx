@@ -179,10 +179,12 @@ class OrderDetails extends React.Component<Props, State> {
         const { orderType } = this.props;
         let render = null;
         if (orderType === OrderType.Limit) {
-            render = this._renderLimitOrder();
+            const { orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD } = this.state.limitOrder;
+            render = this._renderOrderDetails(orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD);
         }
         if (orderType === OrderType.Market) {
-            render = this._renderMarketOrder();
+            const { orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD } = this.state.marketOrder;
+            render = this._renderOrderDetails(orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD);
         }
         return render;
     };
@@ -196,8 +198,12 @@ class OrderDetails extends React.Component<Props, State> {
         return totalCost;
     };
 
-    private readonly _renderLimitOrder = () => {
-        const { orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD } = this.state.limitOrder;
+    private readonly _renderOrderDetails = (
+        orderDetailType: OrderDetailsType,
+        zeroXFeeInUSD: BigNumber,
+        totalCostInWeth: BigNumber,
+        totalCostInUSD: BigNumber,
+    ) => {
         const ethUsdTabs = [
             {
                 active: orderDetailType === OrderDetailsType.Eth,
@@ -233,10 +239,6 @@ class OrderDetails extends React.Component<Props, State> {
                 </LabelContainer>
             </>
         );
-    };
-
-    private readonly _renderMarketOrder = () => {
-        return null;
     };
 
     private readonly _switchToUsd = () => {
