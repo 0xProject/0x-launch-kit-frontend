@@ -99,7 +99,7 @@ const PriceChangeStyled = styled(PriceChange)`
 `;
 
 export const Toolbar = () => {
-    const mmLocked = true;
+    const mmLocked = false;
 
     return (
         <ToolbarWrapper>

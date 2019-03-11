@@ -33,13 +33,6 @@ const CardTitle = styled.h1`
     padding: 0 20px 0 0;
 `;
 
-const CardAction = styled.div`
-    color: #b9b9b9;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.2;
-`;
-
 const CardBody = styled.div`
     margin: 0;
     min-height: 140px;
@@ -56,7 +49,7 @@ export const Card: React.FC<Props> = props => {
             {title || action ? (
                 <CardHeader>
                     <CardTitle>{title}</CardTitle>
-                    {action ? <CardAction>{action}</CardAction> : null}
+                    {action ? action : null}
                 </CardHeader>
             ) : null}
             <CardBody>{children}</CardBody>
