@@ -162,15 +162,15 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public updateMarketOrderState = async () => {
-        const { tokenAmount, selectedToken, orderType, operationType, state } = this.props;
+        const { tokenAmount, selectedToken, operationType, state } = this.props;
         if (selectedToken) {
             /* Reduces decimals of the token amount */
-            const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
+            // const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
 
             const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
             try {
                 const results = await Promise.all(promisesArray);
-                const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+                const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
                 let ordersToFill: SignedOrder[];
                 let totalFee = new BigNumber(0);
                 /* Gets all the orders needed to fill the order **/
@@ -239,23 +239,38 @@ class OrderDetails extends React.Component<Props, State> {
         const { orderType } = this.props;
         let render = null;
         if (orderType === OrderType.Limit) {
-            const { orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD } = this.state.limitOrder;
-            render = this._renderOrderDetails(orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD);
+            const {
+                orderDetailType,
+                zeroXFeeInUSD,
+                zeroXFeeInZrx,
+                totalCostInWeth,
+                totalCostInUSD,
+            } = this.state.limitOrder;
+            render = this._renderOrderDetails(
+                orderDetailType,
+                zeroXFeeInUSD,
+                zeroXFeeInZrx,
+                totalCostInWeth,
+                totalCostInUSD,
+            );
         }
         if (orderType === OrderType.Market) {
-            const { orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD } = this.state.marketOrder;
-            render = this._renderOrderDetails(orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD);
+            const {
+                orderDetailType,
+                zeroXFeeInUSD,
+                zeroXFeeInZrx,
+                totalCostInWeth,
+                totalCostInUSD,
+            } = this.state.marketOrder;
+            render = this._renderOrderDetails(
+                orderDetailType,
+                zeroXFeeInUSD,
+                zeroXFeeInZrx,
+                totalCostInWeth,
+                totalCostInUSD,
+            );
         }
         return render;
-    };
-
-    private readonly _calculateTotalCostMarketInWeth = async (
-        tokenAmount: BigNumber,
-        tokenPrice: BigNumber,
-    ): Promise<BigNumber> => {
-        const totalCost = new BigNumber(0);
-        /* TODO **/
-        return totalCost;
     };
 
     private readonly _renderOrderDetails = (
