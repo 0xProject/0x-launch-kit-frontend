@@ -7,13 +7,14 @@ import { Redirect, Route, Switch } from 'react-router';
 import 'sanitize.css';
 
 import { AppContainer } from './components/app';
+import { AdBlockDetector } from './components/common/adblock_detector';
 import { GeneralLayout } from './components/general_layout';
 import './icons';
 import './index.css';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
 import * as serviceWorker from './serviceWorker';
-import { history, store } from './store/index';
+import { history, store } from './store';
 
 ReactModal.setAppElement('#root');
 const RedirectToHome = () => <Redirect to="/" />;
@@ -22,6 +23,7 @@ const Web3WrappedApp = (
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <AppContainer>
+                <AdBlockDetector />
                 <GeneralLayout>
                     <Switch>
                         <Route exact={true} path="/" component={Marketplace} />
