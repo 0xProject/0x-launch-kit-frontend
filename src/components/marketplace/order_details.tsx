@@ -22,12 +22,14 @@ interface State {
         orderDetailType: OrderDetailsType;
         zeroXFeeInUSD: BigNumber;
         zeroXFeeInWeth: BigNumber;
+        zeroXFeeInZrx: BigNumber;
         totalCostInWeth: BigNumber;
         totalCostInUSD: BigNumber;
     };
     marketOrder: {
         orderDetailType: OrderDetailsType;
         zeroXFeeInUSD: BigNumber;
+        zeroXFeeInZrx: BigNumber;
         zeroXFeeInWeth: BigNumber;
         totalCostInWeth: BigNumber;
         totalCostInUSD: BigNumber;
@@ -108,6 +110,7 @@ class OrderDetails extends React.Component<Props, State> {
             orderDetailType: OrderDetailsType.Eth,
             zeroXFeeInUSD: new BigNumber(0),
             zeroXFeeInWeth: new BigNumber(0),
+            zeroXFeeInZrx: new BigNumber(MAKER_FEE),
             totalCostInWeth: new BigNumber(0),
             totalCostInUSD: new BigNumber(0),
         },
@@ -115,6 +118,7 @@ class OrderDetails extends React.Component<Props, State> {
             orderDetailType: OrderDetailsType.Eth,
             zeroXFeeInUSD: new BigNumber(0),
             zeroXFeeInWeth: new BigNumber(0),
+            zeroXFeeInZrx: new BigNumber(0),
             totalCostInWeth: new BigNumber(0),
             totalCostInUSD: new BigNumber(0),
         },
@@ -134,6 +138,7 @@ class OrderDetails extends React.Component<Props, State> {
                 const zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
                 const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
                 const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
+                const zeroXFeeInZrx = new BigNumber(MAKER_FEE);
 
                 /* Calculates total cost in USD */
                 const zeroXFeeInUSD = zeroXPriceInUSD.mul(MAKER_FEE);
@@ -144,6 +149,7 @@ class OrderDetails extends React.Component<Props, State> {
                     limitOrder: {
                         ...this.state.limitOrder,
                         zeroXFeeInWeth,
+                        zeroXFeeInZrx,
                         zeroXFeeInUSD,
                         totalCostInWeth,
                         totalCostInUSD,
@@ -177,7 +183,8 @@ class OrderDetails extends React.Component<Props, State> {
                 }
 
                 /* TODO - Calculates total cost in wETH */
-                const zeroXFeeInWeth = totalFee;
+                const zeroXFeeInZrx = totalFee;
+                const zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
                 const totalCostInWeth = new BigNumber(0);
 
                 /* TODO - Calculates total cost in USD */
@@ -188,6 +195,7 @@ class OrderDetails extends React.Component<Props, State> {
                     marketOrder: {
                         ...this.state.marketOrder,
                         zeroXFeeInWeth,
+                        zeroXFeeInZrx,
                         zeroXFeeInUSD,
                         totalCostInWeth,
                         totalCostInUSD,
@@ -231,16 +239,32 @@ class OrderDetails extends React.Component<Props, State> {
         const { orderType } = this.props;
         let render = null;
         if (orderType === OrderType.Limit) {
-            render = this._renderLimitOrder();
+            const { orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD } = this.state.limitOrder;
+            render = this._renderOrderDetails(orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD);
         }
         if (orderType === OrderType.Market) {
-            render = this._renderMarketOrder();
+            const { orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD } = this.state.marketOrder;
+            render = this._renderOrderDetails(orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD);
         }
         return render;
     };
 
-    private readonly _renderLimitOrder = () => {
-        const { orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD } = this.state.limitOrder;
+    private readonly _calculateTotalCostMarketInWeth = async (
+        tokenAmount: BigNumber,
+        tokenPrice: BigNumber,
+    ): Promise<BigNumber> => {
+        const totalCost = new BigNumber(0);
+        /* TODO **/
+        return totalCost;
+    };
+
+    private readonly _renderOrderDetails = (
+        orderDetailType: OrderDetailsType,
+        zeroXFeeInUSD: BigNumber,
+        zeroXFeeInZrx: BigNumber,
+        totalCostInWeth: BigNumber,
+        totalCostInUSD: BigNumber,
+    ) => {
         const ethUsdTabs = [
             {
                 active: orderDetailType === OrderDetailsType.Eth,
@@ -265,7 +289,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>
                         {orderDetailType === OrderDetailsType.Usd
                             ? `$ ${zeroXFeeInUSD.toFixed(2)}`
-                            : `${MAKER_FEE} ZRX`}
+                            : `${zeroXFeeInZrx} ZRX`}
                     </Value>
                 </Row>
                 <LabelContainer>
@@ -276,10 +300,6 @@ class OrderDetails extends React.Component<Props, State> {
                 </LabelContainer>
             </>
         );
-    };
-
-    private readonly _renderMarketOrder = () => {
-        return null;
     };
 
     private readonly _switchToUsd = () => {
