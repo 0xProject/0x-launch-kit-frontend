@@ -46,21 +46,22 @@ export interface UIState {
     readonly stepsModal: StepsModalState;
 }
 
-export interface FetchPriceZRXState {
+export interface PriceState {
     readonly price: BigNumber;
     readonly error: Error | null;
     readonly isFetching: boolean;
     readonly lastFetched: number;
 }
 
-export type FetchPriceZRX = FetchPriceZRXState;
+export type FetchPrice = PriceState;
 
 export interface StoreState {
     readonly router: RouterState;
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
     readonly ui: UIState;
-    readonly fetchPriceZRX: FetchPriceZRXState;
+    readonly priceZRX: PriceState;
+    readonly priceEther: PriceState;
 }
 
 export enum StepKind {
@@ -85,6 +86,11 @@ export interface StepsModalState {
 export enum OrderSide {
     Sell,
     Buy,
+}
+
+export enum Price {
+    Ether,
+    Zrx,
 }
 
 export interface UIOrder {

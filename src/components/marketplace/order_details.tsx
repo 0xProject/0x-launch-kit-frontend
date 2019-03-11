@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
-import { updateFetchPriceZRX } from '../../store/actions';
-import { getFetchPriceZRX } from '../../store/selectors';
+import { updateFetchPrice } from '../../store/actions';
+import { getFetchPrice } from '../../store/selectors';
 import { getZeroXPriceInUSD } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { StoreState } from '../../util/types';
+import { Price, StoreState } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
 
 interface State {
@@ -17,11 +17,12 @@ interface State {
 }
 
 interface StateProps {
-    fetchPriceZRX: BigNumber;
+    priceZrx: BigNumber;
+    priceEther: BigNumber;
 }
 
 interface DispatchProps {
-    onUpdateFetchPriceZRX: () => Promise<any>;
+    onUpdateFetchPrice: (typePrice: Price) => Promise<void>;
 }
 
 type PropsOrderDetails = StateProps & DispatchProps;
@@ -140,12 +141,13 @@ class OrderDetails extends React.Component<PropsOrderDetails, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        fetchPriceZRX: getFetchPriceZRX(state),
+        priceZrx: getFetchPrice(Price.Zrx, state),
+        priceEther: getFetchPrice(Price.Zrx, state),
     };
 };
 
 const mapDispatchToProps = {
-    onUpdateFetchPriceZRX: updateFetchPriceZRX,
+    onUpdateFetchPrice: updateFetchPrice,
 };
 
 const OrderDetailsContainer = connect(

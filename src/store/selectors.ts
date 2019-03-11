@@ -1,7 +1,7 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { createSelector } from 'reselect';
 
-import { OrderBook, OrderSide, StoreState } from '../util/types';
+import { OrderBook, OrderSide, Price, StoreState } from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
@@ -15,7 +15,17 @@ export const getSelectedToken = (state: StoreState) => state.relayer.selectedTok
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
-export const getFetchPriceZRX = (state: StoreState) => state.fetchPriceZRX.price;
+export const getFetchPrice = (priceType: Price, state: StoreState): BigNumber => {
+    let price = new BigNumber(0);
+    if (priceType === Price.Zrx) {
+        price = state.priceZRX.price;
+    }
+
+    if (priceType === Price.Ether) {
+        price = state.priceEther.price;
+    }
+    return price;
+};
 
 export const getOpenOrders = createSelector(
     getOrders,

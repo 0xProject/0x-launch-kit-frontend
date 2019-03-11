@@ -2,7 +2,12 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
-import { FETCH_PRICE_ZRX_TIME_TO_STALE, TX_DEFAULTS, ZEROX_MARKET_PRICE_API_ENDPOINT } from '../common/constants';
+import {
+    ETH_MARKET_PRICE_API_ENDPOINT,
+    FETCH_PRICE_TIME_TO_STALE,
+    TX_DEFAULTS,
+    ZEROX_MARKET_PRICE_API_ENDPOINT,
+} from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
@@ -12,8 +17,9 @@ import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import {
     BlockchainState,
-    FetchPriceZRX,
+    FetchPrice,
     OrderSide,
+    Price,
     RelayerState,
     Step,
     StepKind,
@@ -88,16 +94,30 @@ export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
 
+// Price ZeroX Actions
 export const fetchPriceZRXAbort = createAction('FETCH_PRICE_ZRX_ABORT');
 
 export const fetchPriceZRXError = createAction('FETCH_PRICE_ZRX_ERROR', resolve => {
-    return (data: Error) => resolve(data);
+    return (data: any) => resolve(data);
 });
 
 export const fetchPriceZRXStart = createAction('FETCH_PRICE_ZRX_START');
 
 export const fetchPriceZRXUpdate = createAction('FETCH_PRICE_ZRX_UPDATE', resolve => {
-    return (data: FetchPriceZRX) => resolve(data);
+    return (data: FetchPrice) => resolve(data);
+});
+
+// Price ethereum actions
+export const fetchPriceEthereumAbort = createAction('FETCH_PRICE_ETHEREUM_ABORT');
+
+export const fetchPriceEthereumError = createAction('FETCH_PRICE_ETHEREUM_ERROR', resolve => {
+    return (data: any) => resolve(data);
+});
+
+export const fetchPriceEthereumStart = createAction('FETCH_PRICE_ETHEREUM_START');
+
+export const fetchPriceEthereumUpdate = createAction('FETCH_PRICE_ETHEREUM_UPDATE', resolve => {
+    return (data: FetchPrice) => resolve(data);
 });
 
 export const unlockToken = (token: Token) => {
@@ -232,7 +252,8 @@ export const initWallet = () => {
             );
             dispatch(getAllOrders());
             dispatch(getUserOrders());
-            dispatch(updateFetchPriceZRX());
+            dispatch(updateFetchPrice(Price.Ether));
+            dispatch(updateFetchPrice(Price.Zrx));
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }
@@ -348,24 +369,47 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     };
 };
 
-export const updateFetchPriceZRX = () => {
+export const updateFetchPrice = (typePrice: Price) => {
     return async (dispatch: any, getState: any) => {
-        const timeSinceLastFetch = getState().fetchPriceZRX.lastFetched;
+        let timeSinceLastFetch = 0;
+        let fetchPriceStart = null;
+        let fetchPriceUpdate = null;
+        let fetchPriceError = null;
+        let fetchPriceAbort = null;
+        let apiEndpoint = null;
 
-        const isDataStale = Date.now() - timeSinceLastFetch > FETCH_PRICE_ZRX_TIME_TO_STALE;
+        if (typePrice === Price.Ether) {
+            timeSinceLastFetch = getState().priceZRX.lastFetched;
+            fetchPriceStart = fetchPriceEthereumStart;
+            fetchPriceUpdate = fetchPriceEthereumUpdate;
+            fetchPriceError = fetchPriceEthereumError;
+            fetchPriceAbort = fetchPriceEthereumAbort;
+            apiEndpoint = ETH_MARKET_PRICE_API_ENDPOINT;
+        } else if (typePrice === Price.Zrx) {
+            timeSinceLastFetch = getState().priceEther.lastFetched;
+            fetchPriceStart = fetchPriceZRXStart;
+            fetchPriceUpdate = fetchPriceZRXUpdate;
+            fetchPriceError = fetchPriceZRXError;
+            fetchPriceAbort = fetchPriceZRXAbort;
+            apiEndpoint = ZEROX_MARKET_PRICE_API_ENDPOINT;
+        } else {
+            throw new Error('Missing price type');
+        }
+
+        const isDataStale = Date.now() - timeSinceLastFetch > FETCH_PRICE_TIME_TO_STALE;
         if (isDataStale) {
-            dispatch(fetchPriceZRXStart());
+            dispatch(fetchPriceStart());
 
             // Run the async fetch
             try {
-                const data = await fetch(ZEROX_MARKET_PRICE_API_ENDPOINT);
+                const data = await fetch(apiEndpoint);
                 if (data.status !== 200) {
                     throw new Error('Failed to fetch prices');
                 }
                 const content = await data.json();
                 const priceUsd: string = (content as any)[0].price_usd;
                 dispatch(
-                    fetchPriceZRXUpdate({
+                    fetchPriceUpdate({
                         price: new BigNumber(priceUsd),
                         error: null,
                         isFetching: false,
@@ -373,10 +417,10 @@ export const updateFetchPriceZRX = () => {
                     }),
                 );
             } catch (err) {
-                dispatch(fetchPriceZRXError(err));
+                dispatch(fetchPriceError(err));
             }
         } else {
-            dispatch(fetchPriceZRXAbort());
+            dispatch(fetchPriceAbort());
         }
     };
 };
@@ -403,7 +447,8 @@ export const updateStore = () => {
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
-            dispatch(updateFetchPriceZRX());
+            dispatch(updateFetchPrice(Price.Zrx));
+            dispatch(updateFetchPrice(Price.Ether));
         }
     };
 };

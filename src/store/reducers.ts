@@ -6,7 +6,7 @@ import { ActionType, getType } from 'typesafe-actions';
 
 import {
     BlockchainState,
-    FetchPriceZRXState,
+    PriceState,
     RelayerState,
     Step,
     StepsModalState,
@@ -112,17 +112,14 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
     };
 }
 
-const initialFetchPriceZRXState = {
+const initialFetchPriceState = {
     price: new BigNumber(0),
     error: null,
     isFetching: false,
     lastFetched: 0,
 };
 
-export const fetchPriceZRX = (
-    state: FetchPriceZRXState = initialFetchPriceZRXState,
-    action: RootAction,
-): FetchPriceZRXState => {
+export const priceZRX = (state: PriceState = initialFetchPriceState, action: RootAction): PriceState => {
     switch (action.type) {
         case getType(actions.fetchPriceZRXError): {
             return {
@@ -154,11 +151,44 @@ export const fetchPriceZRX = (
     }
 };
 
+export const priceEther = (state: PriceState = initialFetchPriceState, action: RootAction): PriceState => {
+    switch (action.type) {
+        case getType(actions.fetchPriceEthereumError): {
+            return {
+                ...state,
+                isFetching: false,
+            };
+        }
+
+        case getType(actions.fetchPriceEthereumStart): {
+            return {
+                ...state,
+                isFetching: true,
+            };
+        }
+
+        case getType(actions.fetchPriceEthereumUpdate): {
+            return {
+                ...state,
+                price: (action.payload && action.payload.price) || new BigNumber(0),
+                error: null,
+                isFetching: false,
+                lastFetched: Date.now(),
+            };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
 export const createRootReducer = (history: History) =>
     combineReducers<StoreState>({
         router: connectRouter(history),
         blockchain,
         relayer,
         ui,
-        fetchPriceZRX,
+        priceZRX,
+        priceEther,
     });

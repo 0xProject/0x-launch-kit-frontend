@@ -28,8 +28,8 @@ export const CACHE_CHECK_INTERVAL: number =
 export const UI_UPDATE_CHECK_INTERVAL: number =
     Number.parseInt(process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL as string, 10) || 5000;
 
-export const FETCH_PRICE_ZRX_TIME_TO_STALE: number =
-    Number.parseInt(process.env.REACT_APP_FETCH_PRICE_ZRX_TIME_TO_STALE as string, 10) || 3600000;
+export const FETCH_PRICE_TIME_TO_STALE: number =
+    Number.parseInt(process.env.REACT_APP_FETCH_PRICE_TIME_TO_STALE as string, 10) || 3600000;
 
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
