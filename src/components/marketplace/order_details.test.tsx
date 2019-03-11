@@ -33,22 +33,16 @@ describe('OrderDetails', () => {
         CONSTANTS.MAKER_FEE = '1.0';
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
-            return new Promise(resolve => {
-                resolve(new BigNumber(ZEROX_WETH_PRICE));
-            });
+            return new BigNumber(ZEROX_WETH_PRICE);
         });
         // @ts-ignore
         dollarUtils.getZeroXPriceInUSD = jest.fn(() => {
-            return new Promise(resolve => {
-                resolve(new BigNumber(ZEROX_USD_PRICE));
-            });
+            return new BigNumber(ZEROX_USD_PRICE);
         });
 
         // @ts-ignore
         dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
-            return new Promise(resolve => {
-                resolve(new BigNumber(DOLAR_PRICE));
-            });
+            return new BigNumber(DOLAR_PRICE);
         });
 
         // when
