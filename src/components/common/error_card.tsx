@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { themeColors, themeDimensions } from '../../util/theme';
 
 import { LockIcon } from './icons/lock_icon';
+import { MetamaskSideIcon } from './icons/metamask_side_icon';
 import { SadIcon } from './icons/sad_icon';
 
 interface Props extends HTMLAttributes<HTMLDivElement>, ErrorProps {
@@ -19,6 +20,7 @@ interface ErrorProps {
 export enum ErrorIcons {
     Lock = 1,
     Sad = 2,
+    Metamask = 3,
 }
 
 export enum FontSize {
@@ -48,6 +50,9 @@ const getIcon = (icon: ErrorIcons) => {
 
     if (icon === ErrorIcons.Lock) {
         theIcon = <LockIcon />;
+    }
+    if (icon === ErrorIcons.Metamask) {
+        theIcon = <MetamaskSideIcon />;
     }
     if (icon === ErrorIcons.Sad) {
         theIcon = <SadIcon />;
