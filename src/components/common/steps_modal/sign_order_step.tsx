@@ -6,13 +6,18 @@ import { connect } from 'react-redux';
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
+import { StepItem } from '../steps_modal/steps_progress';
 
 import {
+    ModalContent,
+    ModalStatusText,
+    ModalText,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
     StepStatusError,
     StepStatusLoading,
+    StepsTimeline,
     Title,
 } from './steps_common';
 
@@ -37,13 +42,32 @@ class SignOrderStep extends React.Component<Props, State> {
     };
 
     public componentDidMount = async () => {
-        await this._getSignedOrder();
+        // await this._getSignedOrder();
     };
 
     public render = () => {
         const { status } = this.state;
         const retry = () => this._retry();
         let content;
+
+        const steps: StepItem[] = [
+            {
+                active: true,
+                progress: '100',
+                title: 'Unlock',
+            },
+            {
+                active: true,
+                progress: '30',
+                title: 'Name',
+            },
+            {
+                active: false,
+                progress: '0',
+                title: 'Another Name',
+            },
+        ];
+
         switch (status) {
             case StepStatus.Loading:
                 content = <StepStatusLoading>Submitting order.</StepStatusLoading>;
@@ -61,15 +85,19 @@ class SignOrderStep extends React.Component<Props, State> {
             default:
                 content = (
                     <StepStatusConfirmOnMetamask>
-                        Confirm signature on Metamask to submit order.
+                        <ModalText>Confirm signature on Metamask to submit order.</ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
                 break;
         }
         return (
             <>
-                <Title>Order Setup</Title>
-                {content}
+                <ModalContent>
+                    <Title>Order Setup</Title>
+                    {content}
+                    <StepsTimeline steps={steps} />
+                    <ModalStatusText>Current status, waiting, time...</ModalStatusText>
+                </ModalContent>
             </>
         );
     };

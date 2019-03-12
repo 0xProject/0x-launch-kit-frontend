@@ -26,7 +26,13 @@ const initialRelayerState: RelayerState = {
 
 const initialStepsModalState: StepsModalState = {
     doneSteps: [],
-    currentStep: null,
+    // currentStep: null,
+    currentStep: {
+        kind: 2,
+        amount: new BigNumber(0),
+        price: new BigNumber(0),
+        side: 0,
+    },
     pendingSteps: [],
 };
 
