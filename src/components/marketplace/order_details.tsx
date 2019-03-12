@@ -173,10 +173,10 @@ class OrderDetails extends React.Component<Props, State> {
                 const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
                 let ordersToFill: SignedOrder[];
                 let totalFee = new BigNumber(0);
-                /* Gets all the orders needed to fill the order **/
                 if (state) {
-                    /* TODO - Check if there are orders with a makerFee > 0 */
+                    /* Gets all the orders needed to fill the order **/
                     ordersToFill = getAllOrdersToFillMarketOrder(tokenAmount, operationType, state);
+                    /* Takes the sum of all the orders fee */
                     totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
                         return totalFeeSum.add(currentOrder.makerFee);
                     }, new BigNumber(0));
