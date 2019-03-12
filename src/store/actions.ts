@@ -99,9 +99,16 @@ export const stepsModalReset = createAction('STEPSMODAL_RESET');
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any): Promise<any> => {
         const state = getState();
-        const tokenBalance = getTokenBalances(state).find(
-            balance => balance.token.address === token.address,
-        ) as TokenBalance;
+
+        let tokenBalance: TokenBalance;
+        if (token.symbol === WETH_TOKEN_SYMBOL) {
+            tokenBalance = getWethTokenBalance(state) as TokenBalance;
+        } else {
+            tokenBalance = getTokenBalances(state).find(
+                balance => balance.token.address === token.address,
+            ) as TokenBalance;
+        }
+
         if (!tokenBalance.isUnlocked) {
             const ethAccount = getEthAccount(state);
             const contractWrappers = await getContractWrappers();
@@ -386,16 +393,16 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
         //     pendingSteps.push(currentStep);
         //     currentStep = wrapEthStep;
         // }
-        // const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
-        // if (unlockZrxStep) {
-        //     pendingSteps.push(currentStep);
-        //     currentStep = unlockZrxStep;
-        // }
-        // const unlockSelectedToken = getUnlockSelectedTokenStepIfNeeded(side, state);
-        // if (unlockSelectedToken) {
-        //     pendingSteps.push(currentStep);
-        //     currentStep = unlockSelectedToken;
-        // }
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            pendingSteps.push(currentStep);
+            currentStep = unlockZrxStep;
+        }
+        const unlockSelectedToken = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedToken) {
+            pendingSteps.push(currentStep);
+            currentStep = unlockSelectedToken;
+        }
 
         dispatch(setStepsModalPendingSteps(pendingSteps));
         dispatch(setStepsModalCurrentStep(currentStep));
@@ -448,9 +455,7 @@ const getUnlockSelectedTokenStepIfNeeded = (side: OrderSide, state: StoreState):
             tokenBalance => tokenBalance.token.symbol === selectedToken.symbol,
         ) as TokenBalance;
     } else {
-        selectedTokenBalance = tokenBalances.find(
-            tokenBalance => tokenBalance.token.symbol === WETH_TOKEN_SYMBOL,
-        ) as TokenBalance;
+        selectedTokenBalance = getWethTokenBalance(state) as TokenBalance;
     }
 
     if (selectedTokenBalance.isUnlocked) {

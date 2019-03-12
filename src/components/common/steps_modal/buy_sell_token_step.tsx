@@ -51,7 +51,11 @@ class BuySellTokenStep extends React.Component<Props, State> {
         let content;
         switch (status) {
             case StepStatus.Loading:
-                content = <StepStatusLoading>Processing {isBuyOrSell ? 'buy' : 'sale'} of {amountOfTokenString} .</StepStatusLoading>;
+                content = (
+                    <StepStatusLoading>
+                        Processing {isBuyOrSell ? 'buy' : 'sale'} of {amountOfTokenString} .
+                    </StepStatusLoading>
+                );
                 break;
             case StepStatus.Done:
                 content = <StepStatusDone>{isBuyOrSell ? 'Buy' : 'Sale'} complete!</StepStatusDone>;
@@ -59,7 +63,8 @@ class BuySellTokenStep extends React.Component<Props, State> {
             case StepStatus.Error:
                 content = (
                     <StepStatusError>
-                        Error {isBuyOrSell ? 'buying' : 'selling'} {amountOfTokenString}. <em onClick={retry}>Click here to try again</em>
+                        Error {isBuyOrSell ? 'buying' : 'selling'} {amountOfTokenString}.{' '}
+                        <em onClick={retry}>Click here to try again</em>
                     </StepStatusError>
                 );
                 break;
