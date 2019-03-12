@@ -188,7 +188,7 @@ class OrderDetails extends React.Component<Props, State> {
                 const totalCostInWeth = new BigNumber(0);
 
                 /* TODO - Calculates total cost in USD */
-                const zeroXFeeInUSD = zeroXFeeInWeth.mul(zeroXPriceInUSD);
+                const zeroXFeeInUSD = zeroXFeeInZrx.mul(zeroXPriceInUSD);
                 const totalCostInUSD = new BigNumber(0);
 
                 this.setState({
