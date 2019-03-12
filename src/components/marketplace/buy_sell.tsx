@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
-import { getSelectedTokenSymbol } from '../../store/selectors';
+import { getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { OrderSide, StoreState } from '../../util/types';
+import { OrderSide, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
@@ -16,6 +16,7 @@ import { OrderDetails } from './order_details';
 
 interface StateProps {
     selectedTokenSymbol: string;
+    selectedToken: Token | null;
 }
 
 interface DispatchProps {
@@ -214,7 +215,12 @@ class BuySell extends React.Component<Props, State> {
                             </FieldContainer>
                         </>
                     )}
-                    {orderType === OrderType.Limit ? <OrderDetails /> : null}
+                    <OrderDetails
+                        orderType={orderType}
+                        tokenAmount={this.state.makerAmount}
+                        tokenPrice={this.state.price}
+                        selectedToken={this.props.selectedToken}
+                    />
                     <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
                         {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
                         <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
@@ -277,6 +283,7 @@ class BuySell extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         selectedTokenSymbol: getSelectedTokenSymbol(state),
+        selectedToken: getSelectedToken(state),
     };
 };
 
