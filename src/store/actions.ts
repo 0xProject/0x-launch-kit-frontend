@@ -2,7 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS } from '../common/constants';
+import { TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
@@ -10,7 +10,17 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
-import { BlockchainState, OrderSide, RelayerState, Token, TokenBalance, UIOrder, Web3State } from '../util/types';
+import {
+    BlockchainState,
+    OrderSide,
+    RelayerState,
+    Step,
+    StepKind,
+    Token,
+    TokenBalance,
+    UIOrder,
+    Web3State,
+} from '../util/types';
 
 import {
     getEthAccount,
@@ -19,6 +29,7 @@ import {
     getSelectedToken,
     getTokenBalances,
     getWethBalance,
+    getWethTokenBalance,
 } from './selectors';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
@@ -49,6 +60,10 @@ export const setWethBalance = createAction('SET_WETH_BALANCE', resolve => {
     return (wethBalance: BigNumber) => resolve(wethBalance);
 });
 
+export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolve => {
+    return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
+});
+
 export const setOrders = createAction('SET_ORDERS', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
@@ -61,56 +76,64 @@ export const setSelectedToken = createAction('SET_SELECTED_TOKEN', resolve => {
     return (selectedToken: Token | null) => resolve(selectedToken);
 });
 
-export const unlockToken = (token: Token) => {
+export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
+    return (pendingSteps: Step[]) => resolve(pendingSteps);
+});
+
+export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', resolve => {
+    return (doneSteps: Step[]) => resolve(doneSteps);
+});
+
+export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
+    return (currentStep: Step | null) => resolve(currentStep);
+});
+
+export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
+
+export const stepsModalReset = createAction('STEPSMODAL_RESET');
+
+export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
-        const tokenBalances = getTokenBalances(state);
-
-        const contractWrappers = await getContractWrappers();
-        await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
-
-        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
-            if (tokenBalance.token.address !== token.address) {
-                return tokenBalance;
-            }
-
-            return {
-                ...tokenBalance,
-                isUnlocked: true,
-            };
-        });
-
-        dispatch(setTokenBalances(updatedTokenBalances));
-    };
-};
-
-export const lockToken = (token: Token) => {
-    return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const ethAccount = getEthAccount(state);
-        const tokenBalances = getTokenBalances(state);
 
         const contractWrappers = await getContractWrappers();
 
-        await contractWrappers.erc20Token.setProxyAllowanceAsync(
-            token.address,
-            ethAccount,
-            new BigNumber('0'),
-            TX_DEFAULTS,
-        );
+        if (isUnlocked) {
+            await contractWrappers.erc20Token.setProxyAllowanceAsync(
+                token.address,
+                ethAccount,
+                new BigNumber('0'),
+                TX_DEFAULTS,
+            );
+        } else {
+            await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+        }
 
-        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
-            if (tokenBalance.token.address !== token.address) {
-                return tokenBalance;
-            }
-            return {
-                ...tokenBalance,
-                isUnlocked: false,
-            };
-        });
+        const isWeth = token.symbol === WETH_TOKEN_SYMBOL;
+        if (isWeth) {
+            const wethTokenBalance = getWethTokenBalance(state) as TokenBalance;
+            dispatch(
+                setWethTokenBalance({
+                    ...wethTokenBalance,
+                    isUnlocked: !isUnlocked,
+                }),
+            );
+        } else {
+            const tokenBalances = getTokenBalances(state);
+            const updatedTokenBalances = tokenBalances.map(tokenBalance => {
+                if (tokenBalance.token.address !== token.address) {
+                    return tokenBalance;
+                }
 
-        dispatch(setTokenBalances(updatedTokenBalances));
+                return {
+                    ...tokenBalance,
+                    isUnlocked: !isUnlocked,
+                };
+            });
+
+            dispatch(setTokenBalances(updatedTokenBalances));
+        }
     };
 };
 
@@ -118,6 +141,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
 
         const web3Wrapper = await getWeb3WrapperOrThrow();
@@ -146,9 +170,16 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
 
         await web3Wrapper.awaitTransactionSuccessAsync(tx);
         const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-
         dispatch(setEthBalance(ethBalance));
-        dispatch(setWethBalance(newWethBalance));
+
+        const newWethTokenBalance = wethTokenBalance
+            ? {
+                  ...wethTokenBalance,
+                  balance: newWethBalance,
+              }
+            : null;
+
+        dispatch(setWethTokenBalance(newWethTokenBalance));
     };
 };
 
@@ -169,9 +200,9 @@ export const initWallet = () => {
             );
 
             const wethToken = knownTokens.getWethToken();
+            const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-            const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
             const selectedToken = knownTokens.getTokenBySymbol('ZRX');
 
@@ -180,7 +211,7 @@ export const initWallet = () => {
                     web3State: Web3State.Done,
                     ethAccount,
                     ethBalance,
-                    wethBalance,
+                    wethTokenBalance,
                     tokenBalances,
                 }),
             );
@@ -191,8 +222,7 @@ export const initWallet = () => {
                     selectedToken,
                 }),
             );
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
         } else {
             dispatch(setWeb3State(Web3State.Error));
         }
@@ -224,22 +254,34 @@ export const cancelOrder = (order: SignedOrder) => {
     return async (dispatch: any) => {
         await cancelSignedOrder(order);
 
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
+        dispatch(getOrderbookAndUserOrders());
     };
 };
 
-export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch: any) => {
+        const step: Step = {
+            kind: StepKind.BuySellLimit,
+            amount,
+            price,
+            side,
+        };
+        const pendingSteps: Step[] = [];
+        dispatch(setStepsModalPendingSteps(pendingSteps));
+        dispatch(setStepsModalCurrentStep(step));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const selectedToken = getSelectedToken(state) as Token;
 
-        const relayer = getRelayer();
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = await getContractWrappers();
-
         const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const order = buildLimitOrder(
@@ -255,12 +297,15 @@ export const submitLimitOrder = (amount: BigNumber, price: BigNumber, side: Orde
         );
 
         const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-        const signedOrder = await signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+        return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+    };
+};
 
-        await relayer.client.submitOrderAsync(signedOrder);
-
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
+export const submitLimitOrder = (signedOrder: SignedOrder) => {
+    return async (dispatch: any) => {
+        const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+        dispatch(getOrderbookAndUserOrders());
+        return submitResult;
     };
 };
 
@@ -283,10 +328,41 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
         if (canBeFilled) {
             await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
-            dispatch(getAllOrders());
-            dispatch(getUserOrders());
+            dispatch(getOrderbookAndUserOrders());
         } else {
             window.alert('There are no enough orders to fill this amount');
         }
+    };
+};
+
+export const updateStore = () => {
+    return async (dispatch: any) => {
+        const web3Wrapper = await getWeb3Wrapper();
+
+        if (web3Wrapper) {
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+
+            const knownTokens = getKnownTokens(networkId);
+
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
+            const wethToken = knownTokens.getWethToken();
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            const wethBalance = await getTokenBalance(wethToken, ethAccount);
+
+            dispatch(getOrderbookAndUserOrders());
+            dispatch(setTokenBalances(tokenBalances));
+            dispatch(setEthBalance(ethBalance));
+            dispatch(setWethBalance(wethBalance));
+        }
+    };
+};
+
+export const getOrderbookAndUserOrders = () => {
+    return async (dispatch: any) => {
+        dispatch(getAllOrders());
+        dispatch(getUserOrders());
     };
 };

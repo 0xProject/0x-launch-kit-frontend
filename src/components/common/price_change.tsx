@@ -71,8 +71,10 @@ export class PriceChange extends React.Component<Props, State> {
     };
 
     public render = () => {
+        const { ...restProps } = this.props;
+
         return (
-            <PriceChangeWrapper>
+            <PriceChangeWrapper {...restProps}>
                 {this.state.isLoading ? (
                     <LoadingStyled />
                 ) : (

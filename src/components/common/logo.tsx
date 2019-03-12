@@ -2,6 +2,8 @@ import React, { HTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { themeBreakPoints } from '../../util/theme';
+
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const LogoLink = styled<any>(Link)`
@@ -14,10 +16,15 @@ const LogoLink = styled<any>(Link)`
 
 const LogoText = styled.h1`
     color: #000;
+    display: none;
     font-size: 18px;
     font-weight: 500;
     margin-left: 10px;
     text-decoration: none;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        display: block;
+    }
 `;
 
 const LogoSVG = () => (

@@ -27,6 +27,7 @@ import { ReactComponent as SaltTokenIcon } from '../../../assets/icons/salt.svg'
 import { ReactComponent as SntTokenIcon } from '../../../assets/icons/snt.svg';
 import { ReactComponent as SpankTokenIcon } from '../../../assets/icons/spank.svg';
 import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
+import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
 import { themeColors } from '../../../util/theme';
@@ -34,6 +35,7 @@ import { Token } from '../../../util/types';
 
 interface Props {
     token: Token;
+    isInline?: boolean;
 }
 
 const TokenIcons = {
@@ -47,6 +49,7 @@ const TokenIcons = {
     DgdTokenIcon,
     DgxTokenIcon,
     DntTokenIcon,
+    WethTokenIcon,
     FunTokenIcon,
     GnoTokenIcon,
     LinkTokenIcon,
@@ -67,14 +70,17 @@ const TokenIcons = {
     ZrxTokenIcon,
 };
 
-const IconContainer = styled.div<{ color: string }>`
+const IconContainer = styled.div<{ color: string; isInline?: boolean }>`
     align-items: center;
     background-color: ${props => (props.color ? props.color : 'transparent')};
     border-radius: 50%;
-    display: flex;
-    height: 1.6em;
+    display: ${props => (props.isInline ? 'inline-block' : 'flex')};
+    height: 26px;
     justify-content: center;
-    width: 1.6em;
+    width: 26px;
+    ${props => (props.isInline ? 'text-align: center;' : '')}
+    ${props => (props.isInline ? 'margin-right: 10px;' : '')}
+    ${props => (props.isInline ? 'vertical-align: bottom;' : '')}
 `;
 
 const Label = styled.label`
@@ -84,13 +90,12 @@ const Label = styled.label`
     line-height: normal;
     margin: 0;
 `;
-
 export const TokenIcon = (props: Props) => {
-    const { token } = props;
+    const { token, ...restProps } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(token.symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
     return (
-        <IconContainer color={token.primaryColor || themeColors.gray}>
+        <IconContainer color={token.primaryColor || themeColors.gray} {...restProps}>
             {Icon ? <Icon /> : <Label>{token.symbol && token.symbol.toUpperCase()}</Label>}
         </IconContainer>
     );

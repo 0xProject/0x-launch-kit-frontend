@@ -2,11 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
+import { NotificationsDropdown } from '../account/notifications_dropdown';
 
 import { Logo } from './logo';
-import { MarketsDropdown } from './markets_dropdown';
+import { MarketsDropdownContainer } from './markets_dropdown';
 import { PriceChange } from './price_change';
 
 const separatorTopbar = `
@@ -69,7 +70,7 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
-const MarketsDropdownHeader = styled<any>(MarketsDropdown)`
+const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     align-items: center;
     display: flex;
 
@@ -77,10 +78,22 @@ const MarketsDropdownHeader = styled<any>(MarketsDropdown)`
 `;
 
 const WalletDropdown = styled(WalletConnectionStatusContainer)`
-    align-items: center;
-    display: flex;
+    display: none;
 
-    ${separatorTopbar}
+    @media (min-width: ${themeBreakPoints.sm}) {
+        align-items: center;
+        display: flex;
+
+        ${separatorTopbar}
+    }
+`;
+
+const PriceChangeStyled = styled(PriceChange)`
+    display: none;
+
+    @media (min-width: ${themeBreakPoints.lg}) {
+        display: flex;
+    }
 `;
 
 export const Toolbar = () => (
@@ -88,11 +101,12 @@ export const Toolbar = () => (
         <ToolbarStart>
             <LogoHeader />
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-            <PriceChange />
+            <PriceChangeStyled />
         </ToolbarStart>
         <ToolbarEnd>
             <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
             <WalletDropdown />
+            <NotificationsDropdown />
         </ToolbarEnd>
     </ToolbarWrapper>
 );

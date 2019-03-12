@@ -4,7 +4,7 @@ import { History } from 'history';
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 
-import { BlockchainState, RelayerState, StoreState, Web3State } from '../util/types';
+import { BlockchainState, RelayerState, Step, StepsModalState, StoreState, UIState, Web3State } from '../util/types';
 
 import * as actions from './actions';
 
@@ -15,13 +15,23 @@ const initialBlockchainState: BlockchainState = {
     web3State: Web3State.Loading,
     tokenBalances: [],
     ethBalance: new BigNumber(0),
-    wethBalance: new BigNumber(0),
+    wethTokenBalance: null,
 };
 
 const initialRelayerState: RelayerState = {
     orders: [],
     userOrders: [],
     selectedToken: null,
+};
+
+const initialStepsModalState: StepsModalState = {
+    doneSteps: [],
+    currentStep: null,
+    pendingSteps: [],
+};
+
+const initialUIState: UIState = {
+    stepsModal: initialStepsModalState,
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -32,8 +42,18 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, web3State: action.payload };
         case getType(actions.setTokenBalances):
             return { ...state, tokenBalances: action.payload };
+        case getType(actions.setWethTokenBalance):
+            return { ...state, wethTokenBalance: action.payload };
         case getType(actions.setWethBalance):
-            return { ...state, wethBalance: action.payload };
+            return {
+                ...state,
+                wethTokenBalance: state.wethTokenBalance
+                    ? {
+                          ...state.wethTokenBalance,
+                          balance: action.payload,
+                      }
+                    : null,
+            };
         case getType(actions.setEthBalance):
             return { ...state, ethBalance: action.payload };
         case getType(actions.initializeBlockchainData):
@@ -56,9 +76,47 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
     return state;
 }
 
+export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
+    switch (action.type) {
+        case getType(actions.setStepsModalDoneSteps):
+            return { ...state, doneSteps: action.payload };
+        case getType(actions.setStepsModalPendingSteps):
+            return { ...state, pendingSteps: action.payload };
+        case getType(actions.setStepsModalCurrentStep):
+            return { ...state, currentStep: action.payload };
+        case getType(actions.stepsModalAdvanceStep):
+            const { doneSteps, currentStep, pendingSteps } = state;
+            if (pendingSteps.length === 0 && currentStep !== null) {
+                return {
+                    ...state,
+                    doneSteps: doneSteps.concat([currentStep as Step]),
+                    currentStep: null,
+                };
+            } else {
+                return {
+                    ...state,
+                    pendingSteps: pendingSteps.slice(1),
+                    doneSteps: doneSteps.concat([currentStep as Step]),
+                    currentStep: pendingSteps[0] as Step,
+                };
+            }
+        case getType(actions.stepsModalReset):
+            return initialStepsModalState;
+    }
+    return state;
+}
+
+export function ui(state: UIState = initialUIState, action: RootAction): UIState {
+    return {
+        ...state,
+        stepsModal: stepsModal(state.stepsModal, action),
+    };
+}
+
 export const createRootReducer = (history: History) =>
     combineReducers<StoreState>({
         router: connectRouter(history),
         blockchain,
         relayer,
+        ui,
     });

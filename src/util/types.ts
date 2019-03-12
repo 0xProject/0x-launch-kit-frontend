@@ -33,7 +33,7 @@ export interface BlockchainState {
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
-    readonly wethBalance: BigNumber;
+    readonly wethTokenBalance: TokenBalance | null;
 }
 
 export interface RelayerState {
@@ -42,10 +42,34 @@ export interface RelayerState {
     readonly selectedToken: Token | null;
 }
 
+export interface UIState {
+    readonly stepsModal: StepsModalState;
+}
+
 export interface StoreState {
     readonly router: RouterState;
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
+    readonly ui: UIState;
+}
+
+export enum StepKind {
+    BuySellLimit,
+}
+
+export interface StepBuySellLimitOrder {
+    kind: StepKind.BuySellLimit;
+    amount: BigNumber;
+    price: BigNumber;
+    side: OrderSide;
+}
+
+export type Step = StepBuySellLimitOrder;
+
+export interface StepsModalState {
+    readonly doneSteps: Step[];
+    readonly currentStep: Step | null;
+    readonly pendingSteps: Step[];
 }
 
 export enum OrderSide {

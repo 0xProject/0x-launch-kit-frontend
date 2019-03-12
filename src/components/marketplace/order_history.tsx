@@ -46,11 +46,13 @@ const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
     return (
         <TR key={index}>
             <SideTD side={order.side}>{sideLabel}</SideTD>
-            <CustomTD>{size}</CustomTD>
-            <CustomTD>{filled}</CustomTD>
-            <CustomTD>{price}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{filled}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right' }}>{price}</CustomTD>
             <CustomTD>{status}</CustomTD>
-            <CustomTD>{isOrderFillable ? <CancelOrderButtonContainer order={order} /> : ''}</CustomTD>
+            <CustomTD styles={{ textAlign: 'center' }}>
+                {isOrderFillable ? <CancelOrderButtonContainer order={order} /> : ''}
+            </CustomTD>
         </TR>
     );
 };
@@ -62,12 +64,9 @@ class OrderHistory extends React.Component<Props, State> {
 
     public render = () => {
         const { orders, selectedToken } = this.props;
-
         const openOrders = orders.filter(order => order.status === OrderStatus.Fillable);
         const filledOrders = orders.filter(order => order.status === OrderStatus.FullyFilled);
-
         const ordersToShow = this.state.tab === Tab.Open ? openOrders : filledOrders;
-
         const setTabOpen = () => this.setState({ tab: Tab.Open });
         const setTabFilled = () => this.setState({ tab: Tab.Filled });
 
@@ -96,9 +95,9 @@ class OrderHistory extends React.Component<Props, State> {
                     <THead>
                         <TR>
                             <TH>Side</TH>
-                            <TH>Size ({selectedToken.symbol})</TH>
-                            <TH>Filled ({selectedToken.symbol})</TH>
-                            <TH>Price (WETH)</TH>
+                            <TH styles={{ textAlign: 'center' }}>Size ({selectedToken.symbol})</TH>
+                            <TH styles={{ textAlign: 'center' }}>Filled ({selectedToken.symbol})</TH>
+                            <TH styles={{ textAlign: 'center' }}>Price (WETH)</TH>
                             <TH>Status</TH>
                             <TH>&nbsp;</TH>
                         </TR>
