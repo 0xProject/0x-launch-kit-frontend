@@ -1,5 +1,4 @@
 import { BigNumber } from '0x.js';
-import { SignedOrder } from '@0x/connect';
 import React from 'react';
 import { connect } from 'react-redux';
 

@@ -33,7 +33,7 @@ export interface BlockchainState {
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
-    readonly wethBalance: BigNumber;
+    readonly wethTokenBalance: TokenBalance | null;
 }
 
 export interface RelayerState {
