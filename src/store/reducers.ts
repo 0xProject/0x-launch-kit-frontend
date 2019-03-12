@@ -31,6 +31,8 @@ const initialStepsModalState: StepsModalState = {
 };
 
 const initialUIState: UIState = {
+    notifications: [],
+    hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
 };
 
@@ -107,6 +109,17 @@ export function stepsModal(state: StepsModalState = initialStepsModalState, acti
 }
 
 export function ui(state: UIState = initialUIState, action: RootAction): UIState {
+    switch (action.type) {
+        case getType(actions.setHasUnreadNotifications):
+            return { ...state, hasUnreadNotifications: action.payload };
+        case getType(actions.addNotification):
+            return {
+                ...state,
+                notifications: [action.payload, ...state.notifications],
+                hasUnreadNotifications: true,
+            };
+    }
+
     return {
         ...state,
         stepsModal: stepsModal(state.stepsModal, action),
