@@ -27,6 +27,7 @@ import { ReactComponent as SaltTokenIcon } from '../../../assets/icons/salt.svg'
 import { ReactComponent as SntTokenIcon } from '../../../assets/icons/snt.svg';
 import { ReactComponent as SpankTokenIcon } from '../../../assets/icons/spank.svg';
 import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
+import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
 import { themeColors } from '../../../util/theme';
@@ -48,6 +49,7 @@ const TokenIcons = {
     DgdTokenIcon,
     DgxTokenIcon,
     DntTokenIcon,
+    WethTokenIcon,
     FunTokenIcon,
     GnoTokenIcon,
     LinkTokenIcon,
@@ -88,7 +90,6 @@ const Label = styled.label`
     line-height: normal;
     margin: 0;
 `;
-
 export const TokenIcon = (props: Props) => {
     const { token, ...restProps } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(token.symbol) as keyof typeof TokenIcons;

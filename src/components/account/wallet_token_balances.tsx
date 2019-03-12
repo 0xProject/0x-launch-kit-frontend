@@ -1,24 +1,26 @@
+import { BigNumber } from '0x.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { lockToken, unlockToken } from '../../store/actions';
-import { getTokenBalances, getWeb3State } from '../../store/selectors';
+import { toggleTokenLock } from '../../store/actions';
+import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
+import { StoreState, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
 import { CustomTD, CustomTDLast, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
+    ethBalance: BigNumber;
     tokenBalances: TokenBalance[];
     web3State: Web3State;
+    wethTokenBalance: TokenBalance | null;
 }
 interface DispatchProps {
-    onUnlockToken: (token: Token) => void;
-    onLockToken: (token: Token) => void;
+    onToggleTokenLock: (tokenBalance: TokenBalance) => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -71,15 +73,39 @@ const LockCell = ({ styles, isUnlocked, onClick }: LockCellProps) => {
 
 class WalletTokenBalances extends React.PureComponent<Props> {
     public render = () => {
-        const { tokenBalances, onUnlockToken, onLockToken, web3State } = this.props;
+        const { ethBalance, tokenBalances, onToggleTokenLock, web3State, wethTokenBalance } = this.props;
 
-        const rows = tokenBalances.map((tokenBalance, index) => {
+        if (!wethTokenBalance) {
+            return null;
+        }
+
+        const wethToken = wethTokenBalance.token;
+        const totalEth = wethTokenBalance.balance.plus(ethBalance);
+        const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals);
+        const onTotalEthClick = () => onToggleTokenLock(wethTokenBalance);
+
+        const totalEthRow = (
+            <TR>
+                <TokenTD>
+                    <TokenIconStyled token={wethToken} />
+                </TokenTD>
+                <CustomTDTokenName styles={{ borderBottom: true }}>ETH Total (ETH + wETH)</CustomTDTokenName>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedTotalEthBalance}</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                <LockCell
+                    isUnlocked={wethTokenBalance.isUnlocked}
+                    onClick={onTotalEthClick}
+                    styles={{ borderBottom: true, textAlign: 'center' }}
+                />
+            </TR>
+        );
+
+        const tokensRows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
             const formattedBalance = tokenAmountInUnits(balance, token.decimals);
-            const onClick = () => {
-                isUnlocked ? onLockToken(token) : onUnlockToken(token);
-            };
+            const onClick = () => onToggleTokenLock(tokenBalance);
 
             return (
                 <TR key={symbol}>
@@ -117,7 +143,10 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                             <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
                         </TR>
                     </THead>
-                    <TBody>{rows}</TBody>
+                    <TBody>
+                        {totalEthRow}
+                        {tokensRows}
+                    </TBody>
                 </Table>
             );
         }
@@ -128,13 +157,14 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        ethBalance: getEthBalance(state),
         tokenBalances: getTokenBalances(state),
         web3State: getWeb3State(state),
+        wethTokenBalance: getWethTokenBalance(state),
     };
 };
 const mapDispatchToProps = {
-    onUnlockToken: unlockToken,
-    onLockToken: lockToken,
+    onToggleTokenLock: toggleTokenLock,
 };
 
 const WalletTokenBalancesContainer = connect(
