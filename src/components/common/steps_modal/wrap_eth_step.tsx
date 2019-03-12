@@ -5,14 +5,21 @@ import { connect } from 'react-redux';
 import { addWethToBalance, stepsModalAdvanceStep } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { StepWrapEth, StoreState } from '../../../util/types';
+import { StepItem } from '../steps_modal/steps_progress';
 
 import {
     DONE_STATUS_VISIBILITY_TIME,
+    ModalContent,
+    ModalStatusText,
+    ModalStatusTextLight,
+    ModalText,
+    ModalTextClickable,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
     StepStatusError,
     StepStatusLoading,
+    StepsTimeline,
     Title,
 } from './steps_common';
 
@@ -46,33 +53,68 @@ class WrapEthStep extends React.Component<Props, State> {
         const { status } = this.state;
         const retry = () => this._retry();
         let content;
+
+        const steps: StepItem[] = [
+            {
+                active: false,
+                progress: '0',
+                title: 'Step',
+            },
+            {
+                active: false,
+                progress: '0',
+                title: 'Name',
+            },
+            {
+                active: false,
+                progress: '0',
+                title: 'Finish',
+            },
+        ];
+
         switch (status) {
             case StepStatus.Loading:
-                content = <StepStatusLoading>Converting {ethAmount} ETH for trading (ETH to wETH).</StepStatusLoading>;
+                content = (
+                    <StepStatusLoading>
+                        <ModalText>Converting {ethAmount} ETH for trading (ETH to wETH).</ModalText>
+                    </StepStatusLoading>
+                );
                 break;
             case StepStatus.Done:
-                content = <StepStatusDone>Converted {ethAmount} ETH for trading (ETH to wETH).</StepStatusDone>;
+                content = (
+                    <StepStatusDone>
+                        <ModalText>Converted {ethAmount} ETH for trading (ETH to wETH).</ModalText>
+                    </StepStatusDone>
+                );
                 break;
             case StepStatus.Error:
                 content = (
                     <StepStatusError>
-                        Error converting {ethAmount} ETH for trading (ETH to wETH).{' '}
-                        <em onClick={retry}>Click here to try again</em>
+                        <ModalText>
+                            Error converting {ethAmount} ETH for trading (ETH to wETH).{' '}
+                            <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
+                        </ModalText>
                     </StepStatusError>
                 );
                 break;
             default:
                 content = (
                     <StepStatusConfirmOnMetamask>
-                        Confirm on Metamask to convert {ethAmount} ETH into wETH.
+                        <ModalText>Confirm on Metamask to convert {ethAmount} ETH into wETH.</ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
                 break;
         }
         return (
             <>
-                <Title>Order Setup</Title>
-                {content}
+                <ModalContent>
+                    <Title>Order Setup</Title>
+                    {content}
+                    <StepsTimeline steps={steps} />
+                    <ModalStatusText>
+                        Current status, time <ModalStatusTextLight>00:34s...</ModalStatusTextLight>
+                    </ModalStatusText>
+                </ModalContent>
             </>
         );
     };
