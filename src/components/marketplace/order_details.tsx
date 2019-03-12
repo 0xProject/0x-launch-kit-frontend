@@ -168,42 +168,38 @@ class OrderDetails extends React.Component<Props, State> {
             // const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
 
             const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
-            try {
-                const results = await Promise.all(promisesArray);
-                const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
-                let ordersToFill: SignedOrder[];
-                let totalFee = new BigNumber(0);
-                if (state) {
-                    /* Gets all the orders needed to fill the order **/
-                    ordersToFill = getAllOrdersToFillMarketOrder(tokenAmount, operationType, state);
-                    /* Takes the sum of all the orders fee */
-                    totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
-                        return totalFeeSum.add(currentOrder.makerFee);
-                    }, new BigNumber(0));
-                }
-
-                /* TODO - Calculates total cost in wETH */
-                const zeroXFeeInZrx = totalFee;
-                const zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
-                const totalCostInWeth = new BigNumber(0);
-
-                /* TODO - Calculates total cost in USD */
-                const zeroXFeeInUSD = zeroXFeeInZrx.mul(zeroXPriceInUSD);
-                const totalCostInUSD = new BigNumber(0);
-
-                this.setState({
-                    marketOrder: {
-                        ...this.state.marketOrder,
-                        zeroXFeeInWeth,
-                        zeroXFeeInZrx,
-                        zeroXFeeInUSD,
-                        totalCostInWeth,
-                        totalCostInUSD,
-                    },
-                });
-            } catch (error) {
-                throw error;
+            const results = await Promise.all(promisesArray);
+            const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
+            let ordersToFill: SignedOrder[];
+            let totalFee = new BigNumber(0);
+            if (state) {
+                /* Gets all the orders needed to fill the order **/
+                ordersToFill = getAllOrdersToFillMarketOrder(tokenAmount, operationType, state);
+                /* Takes the sum of all the orders fee */
+                totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
+                    return totalFeeSum.add(currentOrder.makerFee);
+                }, new BigNumber(0));
             }
+
+            /* TODO - Calculates total cost in wETH */
+            const zeroXFeeInZrx = totalFee;
+            const zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
+            const totalCostInWeth = new BigNumber(0);
+
+            /* TODO - Calculates total cost in USD */
+            const zeroXFeeInUSD = zeroXFeeInZrx.mul(zeroXPriceInUSD);
+            const totalCostInUSD = new BigNumber(0);
+
+            this.setState({
+                marketOrder: {
+                    ...this.state.marketOrder,
+                    zeroXFeeInWeth,
+                    zeroXFeeInZrx,
+                    zeroXFeeInUSD,
+                    totalCostInWeth,
+                    totalCostInUSD,
+                },
+            });
         }
     };
 
