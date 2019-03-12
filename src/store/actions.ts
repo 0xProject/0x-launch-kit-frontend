@@ -333,6 +333,47 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
     };
 };
 
+export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        const [ordersToFill, amounts, canBeFilled] = getMarketOrdersToFillFromState(amount, side, state);
+        if (!canBeFilled) {
+            window.alert('There are no enough orders to fill this amount');
+        }
+
+        const token = getSelectedToken(state) as Token;
+        const pendingSteps: Step[] = [];
+        let currentStep: Step = {
+            kind: StepKind.BuySellMarket,
+            amount,
+            side,
+            token,
+        };
+
+        // @TODO: calculate amountsSum
+        // const wrapEthStep = getWrapEthStepIfNeeded(amountsSum, side, state);
+        // if (wrapEthStep) {
+        //     pendingSteps.push(currentStep);
+        //     currentStep = wrapEthStep;
+        // }
+        // const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        // if (unlockZrxStep) {
+        //     pendingSteps.push(currentStep);
+        //     currentStep = unlockZrxStep;
+        // }
+        // const unlockSelectedToken = getUnlockSelectedTokenStepIfNeeded(side, state);
+        // if (unlockSelectedToken) {
+        //     pendingSteps.push(currentStep);
+        //     currentStep = unlockSelectedToken;
+        // }
+
+        dispatch(setStepsModalPendingSteps(pendingSteps));
+        dispatch(setStepsModalCurrentStep(currentStep));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
 const getWrapEthStepIfNeeded = (wethAmount: BigNumber, side: OrderSide, state: StoreState): StepWrapEth | null => {
     // Weth needed only when creating a buy order
     if (side === OrderSide.Sell) {
@@ -432,27 +473,31 @@ export const submitLimitOrder = (signedOrder: SignedOrder) => {
 export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
-        const ethAccount = getEthAccount(state);
-
-        const contractWrappers = await getContractWrappers();
-
-        const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
-
-        const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
-            {
-                amount,
-                orders,
-            },
-            side,
-        );
-
+        const [ordersToFill, amounts, canBeFilled] = getMarketOrdersToFillFromState(amount, side, state);
         if (canBeFilled) {
-            await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
-            dispatch(getOrderbookAndUserOrders());
+            const ethAccount = getEthAccount(state);
+            return fillOrders(ordersToFill, amounts, ethAccount);
         } else {
             window.alert('There are no enough orders to fill this amount');
+            return Promise.reject();
         }
     };
+};
+
+const getMarketOrdersToFillFromState = (amount: BigNumber, side: OrderSide, state: StoreState) => {
+    const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+    return buildMarketOrders(
+        {
+            amount,
+            orders,
+        },
+        side,
+    );
+};
+
+const fillOrders = async (ordersToFill: SignedOrder[], amounts: BigNumber[], ethAccount: string) => {
+    const contractWrappers = await getContractWrappers();
+    return contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
 };
 
 export const updateStore = () => {

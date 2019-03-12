@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
+import { startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
 import { getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState } from '../../util/types';
@@ -284,7 +284,7 @@ const BuySellContainer = connect(
     mapStateToProps,
     {
         onSubmitLimitOrder: startBuySellLimitSteps,
-        onSubmitMarketOrder: submitMarketOrder,
+        onSubmitMarketOrder: startBuySellMarketSteps,
     },
 )(BuySell);
 
