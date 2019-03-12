@@ -1,14 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, unlockToken } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { StepUnlockToken, StoreState, Token } from '../../../util/types';
 
-// In milliseconds
-const DONE_STATUS_VISIBILITY_TIME: number = 4000;
+import {
+    DONE_STATUS_VISIBILITY_TIME,
+    StepStatus,
+    StepStatusConfirmOnMetamask,
+    StepStatusDone,
+    StepStatusError,
+    StepStatusLoading,
+    Title,
+} from './steps_common';
 
 interface StateProps {
     step: StepUnlockToken;
@@ -21,29 +27,13 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-enum StepStatus {
-    Initial,
-    Loading,
-    Done,
-    Error,
-}
-
 interface State {
     status: StepStatus;
 }
 
-const Title = styled.h1`
-    color: #000;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1.2;
-    margin: 0 0 25px;
-    text-align: center;
-`;
-
 class UnlockTokensStep extends React.Component<Props, State> {
     public state = {
-        status: StepStatus.Initial,
+        status: StepStatus.ConfirmOnMetamask,
     };
 
     public componentDidMount = async () => {
@@ -59,21 +49,31 @@ class UnlockTokensStep extends React.Component<Props, State> {
         let content;
         switch (status) {
             case StepStatus.Loading:
-                content = <p>Unlocking {tokenSymbol}. It will remain unlocked for future trades</p>;
+                content = (
+                    <StepStatusLoading>
+                        Unlocking {tokenSymbol}. It will remain unlocked for future trades
+                    </StepStatusLoading>
+                );
                 break;
             case StepStatus.Done:
-                content = <p>Unlocked {tokenSymbol}. It will remain unlocked for future trades</p>;
+                content = (
+                    <StepStatusDone>Unlocked {tokenSymbol}. It will remain unlocked for future trades</StepStatusDone>
+                );
                 break;
             case StepStatus.Error:
                 content = (
-                    <p>
+                    <StepStatusError>
                         Unlocking {tokenSymbol} for future trades failed.{' '}
                         <em onClick={retry}>Click here to try again</em>
-                    </p>
+                    </StepStatusError>
                 );
                 break;
             default:
-                content = <p>Confirm on Metamask to unlock {tokenSymbol} for trading on 0x.</p>;
+                content = (
+                    <StepStatusConfirmOnMetamask>
+                        Confirm on Metamask to unlock {tokenSymbol} for trading on 0x.
+                    </StepStatusConfirmOnMetamask>
+                );
                 break;
         }
         return (

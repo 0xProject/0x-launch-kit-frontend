@@ -1,14 +1,20 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 
 import { addWethToBalance, stepsModalAdvanceStep } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
-// In milliseconds
-const DONE_STATUS_VISIBILITY_TIME: number = 4000;
+import {
+    DONE_STATUS_VISIBILITY_TIME,
+    StepStatus,
+    StepStatusConfirmOnMetamask,
+    StepStatusDone,
+    StepStatusError,
+    StepStatusLoading,
+    Title,
+} from './steps_common';
 
 interface StateProps {
     step: StepWrapEth;
@@ -21,29 +27,13 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-enum StepStatus {
-    Initial,
-    Loading,
-    Done,
-    Error,
-}
-
 interface State {
     status: StepStatus;
 }
 
-const Title = styled.h1`
-    color: #000;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1.2;
-    margin: 0 0 25px;
-    text-align: center;
-`;
-
 class WrapEthStep extends React.Component<Props, State> {
     public state = {
-        status: StepStatus.Initial,
+        status: StepStatus.ConfirmOnMetamask,
     };
 
     public componentDidMount = async () => {
@@ -58,21 +48,25 @@ class WrapEthStep extends React.Component<Props, State> {
         let content;
         switch (status) {
             case StepStatus.Loading:
-                content = <p>Converting {ethAmount} ETH for trading (ETH to wETH).</p>;
+                content = <StepStatusLoading>Converting {ethAmount} ETH for trading (ETH to wETH).</StepStatusLoading>;
                 break;
             case StepStatus.Done:
-                content = <p>Converted {ethAmount} ETH for trading (ETH to wETH).</p>;
+                content = <StepStatusDone>Converted {ethAmount} ETH for trading (ETH to wETH).</StepStatusDone>;
                 break;
             case StepStatus.Error:
                 content = (
-                    <p>
-                        Error convertint {ethAmount} ETH for trading (ETH to wETH).{' '}
+                    <StepStatusError>
+                        Error converting {ethAmount} ETH for trading (ETH to wETH).{' '}
                         <em onClick={retry}>Click here to try again</em>
-                    </p>
+                    </StepStatusError>
                 );
                 break;
             default:
-                content = <p>Confirm on Metamask to convert {ethAmount} ETH into wETH.</p>;
+                content = (
+                    <StepStatusConfirmOnMetamask>
+                        Confirm on Metamask to convert {ethAmount} ETH into wETH.
+                    </StepStatusConfirmOnMetamask>
+                );
                 break;
         }
         return (
