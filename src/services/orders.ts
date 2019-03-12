@@ -44,16 +44,28 @@ export const cancelSignedOrder = async (order: SignedOrder) => {
     return web3Wrapper.awaitTransactionSuccessAsync(tx);
 };
 
-export const getAllOrdersToFillMarketOrder = (amount: BigNumber, side: OrderSide, state: StoreState): SignedOrder[] => {
+export const getAllOrdersToFillMarketOrderAndAmountsToPay = (
+    amount: BigNumber,
+    side: OrderSide,
+    state: StoreState,
+): [SignedOrder[], BigNumber[], boolean] => {
     const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
     let ordersToFillReturn: SignedOrder[];
-    const [ordersToFill, , canBeFilled] = buildMarketOrders(
+    let amountToPayForEachOrderReturn: BigNumber[];
+    const [ordersToFill, amountToPayForEachOrder, canBeFilled] = buildMarketOrders(
         {
             amount,
             orders,
         },
         side,
     );
-    canBeFilled ? (ordersToFillReturn = ordersToFill) : (ordersToFillReturn = []);
-    return ordersToFillReturn;
+    if (canBeFilled) {
+        ordersToFillReturn = ordersToFill;
+        amountToPayForEachOrderReturn = amountToPayForEachOrder;
+    } else {
+        ordersToFillReturn = [];
+        amountToPayForEachOrderReturn = [];
+    }
+
+    return [ordersToFillReturn, amountToPayForEachOrderReturn, canBeFilled];
 };

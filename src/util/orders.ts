@@ -76,7 +76,6 @@ export const buildMarketOrders = (
             amounts[i] = amounts[i].mul(order.price);
         }
     }
-
     const canBeFilled = filledAmount.eq(amount);
 
     const roundedAmounts = amounts.map(a => a.ceil());

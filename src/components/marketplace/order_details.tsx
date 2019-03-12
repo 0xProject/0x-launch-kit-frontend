@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
-import { getAllOrdersToFillMarketOrder } from '../../services/orders';
+import { getAllOrdersToFillMarketOrderAndAmountsToPay } from '../../services/orders';
 import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnitsToBigNumber } from '../../util/tokens';
@@ -33,6 +33,7 @@ interface State {
         zeroXFeeInWeth: BigNumber;
         totalCostInWeth: BigNumber;
         totalCostInUSD: BigNumber;
+        orderCanBeFilled: boolean;
     };
 }
 
@@ -121,6 +122,7 @@ class OrderDetails extends React.Component<Props, State> {
             zeroXFeeInZrx: new BigNumber(0),
             totalCostInWeth: new BigNumber(0),
             totalCostInUSD: new BigNumber(0),
+            orderCanBeFilled: true,
         },
     };
 
@@ -164,46 +166,58 @@ class OrderDetails extends React.Component<Props, State> {
     public updateMarketOrderState = async () => {
         const { tokenAmount, selectedToken, operationType, state } = this.props;
         if (selectedToken) {
-            /* Reduces decimals of the token amount */
-            // const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
-
             const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
-            try {
-                const results = await Promise.all(promisesArray);
-                const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
-                let ordersToFill: SignedOrder[];
-                let totalFee = new BigNumber(0);
-                if (state) {
-                    /* Gets all the orders needed to fill the order **/
-                    ordersToFill = getAllOrdersToFillMarketOrder(tokenAmount, operationType, state);
-                    /* Takes the sum of all the orders fee */
-                    totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
-                        return totalFeeSum.add(currentOrder.makerFee);
-                    }, new BigNumber(0));
-                }
-
-                /* TODO - Calculates total cost in wETH */
-                const zeroXFeeInZrx = totalFee;
-                const zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
-                const totalCostInWeth = new BigNumber(0);
-
-                /* TODO - Calculates total cost in USD */
-                const zeroXFeeInUSD = zeroXFeeInWeth.mul(zeroXPriceInUSD);
-                const totalCostInUSD = new BigNumber(0);
-
-                this.setState({
-                    marketOrder: {
-                        ...this.state.marketOrder,
-                        zeroXFeeInWeth,
-                        zeroXFeeInZrx,
-                        zeroXFeeInUSD,
-                        totalCostInWeth,
-                        totalCostInUSD,
+            const results = await Promise.all(promisesArray);
+            const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+            let ordersToFill: SignedOrder[];
+            let canOrderBeFilled: boolean = false;
+            let totalFee = new BigNumber(0);
+            let amountToPayForEachOrder: BigNumber[];
+            let totalPriceWithoutFeeInWeth = new BigNumber(0);
+            if (state) {
+                /* Gets all the orders needed to fill the order **/
+                [
+                    ordersToFill,
+                    amountToPayForEachOrder,
+                    canOrderBeFilled,
+                ] = getAllOrdersToFillMarketOrderAndAmountsToPay(tokenAmount, operationType, state);
+                /* Takes the sum of all the orders fee */
+                totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
+                    return totalFeeSum.add(currentOrder.makerFee);
+                }, new BigNumber(0));
+                /* Takes the sum of all the orders price */
+                totalPriceWithoutFeeInWeth = amountToPayForEachOrder.reduce(
+                    (totalPriceSum: BigNumber, currentPrice: BigNumber) => {
+                        return totalPriceSum.add(currentPrice);
                     },
-                });
-            } catch (error) {
-                throw error;
+                    new BigNumber(0),
+                );
+                totalPriceWithoutFeeInWeth = tokenAmountInUnitsToBigNumber(
+                    totalPriceWithoutFeeInWeth,
+                    selectedToken.decimals,
+                );
             }
+            /* Calculates total cost in wETH */
+            const zeroXFeeInZrx = totalFee;
+            const zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
+            const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
+
+            /* Calculates total cost in USD */
+            const zeroXFeeInUSD = zeroXFeeInZrx.mul(zeroXPriceInUSD);
+            const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
+            const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
+
+            this.setState({
+                marketOrder: {
+                    ...this.state.marketOrder,
+                    zeroXFeeInWeth,
+                    zeroXFeeInZrx,
+                    zeroXFeeInUSD,
+                    totalCostInWeth,
+                    totalCostInUSD,
+                    orderCanBeFilled: canOrderBeFilled,
+                },
+            });
         }
     };
 
@@ -280,6 +294,7 @@ class OrderDetails extends React.Component<Props, State> {
         totalCostInWeth: BigNumber,
         totalCostInUSD: BigNumber,
     ) => {
+        const { orderType } = this.props;
         const ethUsdTabs = [
             {
                 active: orderDetailType === OrderDetailsType.Eth,
@@ -292,6 +307,23 @@ class OrderDetails extends React.Component<Props, State> {
                 text: 'USD',
             },
         ];
+
+        let totalCostMarket;
+        if (this.state.marketOrder.orderCanBeFilled) {
+            totalCostMarket = (
+                <Value>
+                    ({totalCostInWeth.toFixed(2)} wETH) {`$ ${totalCostInUSD.toFixed(2)}`}
+                </Value>
+            );
+        } else {
+            totalCostMarket = <Value>---</Value>;
+        }
+
+        const totalCostLimit = (
+            <Value>
+                ({totalCostInWeth.toFixed(2)} wETH) {`$ ${totalCostInUSD.toFixed(2)}`}
+            </Value>
+        );
         return (
             <>
                 <LabelContainer>
@@ -309,9 +341,7 @@ class OrderDetails extends React.Component<Props, State> {
                 </Row>
                 <LabelContainer>
                     <Label>Total Cost</Label>
-                    <Value>
-                        ({totalCostInWeth.toFixed(2)} wETH) {`$ ${totalCostInUSD.toFixed(2)}`}
-                    </Value>
+                    <Value>{orderType === OrderType.Market ? totalCostMarket : totalCostLimit}</Value>
                 </LabelContainer>
             </>
         );
