@@ -80,7 +80,7 @@ class NotificationItem extends React.Component<Props, State> {
         };
     }
 
-    public componentDidMount = () => {
+    public componentDidMount = async () => {
         const { item } = this.props;
 
         if (item.kind === NotificationKind.Market) {
@@ -89,8 +89,7 @@ class NotificationItem extends React.Component<Props, State> {
                 pending: true,
             });
 
-            /* tslint:disable-next-line:no-floating-promises */
-            item.tx.finally(() => this.setState({ pending: false }));
+            await item.tx.finally(() => this.setState({ pending: false }));
         }
     };
 
