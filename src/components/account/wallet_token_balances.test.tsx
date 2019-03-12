@@ -8,13 +8,26 @@ import { TokenBalance, Web3State } from '../../util/types';
 import { WalletTokenBalances } from './wallet_token_balances';
 
 const noop = () => ({});
+const ZERO = new BigNumber(0);
+const wethTokenBalance = {
+    balance: ZERO,
+    token: {
+        primaryColor: 'white',
+        address: '0x100',
+        decimals: 18,
+        symbol: 'WETH',
+        name: 'wETH',
+    },
+    isUnlocked: true,
+};
 
 describe('WalletTokenBalances', () => {
-    it('should show one row for each token', () => {
+    it('should show one row for each token plus one for the total eth', () => {
         const tokenBalances: TokenBalance[] = [
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x1',
                     decimals: 18,
                     symbol: 'MOCK1',
@@ -25,6 +38,7 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x2',
                     decimals: 18,
                     symbol: 'MOCK2',
@@ -35,6 +49,7 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x3',
                     decimals: 18,
                     symbol: 'MOCK3',
@@ -46,11 +61,17 @@ describe('WalletTokenBalances', () => {
 
         // when
         const wrapper = mount(
-            <WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={noop} web3State={Web3State.Done} />,
+            <WalletTokenBalances
+                ethBalance={ZERO}
+                wethTokenBalance={wethTokenBalance}
+                tokenBalances={tokenBalances}
+                onToggleTokenLock={noop}
+                web3State={Web3State.Done}
+            />,
         );
 
         // then
-        expect(wrapper.find('tbody tr')).toHaveLength(3);
+        expect(wrapper.find('tbody tr')).toHaveLength(4);
     });
 
     it('should properly show locked and unlocked tokens', () => {
@@ -58,6 +79,7 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x1',
                     decimals: 18,
                     symbol: 'MOCK1',
@@ -68,6 +90,7 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x2',
                     decimals: 18,
                     symbol: 'MOCK2',
@@ -78,6 +101,7 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x3',
                     decimals: 18,
                     symbol: 'MOCK3',
@@ -86,78 +110,94 @@ describe('WalletTokenBalances', () => {
                 isUnlocked: true,
             },
         ];
-
-        // when
-        const wrapper = mount(
-            <WalletTokenBalances tokenBalances={tokenBalances} onUnlockToken={noop} web3State={Web3State.Done} />,
-        );
-
-        // then
-        const rows = wrapper.find('tbody tr');
-        expect(rows.at(0).find('[data-icon="lock-open"]')).toExist();
-        expect(rows.at(1).find('[data-icon="lock"]')).toExist();
-        expect(rows.at(2).find('[data-icon="lock-open"]')).toExist();
-    });
-
-    it('should call the onUnlockToken function when a locked token is clicked', () => {
-        const tokenBalances: TokenBalance[] = [
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x1',
-                    decimals: 18,
-                    symbol: 'MOCK1',
-                    name: 'MOCK1',
-                },
-                isUnlocked: true,
-            },
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x2',
-                    decimals: 18,
-                    symbol: 'MOCK2',
-                    name: 'MOCK2',
-                },
-                isUnlocked: false,
-            },
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x3',
-                    decimals: 18,
-                    symbol: 'MOCK3',
-                    name: 'MOCK3',
-                },
-                isUnlocked: true,
-            },
-        ];
-        const onUnlockToken = jest.fn();
-        const onLockToken = jest.fn();
 
         // when
         const wrapper = mount(
             <WalletTokenBalances
+                ethBalance={ZERO}
+                wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
-                onUnlockToken={onUnlockToken}
-                onLockToken={onLockToken}
+                onToggleTokenLock={noop}
+                web3State={Web3State.Done}
+            />,
+        );
+
+        // then
+        const rows = wrapper.find('tbody tr');
+
+        // total eth
+        expect(rows.at(0).find('[data-icon="lock-open"]')).toExist();
+
+        // other tokens
+        expect(rows.at(1).find('[data-icon="lock-open"]')).toExist();
+        expect(rows.at(2).find('[data-icon="lock"]')).toExist();
+        expect(rows.at(3).find('[data-icon="lock-open"]')).toExist();
+    });
+
+    it('should call the onToggleTokenLock function when a locked token is clicked', () => {
+        const tokenBalances: TokenBalance[] = [
+            {
+                balance: new BigNumber(1),
+                token: {
+                    primaryColor: 'white',
+                    address: '0x1',
+                    decimals: 18,
+                    symbol: 'MOCK1',
+                    name: 'MOCK1',
+                },
+                isUnlocked: true,
+            },
+            {
+                balance: new BigNumber(1),
+                token: {
+                    primaryColor: 'white',
+                    address: '0x2',
+                    decimals: 18,
+                    symbol: 'MOCK2',
+                    name: 'MOCK2',
+                },
+                isUnlocked: false,
+            },
+            {
+                balance: new BigNumber(1),
+                token: {
+                    primaryColor: 'white',
+                    address: '0x3',
+                    decimals: 18,
+                    symbol: 'MOCK3',
+                    name: 'MOCK3',
+                },
+                isUnlocked: true,
+            },
+        ];
+        const onToggleTokenLock = jest.fn();
+
+        // when
+        const wrapper = mount(
+            <WalletTokenBalances
+                ethBalance={ZERO}
+                wethTokenBalance={wethTokenBalance}
+                tokenBalances={tokenBalances}
+                onToggleTokenLock={onToggleTokenLock}
+                web3State={Web3State.Done}
             />,
         );
         wrapper
             .find('tbody tr')
-            .at(1)
+            .at(2)
             .find('[data-icon="lock"]')
             .simulate('click');
 
         // then
-        expect(onUnlockToken).toHaveBeenCalledWith(tokenBalances[1].token);
+        expect(onToggleTokenLock).toHaveBeenCalledWith(tokenBalances[1]);
     });
 
-    it('should not call the onUnlockToken function when a unlocked token is clicked', () => {
+    it('should call the onToggleTokenLock function when a unlocked token is clicked', () => {
         const tokenBalances: TokenBalance[] = [
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x1',
                     decimals: 18,
                     symbol: 'MOCK1',
@@ -168,6 +208,7 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x2',
                     decimals: 18,
                     symbol: 'MOCK2',
@@ -178,6 +219,7 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
+                    primaryColor: 'white',
                     address: '0x3',
                     decimals: 18,
                     symbol: 'MOCK3',
@@ -186,122 +228,24 @@ describe('WalletTokenBalances', () => {
                 isUnlocked: true,
             },
         ];
-        const onUnlockToken = jest.fn();
-        const onLockToken = jest.fn();
+        const onToggleTokenLock = jest.fn();
 
         // when
         const wrapper = mount(
             <WalletTokenBalances
+                ethBalance={ZERO}
+                wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
-                onUnlockToken={onUnlockToken}
-                onLockToken={onLockToken}
-            />,
-        );
-        wrapper
-            .find('tbody tr')
-            .at(0)
-            .find('[data-icon="lock-open"]')
-            .simulate('click');
-
-        // then
-        expect(onUnlockToken).not.toHaveBeenCalled();
-    });
-    it('should call the lock function when a unlocked token is clicked', () => {
-        const tokenBalances: TokenBalance[] = [
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x1',
-                    decimals: 18,
-                    symbol: 'MOCK1',
-                },
-                isUnlocked: true,
-            },
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x2',
-                    decimals: 18,
-                    symbol: 'MOCK2',
-                },
-                isUnlocked: false,
-            },
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x3',
-                    decimals: 18,
-                    symbol: 'MOCK3',
-                },
-                isUnlocked: true,
-            },
-        ];
-        const onUnlockToken = jest.fn();
-        const onLockToken = jest.fn();
-
-        // when
-        const wrapper = mount(
-            <WalletTokenBalances
-                tokenBalances={tokenBalances}
-                onUnlockToken={onUnlockToken}
-                onLockToken={onLockToken}
-            />,
-        );
-        const rows = wrapper.find('tbody tr');
-        rows.at(0)
-            .find('[data-icon="lock-open"]')
-            .simulate('click');
-
-        // then
-        expect(onLockToken).toHaveBeenCalled();
-    });
-    it('should not call the lock function when a locked token is clicked', () => {
-        const tokenBalances: TokenBalance[] = [
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x1',
-                    decimals: 18,
-                    symbol: 'MOCK1',
-                },
-                isUnlocked: true,
-            },
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x2',
-                    decimals: 18,
-                    symbol: 'MOCK2',
-                },
-                isUnlocked: false,
-            },
-            {
-                balance: new BigNumber(1),
-                token: {
-                    address: '0x3',
-                    decimals: 18,
-                    symbol: 'MOCK3',
-                },
-                isUnlocked: true,
-            },
-        ];
-        const onUnlockToken = jest.fn();
-        const onLockToken = jest.fn();
-
-        // when
-        const wrapper = mount(
-            <WalletTokenBalances
-                tokenBalances={tokenBalances}
-                onUnlockToken={onUnlockToken}
-                onLockToken={onLockToken}
+                onToggleTokenLock={onToggleTokenLock}
+                web3State={Web3State.Done}
             />,
         );
         const rows = wrapper.find('tbody tr');
         rows.at(1)
-            .find('[data-icon="lock"]')
+            .find('[data-icon="lock-open"]')
             .simulate('click');
 
         // then
-        expect(onLockToken).not.toHaveBeenCalled();
+        expect(onToggleTokenLock).toHaveBeenCalledWith(tokenBalances[0]);
     });
 });
