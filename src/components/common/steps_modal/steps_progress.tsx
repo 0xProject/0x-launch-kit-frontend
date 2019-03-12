@@ -22,6 +22,8 @@ const StepsProgressWrapper = styled.div`
 const StartingDot = styled.div`
     background: #000;
     border-radius: 50%;
+    flex-grow: 0;
+    flex-shrink: 0;
     height: 12px;
     width: 12px;
 `;
@@ -70,6 +72,7 @@ const StepLineProgress = styled.div<{ progress?: string }>`
 const StepDot = styled.div<{ progress?: string }>`
     background: ${props => (props.progress === '100' ? '#000' : 'rgba(0, 0, 0, 0.1)')};
     border-radius: 50%;
+    flex-shrink: 0;
     height: 16px;
     width: 16px;
 

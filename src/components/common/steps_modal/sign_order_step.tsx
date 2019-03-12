@@ -11,7 +11,9 @@ import { StepItem } from '../steps_modal/steps_progress';
 import {
     ModalContent,
     ModalStatusText,
+    ModalStatusTextLight,
     ModalText,
+    ModalTextClickable,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
@@ -42,7 +44,7 @@ class SignOrderStep extends React.Component<Props, State> {
     };
 
     public componentDidMount = async () => {
-        // await this._getSignedOrder();
+        await this._getSignedOrder();
     };
 
     public render = () => {
@@ -59,26 +61,37 @@ class SignOrderStep extends React.Component<Props, State> {
             {
                 active: true,
                 progress: '30',
-                title: 'Name',
+                title: 'Some words',
             },
             {
                 active: false,
                 progress: '0',
-                title: 'Another Name',
+                title: 'Finish',
             },
         ];
 
         switch (status) {
             case StepStatus.Loading:
-                content = <StepStatusLoading>Submitting order.</StepStatusLoading>;
+                content = (
+                    <StepStatusLoading>
+                        <ModalText>Submitting order.</ModalText>
+                    </StepStatusLoading>
+                );
                 break;
             case StepStatus.Done:
-                content = <StepStatusDone>Order successfully placed! (may not be filled immediately)</StepStatusDone>;
+                content = (
+                    <StepStatusDone>
+                        <ModalText>Order successfully placed! (may not be filled immediately)</ModalText>
+                    </StepStatusDone>
+                );
                 break;
             case StepStatus.Error:
                 content = (
                     <StepStatusError>
-                        Error signing/submitting order. <em onClick={retry}>Click here to try again</em>
+                        <ModalText>
+                            Error signing/submitting order.{' '}
+                            <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
+                        </ModalText>
                     </StepStatusError>
                 );
                 break;
@@ -96,7 +109,9 @@ class SignOrderStep extends React.Component<Props, State> {
                     <Title>Order Setup</Title>
                     {content}
                     <StepsTimeline steps={steps} />
-                    <ModalStatusText>Current status, waiting, time...</ModalStatusText>
+                    <ModalStatusText>
+                        Current status, time <ModalStatusTextLight>00:34s...</ModalStatusTextLight>
+                    </ModalStatusText>
                 </ModalContent>
             </>
         );
