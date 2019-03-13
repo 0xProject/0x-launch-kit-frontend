@@ -1,5 +1,4 @@
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
-import { SignedOrder } from '@0x/connect';
+import { BigNumber, MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../common/constants';
@@ -12,6 +11,8 @@ import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import {
     BlockchainState,
+    Notification,
+    NotificationKind,
     OrderSide,
     RelayerState,
     Step,
@@ -74,6 +75,14 @@ export const setUserOrders = createAction('SET_USER_ORDERS', resolve => {
 
 export const setSelectedToken = createAction('SET_SELECTED_TOKEN', resolve => {
     return (selectedToken: Token | null) => resolve(selectedToken);
+});
+
+export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
+    return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
+});
+
+export const addNotification = createAction('ADD_NOTIFICATION', resolve => {
+    return (newNotification: Notification) => resolve(newNotification);
 });
 
 export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
@@ -261,11 +270,22 @@ export const getUserOrders = () => {
     };
 };
 
-export const cancelOrder = (order: SignedOrder) => {
-    return async (dispatch: any) => {
-        await cancelSignedOrder(order);
+export const cancelOrder = (order: UIOrder) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const selectedToken = getSelectedToken(state) as Token;
+
+        await cancelSignedOrder(order.rawOrder);
 
         dispatch(getOrderbookAndUserOrders());
+        dispatch(
+            addNotification({
+                kind: NotificationKind.CancelOrder,
+                amount: order.size,
+                token: selectedToken,
+                timestamp: new Date(),
+            }),
+        );
     };
 };
 
@@ -312,10 +332,24 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
     };
 };
 
-export const submitLimitOrder = (signedOrder: SignedOrder) => {
-    return async (dispatch: any) => {
+export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const selectedToken = getSelectedToken(state) as Token;
+
         const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+
         dispatch(getOrderbookAndUserOrders());
+        dispatch(
+            addNotification({
+                kind: NotificationKind.Limit,
+                amount,
+                token: selectedToken,
+                side,
+                timestamp: new Date(),
+            }),
+        );
+
         return submitResult;
     };
 };
@@ -324,8 +358,10 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const selectedToken = getSelectedToken(state) as Token;
 
         const contractWrappers = await getContractWrappers();
+        const web3Wrapper = await getWeb3WrapperOrThrow();
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
 
@@ -338,8 +374,26 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
         );
 
         if (canBeFilled) {
-            await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
+            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(
+                ordersToFill,
+                amounts,
+                ethAccount,
+                TX_DEFAULTS,
+            );
             dispatch(getOrderbookAndUserOrders());
+
+            const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
+
+            dispatch(
+                addNotification({
+                    kind: NotificationKind.Market,
+                    amount,
+                    token: selectedToken,
+                    side,
+                    tx,
+                    timestamp: new Date(),
+                }),
+            );
         } else {
             window.alert('There are no enough orders to fill this amount');
         }

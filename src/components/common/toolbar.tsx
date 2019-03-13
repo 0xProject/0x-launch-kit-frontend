@@ -8,7 +8,7 @@ import { errorsWallet } from '../../util/error_messages';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
-import { NotificationsDropdown } from '../account/notifications_dropdown';
+import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
 import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 import { Logo } from './logo';
@@ -127,7 +127,7 @@ const _Toolbar = (props: Props) => {
                 <ToolbarEnd>
                     <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
                     <WalletDropdown />
-                    <NotificationsDropdown />
+                    <NotificationsDropdownContainer />
                 </ToolbarEnd>
             ) : null}
         </ToolbarWrapper>
