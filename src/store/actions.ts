@@ -339,32 +339,30 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
     return async (dispatch: any, getState: any) => {
         const state = getState();
 
-        const pendingSteps: Step[] = [];
-        let currentStep: Step = {
+        const buySellLimitFlow: Step[] = [];
+
+        const wrapEthStep = getWrapEthStepIfNeeded(price, side, state);
+        if (wrapEthStep) {
+            buySellLimitFlow.push(wrapEthStep);
+        }
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            buySellLimitFlow.push(unlockZrxStep);
+        }
+        const unlockSelectedTokenStep = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedTokenStep) {
+            buySellLimitFlow.push(unlockSelectedTokenStep);
+        }
+
+        buySellLimitFlow.push({
             kind: StepKind.BuySellLimit,
             amount,
             price,
             side,
-        };
+        });
 
-        const wrapEthStep = getWrapEthStepIfNeeded(price, side, state);
-        if (wrapEthStep) {
-            pendingSteps.push(currentStep);
-            currentStep = wrapEthStep;
-        }
-        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
-        if (unlockZrxStep) {
-            pendingSteps.push(currentStep);
-            currentStep = unlockZrxStep;
-        }
-        const unlockSelectedToken = getUnlockSelectedTokenStepIfNeeded(side, state);
-        if (unlockSelectedToken) {
-            pendingSteps.push(currentStep);
-            currentStep = unlockSelectedToken;
-        }
-
-        dispatch(setStepsModalPendingSteps(pendingSteps));
-        dispatch(setStepsModalCurrentStep(currentStep));
+        dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellLimitFlow.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
 };
@@ -373,39 +371,33 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
 
-        const [ordersToFill, amounts, canBeFilled] = getMarketOrdersToFillFromState(amount, side, state);
+        const [, , canBeFilled] = getMarketOrdersToFillFromState(amount, side, state);
         if (!canBeFilled) {
             window.alert('There are no enough orders to fill this amount');
+            return;
         }
 
-        const token = getSelectedToken(state) as Token;
-        const pendingSteps: Step[] = [];
-        let currentStep: Step = {
+        const buySellMarketFlow: Step[] = [];
+
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            buySellMarketFlow.push(unlockZrxStep);
+        }
+        const unlockSelectedTokenStep = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedTokenStep) {
+            buySellMarketFlow.push(unlockSelectedTokenStep);
+        }
+
+        const selectedToken = getSelectedToken(state) as Token;
+        buySellMarketFlow.push({
             kind: StepKind.BuySellMarket,
             amount,
             side,
-            token,
-        };
+            token: selectedToken,
+        });
 
-        // @TODO: calculate amountsSum
-        // const wrapEthStep = getWrapEthStepIfNeeded(amountsSum, side, state);
-        // if (wrapEthStep) {
-        //     pendingSteps.push(currentStep);
-        //     currentStep = wrapEthStep;
-        // }
-        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
-        if (unlockZrxStep) {
-            pendingSteps.push(currentStep);
-            currentStep = unlockZrxStep;
-        }
-        const unlockSelectedToken = getUnlockSelectedTokenStepIfNeeded(side, state);
-        if (unlockSelectedToken) {
-            pendingSteps.push(currentStep);
-            currentStep = unlockSelectedToken;
-        }
-
-        dispatch(setStepsModalPendingSteps(pendingSteps));
-        dispatch(setStepsModalCurrentStep(currentStep));
+        dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellMarketFlow.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
 };

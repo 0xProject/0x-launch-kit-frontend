@@ -54,10 +54,10 @@ export interface StoreState {
 }
 
 export enum StepKind {
-    WrapEth,
-    UnlockToken,
-    BuySellLimit,
-    BuySellMarket,
+    WrapEth = 'WrapEth',
+    UnlockToken = 'UnlockToken',
+    BuySellLimit = 'BuySellLimit',
+    BuySellMarket = 'BuySellMarket',
 }
 
 export interface StepWrapEth {
