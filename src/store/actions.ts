@@ -2,7 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../common/constants';
+import { METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
@@ -186,10 +186,8 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
 export const initWallet = () => {
     return async (dispatch: any) => {
         dispatch(setWeb3State(Web3State.Loading));
-
-        const web3Wrapper = await getWeb3Wrapper();
-
-        if (web3Wrapper) {
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();
 
@@ -223,8 +221,21 @@ export const initWallet = () => {
                 }),
             );
             dispatch(getOrderbookAndUserOrders());
-        } else {
-            dispatch(setWeb3State(Web3State.Error));
+        } catch (error) {
+            switch (error.message) {
+                case METAMASK_USER_DENIED_AUTH: {
+                    dispatch(setWeb3State(Web3State.Locked));
+                    break;
+                }
+                case METAMASK_NOT_INSTALLED: {
+                    dispatch(setWeb3State(Web3State.NotInstalled));
+                    break;
+                }
+                default: {
+                    dispatch(setWeb3State(Web3State.Error));
+                    break;
+                }
+            }
         }
     };
 };

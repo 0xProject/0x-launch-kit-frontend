@@ -30,3 +30,6 @@ export const UI_UPDATE_CHECK_INTERVAL: number =
 
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
+
+export const METAMASK_USER_DENIED_AUTH = 'User denied Auth';
+export const METAMASK_NOT_INSTALLED = 'User does not have metamask installed';

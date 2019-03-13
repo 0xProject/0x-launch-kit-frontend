@@ -5,7 +5,7 @@ export const errorsBuySell = {
 
 export const errorsWallet = {
     mmConnect: 'Click to Connect MetaMask',
-    mmLocked: 'Metmask Locked',
+    mmLocked: 'Metamask Locked',
     mmNotInstalled: 'Metamask not installed',
     mmGetExtension: 'Get Chrome Extension ',
 };

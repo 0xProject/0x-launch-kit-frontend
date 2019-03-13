@@ -1,8 +1,14 @@
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
+import { initWallet } from '../../store/actions';
+import { getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
+import { StoreState, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
@@ -56,9 +62,9 @@ const Value = styled.span`
     white-space: nowrap;
 `;
 
-const WalletStatusBadge = styled.div<{ walletStatus?: any }>`
+const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
     background-color: ${props =>
-        props.walletStatus === WalletStatus.Ok ? themeColors.green : themeColors.errorButtonBackground};
+        props.web3State === Web3State.Done ? themeColors.green : themeColors.errorButtonBackground};
     border-radius: 50%;
     height: 8px;
     margin-right: 6px;
@@ -120,13 +126,15 @@ const ButtonStyled = styled(Button)`
     width: 100%;
 `;
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
-
-enum WalletStatus {
-    Ok = 1,
-    NotConnected = 2,
-    NoWallet = 3,
+interface StateProps {
+    web3State: Web3State;
 }
+
+interface DispatchProps {
+    onInitWallet: () => any;
+}
+
+type Props = StateProps & DispatchProps;
 
 const fillerBig = () => {
     return (
@@ -144,39 +152,33 @@ const fillerSmall = () => {
     );
 };
 
-const getWalletStatus = () => {
-    // return WalletStatus.Ok;
-    // return WalletStatus.NotConnected;
-    return WalletStatus.NoWallet;
-};
-
 const getWalletName = () => {
     return 'MetaMask';
 };
 
-const getWallet = () => {
+const getWallet = (web3State: Web3State) => {
     return (
         <WalletStatusContainer>
-            <WalletStatusBadge walletStatus={getWalletStatus()} />
+            <WalletStatusBadge web3State={web3State} />
             <WalletStatusTitle>{getWalletName()}</WalletStatusTitle>
         </WalletStatusContainer>
     );
 };
 
-const getWalletTitle = () => {
+const getWalletTitle = (web3State: Web3State) => {
     let title = 'Wallet Balance';
 
-    if (getWalletStatus() === WalletStatus.NoWallet) {
+    if (web3State === Web3State.NotInstalled) {
         title = 'No wallet found';
     }
 
     return title;
 };
 
-const getWalletContent = () => {
+const getWalletContent = (web3State: Web3State, onConnectCb: () => any) => {
     let content: any = null;
 
-    if (getWalletStatus() === WalletStatus.Ok) {
+    if (web3State === Web3State.Done) {
         content = (
             <>
                 <LabelTitleWrapper>
@@ -197,7 +199,7 @@ const getWalletContent = () => {
         );
     }
 
-    if (getWalletStatus() === WalletStatus.NotConnected) {
+    if (web3State === Web3State.Locked) {
         content = (
             <WalletErrorContainer>
                 <ErrorCardStyled
@@ -205,6 +207,7 @@ const getWalletContent = () => {
                     icon={ErrorIcons.Lock}
                     text={errorsWallet.mmConnect}
                     textAlign="center"
+                    onClick={onConnectCb}
                 />
                 <WalletErrorFiller top="0" left="0">
                     {fillerBig()}
@@ -222,7 +225,7 @@ const getWalletContent = () => {
         );
     }
 
-    if (getWalletStatus() === WalletStatus.NoWallet) {
+    if (web3State === Web3State.NotInstalled) {
         content = (
             <>
                 <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
@@ -234,10 +237,30 @@ const getWalletContent = () => {
     return content;
 };
 
-export const WalletBalance: React.FC<Props> = props => {
+export const _WalletBalance: React.FC<Props> = props => {
+    const { web3State, onInitWallet } = props;
     return (
-        <Card title={getWalletTitle()} action={getWallet()}>
-            {getWalletContent()}
+        <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
+            {getWalletContent(web3State, onInitWallet)}
         </Card>
     );
 };
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        web3State: getWeb3State(state),
+    };
+};
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+    return {
+        onInitWallet: () => dispatch(initWallet()),
+    };
+};
+
+const WalletBalance = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(_WalletBalance);
+
+export { WalletBalance };

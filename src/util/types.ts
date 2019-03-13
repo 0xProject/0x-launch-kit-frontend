@@ -26,6 +26,8 @@ export enum Web3State {
     Done,
     Error,
     Loading,
+    NotInstalled,
+    Locked,
 }
 
 export interface BlockchainState {
