@@ -119,39 +119,6 @@ export const unlockToken = (token: Token) => {
     };
 };
 
-export const unlockTokenAndUpdateTokenBalance = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
-        const txHash = await dispatch(unlockToken(token));
-
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        await web3Wrapper.awaitTransactionSuccessAsync(txHash);
-
-        const state = getState();
-        const tokenBalance = getTokenBalances(state).find(
-            balance => balance.token.address === token.address,
-        ) as TokenBalance;
-        const updatedTokenBalance = {
-            ...tokenBalance,
-            isUnlocked: true,
-        };
-        dispatch(updateTokenBalance(updatedTokenBalance));
-    };
-};
-
-export const updateTokenBalance = (updatedTokenBalance: TokenBalance) => {
-    return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const updatedTokenBalances = getTokenBalances(state).map(tokenBalance => {
-            if (tokenBalance.token.address !== updatedTokenBalance.token.address) {
-                return tokenBalance;
-            } else {
-                return updatedTokenBalance;
-            }
-        });
-        dispatch(setTokenBalances(updatedTokenBalances));
-    };
-};
-
 export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
