@@ -1,0 +1,199 @@
+import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import { createAction } from 'typesafe-actions';
+
+import { ZRX_TOKEN_SYMBOL } from '../../common/constants';
+import { getContractWrappers } from '../../services/contract_wrappers';
+import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
+import { getKnownTokens } from '../../util/known_tokens';
+import { buildLimitOrder } from '../../util/orders';
+import { unitsInTokenAmount } from '../../util/tokens';
+import {
+    Notification,
+    OrderSide,
+    Step,
+    StepKind,
+    StepUnlockToken,
+    StepWrapEth,
+    StoreState,
+    Token,
+    TokenBalance,
+} from '../../util/types';
+import { getMarketOrdersToFillFromState } from '../relayer/actions';
+import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+
+export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
+    return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
+});
+
+export const addNotification = createAction('ADD_NOTIFICATION', resolve => {
+    return (newNotification: Notification) => resolve(newNotification);
+});
+
+export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
+    return (pendingSteps: Step[]) => resolve(pendingSteps);
+});
+
+export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', resolve => {
+    return (doneSteps: Step[]) => resolve(doneSteps);
+});
+
+export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
+    return (currentStep: Step | null) => resolve(currentStep);
+});
+
+export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
+
+export const stepsModalReset = createAction('STEPSMODAL_RESET');
+
+export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        const buySellLimitFlow: Step[] = [];
+
+        const wrapEthStep = getWrapEthStepIfNeeded(price, side, state);
+        if (wrapEthStep) {
+            buySellLimitFlow.push(wrapEthStep);
+        }
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            buySellLimitFlow.push(unlockZrxStep);
+        }
+        const unlockSelectedTokenStep = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedTokenStep) {
+            buySellLimitFlow.push(unlockSelectedTokenStep);
+        }
+
+        buySellLimitFlow.push({
+            kind: StepKind.BuySellLimit,
+            amount,
+            price,
+            side,
+        });
+
+        dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellLimitFlow.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        const [, , canBeFilled] = getMarketOrdersToFillFromState(amount, side, state);
+        if (!canBeFilled) {
+            window.alert('There are no enough orders to fill this amount');
+            return;
+        }
+
+        const buySellMarketFlow: Step[] = [];
+
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            buySellMarketFlow.push(unlockZrxStep);
+        }
+        const unlockSelectedTokenStep = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedTokenStep) {
+            buySellMarketFlow.push(unlockSelectedTokenStep);
+        }
+
+        const selectedToken = getSelectedToken(state) as Token;
+        buySellMarketFlow.push({
+            kind: StepKind.BuySellMarket,
+            amount,
+            side,
+            token: selectedToken,
+        });
+
+        dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellMarketFlow.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+const getWrapEthStepIfNeeded = (wethAmount: BigNumber, side: OrderSide, state: StoreState): StepWrapEth | null => {
+    // Weth needed only when creating a buy order
+    if (side === OrderSide.Sell) {
+        return null;
+    }
+    const wethTokenDecimals = getKnownTokens().getWethToken().decimals;
+    const wethAmountInUnits = unitsInTokenAmount(wethAmount.toString(), wethTokenDecimals);
+    const wethBalance = getWethBalance(state);
+
+    // Need to wrap eth only if weth balance is not enough
+    const deltaWeth = wethBalance.sub(wethAmountInUnits);
+    if (deltaWeth.lessThan(0)) {
+        return {
+            kind: StepKind.WrapEth,
+            amount: deltaWeth.abs().div(new BigNumber(10).pow(wethTokenDecimals)),
+        };
+    } else {
+        return null;
+    }
+};
+
+const getUnlockZrxStepIfNeeded = (state: StoreState): StepUnlockToken | null => {
+    const tokenBalances = getTokenBalances(state);
+    const zrxTokenBalance: TokenBalance = tokenBalances.find(
+        tokenBalance => tokenBalance.token.symbol === ZRX_TOKEN_SYMBOL,
+    ) as TokenBalance;
+    if (zrxTokenBalance.isUnlocked) {
+        return null;
+    } else {
+        return {
+            kind: StepKind.UnlockToken,
+            token: zrxTokenBalance.token,
+        };
+    }
+};
+
+const getUnlockSelectedTokenStepIfNeeded = (side: OrderSide, state: StoreState): StepUnlockToken | null => {
+    const tokenBalances = getTokenBalances(state);
+    let selectedTokenBalance: TokenBalance;
+    if (side === OrderSide.Sell) {
+        const selectedToken = getSelectedToken(state) as Token;
+        selectedTokenBalance = tokenBalances.find(
+            tokenBalance => tokenBalance.token.symbol === selectedToken.symbol,
+        ) as TokenBalance;
+    } else {
+        selectedTokenBalance = getWethTokenBalance(state) as TokenBalance;
+    }
+
+    if (selectedTokenBalance.isUnlocked) {
+        return null;
+    } else {
+        return {
+            kind: StepKind.UnlockToken,
+            token: selectedTokenBalance.token,
+        };
+    }
+};
+
+export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const selectedToken = getSelectedToken(state) as Token;
+
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const contractWrappers = await getContractWrappers();
+        const wethAddress = getKnownTokens(networkId).getWethToken().address;
+
+        const order = buildLimitOrder(
+            {
+                account: ethAccount,
+                amount,
+                price,
+                tokenAddress: selectedToken.address,
+                wethAddress,
+                exchangeAddress: contractWrappers.exchange.address,
+            },
+            side,
+        );
+
+        const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+        return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+    };
+};
