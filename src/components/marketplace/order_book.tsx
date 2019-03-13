@@ -3,10 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
-import { getOrderBook, getSelectedToken, getUserOrders } from '../../store/selectors';
+import { getOrderBook, getSelectedToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder } from '../../util/types';
+import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
@@ -18,6 +18,7 @@ interface StateProps {
     orderBook: OrderBook;
     selectedToken: Token | null;
     userOrders: UIOrder[];
+    web3State?: Web3State;
 }
 
 type Props = StateProps;
@@ -77,7 +78,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, selectedToken } = this.props;
+        const { orderBook, selectedToken, web3State } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -104,8 +105,9 @@ class OrderBookTable extends React.Component<Props, State> {
         });
 
         let content: React.ReactNode;
-
-        if (!selectedToken) {
+        if (web3State === Web3State.Locked || web3State === Web3State.NotInstalled || web3State === Web3State.Error) {
+            content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+        } else if (!selectedToken) {
             content = <CardLoading />;
         } else if (!buyOrders.length && !sellOrders.length) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
@@ -159,6 +161,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         orderBook: getOrderBook(state),
         selectedToken: getSelectedToken(state),
         userOrders: getUserOrders(state),
+        web3State: getWeb3State(state),
     };
 };
 

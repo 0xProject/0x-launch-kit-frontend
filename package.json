@@ -31,7 +31,7 @@
     "scripts": {
         "start": "cross-env PORT=3001 react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test -u",
+        "test": "react-scripts test",
         "test-once": "cross-env CI=true react-scripts test --coverage",
         "lint": "tslint --project . 'src/**/*.{ts,tsx}' && npm run prettier-check",
         "eject": "react-scripts eject",
