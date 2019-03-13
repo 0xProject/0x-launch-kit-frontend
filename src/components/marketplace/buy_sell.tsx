@@ -11,6 +11,7 @@ import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
+import { InstallMetamaskModal } from '../common/install_metamask';
 
 import { OrderDetails } from './order_details';
 
@@ -32,6 +33,7 @@ enum OrderType {
 }
 
 interface State {
+    mmOpen: boolean;
     makerAmount: BigNumber;
     orderType: OrderType;
     price: BigNumber;
@@ -149,6 +151,7 @@ const TokenTextButtonUppercase = styled.span`
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
+        mmOpen: false,
         orderType: OrderType.Limit,
         price: new BigNumber(0),
         tab: OrderSide.Buy,
@@ -172,63 +175,71 @@ class BuySell extends React.Component<Props, State> {
         ];
 
         return (
-            <BuySellWrapper>
-                <TabsContainer>
-                    <TabButton isSelected={tab === OrderSide.Buy} onClick={this.changeTab(OrderSide.Buy)}>
-                        Buy
-                    </TabButton>
-                    <TabButton isSelected={tab === OrderSide.Sell} onClick={this.changeTab(OrderSide.Sell)}>
-                        Sell
-                    </TabButton>
-                </TabsContainer>
-                <Content>
-                    <LabelContainer>
-                        <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
-                        <InnerTabs tabs={buySellInnerTabs} />
-                    </LabelContainer>
-                    <FieldContainer>
-                        <BigInputNumberStyled
-                            decimals={18}
-                            min={new BigNumber(0)}
-                            onChange={this.updateMakerAmount}
-                            value={makerAmount}
+            <>
+                <BuySellWrapper>
+                    <TabsContainer>
+                        <TabButton isSelected={tab === OrderSide.Buy} onClick={this.changeTab(OrderSide.Buy)}>
+                            Buy
+                        </TabButton>
+                        <TabButton isSelected={tab === OrderSide.Sell} onClick={this.changeTab(OrderSide.Sell)}>
+                            Sell
+                        </TabButton>
+                    </TabsContainer>
+                    <Content>
+                        <LabelContainer>
+                            <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
+                            <InnerTabs tabs={buySellInnerTabs} />
+                        </LabelContainer>
+                        <FieldContainer>
+                            <BigInputNumberStyled
+                                decimals={18}
+                                min={new BigNumber(0)}
+                                onChange={this.updateMakerAmount}
+                                value={makerAmount}
+                            />
+                            <TokenContainer>
+                                <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
+                            </TokenContainer>
+                        </FieldContainer>
+                        {orderType === OrderType.Limit && (
+                            <>
+                                <LabelContainer>
+                                    <Label>Token price</Label>
+                                </LabelContainer>
+                                <FieldContainer>
+                                    <BigInputNumberStyled
+                                        decimals={0}
+                                        min={new BigNumber(0)}
+                                        onChange={this.updatePrice}
+                                        value={price}
+                                    />
+                                    <TokenContainer>
+                                        <TokenText>wETH</TokenText>
+                                    </TokenContainer>
+                                </FieldContainer>
+                            </>
+                        )}
+                        <OrderDetails
+                            orderType={orderType}
+                            tokenAmount={this.state.makerAmount}
+                            tokenPrice={this.state.price}
+                            selectedToken={this.props.selectedToken}
                         />
-                        <TokenContainer>
-                            <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
-                        </TokenContainer>
-                    </FieldContainer>
-                    {orderType === OrderType.Limit && (
-                        <>
-                            <LabelContainer>
-                                <Label>Token price</Label>
-                            </LabelContainer>
-                            <FieldContainer>
-                                <BigInputNumberStyled
-                                    decimals={0}
-                                    min={new BigNumber(0)}
-                                    onChange={this.updatePrice}
-                                    value={price}
-                                />
-                                <TokenContainer>
-                                    <TokenText>wETH</TokenText>
-                                </TokenContainer>
-                            </FieldContainer>
-                        </>
-                    )}
-                    <OrderDetails
-                        orderType={orderType}
-                        tokenAmount={this.state.makerAmount}
-                        tokenPrice={this.state.price}
-                        selectedToken={this.props.selectedToken}
-                    />
-                    <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
-                        {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
-                        <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
-                    </Button>
-                </Content>
-            </BuySellWrapper>
+                        <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
+                            {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
+                            <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
+                        </Button>
+                    </Content>
+                </BuySellWrapper>
+                <a onClick={this.openMetamaskModal}>Show MM modal</a>
+                <InstallMetamaskModal isOpen={this.state.mmOpen} closeModal={this.closeMetamaskModal} />
+            </>
         );
     };
+
+    public closeMetamaskModal = () => this.setState({ mmOpen: false });
+
+    public openMetamaskModal = () => this.setState({ mmOpen: true });
 
     public changeTab = (tab: OrderSide) => () => this.setState({ tab });
 
