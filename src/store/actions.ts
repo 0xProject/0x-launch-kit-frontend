@@ -255,8 +255,7 @@ export const addWethToBalance = (amount: BigNumber) => {
         const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const contractWrappers = await getContractWrappers();
-        const tx = await contractWrappers.etherToken.depositAsync(wethAddress, wethAmount, ethAccount);
-        return web3Wrapper.awaitTransactionSuccessAsync(tx);
+        return contractWrappers.etherToken.depositAsync(wethAddress, wethAmount, ethAccount);
     };
 };
 

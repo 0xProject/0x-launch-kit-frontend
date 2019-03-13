@@ -2,6 +2,7 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { addWethToBalance, stepsModalAdvanceStep } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { StepWrapEth, StoreState } from '../../../util/types';
@@ -93,16 +94,17 @@ class WrapEthStep extends React.Component<Props, State> {
     private readonly _convertWeth = async () => {
         const { step, advanceStep } = this.props;
         const { amount } = step;
-        const convertPromise = this.props.convertWeth(amount);
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const convertTxHash = await this.props.convertWeth(amount);
         this.setState({ status: StepStatus.Loading });
         try {
-            await convertPromise;
+            await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
             this.setState({ status: StepStatus.Done });
             setTimeout(advanceStep, DONE_STATUS_VISIBILITY_TIME);
         } catch (err) {
             this.setState({ status: StepStatus.Error });
         }
-        return convertPromise;
+        return convertTxHash;
     };
 
     private readonly _retry = async () => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, unlockToken } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
@@ -52,7 +53,10 @@ class UnlockTokensStep extends React.Component<Props, State> {
 
     public render = () => {
         const { token } = this.props.step;
-        const tokenSymbol = token.symbol.toUpperCase();
+        let tokenSymbol = token.symbol.toUpperCase();
+        if (tokenSymbol === WETH_TOKEN_SYMBOL.toUpperCase()) {
+            tokenSymbol = 'wETH';
+        }
 
         const { status } = this.state;
         const retry = () => this._retry();
@@ -105,7 +109,7 @@ class UnlockTokensStep extends React.Component<Props, State> {
         const unlockTxHash = await this.props.unlockToken(step.token);
         this.setState({ status: StepStatus.Loading });
         try {
-            await web3Wrapper.awaitTransactionMinedAsync(await unlockTxHash);
+            await web3Wrapper.awaitTransactionSuccessAsync(unlockTxHash);
             this.setState({ status: StepStatus.Done });
             setTimeout(advanceStep, DONE_STATUS_VISIBILITY_TIME);
         } catch (err) {
