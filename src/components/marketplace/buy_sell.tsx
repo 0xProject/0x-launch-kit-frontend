@@ -4,20 +4,19 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
-import { getSelectedTokenSymbol } from '../../store/selectors';
-import { errorsBuySell } from '../../util/error_messages';
+import { getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { OrderSide, StoreState } from '../../util/types';
+import { OrderSide, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
-import { ErrorCard, ErrorIcons } from '../common/error_card';
 
 import { OrderDetails } from './order_details';
 
 interface StateProps {
     selectedTokenSymbol: string;
+    selectedToken: Token | null;
 }
 
 interface DispatchProps {
@@ -40,7 +39,7 @@ interface State {
 }
 
 const BuySellWrapper = styled(CardBase)`
-    margin-bottom: 10px;
+    margin-bottom: ${themeDimensions.verticalSeparation};
 `;
 
 const Content = styled.div`
@@ -171,66 +170,63 @@ class BuySell extends React.Component<Props, State> {
                 text: 'Limit',
             },
         ];
-        const txError = true;
 
         return (
-            <>
-                <BuySellWrapper>
-                    <TabsContainer>
-                        <TabButton isSelected={tab === OrderSide.Buy} onClick={this.changeTab(OrderSide.Buy)}>
-                            Buy
-                        </TabButton>
-                        <TabButton isSelected={tab === OrderSide.Sell} onClick={this.changeTab(OrderSide.Sell)}>
-                            Sell
-                        </TabButton>
-                    </TabsContainer>
-                    <Content>
-                        <LabelContainer>
-                            <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
-                            <InnerTabs tabs={buySellInnerTabs} />
-                        </LabelContainer>
-                        <FieldContainer>
-                            <BigInputNumberStyled
-                                decimals={18}
-                                min={new BigNumber(0)}
-                                onChange={this.updateMakerAmount}
-                                value={makerAmount}
-                            />
-                            <TokenContainer>
-                                <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
-                            </TokenContainer>
-                        </FieldContainer>
-                        {orderType === OrderType.Limit && (
-                            <>
-                                <LabelContainer>
-                                    <Label>Token price</Label>
-                                </LabelContainer>
-                                <FieldContainer>
-                                    <BigInputNumberStyled
-                                        decimals={0}
-                                        min={new BigNumber(0)}
-                                        onChange={this.updatePrice}
-                                        value={price}
-                                    />
-                                    <TokenContainer>
-                                        <TokenText>wETH</TokenText>
-                                    </TokenContainer>
-                                </FieldContainer>
-                            </>
-                        )}
-                        {orderType === OrderType.Limit ? <OrderDetails /> : null}
-                        <Button
-                            theme={txError ? 'error' : 'secondary'}
-                            disabled={txError ? true : false}
-                            onClick={tab === OrderSide.Buy ? this.buy : this.sell}
-                        >
-                            {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
-                            <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
-                        </Button>
-                    </Content>
-                </BuySellWrapper>
-                {txError ? <ErrorCard text={errorsBuySell.ethLack} icon={ErrorIcons.Sad} /> : null}
-            </>
+            <BuySellWrapper>
+                <TabsContainer>
+                    <TabButton isSelected={tab === OrderSide.Buy} onClick={this.changeTab(OrderSide.Buy)}>
+                        Buy
+                    </TabButton>
+                    <TabButton isSelected={tab === OrderSide.Sell} onClick={this.changeTab(OrderSide.Sell)}>
+                        Sell
+                    </TabButton>
+                </TabsContainer>
+                <Content>
+                    <LabelContainer>
+                        <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
+                        <InnerTabs tabs={buySellInnerTabs} />
+                    </LabelContainer>
+                    <FieldContainer>
+                        <BigInputNumberStyled
+                            decimals={18}
+                            min={new BigNumber(0)}
+                            onChange={this.updateMakerAmount}
+                            value={makerAmount}
+                        />
+                        <TokenContainer>
+                            <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
+                        </TokenContainer>
+                    </FieldContainer>
+                    {orderType === OrderType.Limit && (
+                        <>
+                            <LabelContainer>
+                                <Label>Token price</Label>
+                            </LabelContainer>
+                            <FieldContainer>
+                                <BigInputNumberStyled
+                                    decimals={0}
+                                    min={new BigNumber(0)}
+                                    onChange={this.updatePrice}
+                                    value={price}
+                                />
+                                <TokenContainer>
+                                    <TokenText>wETH</TokenText>
+                                </TokenContainer>
+                            </FieldContainer>
+                        </>
+                    )}
+                    <OrderDetails
+                        orderType={orderType}
+                        tokenAmount={this.state.makerAmount}
+                        tokenPrice={this.state.price}
+                        selectedToken={this.props.selectedToken}
+                    />
+                    <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
+                        {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
+                        <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
+                    </Button>
+                </Content>
+            </BuySellWrapper>
         );
     };
 
@@ -287,6 +283,7 @@ class BuySell extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         selectedTokenSymbol: getSelectedTokenSymbol(state),
+        selectedToken: getSelectedToken(state),
     };
 };
 

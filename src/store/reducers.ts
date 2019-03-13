@@ -15,7 +15,7 @@ const initialBlockchainState: BlockchainState = {
     web3State: Web3State.Loading,
     tokenBalances: [],
     ethBalance: new BigNumber(0),
-    wethBalance: new BigNumber(0),
+    wethTokenBalance: null,
 };
 
 const initialRelayerState: RelayerState = {
@@ -42,8 +42,18 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, web3State: action.payload };
         case getType(actions.setTokenBalances):
             return { ...state, tokenBalances: action.payload };
+        case getType(actions.setWethTokenBalance):
+            return { ...state, wethTokenBalance: action.payload };
         case getType(actions.setWethBalance):
-            return { ...state, wethBalance: action.payload };
+            return {
+                ...state,
+                wethTokenBalance: state.wethTokenBalance
+                    ? {
+                          ...state.wethTokenBalance,
+                          balance: action.payload,
+                      }
+                    : null,
+            };
         case getType(actions.setEthBalance):
             return { ...state, ethBalance: action.payload };
         case getType(actions.initializeBlockchainData):

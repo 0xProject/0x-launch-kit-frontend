@@ -2,7 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { createAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS } from '../common/constants';
+import { TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
@@ -29,6 +29,7 @@ import {
     getSelectedToken,
     getTokenBalances,
     getWethBalance,
+    getWethTokenBalance,
 } from './selectors';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
@@ -59,6 +60,10 @@ export const setWethBalance = createAction('SET_WETH_BALANCE', resolve => {
     return (wethBalance: BigNumber) => resolve(wethBalance);
 });
 
+export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolve => {
+    return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
+});
+
 export const setOrders = createAction('SET_ORDERS', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
@@ -87,56 +92,48 @@ export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
 
-export const unlockToken = (token: Token) => {
+export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
-        const tokenBalances = getTokenBalances(state);
-
-        const contractWrappers = await getContractWrappers();
-        await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
-
-        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
-            if (tokenBalance.token.address !== token.address) {
-                return tokenBalance;
-            }
-
-            return {
-                ...tokenBalance,
-                isUnlocked: true,
-            };
-        });
-
-        dispatch(setTokenBalances(updatedTokenBalances));
-    };
-};
-
-export const lockToken = (token: Token) => {
-    return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const ethAccount = getEthAccount(state);
-        const tokenBalances = getTokenBalances(state);
 
         const contractWrappers = await getContractWrappers();
 
-        await contractWrappers.erc20Token.setProxyAllowanceAsync(
-            token.address,
-            ethAccount,
-            new BigNumber('0'),
-            TX_DEFAULTS,
-        );
+        if (isUnlocked) {
+            await contractWrappers.erc20Token.setProxyAllowanceAsync(
+                token.address,
+                ethAccount,
+                new BigNumber('0'),
+                TX_DEFAULTS,
+            );
+        } else {
+            await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+        }
 
-        const updatedTokenBalances = tokenBalances.map(tokenBalance => {
-            if (tokenBalance.token.address !== token.address) {
-                return tokenBalance;
-            }
-            return {
-                ...tokenBalance,
-                isUnlocked: false,
-            };
-        });
+        const isWeth = token.symbol === WETH_TOKEN_SYMBOL;
+        if (isWeth) {
+            const wethTokenBalance = getWethTokenBalance(state) as TokenBalance;
+            dispatch(
+                setWethTokenBalance({
+                    ...wethTokenBalance,
+                    isUnlocked: !isUnlocked,
+                }),
+            );
+        } else {
+            const tokenBalances = getTokenBalances(state);
+            const updatedTokenBalances = tokenBalances.map(tokenBalance => {
+                if (tokenBalance.token.address !== token.address) {
+                    return tokenBalance;
+                }
 
-        dispatch(setTokenBalances(updatedTokenBalances));
+                return {
+                    ...tokenBalance,
+                    isUnlocked: !isUnlocked,
+                };
+            });
+
+            dispatch(setTokenBalances(updatedTokenBalances));
+        }
     };
 };
 
@@ -144,6 +141,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
 
         const web3Wrapper = await getWeb3WrapperOrThrow();
@@ -172,9 +170,16 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
 
         await web3Wrapper.awaitTransactionSuccessAsync(tx);
         const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-
         dispatch(setEthBalance(ethBalance));
-        dispatch(setWethBalance(newWethBalance));
+
+        const newWethTokenBalance = wethTokenBalance
+            ? {
+                  ...wethTokenBalance,
+                  balance: newWethBalance,
+              }
+            : null;
+
+        dispatch(setWethTokenBalance(newWethTokenBalance));
     };
 };
 
@@ -195,9 +200,9 @@ export const initWallet = () => {
             );
 
             const wethToken = knownTokens.getWethToken();
+            const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-            const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
             const selectedToken = knownTokens.getTokenBySymbol('ZRX');
 
@@ -206,7 +211,7 @@ export const initWallet = () => {
                     web3State: Web3State.Done,
                     ethAccount,
                     ethBalance,
-                    wethBalance,
+                    wethTokenBalance,
                     tokenBalances,
                 }),
             );
