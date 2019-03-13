@@ -11,6 +11,8 @@ import { CloseModalButton } from '../../common/icons/close_modal_button';
 
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
 import { SignOrderStepContainer } from './sign_order_step';
+import { ModalContent, ModalStatusText, ModalStatusTextLight, StepsTimeline } from './steps_common';
+import { StepItem } from './steps_progress';
 import { UnlockTokensStepContainer } from './unlock_token_step';
 import { WrapEthStepContainer } from './wrap_eth_step';
 
@@ -33,6 +35,24 @@ const CloseButtonContainer = styled.div`
     margin-top: -10px;
 `;
 
+const steps: StepItem[] = [
+    {
+        active: true,
+        progress: '100',
+        title: 'Unlock',
+    },
+    {
+        active: true,
+        progress: '30',
+        title: 'Some words',
+    },
+    {
+        active: false,
+        progress: '0',
+        title: 'Finish',
+    },
+];
+
 class StepsModal extends React.Component<Props> {
     public render = () => {
         const { currentStep, reset } = this.props;
@@ -42,10 +62,17 @@ class StepsModal extends React.Component<Props> {
                 <CloseButtonContainer>
                     <CloseModalButton onClick={reset} />
                 </CloseButtonContainer>
-                {currentStep && currentStep.kind === StepKind.UnlockToken && <UnlockTokensStepContainer />}
-                {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
-                {currentStep && currentStep.kind === StepKind.BuySellMarket && <BuySellTokenStepContainer />}
-                {currentStep && currentStep.kind === StepKind.WrapEth && <WrapEthStepContainer />}
+                <ModalContent>
+                    {currentStep && currentStep.kind === StepKind.UnlockToken && <UnlockTokensStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.BuySellMarket && <BuySellTokenStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.WrapEth && <WrapEthStepContainer />}
+
+                    <StepsTimeline steps={steps} />
+                    <ModalStatusText>
+                        Current status, time <ModalStatusTextLight>00:34s...</ModalStatusTextLight>
+                    </ModalStatusText>
+                </ModalContent>
             </Modal>
         );
     };

@@ -5,13 +5,9 @@ import { connect } from 'react-redux';
 import { addWethToBalance, stepsModalAdvanceStep } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { StepWrapEth, StoreState } from '../../../util/types';
-import { StepItem } from '../steps_modal/steps_progress';
 
 import {
     DONE_STATUS_VISIBILITY_TIME,
-    ModalContent,
-    ModalStatusText,
-    ModalStatusTextLight,
     ModalText,
     ModalTextClickable,
     StepStatus,
@@ -19,7 +15,6 @@ import {
     StepStatusDone,
     StepStatusError,
     StepStatusLoading,
-    StepsTimeline,
     Title,
 } from './steps_common';
 
@@ -53,24 +48,6 @@ class WrapEthStep extends React.Component<Props, State> {
         const { status } = this.state;
         const retry = () => this._retry();
         let content;
-
-        const steps: StepItem[] = [
-            {
-                active: false,
-                progress: '0',
-                title: 'Step',
-            },
-            {
-                active: false,
-                progress: '0',
-                title: 'Name',
-            },
-            {
-                active: false,
-                progress: '0',
-                title: 'Finish',
-            },
-        ];
 
         switch (status) {
             case StepStatus.Loading:
@@ -107,14 +84,8 @@ class WrapEthStep extends React.Component<Props, State> {
         }
         return (
             <>
-                <ModalContent>
-                    <Title>Order Setup</Title>
-                    {content}
-                    <StepsTimeline steps={steps} />
-                    <ModalStatusText>
-                        Current status, time <ModalStatusTextLight>00:34s...</ModalStatusTextLight>
-                    </ModalStatusText>
-                </ModalContent>
+                <Title>Order Setup</Title>
+                {content}
             </>
         );
     };

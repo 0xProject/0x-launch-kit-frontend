@@ -9,7 +9,6 @@ import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { OrderSide, StepBuySellMarket, StoreState } from '../../../util/types';
 
 import {
-    ModalContent,
     ModalText,
     ModalTextClickable,
     StepStatus,
@@ -96,10 +95,10 @@ class BuySellTokenStep extends React.Component<Props, State> {
                 break;
         }
         return (
-            <ModalContent>
+            <>
                 <Title>Order Setup</Title>
                 {content}
-            </ModalContent>
+            </>
         );
     };
 

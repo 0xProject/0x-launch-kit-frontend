@@ -6,12 +6,8 @@ import { connect } from 'react-redux';
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
-import { StepItem } from '../steps_modal/steps_progress';
 
 import {
-    ModalContent,
-    ModalStatusText,
-    ModalStatusTextLight,
     ModalText,
     ModalTextClickable,
     StepStatus,
@@ -19,7 +15,6 @@ import {
     StepStatusDone,
     StepStatusError,
     StepStatusLoading,
-    StepsTimeline,
     Title,
 } from './steps_common';
 
@@ -51,24 +46,6 @@ class SignOrderStep extends React.Component<Props, State> {
         const { status } = this.state;
         const retry = () => this._retry();
         let content;
-
-        const steps: StepItem[] = [
-            {
-                active: true,
-                progress: '100',
-                title: 'Unlock',
-            },
-            {
-                active: true,
-                progress: '30',
-                title: 'Some words',
-            },
-            {
-                active: false,
-                progress: '0',
-                title: 'Finish',
-            },
-        ];
 
         switch (status) {
             case StepStatus.Loading:
@@ -105,14 +82,8 @@ class SignOrderStep extends React.Component<Props, State> {
         }
         return (
             <>
-                <ModalContent>
-                    <Title>Order Setup</Title>
-                    {content}
-                    <StepsTimeline steps={steps} />
-                    <ModalStatusText>
-                        Current status, time <ModalStatusTextLight>00:34s...</ModalStatusTextLight>
-                    </ModalStatusText>
-                </ModalContent>
+                <Title>Order Setup</Title>
+                {content}
             </>
         );
     };

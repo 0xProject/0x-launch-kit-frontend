@@ -5,13 +5,9 @@ import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, unlockToken } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { StepUnlockToken, StoreState, Token } from '../../../util/types';
-import { StepItem } from '../steps_modal/steps_progress';
 
 import {
     DONE_STATUS_VISIBILITY_TIME,
-    ModalContent,
-    ModalStatusText,
-    ModalStatusTextLight,
     ModalText,
     ModalTextClickable,
     StepStatus,
@@ -19,7 +15,6 @@ import {
     StepStatusDone,
     StepStatusError,
     StepStatusLoading,
-    StepsTimeline,
     Title,
 } from './steps_common';
 
@@ -63,24 +58,6 @@ class UnlockTokensStep extends React.Component<Props, State> {
         const retry = () => this._retry();
         let content;
 
-        const steps: StepItem[] = [
-            {
-                active: true,
-                progress: '100',
-                title: 'Step 1',
-            },
-            {
-                active: true,
-                progress: '100',
-                title: 'Step 2',
-            },
-            {
-                active: true,
-                progress: '0',
-                title: 'Finish',
-            },
-        ];
-
         switch (status) {
             case StepStatus.Loading:
                 content = (
@@ -116,14 +93,8 @@ class UnlockTokensStep extends React.Component<Props, State> {
         }
         return (
             <>
-                <ModalContent>
-                    <Title>Order Setup</Title>
-                    {content}
-                    <StepsTimeline steps={steps} />
-                    <ModalStatusText>
-                        Current status, time <ModalStatusTextLight>00:34s...</ModalStatusTextLight>
-                    </ModalStatusText>
-                </ModalContent>
+                <Title>Order Setup</Title>
+                {content}
             </>
         );
     };
