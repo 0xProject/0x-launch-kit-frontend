@@ -109,7 +109,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const fillOrdersTxHash = await this.props.submitMarketOrder(amount, side);
         this.setState({ status: StepStatus.Loading });
         try {
-            const tx = await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
+            await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
             this.setState({ status: StepStatus.Done });
             this.props.notifyBuySellMarket(amount, token, side, Promise.resolve());
             this.props.refreshOrders();

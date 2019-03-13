@@ -5,9 +5,8 @@ import { TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
-import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { buildMarketOrders } from '../../util/orders';
-import { NotificationKind, OrderSide, RelayerState, StoreState, Token, UIOrder } from '../../util/types';
+import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
 import { getEthAccount, getOpenBuyOrders, getOpenSellOrders, getSelectedToken } from '../selectors';
 import { addNotification } from '../ui/actions';
 
