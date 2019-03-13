@@ -93,13 +93,8 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
-        const selectedToken = getSelectedToken(state) as Token;
-
-        const contractWrappers = await getContractWrappers();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
-
         const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
@@ -109,57 +104,12 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
         );
 
         if (canBeFilled) {
-            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(
-                ordersToFill,
-                amounts,
-                ethAccount,
-                TX_DEFAULTS,
-            );
-            dispatch(getOrderbookAndUserOrders());
-
-            const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
-
-            dispatch(
-                addNotification({
-                    kind: NotificationKind.Market,
-                    amount,
-                    token: selectedToken,
-                    side,
-                    tx,
-                    timestamp: new Date(),
-                }),
-            );
+            const contractWrappers = await getContractWrappers();
+            return contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
         } else {
             window.alert('There are no enough orders to fill this amount');
         }
     };
-};
-
-export const getMarketOrdersToFillFromState = (amount: BigNumber, side: OrderSide, state: StoreState) => {
-    const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
-    return buildMarketOrders(
-        {
-            amount,
-            orders,
-        },
-        side,
-    );
-};
-
-export const fillOrders = async (ordersToFill: SignedOrder[], amounts: BigNumber[], ethAccount: string) => {
-    const contractWrappers = await getContractWrappers();
-    // @TODO:
-    // dispatch(
-    //     addNotification({
-    //         kind: NotificationKind.Market,
-    //         amount,
-    //         token: selectedToken,
-    //         side,
-    //         tx,
-    //         timestamp: new Date(),
-    //     }),
-    // );
-    return contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
 };
 
 export const getOrderbookAndUserOrders = () => {

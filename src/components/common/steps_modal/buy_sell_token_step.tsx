@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 
 import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
-import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
+import { addMarketBuySellNotification, getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
-import { OrderSide, StepBuySellMarket, StoreState } from '../../../util/types';
+import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
 import {
     ModalText,
@@ -26,6 +26,7 @@ interface StateProps {
 interface DispatchProps {
     submitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
     refreshOrders: () => any;
+    notifyBuySellMarket: (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => any;
 }
 
 type Props = StateProps & DispatchProps;
@@ -103,13 +104,14 @@ class BuySellTokenStep extends React.Component<Props, State> {
     };
 
     private readonly _confirmOnMetamasBuyOrSell = async () => {
-        const { amount, side } = this.props.step;
+        const { amount, side, token } = this.props.step;
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const fillOrdersTxHash = await this.props.submitMarketOrder(amount, side);
         this.setState({ status: StepStatus.Loading });
         try {
-            await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
+            const tx = await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
             this.setState({ status: StepStatus.Done });
+            this.props.notifyBuySellMarket(amount, token, side, Promise.resolve());
             this.props.refreshOrders();
         } catch (err) {
             this.setState({ status: StepStatus.Error });
@@ -134,6 +136,8 @@ const BuySellTokenStepContainer = connect(
     (dispatch: any) => {
         return {
             submitMarketOrder: (amount: BigNumber, side: OrderSide) => dispatch(submitMarketOrder(amount, side)),
+            notifyBuySellMarket: (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) =>
+                dispatch(addMarketBuySellNotification(amount, token, side, tx)),
             refreshOrders: () => dispatch(getOrderbookAndUserOrders()),
         };
     },

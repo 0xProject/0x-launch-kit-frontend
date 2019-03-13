@@ -5,10 +5,11 @@ import { ZRX_TOKEN_SYMBOL } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
-import { buildLimitOrder } from '../../util/orders';
+import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import { unitsInTokenAmount } from '../../util/tokens';
 import {
     Notification,
+    NotificationKind,
     OrderSide,
     Step,
     StepKind,
@@ -18,8 +19,15 @@ import {
     Token,
     TokenBalance,
 } from '../../util/types';
-import { getMarketOrdersToFillFromState } from '../relayer/actions';
-import { getEthAccount, getSelectedToken, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+import {
+    getEthAccount,
+    getOpenBuyOrders,
+    getOpenSellOrders,
+    getSelectedToken,
+    getTokenBalances,
+    getWethBalance,
+    getWethTokenBalance,
+} from '../selectors';
 
 export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
     return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
@@ -81,7 +89,14 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
 
-        const [, , canBeFilled] = getMarketOrdersToFillFromState(amount, side, state);
+        const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+        const [, , canBeFilled] = buildMarketOrders(
+            {
+                amount,
+                orders,
+            },
+            side,
+        );
         if (!canBeFilled) {
             window.alert('There are no enough orders to fill this amount');
             return;
@@ -195,5 +210,20 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
 
         const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
         return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+    };
+};
+
+export const addMarketBuySellNotification = (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => {
+    return async (dispatch: any) => {
+        dispatch(
+            addNotification({
+                kind: NotificationKind.Market,
+                amount,
+                token,
+                side,
+                tx,
+                timestamp: new Date(),
+            }),
+        );
     };
 };
