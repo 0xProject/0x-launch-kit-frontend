@@ -2,7 +2,7 @@ import { getType } from 'typesafe-actions';
 
 import { RelayerState } from '../../util/types';
 import * as actions from '../actions';
-import { RootAction } from '../common/reducers';
+import { RootAction } from '../reducers';
 
 const initialRelayerState: RelayerState = {
     orders: [],

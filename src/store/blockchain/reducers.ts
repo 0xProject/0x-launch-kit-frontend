@@ -3,7 +3,7 @@ import { getType } from 'typesafe-actions';
 
 import { BlockchainState, Web3State } from '../../util/types';
 import * as actions from '../actions';
-import { RootAction } from '../common/reducers';
+import { RootAction } from '../reducers';
 
 const initialBlockchainState: BlockchainState = {
     ethAccount: '',

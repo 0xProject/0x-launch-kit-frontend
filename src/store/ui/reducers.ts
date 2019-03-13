@@ -2,7 +2,7 @@ import { getType } from 'typesafe-actions';
 
 import { Step, StepsModalState, UIState } from '../../util/types';
 import * as actions from '../actions';
-import { RootAction } from '../common/reducers';
+import { RootAction } from '../reducers';
 
 const initialStepsModalState: StepsModalState = {
     doneSteps: [],
