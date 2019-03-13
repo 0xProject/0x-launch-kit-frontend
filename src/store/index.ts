@@ -2,7 +2,7 @@ import { createBrowserHistory } from 'history';
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
-import { createRootReducer } from './common/reducers';
+import { createRootReducer } from './reducers';
 
 export const history = createBrowserHistory();
 const rootReducer = createRootReducer(history);
