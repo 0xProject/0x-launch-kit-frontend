@@ -4,6 +4,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
+import { METAMASK_EXTENSION_URL } from '../../common/constants';
 import { initWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
@@ -229,12 +230,21 @@ const getWalletContent = (web3State: Web3State, onConnectCb: () => any) => {
         content = (
             <>
                 <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                <ButtonStyled theme={'tertiary'}>Get Chrome Extension</ButtonStyled>
+                <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                    {errorsWallet.mmGetExtension}
+                </ButtonStyled>
             </>
         );
     }
 
     return content;
+};
+
+const openMetamaskExtensionUrl = () => {
+    const win = window.open(METAMASK_EXTENSION_URL, '_blank');
+    if (win) {
+        win.focus();
+    }
 };
 
 export const _WalletBalance: React.FC<Props> = props => {
