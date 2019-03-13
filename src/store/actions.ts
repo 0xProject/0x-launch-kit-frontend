@@ -1,5 +1,4 @@
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
-import { SignedOrder } from '@0x/connect';
+import { BigNumber, MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS, WETH_TOKEN_SYMBOL, ZRX_TOKEN_SYMBOL } from '../common/constants';
@@ -13,6 +12,8 @@ import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import { unitsInTokenAmount } from '../util/tokens';
 import {
     BlockchainState,
+    Notification,
+    NotificationKind,
     OrderSide,
     RelayerState,
     Step,
@@ -78,6 +79,14 @@ export const setUserOrders = createAction('SET_USER_ORDERS', resolve => {
 
 export const setSelectedToken = createAction('SET_SELECTED_TOKEN', resolve => {
     return (selectedToken: Token | null) => resolve(selectedToken);
+});
+
+export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
+    return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
+});
+
+export const addNotification = createAction('ADD_NOTIFICATION', resolve => {
+    return (newNotification: Notification) => resolve(newNotification);
 });
 
 export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
@@ -293,11 +302,22 @@ export const getUserOrders = () => {
     };
 };
 
-export const cancelOrder = (order: SignedOrder) => {
-    return async (dispatch: any) => {
-        await cancelSignedOrder(order);
+export const cancelOrder = (order: UIOrder) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const selectedToken = getSelectedToken(state) as Token;
+
+        await cancelSignedOrder(order.rawOrder);
 
         dispatch(getOrderbookAndUserOrders());
+        dispatch(
+            addNotification({
+                kind: NotificationKind.CancelOrder,
+                amount: order.size,
+                token: selectedToken,
+                timestamp: new Date(),
+            }),
+        );
     };
 };
 
@@ -454,10 +474,24 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
     };
 };
 
-export const submitLimitOrder = (signedOrder: SignedOrder) => {
-    return async (dispatch: any) => {
+export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const selectedToken = getSelectedToken(state) as Token;
+
         const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+
         dispatch(getOrderbookAndUserOrders());
+        dispatch(
+            addNotification({
+                kind: NotificationKind.Limit,
+                amount,
+                token: selectedToken,
+                side,
+                timestamp: new Date(),
+            }),
+        );
+
         return submitResult;
     };
 };
@@ -489,6 +523,17 @@ const getMarketOrdersToFillFromState = (amount: BigNumber, side: OrderSide, stat
 
 const fillOrders = async (ordersToFill: SignedOrder[], amounts: BigNumber[], ethAccount: string) => {
     const contractWrappers = await getContractWrappers();
+    // @TODO:
+    // dispatch(
+    //     addNotification({
+    //         kind: NotificationKind.Market,
+    //         amount,
+    //         token: selectedToken,
+    //         side,
+    //         tx,
+    //         timestamp: new Date(),
+    //     }),
+    // );
     return contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, TX_DEFAULTS);
 };
 

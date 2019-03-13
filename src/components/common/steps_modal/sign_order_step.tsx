@@ -24,7 +24,7 @@ interface StateProps {
 
 interface DispatchProps {
     createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<SignedOrder>;
-    submitLimitOrder: (singedOrder: SignedOrder) => Promise<any>;
+    submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -92,7 +92,7 @@ class SignOrderStep extends React.Component<Props, State> {
         const { amount, price, side } = this.props.step;
         const signedOrder = await this.props.createSignedOrder(amount, price, side);
         this.setState({ status: StepStatus.Loading });
-        await this.props.submitLimitOrder(signedOrder);
+        await this.props.submitLimitOrder(signedOrder, amount, side);
         this.setState({ status: StepStatus.Done });
     };
 
@@ -112,7 +112,8 @@ const SignOrderStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            submitLimitOrder: (signedOrder: SignedOrder) => dispatch(submitLimitOrder(signedOrder)),
+            submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) =>
+                dispatch(submitLimitOrder(signedOrder, amount, side)),
             createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
                 dispatch(createSignedOrder(amount, price, side)),
         };
