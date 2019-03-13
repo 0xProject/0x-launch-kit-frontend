@@ -47,6 +47,14 @@ class UnlockTokensStep extends React.Component<Props, State> {
         await this._unlockToken();
     };
 
+    public componentDidUpdate = async (prevProps: Props) => {
+        // If there are consecutive StepUnlockToken in the flow, this will force the step "restart"
+        if (this.props.step.token.address !== prevProps.step.token.address) {
+            this.setState({ status: StepStatus.ConfirmOnMetamask });
+            await this._unlockToken();
+        }
+    };
+
     public render = () => {
         const { token } = this.props.step;
         const tokenSymbol = token.symbol.toUpperCase();
