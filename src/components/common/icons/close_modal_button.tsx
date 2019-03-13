@@ -10,6 +10,15 @@ const CloseButton = styled.span`
     width: 20px;
 `;
 
+const CloseButtonContainer = styled.div`
+    align-items: center;
+    display: flex;
+    height: 20px;
+    justify-content: flex-end;
+    margin-right: -10px;
+    margin-top: -10px;
+`;
+
 const CloseButtonSVG = () => {
     return (
         <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,8 +40,10 @@ export const CloseModalButton: React.FC<Props> = props => {
     const { onClick } = props;
 
     return (
-        <CloseButton onClick={onClick}>
-            <CloseButtonSVG />
-        </CloseButton>
+        <CloseButtonContainer>
+            <CloseButton onClick={onClick}>
+                <CloseButtonSVG />
+            </CloseButton>
+        </CloseButtonContainer>
     );
 };
