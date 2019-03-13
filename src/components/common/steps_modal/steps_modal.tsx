@@ -1,7 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 
 import { stepsModalReset } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
@@ -23,24 +22,14 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-const CloseButtonContainer = styled.div`
-    align-items: center;
-    display: flex;
-    height: 20px;
-    justify-content: flex-end;
-    margin-right: -10px;
-    margin-top: -10px;
-`;
-
 class StepsModal extends React.Component<Props> {
     public render = () => {
         const { currentStep, reset } = this.props;
         const isOpen = currentStep !== null;
         return (
             <Modal isOpen={isOpen} style={themeModalStyle}>
-                <CloseButtonContainer>
-                    <CloseModalButton onClick={reset} />
-                </CloseButtonContainer>
+                1
+                <CloseModalButton onClick={reset} />
                 {currentStep && currentStep.kind === StepKind.UnlockToken && <UnlockTokensStepContainer />}
                 {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
                 {currentStep && currentStep.kind === StepKind.WrapEth && <WrapEthStepContainer />}
