@@ -8,7 +8,7 @@ import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
-import { Tooltip } from '../common/tooltip';
+import { Tooltip, TooltipPosition } from '../common/tooltip';
 
 enum Editing {
     Eth,
@@ -229,7 +229,10 @@ class WethModal extends React.Component<Props, State> {
                         )}
                         <EthBoxUnit>wETH</EthBoxUnit>
                         <TooltipStyled>
-                            <Tooltip />
+                            <Tooltip
+                                description="Some text to show in this simple tooltip..."
+                                tooltipPosition={TooltipPosition.Left}
+                            />
                         </TooltipStyled>
                     </EthBox>
                 </EthBoxes>

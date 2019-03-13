@@ -11,7 +11,7 @@ import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { CardLoading } from '../common/loading';
-import { Tooltip } from '../common/tooltip';
+import { IconType, Tooltip, TooltipPosition } from '../common/tooltip';
 
 import { WethModal } from './wallet_weth_modal';
 
@@ -161,7 +161,12 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Button>
                     <Row>
                         <LabelWrapper>
-                            <Label>wETH</Label> <Tooltip type="full" />
+                            <Label>wETH</Label>{' '}
+                            <Tooltip
+                                description="Some text to show in this simple tooltip..."
+                                iconType={IconType.Fill}
+                                tooltipPosition={TooltipPosition.Bottom}
+                            />
                         </LabelWrapper>
                         <Value>{formattedWeth}</Value>
                     </Row>
