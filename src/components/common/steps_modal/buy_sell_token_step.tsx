@@ -2,12 +2,16 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { OrderSide, StepBuySellMarket, StoreState } from '../../../util/types';
 
 import {
+    ModalContent,
+    ModalText,
+    ModalTextClickable,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
@@ -45,7 +49,12 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const { status } = this.state;
 
         const isBuyOrSell = step.side === OrderSide.Buy;
-        const amountOfTokenString = `${step.amount.toString()} of ${step.token.symbol.toUpperCase()}`;
+        let tokenSymbol = step.token.symbol.toUpperCase();
+        if (tokenSymbol === WETH_TOKEN_SYMBOL.toUpperCase()) {
+            tokenSymbol = 'wETH';
+        }
+
+        const amountOfTokenString = `${step.amount.toString()} of ${tokenSymbol}`;
         const retry = () => this._retry();
 
         let content;
@@ -53,34 +62,44 @@ class BuySellTokenStep extends React.Component<Props, State> {
             case StepStatus.Loading:
                 content = (
                     <StepStatusLoading>
-                        Processing {isBuyOrSell ? 'buy' : 'sale'} of {amountOfTokenString} .
+                        <ModalText>
+                            Processing {isBuyOrSell ? 'buy' : 'sale'} of {amountOfTokenString}.
+                        </ModalText>
                     </StepStatusLoading>
                 );
                 break;
             case StepStatus.Done:
-                content = <StepStatusDone>{isBuyOrSell ? 'Buy' : 'Sale'} complete!</StepStatusDone>;
+                content = (
+                    <StepStatusDone>
+                        <ModalText>{isBuyOrSell ? 'Buy' : 'Sale'} complete!</ModalText>
+                    </StepStatusDone>
+                );
                 break;
             case StepStatus.Error:
                 content = (
                     <StepStatusError>
-                        Error {isBuyOrSell ? 'buying' : 'selling'} {amountOfTokenString}.{' '}
-                        <em onClick={retry}>Click here to try again</em>
+                        <ModalText>
+                            Error {isBuyOrSell ? 'buying' : 'selling'} {amountOfTokenString}.{' '}
+                            <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
+                        </ModalText>
                     </StepStatusError>
                 );
                 break;
             default:
                 content = (
                     <StepStatusConfirmOnMetamask>
-                        Confirm on Metamask to {isBuyOrSell ? 'buy' : 'sell'} {amountOfTokenString}.
+                        <ModalText>
+                            Confirm on Metamask to {isBuyOrSell ? 'buy' : 'sell'} {amountOfTokenString}.
+                        </ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
                 break;
         }
         return (
-            <>
+            <ModalContent>
                 <Title>Order Setup</Title>
                 {content}
-            </>
+            </ModalContent>
         );
     };
 
