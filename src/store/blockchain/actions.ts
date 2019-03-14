@@ -140,7 +140,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
         const contractWrappers = await getContractWrappers();
         contractWrappers.exchange.subscribe(
             ExchangeEvents.Fill,
-            { maker: ethAccount },
+            { makerAddress: ethAccount },
             (err: Error | null, logEvent?: DecodedLogEvent<ExchangeFillEventArgs>) => {
                 if (err || !logEvent) {
                     // tslint:disable-next-line:no-console
