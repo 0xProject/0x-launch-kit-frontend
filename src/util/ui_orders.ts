@@ -3,7 +3,21 @@ import { SignedOrder } from '@0x/connect';
 
 import { OrderBookItem, OrderSide, Token, UIOrder } from '../util/types';
 
-export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[], selectedToken: Token): UIOrder[] => {
+export const ordersToUIOrders = (orders: SignedOrder[], selectedToken: Token, ordersInfo?: OrderInfo[]): UIOrder[] => {
+    if (ordersInfo) {
+        return ordersToUIOrdersWithOrdersInfo(orders, ordersInfo, selectedToken);
+    } else {
+        return ordersToUIOrdersWithoutOrderInfo(orders, selectedToken);
+    }
+};
+
+/* The user has web3 and the order info could be retrieved from the contract */
+
+const ordersToUIOrdersWithOrdersInfo = (
+    orders: SignedOrder[],
+    ordersInfo: OrderInfo[],
+    selectedToken: Token,
+): UIOrder[] => {
     if (ordersInfo.length !== orders.length) {
         throw new Error(
             `AssertionError: Orders info length does not match orders length: ${ordersInfo.length} !== ${
@@ -40,6 +54,31 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
     });
 };
 
+/* The user does not have web3 and the order info could not be retrieved from the contract */
+const ordersToUIOrdersWithoutOrderInfo = (orders: SignedOrder[], selectedToken: Token): UIOrder[] => {
+    const selectedTokenEncoded = assetDataUtils.encodeERC20AssetData(selectedToken.address);
+
+    return orders.map((order, i) => {
+        const side = order.takerAssetData === selectedTokenEncoded ? OrderSide.Buy : OrderSide.Sell;
+        const size = side === OrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
+        const filled = null;
+        const status = null;
+        const price =
+            side === OrderSide.Sell
+                ? order.takerAssetAmount.div(order.makerAssetAmount)
+                : order.makerAssetAmount.div(order.takerAssetAmount);
+
+        return {
+            rawOrder: order,
+            side,
+            size,
+            filled,
+            price,
+            status,
+        };
+    });
+};
+
 export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
     const initialValue: { [x: string]: UIOrder[] } = {};
     const ordersByPrice = orders.reduce((acc, order) => {
@@ -59,7 +98,11 @@ export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
             });
         })
         .map(order => {
-            const newSize = order.size.minus(order.filled);
+            let newSize = order.size;
+            if (order.filled) {
+                newSize = order.size.minus(order.filled);
+            }
+
             return {
                 side: order.side,
                 price: order.price,

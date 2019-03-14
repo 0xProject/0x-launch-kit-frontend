@@ -4,14 +4,12 @@ import { connect } from 'react-redux';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { getOrderBook, getSelectedToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
-import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { CardLoading } from '../common/loading';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
@@ -80,7 +78,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, selectedToken, web3State } = this.props;
+        const { orderBook, selectedToken } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -107,71 +105,51 @@ class OrderBookTable extends React.Component<Props, State> {
         });
 
         let content: React.ReactNode;
-        switch (web3State) {
-            case Web3State.NotInstalled: {
-                content = (
-                    <ErrorCard
-                        fontSize={FontSize.Large}
-                        text={errorsWallet.mmNotInstalled}
-                        icon={ErrorIcons.Metamask}
-                    />
-                );
-                break;
-            }
-            case Web3State.Locked: {
-                content = <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />;
-                break;
-            }
-            default: {
-                if (!selectedToken) {
-                    content = <CardLoading />;
-                } else if (!buyOrders.length && !sellOrders.length) {
-                    content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
-                } else {
-                    content = (
-                        <Table fitInCard={true}>
-                            <THead>
-                                <TR>
-                                    <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
-                                    <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
-                                    <TH styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</TH>
-                                    <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
-                                </TR>
-                            </THead>
-                            <tbody>
-                                {sellOrders.map((order, index) =>
-                                    orderToRow(order, index, sellOrders.length, selectedToken, mySizeSellArray),
-                                )}
-                                <TR>
-                                    <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                        Spread
-                                    </CustomTDTitle>
-                                    <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                        {}
-                                    </CustomTD>
-                                    <CustomTD
-                                        styles={{
-                                            tabular: true,
-                                            textAlign: 'right',
-                                            borderBottom: true,
-                                            borderTop: true,
-                                        }}
-                                    >
-                                        {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-                                    </CustomTD>
-                                    <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                        {}
-                                    </CustomTDLast>
-                                </TR>
-                                {buyOrders.map((order, index) =>
-                                    orderToRow(order, index, buyOrders.length, selectedToken, mySizeBuyArray),
-                                )}
-                            </tbody>
-                        </Table>
-                    );
-                }
-                break;
-            }
+
+        if (!selectedToken) {
+            content = <CardLoading />;
+        } else if (!buyOrders.length && !sellOrders.length) {
+            content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+        } else {
+            content = (
+                <Table fitInCard={true}>
+                    <THead>
+                        <TR>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</TH>
+                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
+                        </TR>
+                    </THead>
+                    <tbody>
+                        {sellOrders.map((order, index) =>
+                            orderToRow(order, index, sellOrders.length, selectedToken, mySizeSellArray),
+                        )}
+                        <TR>
+                            <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                                Spread
+                            </CustomTDTitle>
+                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
+                            <CustomTD
+                                styles={{
+                                    tabular: true,
+                                    textAlign: 'right',
+                                    borderBottom: true,
+                                    borderTop: true,
+                                }}
+                            >
+                                {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                            </CustomTD>
+                            <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                                {}
+                            </CustomTDLast>
+                        </TR>
+                        {buyOrders.map((order, index) =>
+                            orderToRow(order, index, buyOrders.length, selectedToken, mySizeBuyArray),
+                        )}
+                    </tbody>
+                </Table>
+            );
         }
 
         return (

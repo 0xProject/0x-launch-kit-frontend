@@ -16,10 +16,17 @@ export const getAllOrders = (token: Token) => {
 };
 
 export const getAllOrdersAsUIOrders = async (token: Token) => {
+    let uiOrders = [];
     const orders = await getAllOrders(token);
-    const contractWrappers = await getContractWrappers();
-    const ordersInfo = await contractWrappers.exchange.getOrdersInfoAsync(orders);
-    return ordersToUIOrders(orders, ordersInfo, token);
+    try {
+        const contractWrappers = await getContractWrappers();
+        const ordersInfo = await contractWrappers.exchange.getOrdersInfoAsync(orders);
+        uiOrders = ordersToUIOrders(orders, token, ordersInfo);
+    } catch (error) {
+        /* We got an error from web3 getting the contract wrappers, we fetch the default orders without the ordersInfo **/
+        uiOrders = ordersToUIOrders(orders, token);
+    }
+    return uiOrders;
 };
 
 export const getUserOrders = (token: Token, ethAccount: string) => {
@@ -32,7 +39,7 @@ export const getUserOrdersAsUIOrders = async (token: Token, ethAccount: string) 
     const myOrders = await getUserOrders(token, ethAccount);
     const contractWrappers = await getContractWrappers();
     const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
-    return ordersToUIOrders(myOrders, myOrdersInfo, token);
+    return ordersToUIOrders(myOrders, token, myOrdersInfo);
 };
 
 export const cancelSignedOrder = async (order: SignedOrder) => {

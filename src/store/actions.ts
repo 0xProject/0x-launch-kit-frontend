@@ -1,7 +1,13 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../common/constants';
+import {
+    MAINNET_ID,
+    METAMASK_NOT_INSTALLED,
+    METAMASK_USER_DENIED_AUTH,
+    TX_DEFAULTS,
+    WETH_TOKEN_SYMBOL,
+} from '../common/constants';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
@@ -197,47 +203,60 @@ export const initWallet = () => {
         dispatch(setWeb3State(Web3State.Loading));
         try {
             const web3Wrapper = await getWeb3Wrapper();
-            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-            const networkId = await web3Wrapper.getNetworkIdAsync();
+            if (web3Wrapper) {
+                const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+                const networkId = await web3Wrapper.getNetworkIdAsync();
 
-            const knownTokens = getKnownTokens(networkId);
+                const knownTokens = getKnownTokens(networkId);
 
-            const tokenBalances = await Promise.all(
-                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-            );
+                const tokenBalances = await Promise.all(
+                    knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+                );
 
-            const wethToken = knownTokens.getWethToken();
-            const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
+                const wethToken = knownTokens.getWethToken();
+                const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
-            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+                const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+                const selectedToken = knownTokens.getTokenBySymbol('ZRX');
 
-            dispatch(
-                initializeBlockchainData({
-                    web3State: Web3State.Done,
-                    ethAccount,
-                    ethBalance,
-                    wethTokenBalance,
-                    tokenBalances,
-                }),
-            );
-            dispatch(
-                initializeRelayerData({
-                    orders: [],
-                    userOrders: [],
-                    selectedToken,
-                }),
-            );
-            dispatch(getOrderbookAndUserOrders());
+                dispatch(
+                    initializeBlockchainData({
+                        web3State: Web3State.Done,
+                        ethAccount,
+                        ethBalance,
+                        wethTokenBalance,
+                        tokenBalances,
+                    }),
+                );
+                dispatch(
+                    initializeRelayerData({
+                        orders: [],
+                        userOrders: [],
+                        selectedToken,
+                    }),
+                );
+                dispatch(getOrderbookAndUserOrders());
+            }
         } catch (error) {
+            const knownTokens = getKnownTokens(MAINNET_ID);
+            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {
                     dispatch(setWeb3State(Web3State.Locked));
+                    dispatch(setSelectedToken(selectedToken));
                     break;
                 }
                 case METAMASK_NOT_INSTALLED: {
                     dispatch(setWeb3State(Web3State.NotInstalled));
+                    dispatch(
+                        initializeRelayerData({
+                            orders: [],
+                            userOrders: [],
+                            selectedToken,
+                        }),
+                    );
+                    dispatch(getOrderBook());
                     break;
                 }
                 default: {
@@ -249,12 +268,40 @@ export const initWallet = () => {
     };
 };
 
+export const updateStore = () => {
+    return async (dispatch: any) => {
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+
+            const knownTokens = getKnownTokens(networkId);
+
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
+            const wethToken = knownTokens.getWethToken();
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            const wethBalance = await getTokenBalance(wethToken, ethAccount);
+
+            dispatch(getOrderbookAndUserOrders());
+            dispatch(setTokenBalances(tokenBalances));
+            dispatch(setEthBalance(ethBalance));
+            dispatch(setWethBalance(wethBalance));
+        } catch (error) {
+            const knownTokens = getKnownTokens(MAINNET_ID);
+            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+            dispatch(setSelectedToken(selectedToken));
+            dispatch(getOrderBook());
+        }
+    };
+};
+
 export const getAllOrders = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const selectedToken = getSelectedToken(state) as Token;
         const uiOrders = await getAllOrdersAsUIOrders(selectedToken);
-
         dispatch(setOrders(uiOrders));
     };
 };
@@ -400,34 +447,15 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     };
 };
 
-export const updateStore = () => {
-    return async (dispatch: any) => {
-        const web3Wrapper = await getWeb3Wrapper();
-
-        if (web3Wrapper) {
-            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-            const networkId = await web3Wrapper.getNetworkIdAsync();
-
-            const knownTokens = getKnownTokens(networkId);
-
-            const tokenBalances = await Promise.all(
-                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-            );
-            const wethToken = knownTokens.getWethToken();
-            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-            const wethBalance = await getTokenBalance(wethToken, ethAccount);
-
-            dispatch(getOrderbookAndUserOrders());
-            dispatch(setTokenBalances(tokenBalances));
-            dispatch(setEthBalance(ethBalance));
-            dispatch(setWethBalance(wethBalance));
-        }
-    };
-};
-
 export const getOrderbookAndUserOrders = () => {
     return async (dispatch: any) => {
         dispatch(getAllOrders());
         dispatch(getUserOrders());
+    };
+};
+
+export const getOrderBook = () => {
+    return async (dispatch: any) => {
+        dispatch(getAllOrders());
     };
 };
