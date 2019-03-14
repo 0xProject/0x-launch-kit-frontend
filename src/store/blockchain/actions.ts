@@ -6,7 +6,6 @@ import { getContractWrappers } from '../../services/contract_wrappers';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
-import { unitsInTokenAmount } from '../../util/tokens';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
@@ -178,17 +177,14 @@ export const initWallet = () => {
 
 export const addWethToBalance = (amount: BigNumber) => {
     return async (dispatch: any, getState: any) => {
-        const wethToken = getKnownTokens().getWethToken();
-        const wethAmount = unitsInTokenAmount(amount.toString(), wethToken.decimals);
-
         const state = getState();
         const ethAccount = getEthAccount(state);
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const wethAddress = getKnownTokens(networkId).getWethToken().address;
+
+        const wethToken = getKnownTokens().getWethToken();
+        const wethAddress = wethToken.address;
 
         const contractWrappers = await getContractWrappers();
-        return contractWrappers.etherToken.depositAsync(wethAddress, wethAmount, ethAccount);
+        return contractWrappers.etherToken.depositAsync(wethAddress, amount, ethAccount);
     };
 };
 
