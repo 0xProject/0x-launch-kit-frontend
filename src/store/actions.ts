@@ -6,6 +6,7 @@ import { setEthBalance, setTokenBalances, setWethBalance } from './blockchain/ac
 import { getOrderbookAndUserOrders } from './relayer/actions';
 
 export * from './blockchain/actions';
+export * from './market/actions';
 export * from './relayer/actions';
 export * from './ui/actions';
 

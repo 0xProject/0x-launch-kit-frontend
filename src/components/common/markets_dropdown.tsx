@@ -2,10 +2,10 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getOrderbookAndUserOrders, setSelectedToken } from '../../store/actions';
-import { getSelectedToken, getTokens } from '../../store/selectors';
+import { getOrderbookAndUserOrders } from '../../store/actions';
+import { getCurrencyPair, getTokens } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { StoreState, Token } from '../../util/types';
+import { CurrencyPair, StoreState, Token } from '../../util/types';
 
 import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
@@ -17,13 +17,12 @@ import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
 interface DispatchProps {
-    setSelectedToken: (token: Token) => Promise<any>;
     getOrderbookAndUserOrders: () => any;
 }
 
 interface PropsToken {
     tokens: Token[];
-    selectedToken: Token | null;
+    currencyPair: CurrencyPair;
 }
 
 type Props = PropsDivElement & PropsToken & DispatchProps;
@@ -264,15 +263,12 @@ class MarketsDropdown extends React.Component<Props, State> {
     }
 
     public render = () => {
-        const { selectedToken, ...restProps } = this.props;
-
-        const tokenSymbol = (selectedToken && selectedToken.symbol) || '';
+        const { currencyPair, ...restProps } = this.props;
 
         const header = (
             <MarketsDropdownHeader>
                 <MarketsDropdownHeaderText>
-                    {selectedToken ? <TokenIcon token={selectedToken} isInline={true} /> : ''}
-                    {tokenSymbol.toUpperCase()}
+                    {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
                 </MarketsDropdownHeaderText>
                 <ChevronDownIcon />
             </MarketsDropdownHeader>
@@ -342,56 +338,57 @@ class MarketsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _getMarkets = () => {
-        const { selectedToken } = this.props;
+        return null;
+        // const { selectedToken } = this.props;
 
-        return (
-            <Table>
-                <THead>
-                    <TR>
-                        <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
-                        <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
-                        <THStyled styles={{ textAlign: 'center' }}>24H change</THStyled>
-                        <THLastStyled styles={{ textAlign: 'center' }}>24H Vol (usd)</THLastStyled>
-                    </TR>
-                </THead>
-                <TBody>
-                    {this.state.filteredTokens.map((token, index) => {
-                        const { symbol } = token;
-                        let isActive = false;
-                        if (selectedToken) {
-                            isActive = symbol === selectedToken.symbol;
-                        }
-                        return (
-                            <TRStyled
-                                active={isActive}
-                                key={symbol}
-                                onClick={this._setSelectedMarket.bind(this, token)}
-                            >
-                                <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    <TokenIcon token={token} />
-                                    {symbol.toUpperCase()}
-                                </CustomTDFirstStyled>
-                                <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {this._getPrice(token)}
-                                </CustomTDStyled>
-                                <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
-                                    {this._getDayChange(token)}
-                                </CustomTDStyled>
-                                <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {this._getDayVolumen(token)}
-                                </CustomTDLastStyled>
-                            </TRStyled>
-                        );
-                    })}
-                </TBody>
-            </Table>
-        );
+        // return (
+        //     <Table>
+        //         <THead>
+        //             <TR>
+        //                 <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
+        //                 <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
+        //                 <THStyled styles={{ textAlign: 'center' }}>24H change</THStyled>
+        //                 <THLastStyled styles={{ textAlign: 'center' }}>24H Vol (usd)</THLastStyled>
+        //             </TR>
+        //         </THead>
+        //         <TBody>
+        //             {this.state.filteredTokens.map((token, index) => {
+        //                 const { symbol } = token;
+        //                 let isActive = false;
+        //                 if (selectedToken) {
+        //                     isActive = symbol === selectedToken.symbol;
+        //                 }
+        //                 return (
+        //                     <TRStyled
+        //                         active={isActive}
+        //                         key={symbol}
+        //                         onClick={this._setSelectedMarket.bind(this, token)}
+        //                     >
+        //                         <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
+        //                             <TokenIcon token={token} />
+        //                             {symbol.toUpperCase()}
+        //                         </CustomTDFirstStyled>
+        //                         <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
+        //                             {this._getPrice(token)}
+        //                         </CustomTDStyled>
+        //                         <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
+        //                             {this._getDayChange(token)}
+        //                         </CustomTDStyled>
+        //                         <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
+        //                             {this._getDayVolumen(token)}
+        //                         </CustomTDLastStyled>
+        //                     </TRStyled>
+        //                 );
+        //             })}
+        //         </TBody>
+        //     </Table>
+        // );
     };
 
     private readonly _setSelectedMarket: any = async (token: Token) => {
-        await this.props.setSelectedToken(token);
-        this.props.getOrderbookAndUserOrders();
-        this._closeDropdown();
+        // await this.props.setSelectedToken(token);
+        // this.props.getOrderbookAndUserOrders();
+        // this._closeDropdown();
     };
 
     private readonly _getDayChange: any = (item: Token) => {
@@ -434,13 +431,12 @@ class MarketsDropdown extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): PropsToken => {
     return {
         tokens: getTokens(state),
-        selectedToken: getSelectedToken(state),
+        currencyPair: getCurrencyPair(state),
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        setSelectedToken: (token: Token) => dispatch(setSelectedToken(token)),
         getOrderbookAndUserOrders: () => dispatch(getOrderbookAndUserOrders()),
     };
 };

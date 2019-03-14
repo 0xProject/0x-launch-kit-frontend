@@ -49,7 +49,8 @@ export const getZeroXPriceInWeth = async (): Promise<BigNumber> => {
             const networkId = await web3Wrapper.getNetworkIdAsync();
             const knownTokens = getKnownTokens(networkId);
             const zeroXToken = knownTokens.getTokenBySymbol('ZRX');
-            let sellOrders = await getAllOrdersAsUIOrders(zeroXToken);
+            const wethToken = knownTokens.getWethToken();
+            let sellOrders = await getAllOrdersAsUIOrders(zeroXToken, wethToken);
             if (sellOrders.length > 0) {
                 sellOrders = sellOrders
                     .filter(order => order.side === OrderSide.Sell)

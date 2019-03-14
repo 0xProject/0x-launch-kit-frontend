@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
-import { getOrderBook, getSelectedToken, getUserOrders } from '../../store/selectors';
+import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder } from '../../util/types';
@@ -16,7 +16,8 @@ import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } f
 
 interface StateProps {
     orderBook: OrderBook;
-    selectedToken: Token | null;
+    baseToken: Token | null;
+    quoteToken: Token | null;
     userOrders: UIOrder[];
 }
 
@@ -77,7 +78,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, selectedToken } = this.props;
+        const { orderBook, baseToken, quoteToken } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -105,7 +106,7 @@ class OrderBookTable extends React.Component<Props, State> {
 
         let content: React.ReactNode;
 
-        if (!selectedToken) {
+        if (!baseToken || !quoteToken) {
             content = <CardLoading />;
         } else if (!buyOrders.length && !sellOrders.length) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
@@ -116,13 +117,13 @@ class OrderBookTable extends React.Component<Props, State> {
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
-                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price ({quoteToken.symbol})</TH>
                             <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
                         </TR>
                     </THead>
                     <tbody>
                         {sellOrders.map((order, index) =>
-                            orderToRow(order, index, sellOrders.length, selectedToken, mySizeSellArray),
+                            orderToRow(order, index, sellOrders.length, baseToken, mySizeSellArray),
                         )}
                         <TR>
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
@@ -139,7 +140,7 @@ class OrderBookTable extends React.Component<Props, State> {
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
-                            orderToRow(order, index, buyOrders.length, selectedToken, mySizeBuyArray),
+                            orderToRow(order, index, buyOrders.length, baseToken, mySizeBuyArray),
                         )}
                     </tbody>
                 </Table>
@@ -157,8 +158,9 @@ class OrderBookTable extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         orderBook: getOrderBook(state),
-        selectedToken: getSelectedToken(state),
+        baseToken: getBaseToken(state),
         userOrders: getUserOrders(state),
+        quoteToken: getQuoteToken(state),
     };
 };
 

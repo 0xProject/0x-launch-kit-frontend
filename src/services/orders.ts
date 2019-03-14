@@ -9,30 +9,32 @@ import { getContractWrappers } from './contract_wrappers';
 import { getRelayer } from './relayer';
 import { getWeb3WrapperOrThrow } from './web3_wrapper';
 
-export const getAllOrders = (token: Token) => {
+export const getAllOrders = (baseToken: Token, quoteToken: Token) => {
     const relayer = getRelayer();
-    const tokenAssetData = assetDataUtils.encodeERC20AssetData(token.address);
-    return relayer.getAllOrdersAsync(tokenAssetData);
+    const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
+    const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteToken.address);
+    return relayer.getAllOrdersAsync(baseTokenAssetData, quoteTokenAssetData);
 };
 
-export const getAllOrdersAsUIOrders = async (token: Token) => {
-    const orders = await getAllOrders(token);
+export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token) => {
+    const orders = await getAllOrders(baseToken, quoteToken);
     const contractWrappers = await getContractWrappers();
     const ordersInfo = await contractWrappers.exchange.getOrdersInfoAsync(orders);
-    return ordersToUIOrders(orders, ordersInfo, token);
+    return ordersToUIOrders(orders, ordersInfo, baseToken);
 };
 
-export const getUserOrders = (token: Token, ethAccount: string) => {
+export const getUserOrders = (baseToken: Token, quoteToken: Token, ethAccount: string) => {
     const relayer = getRelayer();
-    const selectedTokenAssetData = assetDataUtils.encodeERC20AssetData(token.address);
-    return relayer.getUserOrdersAsync(ethAccount, selectedTokenAssetData);
+    const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
+    const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteToken.address);
+    return relayer.getUserOrdersAsync(ethAccount, baseTokenAssetData, quoteTokenAssetData);
 };
 
-export const getUserOrdersAsUIOrders = async (token: Token, ethAccount: string) => {
-    const myOrders = await getUserOrders(token, ethAccount);
+export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token, ethAccount: string) => {
+    const myOrders = await getUserOrders(baseToken, quoteToken, ethAccount);
     const contractWrappers = await getContractWrappers();
     const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
-    return ordersToUIOrders(myOrders, myOrdersInfo, token);
+    return ordersToUIOrders(myOrders, myOrdersInfo, baseToken);
 };
 
 export const cancelSignedOrder = async (order: SignedOrder) => {

@@ -7,8 +7,9 @@ import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { BlockchainState, TokenBalance, Web3State } from '../../util/types';
+import { setMarketTokens } from '../market/actions';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
-import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: BlockchainState) => resolve(blockchainData);
@@ -130,7 +131,10 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
 };
 
 export const initWallet = () => {
-    return async (dispatch: any) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const currencyPair = getCurrencyPair(state);
+
         dispatch(setWeb3State(Web3State.Loading));
 
         const web3Wrapper = await getWeb3Wrapper();
@@ -150,7 +154,8 @@ export const initWallet = () => {
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
             dispatch(
                 initializeBlockchainData({
@@ -165,9 +170,9 @@ export const initWallet = () => {
                 initializeRelayerData({
                     orders: [],
                     userOrders: [],
-                    selectedToken,
                 }),
             );
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
         } else {
             dispatch(setWeb3State(Web3State.Error));

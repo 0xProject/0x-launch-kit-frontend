@@ -21,6 +21,9 @@ export class KnownTokens {
         const symbolInLowerCaseScore = symbol.toLowerCase();
         const token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
         if (!token) {
+            if (symbolInLowerCaseScore === WETH_TOKEN_SYMBOL) {
+                return this.getWethToken();
+            }
             throw new Error(`Token with symbol ${symbol} not found in known tokens`);
         }
         return token;

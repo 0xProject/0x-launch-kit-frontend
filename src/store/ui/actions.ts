@@ -3,10 +3,9 @@ import { createAction } from 'typesafe-actions';
 
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
-import { getKnownTokens } from '../../util/known_tokens';
 import { buildLimitOrder } from '../../util/orders';
 import { Notification, OrderSide, Step, StepKind, Token } from '../../util/types';
-import { getEthAccount, getSelectedToken } from '../selectors';
+import { getBaseToken, getEthAccount, getQuoteToken } from '../selectors';
 
 export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
     return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
@@ -51,20 +50,19 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
-        const selectedToken = getSelectedToken(state) as Token;
+        const baseToken = getBaseToken(state) as Token;
+        const quoteToken = getQuoteToken(state) as Token;
 
         const web3Wrapper = await getWeb3WrapperOrThrow();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
         const contractWrappers = await getContractWrappers();
-        const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
         const order = buildLimitOrder(
             {
                 account: ethAccount,
                 amount,
                 price,
-                tokenAddress: selectedToken.address,
-                wethAddress,
+                baseTokenAddress: baseToken.address,
+                quoteTokenAddress: quoteToken.address,
                 exchangeAddress: contractWrappers.exchange.address,
             },
             side,
