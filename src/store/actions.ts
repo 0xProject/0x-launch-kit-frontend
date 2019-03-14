@@ -3,15 +3,19 @@ import { getWeb3Wrapper } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
 import { setEthBalance, setTokenBalances, setWethBalance } from './blockchain/actions';
+import { setMarketTokens } from './market/actions';
 import { getOrderbookAndUserOrders } from './relayer/actions';
+import { getCurrencyPair } from './selectors';
 
 export * from './blockchain/actions';
 export * from './market/actions';
 export * from './relayer/actions';
+export * from './router/actions';
 export * from './ui/actions';
 
 export const updateStore = () => {
-    return async (dispatch: any) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
         const web3Wrapper = await getWeb3Wrapper();
 
         if (web3Wrapper) {
@@ -27,6 +31,11 @@ export const updateStore = () => {
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
+            const currencyPair = getCurrencyPair(state);
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));

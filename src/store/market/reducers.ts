@@ -1,3 +1,4 @@
+import queryString from 'query-string';
 import { getType } from 'typesafe-actions';
 
 import { MarketState } from '../../util/types';
@@ -6,8 +7,8 @@ import { RootAction } from '../reducers';
 
 const initialMarketState: MarketState = {
     currencyPair: {
-        base: 'ZRX',
-        quote: 'WETH',
+        base: (queryString.parse(location.search).base as string) || 'ZRX',
+        quote: (queryString.parse(location.search).quote as string) || 'WETH',
     },
     baseToken: null,
     quoteToken: null,
@@ -17,6 +18,8 @@ export function market(state: MarketState = initialMarketState, action: RootActi
     switch (action.type) {
         case getType(actions.setMarketTokens):
             return { ...state, baseToken: action.payload.baseToken, quoteToken: action.payload.quoteToken };
+        case getType(actions.setCurrencyPair):
+            return { ...state, currencyPair: action.payload };
     }
     return state;
 }

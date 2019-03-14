@@ -2,8 +2,9 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getOrderbookAndUserOrders } from '../../store/actions';
-import { getCurrencyPair, getTokens } from '../../store/selectors';
+import { availableMarkets } from '../../common/markets';
+import { changeMarket, getOrderbookAndUserOrders } from '../../store/actions';
+import { getBaseToken, getCurrencyPair } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { CurrencyPair, StoreState, Token } from '../../util/types';
 
@@ -18,10 +19,11 @@ interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
 interface DispatchProps {
     getOrderbookAndUserOrders: () => any;
+    changeMarket: (currencyPair: CurrencyPair) => any;
 }
 
 interface PropsToken {
-    tokens: Token[];
+    baseToken: Token | null;
     currencyPair: CurrencyPair;
 }
 
@@ -29,8 +31,6 @@ type Props = PropsDivElement & PropsToken & DispatchProps;
 
 interface State {
     selectedFilter: number;
-    filteredTokens: Token[];
-    alreadyAssignedProps: boolean;
     search: string;
 }
 
@@ -243,24 +243,11 @@ const MARKETS_LIST = [
 
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
-        // Note: this will give you a headache in the long run, so please use redux / mobx or something...
         selectedFilter: 0,
-        filteredTokens: [],
-        alreadyAssignedProps: false,
         search: '',
     };
 
     private _closeDropdown: any;
-
-    public static getDerivedStateFromProps(nextProps: Props, previousState: State): any {
-        // Check for initialization
-        if (!previousState.alreadyAssignedProps && nextProps.tokens && nextProps.tokens.length > 0) {
-            previousState.filteredTokens = nextProps.tokens;
-            previousState.alreadyAssignedProps = true;
-            return previousState;
-        }
-        return null;
-    }
 
     public render = () => {
         const { currencyPair, ...restProps } = this.props;
@@ -325,70 +312,67 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _handleChange = (e: any) => {
         const search = e.currentTarget.value;
-        const value = search.toLowerCase();
-        const filteredTokens = this.props.tokens.filter((token: Token) => {
-            const symbol = token.symbol.toLowerCase();
-            return symbol.indexOf(value) !== -1;
-        });
 
         this.setState({
-            filteredTokens,
             search,
         });
     };
 
     private readonly _getMarkets = () => {
-        return null;
-        // const { selectedToken } = this.props;
+        const { baseToken, currencyPair } = this.props;
+        const { search } = this.state;
 
-        // return (
-        //     <Table>
-        //         <THead>
-        //             <TR>
-        //                 <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
-        //                 <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
-        //                 <THStyled styles={{ textAlign: 'center' }}>24H change</THStyled>
-        //                 <THLastStyled styles={{ textAlign: 'center' }}>24H Vol (usd)</THLastStyled>
-        //             </TR>
-        //         </THead>
-        //         <TBody>
-        //             {this.state.filteredTokens.map((token, index) => {
-        //                 const { symbol } = token;
-        //                 let isActive = false;
-        //                 if (selectedToken) {
-        //                     isActive = symbol === selectedToken.symbol;
-        //                 }
-        //                 return (
-        //                     <TRStyled
-        //                         active={isActive}
-        //                         key={symbol}
-        //                         onClick={this._setSelectedMarket.bind(this, token)}
-        //                     >
-        //                         <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-        //                             <TokenIcon token={token} />
-        //                             {symbol.toUpperCase()}
-        //                         </CustomTDFirstStyled>
-        //                         <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
-        //                             {this._getPrice(token)}
-        //                         </CustomTDStyled>
-        //                         <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
-        //                             {this._getDayChange(token)}
-        //                         </CustomTDStyled>
-        //                         <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
-        //                             {this._getDayVolumen(token)}
-        //                         </CustomTDLastStyled>
-        //                     </TRStyled>
-        //                 );
-        //             })}
-        //         </TBody>
-        //     </Table>
-        // );
+        if (!baseToken) {
+            return null;
+        }
+
+        const filteredMarkets = availableMarkets.filter(cp => {
+            const baseLowerCase = cp.base.toLowerCase();
+            const quoteLowerCase = cp.quote.toLowerCase();
+            return `${baseLowerCase}/${quoteLowerCase}`.indexOf(search.toLowerCase()) !== -1;
+        });
+
+        return (
+            <Table>
+                <THead>
+                    <TR>
+                        <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
+                        <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
+                        <THStyled styles={{ textAlign: 'center' }}>24H change</THStyled>
+                        <THLastStyled styles={{ textAlign: 'center' }}>24H Vol (usd)</THLastStyled>
+                    </TR>
+                </THead>
+                <TBody>
+                    {filteredMarkets.map((cp, index) => {
+                        const isActive = cp.base === currencyPair.base && cp.quote === currencyPair.quote;
+                        const setSelectedMarket = () => this._setSelectedMarket(cp);
+                        return (
+                            <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
+                                <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
+                                    <TokenIcon token={baseToken} />
+                                    {cp.base.toUpperCase()}/{cp.quote.toUpperCase()}
+                                </CustomTDFirstStyled>
+                                <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
+                                    {this._getPrice(baseToken)}
+                                </CustomTDStyled>
+                                <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
+                                    {this._getDayChange(baseToken)}
+                                </CustomTDStyled>
+                                <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
+                                    {this._getDayVolumen(baseToken)}
+                                </CustomTDLastStyled>
+                            </TRStyled>
+                        );
+                    })}
+                </TBody>
+            </Table>
+        );
     };
 
-    private readonly _setSelectedMarket: any = async (token: Token) => {
-        // await this.props.setSelectedToken(token);
-        // this.props.getOrderbookAndUserOrders();
-        // this._closeDropdown();
+    private readonly _setSelectedMarket: any = async (currencyPair: CurrencyPair) => {
+        await this.props.changeMarket(currencyPair);
+        this.props.getOrderbookAndUserOrders();
+        this._closeDropdown();
     };
 
     private readonly _getDayChange: any = (item: Token) => {
@@ -430,14 +414,15 @@ class MarketsDropdown extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): PropsToken => {
     return {
-        tokens: getTokens(state),
+        baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         getOrderbookAndUserOrders: () => dispatch(getOrderbookAndUserOrders()),
+        changeMarket: (currencyPair: CurrencyPair) => dispatch(changeMarket(currencyPair)),
     };
 };
 
