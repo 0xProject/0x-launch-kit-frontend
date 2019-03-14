@@ -14,8 +14,8 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
 
-export const MAKER_FEE = process.env.REACT_APP_MAKER_FEE || '1.0';
-export const TAKER_FEE = process.env.REACT_APP_TAKER_FEE || '0.1';
+export const MAKER_FEE = process.env.REACT_APP_MAKER_FEE || '0';
+export const TAKER_FEE = process.env.REACT_APP_TAKER_FEE || '0';
 
 export const ETH_MARKET_PRICE_API_ENDPOINT =
     process.env.REACT_APP_ETH_MARKET_PRICE_API_ENDPOINT || 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
