@@ -105,17 +105,17 @@ class UnlockTokensStep extends React.Component<Props, State> {
 
     private readonly _unlockToken = async () => {
         const { step, advanceStep } = this.props;
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const unlockTxHash = await this.props.unlockToken(step.token);
-        this.setState({ status: StepStatus.Loading });
         try {
+            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const unlockTxHash = await this.props.unlockToken(step.token);
+            this.setState({ status: StepStatus.Loading });
+
             await web3Wrapper.awaitTransactionSuccessAsync(unlockTxHash);
             this.setState({ status: StepStatus.Done });
             setTimeout(advanceStep, DONE_STATUS_VISIBILITY_TIME);
         } catch (err) {
             this.setState({ status: StepStatus.Error });
         }
-        return unlockTxHash;
     };
 
     private readonly _retry = async () => {

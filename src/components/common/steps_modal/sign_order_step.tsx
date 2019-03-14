@@ -90,10 +90,15 @@ class SignOrderStep extends React.Component<Props, State> {
 
     private readonly _getSignedOrder = async () => {
         const { amount, price, side } = this.props.step;
-        const signedOrder = await this.props.createSignedOrder(amount, price, side);
-        this.setState({ status: StepStatus.Loading });
-        await this.props.submitLimitOrder(signedOrder, amount, side);
-        this.setState({ status: StepStatus.Done });
+        try {
+            const signedOrder = await this.props.createSignedOrder(amount, price, side);
+            this.setState({ status: StepStatus.Loading });
+
+            await this.props.submitLimitOrder(signedOrder, amount, side);
+            this.setState({ status: StepStatus.Done });
+        } catch (err) {
+            this.setState({ status: StepStatus.Error });
+        }
     };
 
     private readonly _retry = async () => {

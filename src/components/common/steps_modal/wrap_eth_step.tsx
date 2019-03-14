@@ -97,17 +97,17 @@ class WrapEthStep extends React.Component<Props, State> {
     private readonly _convertWeth = async () => {
         const { step, advanceStep } = this.props;
         const { amount } = step;
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const convertTxHash = await this.props.convertWeth(amount);
-        this.setState({ status: StepStatus.Loading });
         try {
+            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const convertTxHash = await this.props.convertWeth(amount);
+            this.setState({ status: StepStatus.Loading });
+
             await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
             this.setState({ status: StepStatus.Done });
             setTimeout(advanceStep, DONE_STATUS_VISIBILITY_TIME);
         } catch (err) {
             this.setState({ status: StepStatus.Error });
         }
-        return convertTxHash;
     };
 
     private readonly _retry = async () => {

@@ -109,10 +109,11 @@ class BuySellTokenStep extends React.Component<Props, State> {
 
     private readonly _confirmOnMetamasBuyOrSell = async () => {
         const { amount, side, token } = this.props.step;
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const fillOrdersTxHash = await this.props.submitMarketOrder(amount, side);
-        this.setState({ status: StepStatus.Loading });
         try {
+            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const fillOrdersTxHash = await this.props.submitMarketOrder(amount, side);
+            this.setState({ status: StepStatus.Loading });
+
             await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
             this.setState({ status: StepStatus.Done });
             this.props.notifyBuySellMarket(amount, token, side, Promise.resolve());
@@ -120,7 +121,6 @@ class BuySellTokenStep extends React.Component<Props, State> {
         } catch (err) {
             this.setState({ status: StepStatus.Error });
         }
-        return fillOrdersTxHash;
     };
 
     private readonly _retry = async () => {
