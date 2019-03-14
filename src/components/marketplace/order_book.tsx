@@ -105,7 +105,6 @@ class OrderBookTable extends React.Component<Props, State> {
         });
 
         let content: React.ReactNode;
-
         if (!selectedToken) {
             content = <CardLoading />;
         } else if (!buyOrders.length && !sellOrders.length) {

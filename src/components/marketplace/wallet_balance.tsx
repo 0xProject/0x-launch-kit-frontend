@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
-import { initWallet } from '../../store/actions';
+import { connectWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
@@ -132,7 +132,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onInitWallet: () => any;
+    onConnectWallet: () => any;
 }
 
 type Props = StateProps & DispatchProps;
@@ -248,10 +248,10 @@ const openMetamaskExtensionUrl = () => {
 };
 
 export const _WalletBalance: React.FC<Props> = props => {
-    const { web3State, onInitWallet } = props;
+    const { web3State, onConnectWallet } = props;
     return (
         <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
-            {getWalletContent(web3State, onInitWallet)}
+            {getWalletContent(web3State, onConnectWallet)}
         </Card>
     );
 };
@@ -264,7 +264,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     return {
-        onInitWallet: () => dispatch(initWallet()),
+        onConnectWallet: () => dispatch(connectWallet()),
     };
 };
 

@@ -29,7 +29,7 @@ class App extends React.Component<Props> {
     public componentWillMount = () => {
         this.props.onInitWallet();
         /* Enables realtime updates of the store using pooling */
-        if (!this._updateStoreInterval) {
+        if (!this._updateStoreInterval && this.props.web3State === Web3State.Done) {
             this._updateStoreInterval = window.setInterval(async () => {
                 this.props.onUpdateStore();
                 this.setState({

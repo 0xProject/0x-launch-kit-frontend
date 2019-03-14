@@ -12,7 +12,7 @@ import { getContractWrappers } from '../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../services/orders';
 import { getRelayer } from '../services/relayer';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
-import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../services/web3_wrapper';
+import { getWeb3WrapperOrThrow, reconnectWallet } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../util/orders';
 import {
@@ -198,11 +198,18 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
+export const connectWallet = () => {
+    return async (dispatch: any) => {
+        await reconnectWallet();
+        dispatch(initWallet());
+    };
+};
+
 export const initWallet = () => {
     return async (dispatch: any) => {
         dispatch(setWeb3State(Web3State.Loading));
         try {
-            const web3Wrapper = await getWeb3Wrapper();
+            const web3Wrapper = await getWeb3WrapperOrThrow();
             if (web3Wrapper) {
                 const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
                 const networkId = await web3Wrapper.getNetworkIdAsync();
@@ -244,7 +251,14 @@ export const initWallet = () => {
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {
                     dispatch(setWeb3State(Web3State.Locked));
-                    dispatch(setSelectedToken(selectedToken));
+                    dispatch(
+                        initializeRelayerData({
+                            orders: [],
+                            userOrders: [],
+                            selectedToken,
+                        }),
+                    );
+                    dispatch(getOrderBook());
                     break;
                 }
                 case METAMASK_NOT_INSTALLED: {
@@ -271,7 +285,8 @@ export const initWallet = () => {
 export const updateStore = () => {
     return async (dispatch: any) => {
         try {
-            const web3Wrapper = await getWeb3Wrapper();
+            const web3Wrapper = await getWeb3WrapperOrThrow();
+
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();
 
