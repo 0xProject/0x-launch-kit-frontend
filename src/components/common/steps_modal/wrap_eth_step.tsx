@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { addWethToBalance, stepsModalAdvanceStep } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { getKnownTokens } from '../../../util/known_tokens';
+import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
 import {
@@ -45,7 +47,8 @@ class WrapEthStep extends React.Component<Props, State> {
 
     public render = () => {
         const { amount } = this.props.step;
-        const ethAmount = amount.toString();
+        const wethToken = getKnownTokens().getWethToken();
+        const ethAmount = tokenAmountInUnitsToBigNumber(amount, wethToken.decimals).toString();
         const { status } = this.state;
         const retry = () => this._retry();
         let content;

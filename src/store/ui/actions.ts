@@ -6,7 +6,6 @@ import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
-import { unitsInTokenAmount } from '../../util/tokens';
 import {
     Notification,
     NotificationKind,
@@ -59,7 +58,7 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
 
         const buySellLimitFlow: Step[] = [];
 
-        const wrapEthStep = getWrapEthStepIfNeeded(price, side, state);
+        const wrapEthStep = getWrapEthStepIfNeeded(amount, price, side, state);
         if (wrapEthStep) {
             buySellLimitFlow.push(wrapEthStep);
         }
@@ -127,21 +126,25 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
     };
 };
 
-const getWrapEthStepIfNeeded = (wethAmount: BigNumber, side: OrderSide, state: StoreState): StepWrapEth | null => {
+const getWrapEthStepIfNeeded = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+    state: StoreState,
+): StepWrapEth | null => {
     // Weth needed only when creating a buy order
     if (side === OrderSide.Sell) {
         return null;
     }
-    const wethTokenDecimals = getKnownTokens().getWethToken().decimals;
-    const wethAmountInUnits = unitsInTokenAmount(wethAmount.toString(), wethTokenDecimals);
-    const wethBalance = getWethBalance(state);
 
+    const wethAmount = amount.mul(price);
+    const wethBalance = getWethBalance(state);
+    const deltaWeth = wethBalance.sub(wethAmount);
     // Need to wrap eth only if weth balance is not enough
-    const deltaWeth = wethBalance.sub(wethAmountInUnits);
     if (deltaWeth.lessThan(0)) {
         return {
             kind: StepKind.WrapEth,
-            amount: deltaWeth.abs().div(new BigNumber(10).pow(wethTokenDecimals)),
+            amount: deltaWeth.abs(),
         };
     } else {
         return null;
