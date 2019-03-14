@@ -6,6 +6,7 @@ import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { addMarketBuySellNotification, getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
 import {
@@ -54,7 +55,10 @@ class BuySellTokenStep extends React.Component<Props, State> {
             tokenSymbol = 'wETH';
         }
 
-        const amountOfTokenString = `${step.amount.toString()} of ${tokenSymbol}`;
+        const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
+            step.amount,
+            step.token.decimals,
+        ).toString()} of ${tokenSymbol}`;
         const retry = () => this._retry();
 
         let content;
