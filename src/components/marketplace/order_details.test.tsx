@@ -3,10 +3,9 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
-import { store } from '../../store';
 import * as storeFns from '../../store/selectors';
 import * as dollarUtils from '../../util/market_prices';
-import { OrderSide } from '../../util/types';
+import { OrderSide, UIOrder } from '../../util/types';
 
 import { OrderDetails } from './order_details';
 
@@ -48,6 +47,9 @@ describe('OrderDetails', () => {
             return new BigNumber(DOLAR_PRICE);
         });
 
+        const openSellOrders: UIOrder[] = [];
+        const openBuyOrders: UIOrder[] = [];
+
         // when
         const wrapper = mount(
             <OrderDetails
@@ -55,13 +57,14 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
-                operationType={OrderSide.Buy}
-                state={null}
+                operationType={OrderSide.Sell}
+                openBuyOrders={openBuyOrders}
+                openSellOrders={openSellOrders}
             />,
         );
 
         // then
-        /* Wait until component is fully updated to check if the values are generated */
+        // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
             const mySizeRowValue = wrapper.find('StyledComponent').at(10);
             // then
@@ -95,7 +98,6 @@ describe('OrderDetails', () => {
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(40);
         const MAKER_FEE = new BigNumber(20);
-        const storeState = store.getState();
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -151,6 +153,9 @@ describe('OrderDetails', () => {
             status: OrderStatus.Fillable,
         };
 
+        const openSellOrders = [sellOrder1, sellOrder2];
+        const openBuyOrders: UIOrder[] = [];
+
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
             return new BigNumber(ZEROX_WETH_PRICE);
@@ -165,11 +170,6 @@ describe('OrderDetails', () => {
             return new BigNumber(DOLAR_PRICE);
         });
 
-        // @ts-ignore
-        storeFns.getOpenSellOrders = jest.fn(() => {
-            return [sellOrder1, sellOrder2];
-        });
-
         // when
         // @ts-ignore
         const wrapper = mount(
@@ -178,13 +178,14 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
-                operationType={OrderSide.Buy}
-                state={storeState}
+                operationType={OrderSide.Sell}
+                openBuyOrders={openBuyOrders}
+                openSellOrders={openSellOrders}
             />,
         );
 
         // then
-        /* Wait until component is fully updated to check if the values are generated */
+        // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
             const mySizeRowValue = wrapper.find('StyledComponent').at(9);
             // then
@@ -216,7 +217,6 @@ describe('OrderDetails', () => {
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(55);
         const MAKER_FEE = new BigNumber(20);
-        const storeState = store.getState();
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -272,6 +272,9 @@ describe('OrderDetails', () => {
             status: OrderStatus.Fillable,
         };
 
+        const openSellOrders = [sellOrder1, sellOrder2];
+        const openBuyOrders: UIOrder[] = [];
+
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
             return new BigNumber(ZEROX_WETH_PRICE);
@@ -299,13 +302,14 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
-                operationType={OrderSide.Buy}
-                state={storeState}
+                operationType={OrderSide.Sell}
+                openBuyOrders={openBuyOrders}
+                openSellOrders={openSellOrders}
             />,
         );
 
         // then
-        /* Wait until component is fully updated to check if the values are generated */
+        // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
             const mySizeRowValue = wrapper.find('StyledComponent').at(10);
             // then
@@ -339,7 +343,6 @@ describe('OrderDetails', () => {
         const tokenPrice = new BigNumber(10);
         const resultExpected = 'Total Cost---';
         const MAKER_FEE = new BigNumber(20);
-        const storeState = store.getState();
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -395,6 +398,9 @@ describe('OrderDetails', () => {
             status: OrderStatus.Fillable,
         };
 
+        const openSellOrders = [sellOrder1, sellOrder2];
+        const openBuyOrders: UIOrder[] = [];
+
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
             return new BigNumber(ZEROX_WETH_PRICE);
@@ -422,13 +428,14 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
-                operationType={OrderSide.Buy}
-                state={storeState}
+                operationType={OrderSide.Sell}
+                openBuyOrders={openBuyOrders}
+                openSellOrders={openSellOrders}
             />,
         );
 
         // then
-        /* Wait until component is fully updated to check if the values are generated */
+        // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
             const mySizeRowValue = wrapper.find('StyledComponent').at(10);
             // then

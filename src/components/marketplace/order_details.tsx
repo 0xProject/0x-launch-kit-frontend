@@ -182,6 +182,7 @@ class OrderDetails extends React.Component<Props, State> {
                 operationType,
                 uiOrders,
             );
+
             // Takes the sum of all the orders fee
             totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
                 return totalFeeSum.add(currentOrder.makerFee);
