@@ -30,7 +30,7 @@ describe('OrderDetails', () => {
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(501);
         // @ts-ignore
-        CONSTANTS.MAKER_FEE = '1.0';
+        CONSTANTS.MAKER_FEE = '1000000000000000000';
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
             return new BigNumber(ZEROX_WETH_PRICE);
