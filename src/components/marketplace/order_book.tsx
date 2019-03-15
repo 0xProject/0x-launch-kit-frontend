@@ -36,10 +36,10 @@ const orderToRow = (
     order: OrderBookItem,
     index: number,
     count: number,
-    selectedToken: Token,
+    baseToken: Token,
     mySizeOrders: OrderBookItem[] = [],
 ) => {
-    const size = tokenAmountInUnits(order.size, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+    const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const price = order.price.toString();
     const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
     const time: string = '';
@@ -52,7 +52,7 @@ const orderToRow = (
         return sumSize;
     }, new BigNumber(0));
 
-    const mySizeConverted = tokenAmountInUnits(mySize, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+    const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
 
     return (
         <TR key={index}>
