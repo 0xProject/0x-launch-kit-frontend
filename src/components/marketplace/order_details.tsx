@@ -31,7 +31,7 @@ interface Props {
     orderType: OrderType;
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
-    selectedToken: Token | null;
+    baseToken: Token | null;
 }
 
 const Row = styled.div`
@@ -107,10 +107,10 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public updateLimitOrderState = async () => {
-        const { tokenAmount, tokenPrice, selectedToken } = this.props;
-        if (selectedToken) {
+        const { tokenAmount, tokenPrice, baseToken } = this.props;
+        if (baseToken) {
             /* Reduces decimals of the token amount */
-            const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
+            const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, baseToken.decimals);
             /* This could be refactored with promise all  */
             const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
 
@@ -151,7 +151,7 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.selectedToken !== prevProps.selectedToken
+            newProps.baseToken !== prevProps.baseToken
         ) {
             if (newProps.orderType === OrderType.Limit) {
                 await this.updateLimitOrderState();

@@ -4,16 +4,19 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
-import { getCurrencyPair } from '../../store/selectors';
+import { getBaseToken, getCurrencyPair } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { CurrencyPair, OrderSide, StoreState } from '../../util/types';
+import { CurrencyPair, OrderSide, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
 
+import { OrderDetails } from './order_details';
+
 interface StateProps {
     currencyPair: CurrencyPair;
+    baseToken: Token | null;
 }
 
 interface DispatchProps {
@@ -212,12 +215,12 @@ class BuySell extends React.Component<Props, State> {
                             </FieldContainer>
                         </>
                     )}
-                    {/* <OrderDetails */}
-                    {/*     orderType={orderType} */}
-                    {/*     tokenAmount={this.state.makerAmount} */}
-                    {/*     tokenPrice={this.state.price} */}
-                    {/*     selectedToken={this.props.selectedToken} */}
-                    {/* /> */}
+                    <OrderDetails
+                        orderType={orderType}
+                        tokenAmount={this.state.makerAmount}
+                        tokenPrice={this.state.price}
+                        baseToken={this.props.baseToken}
+                    />
                     <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
                         {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
                         <TokenTextButtonUppercase>{currencyPair.base}</TokenTextButtonUppercase>
@@ -279,6 +282,7 @@ class BuySell extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
     };
 };
