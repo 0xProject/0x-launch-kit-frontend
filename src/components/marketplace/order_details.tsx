@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { MAKER_FEE } from '../../common/constants';
 import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { tokenAmountInUnitsToBigNumber } from '../../util/tokens';
+import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../util/tokens';
 import { Token } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
 
@@ -117,12 +117,12 @@ class OrderDetails extends React.Component<Props, State> {
             const results = await Promise.all(promisesArray);
             const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
             /* Calculates total cost in wETH */
-            const zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
+            const zeroXFeeInWeth = zeroXPriceInWeth.mul(tokenAmountInUnits(new BigNumber(MAKER_FEE), 18));
             const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
             const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
 
             /* Calculates total cost in USD */
-            const zeroXFeeInUSD = zeroXPriceInUSD.mul(MAKER_FEE);
+            const zeroXFeeInUSD = zeroXPriceInUSD.mul(tokenAmountInUnits(new BigNumber(MAKER_FEE), 18));
             const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
             const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
 
@@ -226,7 +226,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>
                         {orderDetailType === OrderDetailsType.Usd
                             ? `$ ${zeroXFeeInUSD.toFixed(2)}`
-                            : `${MAKER_FEE} ZRX`}
+                            : `${tokenAmountInUnits(new BigNumber(MAKER_FEE), 18, 2)} ZRX`}
                     </Value>
                 </Row>
                 <LabelContainer>
