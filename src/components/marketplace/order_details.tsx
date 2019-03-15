@@ -117,12 +117,12 @@ class OrderDetails extends React.Component<Props, State> {
             const results = await Promise.all(promisesArray);
             const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
             /* Calculates total cost in wETH */
-            const zeroXFeeInWeth = zeroXPriceInWeth.mul(tokenAmountInUnits(new BigNumber(MAKER_FEE), 18));
+            const zeroXFeeInWeth = zeroXPriceInWeth.mul(tokenAmountInUnits(MAKER_FEE, 18));
             const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
             const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
 
             /* Calculates total cost in USD */
-            const zeroXFeeInUSD = zeroXPriceInUSD.mul(tokenAmountInUnits(new BigNumber(MAKER_FEE), 18));
+            const zeroXFeeInUSD = zeroXPriceInUSD.mul(tokenAmountInUnits(MAKER_FEE, 18));
             const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
             const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
 
@@ -226,7 +226,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>
                         {orderDetailType === OrderDetailsType.Usd
                             ? `$ ${zeroXFeeInUSD.toFixed(2)}`
-                            : `${tokenAmountInUnits(new BigNumber(MAKER_FEE), 18, 2)} ZRX`}
+                            : `${tokenAmountInUnits(MAKER_FEE, 18, 2)} ZRX`}
                     </Value>
                 </Row>
                 <LabelContainer>
