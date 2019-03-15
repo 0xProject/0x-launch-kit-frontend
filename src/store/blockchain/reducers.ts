@@ -36,7 +36,10 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
         case getType(actions.setEthBalance):
             return { ...state, ethBalance: action.payload };
         case getType(actions.initializeBlockchainData):
-            return action.payload;
+            return {
+                ...state,
+                ...action.payload,
+            };
     }
     return state;
 }
