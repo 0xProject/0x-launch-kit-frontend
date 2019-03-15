@@ -2,9 +2,8 @@ import { assetDataUtils, BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
 import { TX_DEFAULTS } from '../common/constants';
-import { getOpenBuyOrders, getOpenSellOrders } from '../store/selectors';
 import { buildMarketOrders } from '../util/orders';
-import { OrderSide, StoreState, Token } from '../util/types';
+import { OrderSide, Token, UIOrder } from '../util/types';
 import { ordersToUIOrders } from '../util/ui_orders';
 
 import { getContractWrappers } from './contract_wrappers';
@@ -47,9 +46,8 @@ export const cancelSignedOrder = async (order: SignedOrder) => {
 export const getAllOrdersToFillMarketOrderAndAmountsToPay = (
     amount: BigNumber,
     side: OrderSide,
-    state: StoreState,
+    orders: UIOrder[],
 ): [SignedOrder[], BigNumber[], boolean] => {
-    const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
     let ordersToFillReturn: SignedOrder[];
     let amountToPayForEachOrderReturn: BigNumber[];
     const [ordersToFill, amountToPayForEachOrder, canBeFilled] = buildMarketOrders(

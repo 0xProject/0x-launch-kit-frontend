@@ -6,10 +6,11 @@ import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
 import { getAllOrdersToFillMarketOrderAndAmountsToPay } from '../../services/orders';
+import { getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
 import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnitsToBigNumber } from '../../util/tokens';
-import { OrderSide, StoreState, Token } from '../../util/types';
+import { OrderSide, StoreState, Token, UIOrder } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
 
 enum OrderType {
@@ -46,7 +47,8 @@ interface PropsInterface {
 }
 
 interface StateProps {
-    state: StoreState | null;
+    openSellOrders: UIOrder[];
+    openBuyOrders: UIOrder[];
 }
 
 type Props = StateProps & PropsInterface;
@@ -129,20 +131,20 @@ class OrderDetails extends React.Component<Props, State> {
     public updateLimitOrderState = async () => {
         const { tokenAmount, tokenPrice, selectedToken } = this.props;
         if (selectedToken) {
-            /* Reduces decimals of the token amount */
+            // Reduces decimals of the token amount
             const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
-            /* This could be refactored with promise all  */
+            // This could be refactored with promise all
             const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
 
             const results = await Promise.all(promisesArray);
             const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
-            /* Calculates total cost in wETH */
+            // Calculates total cost in wETH
             const zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
             const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
             const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
             const zeroXFeeInZrx = new BigNumber(MAKER_FEE);
 
-            /* Calculates total cost in USD */
+            // Calculates total cost in USD
             const zeroXFeeInUSD = zeroXPriceInUSD.mul(MAKER_FEE);
             const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
             const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
@@ -161,45 +163,47 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public updateMarketOrderState = async () => {
-        const { tokenAmount, selectedToken, operationType, state } = this.props;
+        const { tokenAmount, selectedToken, operationType, openSellOrders, openBuyOrders } = this.props;
         if (selectedToken) {
             const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
             const results = await Promise.all(promisesArray);
             const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
             let ordersToFill: SignedOrder[];
-            let canOrderBeFilled: boolean = false;
-            let totalFee = new BigNumber(0);
+            let canOrderBeFilled: boolean;
+            let totalFee;
             let amountToPayForEachOrder: BigNumber[];
-            let totalPriceWithoutFeeInWeth = new BigNumber(0);
-            if (state) {
-                /* Gets all the orders needed to fill the order **/
-                [
-                    ordersToFill,
-                    amountToPayForEachOrder,
-                    canOrderBeFilled,
-                ] = getAllOrdersToFillMarketOrderAndAmountsToPay(tokenAmount, operationType, state);
-                /* Takes the sum of all the orders fee */
-                totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
-                    return totalFeeSum.add(currentOrder.makerFee);
-                }, new BigNumber(0));
-                /* Takes the sum of all the orders price */
-                totalPriceWithoutFeeInWeth = amountToPayForEachOrder.reduce(
-                    (totalPriceSum: BigNumber, currentPrice: BigNumber) => {
-                        return totalPriceSum.add(currentPrice);
-                    },
-                    new BigNumber(0),
-                );
-                totalPriceWithoutFeeInWeth = tokenAmountInUnitsToBigNumber(
-                    totalPriceWithoutFeeInWeth,
-                    selectedToken.decimals,
-                );
-            }
-            /* Calculates total cost in wETH */
-            const zeroXFeeInZrx = totalFee;
+            let totalPriceWithoutFeeInWeth;
+
+            let uiOrders: UIOrder[];
+            operationType === OrderSide.Sell ? (uiOrders = openSellOrders) : (uiOrders = openBuyOrders);
+            // Gets all the orders needed to fill the order
+            [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = getAllOrdersToFillMarketOrderAndAmountsToPay(
+                tokenAmount,
+                operationType,
+                uiOrders,
+            );
+            // Takes the sum of all the orders fee
+            totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
+                return totalFeeSum.add(currentOrder.makerFee);
+            }, new BigNumber(0));
+            // Takes the sum of all the orders price
+            totalPriceWithoutFeeInWeth = amountToPayForEachOrder.reduce(
+                (totalPriceSum: BigNumber, currentPrice: BigNumber) => {
+                    return totalPriceSum.add(currentPrice);
+                },
+                new BigNumber(0),
+            );
+            totalPriceWithoutFeeInWeth = tokenAmountInUnitsToBigNumber(
+                totalPriceWithoutFeeInWeth,
+                selectedToken.decimals,
+            );
+
+            // Calculates total cost in wETH
+            const zeroXFeeInZrx = tokenAmountInUnitsToBigNumber(totalFee, selectedToken.decimals);
             const zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
             const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
 
-            /* Calculates total cost in USD */
+            // Calculates total cost in USD
             const zeroXFeeInUSD = zeroXFeeInZrx.mul(zeroXPriceInUSD);
             const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
             const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
@@ -377,7 +381,8 @@ class OrderDetails extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        state,
+        openSellOrders: getOpenSellOrders(state),
+        openBuyOrders: getOpenBuyOrders(state),
     };
 };
 
