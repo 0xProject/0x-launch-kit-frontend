@@ -11,6 +11,7 @@ import { getContractWrappers } from '../../services/contract_wrappers';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
+import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, TokenBalance, Web3State } from '../../util/types';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
