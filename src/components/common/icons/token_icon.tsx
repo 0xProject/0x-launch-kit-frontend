@@ -31,7 +31,6 @@ import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg'
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
 import { themeColors } from '../../../util/theme';
-import { Token } from '../../../util/types';
 
 interface Props {
     symbol: string;
