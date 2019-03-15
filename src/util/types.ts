@@ -116,6 +116,7 @@ export enum NotificationKind {
     CancelOrder = 'CancelOrder',
     Market = 'Market',
     Limit = 'Limit',
+    OrderFilled = 'OrderFilled',
 }
 
 interface BaseNotification {
@@ -144,4 +145,11 @@ interface LimitNotification extends BaseNotification {
     side: OrderSide;
 }
 
-export type Notification = CancelOrderNotification | MarketNotification | LimitNotification;
+export interface OrderFilledNotification extends BaseNotification {
+    kind: NotificationKind.OrderFilled;
+    amount: BigNumber;
+    token: Token;
+    side: OrderSide;
+}
+
+export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;

@@ -29,6 +29,15 @@ export class KnownTokens {
         return token;
     };
 
+    public getTokenByAddress = (address: string): Token => {
+        const addressInLowerCase = address.toLowerCase();
+        const token = this._tokens.find(t => t.address.toLowerCase() === addressInLowerCase);
+        if (!token) {
+            throw new Error(`Token with address ${address} not found in known tokens`);
+        }
+        return token;
+    };
+
     public getWethToken = (): Token => {
         return this._wethToken as Token;
     };
