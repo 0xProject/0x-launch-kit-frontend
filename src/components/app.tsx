@@ -31,27 +31,23 @@ class App extends React.Component<Props> {
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<Props>, snapshot?: any) => {
-        const { web3State, children } = this.props;
-        if (web3State !== prevProps.web3State || children !== prevProps.children) {
-            switch (web3State) {
-                case Web3State.Done: {
-                    /* Enables realtime updates of the store using pooling */
-                    if (!this._updateStoreInterval) {
-                        this._updateStoreInterval = window.setInterval(async () => {
-                            this.props.onUpdateStore();
-                            this.setState({
-                                isActiveCheckUpdates: true,
-                            });
-                        }, UI_UPDATE_CHECK_INTERVAL);
-                    }
-                    break;
+        const { web3State } = this.props;
+        if (web3State !== prevProps.web3State) {
+            if (web3State === Web3State.Done) {
+                /* Enables realtime updates of the store using pooling */
+                if (!this._updateStoreInterval) {
+                    this._updateStoreInterval = window.setInterval(async () => {
+                        this.props.onUpdateStore();
+                        this.setState({
+                            isActiveCheckUpdates: true,
+                        });
+                    }, UI_UPDATE_CHECK_INTERVAL);
                 }
-                case Web3State.NotInstalled: {
-                    /* If the user is currently using the dApp, uninstalls metamask, the polling is removed **/
-                    if (this._updateStoreInterval) {
-                        clearInterval(this._updateStoreInterval);
-                    }
-                    break;
+            } else {
+                /* If the user is currently using the dApp with the interval and he change the metamask status, the polling is removed **/
+                if (this._updateStoreInterval) {
+                    clearInterval(this._updateStoreInterval);
+                    this._updateStoreInterval = undefined;
                 }
             }
         }
