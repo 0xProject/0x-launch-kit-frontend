@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { availableMarkets } from '../../common/markets';
 import { changeMarket, getOrderbookAndUserOrders } from '../../store/actions';
 import { getBaseToken, getCurrencyPair } from '../../store/selectors';
+import { getColorBySymbol } from '../../util/known_tokens';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { CurrencyPair, StoreState, Token } from '../../util/types';
 
@@ -346,11 +347,16 @@ class MarketsDropdown extends React.Component<Props, State> {
                     {filteredMarkets.map((cp, index) => {
                         const isActive = cp.base === currencyPair.base && cp.quote === currencyPair.quote;
                         const setSelectedMarket = () => this._setSelectedMarket(cp);
+
+                        const primaryColor = getColorBySymbol(cp.base);
+
                         return (
                             <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    <TokenIcon token={baseToken} />
-                                    {cp.base.toUpperCase()}/{cp.quote.toUpperCase()}
+                                    <TokenIcon symbol={cp.base} primaryColor={primaryColor} />
+                                    <span>
+                                        {cp.base.toUpperCase()}/{cp.quote.toUpperCase()}
+                                    </span>
                                 </CustomTDFirstStyled>
                                 <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
                                     {this._getPrice(baseToken)}

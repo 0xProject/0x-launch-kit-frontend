@@ -34,7 +34,8 @@ import { themeColors } from '../../../util/theme';
 import { Token } from '../../../util/types';
 
 interface Props {
-    token: Token;
+    symbol: string;
+    primaryColor?: string;
     isInline?: boolean;
 }
 
@@ -91,16 +92,16 @@ const Label = styled.label`
     margin: 0;
 `;
 export const TokenIcon = (props: Props) => {
-    const { token, ...restProps } = props;
-    const TokenIconComponentName = getTokenIconNameBySymbol(token.symbol) as keyof typeof TokenIcons;
+    const { symbol, primaryColor, ...restProps } = props;
+    const TokenIconComponentName = getTokenIconNameBySymbol(symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
     return (
-        <IconContainer color={token.primaryColor || themeColors.gray} {...restProps}>
-            {Icon ? <Icon /> : <Label>{token.symbol && token.symbol.toUpperCase()}</Label>}
+        <IconContainer color={primaryColor || themeColors.gray} {...restProps}>
+            {Icon ? <Icon /> : <Label>{symbol && symbol.toUpperCase()}</Label>}
         </IconContainer>
     );
 };
 
 const getTokenIconNameBySymbol = (symbol: string): string => {
-    return `${symbol.charAt(0).toUpperCase()}${symbol.slice(1)}TokenIcon`;
+    return `${symbol.charAt(0).toUpperCase()}${symbol.slice(1).toLowerCase()}TokenIcon`;
 };

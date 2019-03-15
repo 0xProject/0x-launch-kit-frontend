@@ -48,3 +48,12 @@ export const getKnownTokens = (
     }
     return knownTokens;
 };
+
+export const getColorBySymbol = (symbol: string): string => {
+    const token = KNOWN_TOKENS_META_DATA.find(t => t.symbol === symbol.toLowerCase());
+    if (!token) {
+        throw new Error(`Token with symbol ${symbol} not found in known tokens`);
+    }
+
+    return token.primaryColor;
+};
