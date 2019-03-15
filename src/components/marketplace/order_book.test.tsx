@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { openOrder } from '../../util/test-utils';
+import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide } from '../../util/types';
 
 import { OrderBookTable } from './order_book';
@@ -44,12 +44,8 @@ describe('OrderBookTable', () => {
             spread: new BigNumber('0.03'),
         };
 
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
-            name: '0x',
-            symbol: 'zrx',
-        };
+        const baseToken = tokenFactory.build();
+        const quoteToken = tokenFactory.build();
 
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
@@ -60,7 +56,14 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(<OrderBookTable orderBook={orderBook} selectedToken={token} userOrders={userOrders} />);
+        const wrapper = mount(
+            <OrderBookTable
+                orderBook={orderBook}
+                baseToken={baseToken}
+                quoteToken={quoteToken}
+                userOrders={userOrders}
+            />,
+        );
 
         // then
         const mySizeRowValue = wrapper
@@ -111,12 +114,8 @@ describe('OrderBookTable', () => {
             spread: new BigNumber('0.03'),
         };
 
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
-            name: '0x',
-            symbol: 'zrx',
-        };
+        const baseToken = tokenFactory.build();
+        const quoteToken = tokenFactory.build();
 
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
@@ -127,7 +126,14 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(<OrderBookTable orderBook={orderBook} selectedToken={token} userOrders={userOrders} />);
+        const wrapper = mount(
+            <OrderBookTable
+                orderBook={orderBook}
+                baseToken={baseToken}
+                quoteToken={quoteToken}
+                userOrders={userOrders}
+            />,
+        );
 
         // then
         const mySizeRowValue = wrapper
@@ -188,12 +194,8 @@ describe('OrderBookTable', () => {
             spread: new BigNumber('0.03'),
         };
 
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
-            name: '0x',
-            symbol: 'zrx',
-        };
+        const baseToken = tokenFactory.build();
+        const quoteToken = tokenFactory.build();
 
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
@@ -211,7 +213,14 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(<OrderBookTable orderBook={orderBook} selectedToken={token} userOrders={userOrders} />);
+        const wrapper = mount(
+            <OrderBookTable
+                orderBook={orderBook}
+                baseToken={baseToken}
+                quoteToken={quoteToken}
+                userOrders={userOrders}
+            />,
+        );
 
         // then
         const sizeRow1 = wrapper
