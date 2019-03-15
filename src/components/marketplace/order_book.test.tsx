@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { openOrder } from '../../util/test-utils';
-import { OrderSide } from '../../util/types';
+import { OrderSide, Web3State } from '../../util/types';
 
 import { OrderBookTable } from './order_book';
 
@@ -269,5 +269,143 @@ describe('OrderBookTable', () => {
         expect(sizeRow4).toEqual(resultExpected4);
         expect(sizeRow5).toEqual(resultExpected5);
         expect(sizeRow6).toEqual(resultExpected6);
+    });
+    it('Should not render my size column if the user does not have metamask', () => {
+        const orderBook = {
+            sellOrders: [
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('4'),
+                    price: new BigNumber('1.01'),
+                },
+            ],
+            buyOrders: [
+                {
+                    side: OrderSide.Buy,
+                    size: new BigNumber('2'),
+                    price: new BigNumber('0.5'),
+                },
+            ],
+            mySizeOrders: [
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+            ],
+            spread: new BigNumber('0.03'),
+        };
+
+        const token = {
+            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
+            decimals: 0,
+            name: '0x',
+            symbol: 'zrx',
+        };
+
+        const userOrder1 = openOrder({
+            side: OrderSide.Buy,
+            size: new BigNumber(2),
+            price: new BigNumber('0.5'),
+        });
+
+        const userOrders = [userOrder1];
+
+        // when
+        const wrapper = mount(
+            <OrderBookTable
+                orderBook={orderBook}
+                selectedToken={token}
+                userOrders={userOrders}
+                web3State={Web3State.NotInstalled}
+            />,
+        );
+
+        // then
+        expect(wrapper.text()).not.toContain('My Size');
+    });
+    it('Should not render my size column if the user rejected the metamask permissions', () => {
+        const orderBook = {
+            sellOrders: [
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('4'),
+                    price: new BigNumber('1.01'),
+                },
+            ],
+            buyOrders: [
+                {
+                    side: OrderSide.Buy,
+                    size: new BigNumber('2'),
+                    price: new BigNumber('0.5'),
+                },
+            ],
+            mySizeOrders: [
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+                {
+                    side: OrderSide.Sell,
+                    size: new BigNumber('1'),
+                    price: new BigNumber('1.5'),
+                },
+            ],
+            spread: new BigNumber('0.03'),
+        };
+
+        const token = {
+            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
+            decimals: 0,
+            name: '0x',
+            symbol: 'zrx',
+        };
+
+        const userOrder1 = openOrder({
+            side: OrderSide.Buy,
+            size: new BigNumber(2),
+            price: new BigNumber('0.5'),
+        });
+
+        const userOrders = [userOrder1];
+
+        // when
+        const wrapper = mount(
+            <OrderBookTable
+                orderBook={orderBook}
+                selectedToken={token}
+                userOrders={userOrders}
+                web3State={Web3State.Locked}
+            />,
+        );
+
+        // then
+        expect(wrapper.text()).not.toContain('My Size');
     });
 });

@@ -38,6 +38,7 @@ const orderToRow = (
     count: number,
     selectedToken: Token,
     mySizeOrders: OrderBookItem[] = [],
+    web3State?: Web3State,
 ) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const price = order.price.toString();
@@ -53,15 +54,19 @@ const orderToRow = (
     }, new BigNumber(0));
 
     const mySizeConverted = tokenAmountInUnits(mySize, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+    const mySizeRow =
+        web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
+            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
+                {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
+            </CustomTD>
+        ) : null;
 
     return (
         <TR key={index}>
             <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
-            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
-                {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
-            </CustomTD>
+            {mySizeRow}
             <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
             </CustomTD>
@@ -78,7 +83,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, selectedToken } = this.props;
+        const { orderBook, selectedToken, web3State } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -110,19 +115,23 @@ class OrderBookTable extends React.Component<Props, State> {
         } else if (!buyOrders.length && !sellOrders.length) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {
+            const mySizeHeader =
+                web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
+                    <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
+                ) : null;
             content = (
                 <Table fitInCard={true}>
                     <THead>
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
-                            <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
+                            {mySizeHeader}
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</TH>
                             <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
                         </TR>
                     </THead>
                     <tbody>
                         {sellOrders.map((order, index) =>
-                            orderToRow(order, index, sellOrders.length, selectedToken, mySizeSellArray),
+                            orderToRow(order, index, sellOrders.length, selectedToken, mySizeSellArray, web3State),
                         )}
                         <TR>
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
@@ -144,7 +153,7 @@ class OrderBookTable extends React.Component<Props, State> {
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
-                            orderToRow(order, index, buyOrders.length, selectedToken, mySizeBuyArray),
+                            orderToRow(order, index, buyOrders.length, selectedToken, mySizeBuyArray, web3State),
                         )}
                     </tbody>
                 </Table>

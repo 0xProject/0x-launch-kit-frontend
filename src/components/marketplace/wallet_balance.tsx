@@ -247,7 +247,7 @@ const openMetamaskExtensionUrl = () => {
     }
 };
 
-export const _WalletBalance: React.FC<Props> = props => {
+const WalletBalance: React.FC<Props> = props => {
     const { web3State, onConnectWallet } = props;
     return (
         <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
@@ -268,9 +268,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     };
 };
 
-const WalletBalance = connect(
+const WalletBalanceContainer = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(_WalletBalance);
+)(WalletBalance);
 
-export { WalletBalance };
+export { WalletBalance, WalletBalanceContainer };
