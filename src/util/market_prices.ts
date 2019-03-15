@@ -56,7 +56,7 @@ export const getZeroXPriceInWeth = async (): Promise<BigNumber> => {
                     .sort((o1, o2) => o1.price.comparedTo(o2.price));
                 /* Check if there is any order that could fill the needs of 0x */
                 const orderWithEnoughZeroX = sellOrders.find(sellOrder => {
-                    return sellOrder.size.greaterThanOrEqualTo(MAKER_FEE);
+                    return sellOrder.size.greaterThanOrEqualTo(new BigNumber(MAKER_FEE));
                 });
                 if (orderWithEnoughZeroX) {
                     zeroXPriceInWeth = orderWithEnoughZeroX.price;

@@ -286,7 +286,7 @@ class OrderDetails extends React.Component<Props, State> {
         totalCostInWeth: BigNumber,
         totalCostInUSD: BigNumber,
     ) => {
-        const { orderType } = this.props;
+        const { orderType, selectedToken } = this.props;
         const ethUsdTabs = [
             {
                 active: orderDetailType === OrderDetailsType.Eth,
@@ -316,6 +316,10 @@ class OrderDetails extends React.Component<Props, State> {
                 ({totalCostInWeth.toFixed(2)} wETH) {`$ ${totalCostInUSD.toFixed(2)}`}
             </Value>
         );
+        let zeroXFeeInZrxConverted;
+        if (selectedToken) {
+            zeroXFeeInZrxConverted = tokenAmountInUnitsToBigNumber(zeroXFeeInZrx, selectedToken.decimals);
+        }
         return (
             <>
                 <LabelContainer>
@@ -328,7 +332,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>
                         {orderDetailType === OrderDetailsType.Usd
                             ? `$ ${zeroXFeeInUSD.toFixed(2)}`
-                            : `${zeroXFeeInZrx} ZRX`}
+                            : `${zeroXFeeInZrxConverted} ZRX`}
                     </Value>
                 </Row>
                 <LabelContainer>
