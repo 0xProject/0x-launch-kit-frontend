@@ -11,6 +11,7 @@ import {
     DONE_STATUS_VISIBILITY_TIME,
     ModalText,
     ModalTextClickable,
+    sleep,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
@@ -112,7 +113,8 @@ class UnlockTokensStep extends React.Component<Props, State> {
 
             await web3Wrapper.awaitTransactionSuccessAsync(unlockTxHash);
             this.setState({ status: StepStatus.Done });
-            setTimeout(advanceStep, DONE_STATUS_VISIBILITY_TIME);
+            await sleep(DONE_STATUS_VISIBILITY_TIME);
+            advanceStep();
         } catch (err) {
             this.setState({ status: StepStatus.Error });
         }
