@@ -20,7 +20,7 @@ describe('OrderDetails', () => {
         const orderType = OrderType.Limit;
         const token = {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
+            decimals: 18,
             name: '0x',
             symbol: 'zrx',
             primaryColor: '',
