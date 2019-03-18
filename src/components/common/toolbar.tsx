@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 import { WalletConnectionStatusContainer } from '../account';
-import { NotificationsDropdown } from '../account/notifications_dropdown';
+import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
@@ -106,7 +106,7 @@ export const Toolbar = () => (
         <ToolbarEnd>
             <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
             <WalletDropdown />
-            <NotificationsDropdown />
+            <NotificationsDropdownContainer />
         </ToolbarEnd>
     </ToolbarWrapper>
 );

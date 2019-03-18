@@ -1,10 +1,8 @@
 import { RELAYER_NETWORK_ID, WETH_TOKEN_SYMBOL } from '../common/constants';
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
-import {
-    getWethTokenFromTokensMetaDataByNetworkId,
-    mapTokensMetaDataToTokenByNetworkId,
-} from '../util/token_meta_data';
-import { Token } from '../util/types';
+
+import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
+import { Token } from './types';
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
@@ -22,6 +20,15 @@ export class KnownTokens {
         const token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
         if (!token) {
             throw new Error(`Token with symbol ${symbol} not found in known tokens`);
+        }
+        return token;
+    };
+
+    public getTokenByAddress = (address: string): Token => {
+        const addressInLowerCase = address.toLowerCase();
+        const token = this._tokens.find(t => t.address.toLowerCase() === addressInLowerCase);
+        if (!token) {
+            throw new Error(`Token with address ${address} not found in known tokens`);
         }
         return token;
     };

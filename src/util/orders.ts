@@ -1,7 +1,8 @@
 import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order, SignedOrder } from '0x.js';
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
-import { OrderSide, UIOrder } from '../util/types';
+
+import { OrderSide, UIOrder } from './types';
 
 interface BuildLimitOrderParams {
     account: string;
@@ -34,8 +35,8 @@ export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide):
         takerAddress: ZERO_ADDRESS,
         takerAssetAmount: side === OrderSide.Buy ? amount : amount.mul(price),
         takerAssetData: side === OrderSide.Buy ? tokenAssetData : wethAssetData,
-        makerFee: new BigNumber(MAKER_FEE),
-        takerFee: new BigNumber(TAKER_FEE),
+        makerFee: MAKER_FEE,
+        takerFee: TAKER_FEE,
         salt: generatePseudoRandomSalt(),
         senderAddress: '0x0000000000000000000000000000000000000000',
     };
