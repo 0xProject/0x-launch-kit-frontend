@@ -14,23 +14,13 @@ import { OrderSide, OrderType, StoreState, Token, UIOrder } from '../../util/typ
 import { CardTabSelector } from '../common/card_tab_selector';
 
 interface State {
-    limitOrder: {
-        orderDetailType: OrderDetailsType;
-        zeroXFeeInUSD: BigNumber;
-        zeroXFeeInWeth: BigNumber;
-        zeroXFeeInZrx: BigNumber;
-        totalCostInWeth: BigNumber;
-        totalCostInUSD: BigNumber;
-    };
-    marketOrder: {
-        orderDetailType: OrderDetailsType;
-        zeroXFeeInUSD: BigNumber;
-        zeroXFeeInZrx: BigNumber;
-        zeroXFeeInWeth: BigNumber;
-        totalCostInWeth: BigNumber;
-        totalCostInUSD: BigNumber;
-        orderCanBeFilled: boolean;
-    };
+    orderDetailType: OrderDetailsType;
+    zeroXFeeInUSD: BigNumber;
+    zeroXFeeInZrx: BigNumber;
+    zeroXFeeInWeth: BigNumber;
+    totalCostInWeth: BigNumber;
+    totalCostInUSD: BigNumber;
+    canOrderBeFilled?: boolean;
 }
 
 interface PropsInterface {
@@ -104,23 +94,13 @@ class OrderDetails extends React.Component<Props, State> {
     // TODO: Refactor with hooks (needs react version update)
 
     public state = {
-        limitOrder: {
-            orderDetailType: OrderDetailsType.Eth,
-            zeroXFeeInUSD: new BigNumber(0),
-            zeroXFeeInWeth: new BigNumber(0),
-            zeroXFeeInZrx: new BigNumber(MAKER_FEE),
-            totalCostInWeth: new BigNumber(0),
-            totalCostInUSD: new BigNumber(0),
-        },
-        marketOrder: {
-            orderDetailType: OrderDetailsType.Eth,
-            zeroXFeeInUSD: new BigNumber(0),
-            zeroXFeeInWeth: new BigNumber(0),
-            zeroXFeeInZrx: new BigNumber(0),
-            totalCostInWeth: new BigNumber(0),
-            totalCostInUSD: new BigNumber(0),
-            orderCanBeFilled: true,
-        },
+        orderDetailType: OrderDetailsType.Eth,
+        zeroXFeeInUSD: new BigNumber(0),
+        zeroXFeeInWeth: new BigNumber(0),
+        zeroXFeeInZrx: new BigNumber(0),
+        totalCostInWeth: new BigNumber(0),
+        totalCostInUSD: new BigNumber(0),
+        canOrderBeFilled: true,
     };
 
     public updateLimitOrderState = async () => {
@@ -150,14 +130,12 @@ class OrderDetails extends React.Component<Props, State> {
         totalCostInUSD = tokenAmountInUnitsToBigNumber(totalCostInUSD, selectedToken.decimals);
 
         this.setState({
-            limitOrder: {
-                ...this.state.limitOrder,
-                zeroXFeeInWeth,
-                zeroXFeeInZrx,
-                zeroXFeeInUSD,
-                totalCostInWeth,
-                totalCostInUSD,
-            },
+            ...this.state,
+            zeroXFeeInWeth,
+            zeroXFeeInZrx,
+            zeroXFeeInUSD,
+            totalCostInWeth,
+            totalCostInUSD,
         });
     };
 
@@ -214,15 +192,12 @@ class OrderDetails extends React.Component<Props, State> {
         totalCostInUSD = tokenAmountInUnitsToBigNumber(totalCostInUSD, selectedToken.decimals);
 
         this.setState({
-            marketOrder: {
-                ...this.state.marketOrder,
-                zeroXFeeInWeth,
-                zeroXFeeInZrx,
-                zeroXFeeInUSD,
-                totalCostInWeth,
-                totalCostInUSD,
-                orderCanBeFilled: canOrderBeFilled,
-            },
+            zeroXFeeInWeth,
+            zeroXFeeInZrx,
+            zeroXFeeInUSD,
+            totalCostInWeth,
+            totalCostInUSD,
+            canOrderBeFilled,
         });
     };
 
@@ -256,29 +231,7 @@ class OrderDetails extends React.Component<Props, State> {
 
     public render = () => {
         const { orderType } = this.props;
-        let orderDetailType = OrderDetailsType.Eth;
-        let zeroXFeeInUSD = new BigNumber(0);
-        let totalCostInWeth = new BigNumber(0);
-        let totalCostInUSD = new BigNumber(0);
-        let zeroXFeeInZrx = new BigNumber(0);
-        if (orderType === OrderType.Limit) {
-            ({
-                orderDetailType,
-                zeroXFeeInUSD,
-                zeroXFeeInZrx,
-                totalCostInWeth,
-                totalCostInUSD,
-            } = this.state.limitOrder);
-        }
-        if (orderType === OrderType.Market) {
-            ({
-                orderDetailType,
-                zeroXFeeInUSD,
-                zeroXFeeInZrx,
-                totalCostInWeth,
-                totalCostInUSD,
-            } = this.state.marketOrder);
-        }
+        const { orderDetailType, zeroXFeeInUSD, zeroXFeeInZrx, totalCostInWeth, totalCostInUSD } = this.state;
         const ethUsdTabs = [
             {
                 active: orderDetailType === OrderDetailsType.Eth,
@@ -293,14 +246,14 @@ class OrderDetails extends React.Component<Props, State> {
         ];
 
         let totalCostMarket;
-        if (this.state.marketOrder.orderCanBeFilled) {
-            totalCostMarket = (
+        if (orderType === OrderType.Market) {
+            totalCostMarket = this.state.canOrderBeFilled ? (
                 <Value>
                     ({totalCostInWeth.toFixed(2)} wETH) {`$ ${totalCostInUSD.toFixed(2)}`}
                 </Value>
+            ) : (
+                <Value>---</Value>
             );
-        } else {
-            totalCostMarket = <Value>---</Value>;
         }
 
         const totalCostLimit = (
@@ -333,43 +286,11 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     private readonly _switchToUsd = () => {
-        const { orderType } = this.props;
-        if (orderType === OrderType.Market) {
-            this.setState({
-                marketOrder: {
-                    ...this.state.marketOrder,
-                    orderDetailType: OrderDetailsType.Usd,
-                },
-            });
-        }
-        if (orderType === OrderType.Limit) {
-            this.setState({
-                limitOrder: {
-                    ...this.state.limitOrder,
-                    orderDetailType: OrderDetailsType.Usd,
-                },
-            });
-        }
+        this.setState({ orderDetailType: OrderDetailsType.Usd });
     };
 
     private readonly _switchToEth = () => {
-        const { orderType } = this.props;
-        if (orderType === OrderType.Market) {
-            this.setState({
-                marketOrder: {
-                    ...this.state.marketOrder,
-                    orderDetailType: OrderDetailsType.Eth,
-                },
-            });
-        }
-        if (orderType === OrderType.Limit) {
-            this.setState({
-                limitOrder: {
-                    ...this.state.limitOrder,
-                    orderDetailType: OrderDetailsType.Eth,
-                },
-            });
-        }
+        this.setState({ orderDetailType: OrderDetailsType.Eth });
     };
 }
 
