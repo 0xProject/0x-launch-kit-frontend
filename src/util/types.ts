@@ -23,11 +23,11 @@ export interface TokenBalance {
 }
 
 export enum Web3State {
-    Done,
-    Error,
-    Loading,
-    NotInstalled,
-    Locked,
+    Done = 'Done',
+    Error = 'Error',
+    Loading = 'Loading',
+    NotInstalled = 'NotInstalled',
+    Locked = 'Locked',
 }
 
 export interface BlockchainState {
