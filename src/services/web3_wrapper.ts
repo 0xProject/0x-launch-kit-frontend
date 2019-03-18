@@ -1,8 +1,10 @@
 import { Web3Wrapper } from '@0x/web3-wrapper';
 
+import { METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH } from '../common/constants';
+
 let web3Wrapper: Web3Wrapper | null = null;
 
-export const getWeb3Wrapper = async () => {
+export const getWeb3Wrapper = async (): Promise<Web3Wrapper> => {
     const { ethereum, web3, location } = window;
     if (web3Wrapper) {
         return web3Wrapper;
@@ -25,17 +27,18 @@ export const getWeb3Wrapper = async () => {
             ethereum.on('networkChanged', async (network: number) => {
                 location.reload();
             });
-
             return web3Wrapper;
         } catch (error) {
-            // TODO: User denied account access
-            return null;
+            web3Wrapper = null;
+            /* The user denied account access */
+            throw new Error(METAMASK_USER_DENIED_AUTH);
         }
     } else if (web3) {
         web3Wrapper = new Web3Wrapper(web3.currentProvider);
         return web3Wrapper;
     } else {
-        return null;
+        /*  The user does not have metamask installed */
+        throw new Error(METAMASK_NOT_INSTALLED);
     }
 };
 

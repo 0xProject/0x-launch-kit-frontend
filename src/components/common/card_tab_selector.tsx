@@ -13,8 +13,12 @@ interface ItemProps {
 
 const CardTabSelectorWrapper = styled.div`
     align-items: center;
+    color: #b9b9b9;
     display: flex;
+    font-size: 14px;
+    font-weight: 500;
     justify-content: space-between;
+    line-height: 1.2;
 `;
 
 const CardTabSelectorItem = styled.span<ItemProps>`

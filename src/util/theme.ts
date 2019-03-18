@@ -2,12 +2,16 @@ export const themeColors = {
     borderColor: '#DEDEDE',
     darkBlue: '#002979',
     darkGray: '#474747',
+    errorButtonBackground: '#FF6534',
+    errorCardBackground: '#FAF4EF',
+    errorCardBorder: '#F39E4B',
+    errorCardText: '#F68C24',
+    gray: '#808080',
     green: '#3CB34F',
     lightGray: '#B9B9B9',
     orange: '#F6851B',
-    gray: '#808080',
     rowActive: '#FBFDFF',
-    textLight: '#999999',
+    textLight: '#999',
 };
 
 export const themeDimensions = {
