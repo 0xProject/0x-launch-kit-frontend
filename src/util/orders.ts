@@ -35,8 +35,8 @@ export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide):
         takerAddress: ZERO_ADDRESS,
         takerAssetAmount: side === OrderSide.Buy ? amount : amount.mul(price),
         takerAssetData: side === OrderSide.Buy ? tokenAssetData : wethAssetData,
-        makerFee: MAKER_FEE,
-        takerFee: TAKER_FEE,
+        makerFee: new BigNumber(MAKER_FEE),
+        takerFee: new BigNumber(TAKER_FEE),
         salt: generatePseudoRandomSalt(),
         senderAddress: '0x0000000000000000000000000000000000000000',
     };
@@ -77,7 +77,6 @@ export const buildMarketOrders = (
             amounts[i] = amounts[i].mul(order.price);
         }
     }
-
     const canBeFilled = filledAmount.eq(amount);
 
     const roundedAmounts = amounts.map(a => a.ceil());
