@@ -5,15 +5,15 @@ import { InfoIcon } from './icons/info_icon';
 import { InfoIconFull } from './icons/info_icon_full';
 
 export enum TooltipPosition {
-    Top = 1,
-    Bottom = 2,
-    Left = 3,
-    Right = 4,
+    Top,
+    Bottom,
+    Left,
+    Right,
 }
 
 export enum IconType {
-    Line = 1,
-    Fill = 2,
+    Line,
+    Fill,
 }
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
