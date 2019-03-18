@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import {
@@ -12,12 +12,14 @@ import { getContractWrappers } from '../../services/contract_wrappers';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
+import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, TokenBalance, Web3State } from '../../util/types';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+import { addNotification } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
-    return (blockchainData: BlockchainState) => resolve(blockchainData);
+    return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
 });
 
 export const setEthAccount = createAction('SET_ETH_ACCOUNT', resolve => {
@@ -135,6 +137,29 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
+export const setConnectedUser = (ethAccount: string, networkId: number) => {
+    return async (dispatch: any) => {
+        const knownTokens = getKnownTokens(networkId);
+
+        dispatch(setEthAccount(ethAccount));
+
+        const contractWrappers = await getContractWrappers();
+        contractWrappers.exchange.subscribe(
+            ExchangeEvents.Fill,
+            { makerAddress: ethAccount },
+            (err: Error | null, logEvent?: DecodedLogEvent<ExchangeFillEventArgs>) => {
+                if (err || !logEvent) {
+                    // tslint:disable-next-line:no-console
+                    console.error('There was a problem with the ExchangeFill event', err, logEvent);
+                    return;
+                }
+                const notification = buildOrderFilledNotification(logEvent.log.args, knownTokens);
+                dispatch(addNotification(notification));
+            },
+        );
+    };
+};
+
 export const initWallet = () => {
     return async (dispatch: any) => {
         dispatch(setWeb3State(Web3State.Loading));
@@ -157,10 +182,10 @@ export const initWallet = () => {
 
                 const selectedToken = knownTokens.getTokenBySymbol('ZRX');
 
+                dispatch(setConnectedUser(ethAccount, networkId));
                 dispatch(
                     initializeBlockchainData({
                         web3State: Web3State.Done,
-                        ethAccount,
                         ethBalance,
                         wethTokenBalance,
                         tokenBalances,
