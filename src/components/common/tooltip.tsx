@@ -13,7 +13,7 @@ const TooltipWrapper = styled.div`
 `;
 
 export const Tooltip: React.FC<Props> = props => {
-    const { type = 'line' } = props;
+    const { type = 'line', ...restProps } = props;
 
-    return <TooltipWrapper>{type === 'full' ? <InfoIconFull /> : <InfoIcon />}</TooltipWrapper>;
+    return <TooltipWrapper {...restProps}>{type === 'full' ? <InfoIconFull /> : <InfoIcon />}</TooltipWrapper>;
 };

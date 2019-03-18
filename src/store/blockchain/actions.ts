@@ -1,13 +1,18 @@
 import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../../common/constants';
+import {
+    METAMASK_NOT_INSTALLED,
+    METAMASK_USER_DENIED_AUTH,
+    TX_DEFAULTS,
+    WETH_TOKEN_SYMBOL,
+} from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
 import { setMarketTokens } from '../market/actions';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
@@ -161,10 +166,8 @@ export const initWallet = () => {
         const currencyPair = getCurrencyPair(state);
 
         dispatch(setWeb3State(Web3State.Loading));
-
-        const web3Wrapper = await getWeb3Wrapper();
-
-        if (web3Wrapper) {
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();
 
@@ -199,8 +202,57 @@ export const initWallet = () => {
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
+        } catch (error) {
+            switch (error.message) {
+                case METAMASK_USER_DENIED_AUTH: {
+                    dispatch(setWeb3State(Web3State.Locked));
+                    break;
+                }
+                case METAMASK_NOT_INSTALLED: {
+                    dispatch(setWeb3State(Web3State.NotInstalled));
+                    break;
+                }
+                default: {
+                    dispatch(setWeb3State(Web3State.Error));
+                    break;
+                }
+            }
+        }
+    };
+};
+
+export const addWethToBalance = (amount: BigNumber) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+
+        const wethToken = getKnownTokens().getWethToken();
+        const wethAddress = wethToken.address;
+
+        const contractWrappers = await getContractWrappers();
+        return contractWrappers.etherToken.depositAsync(wethAddress, amount, ethAccount);
+    };
+};
+
+export const unlockToken = (token: Token) => {
+    return async (dispatch: any, getState: any): Promise<any> => {
+        const state = getState();
+
+        let tokenBalance: TokenBalance;
+        if (token.symbol === WETH_TOKEN_SYMBOL) {
+            tokenBalance = getWethTokenBalance(state) as TokenBalance;
         } else {
-            dispatch(setWeb3State(Web3State.Error));
+            tokenBalance = getTokenBalances(state).find(
+                balance => balance.token.address === token.address,
+            ) as TokenBalance;
+        }
+
+        if (!tokenBalance.isUnlocked) {
+            const ethAccount = getEthAccount(state);
+            const contractWrappers = await getContractWrappers();
+            return contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+        } else {
+            return Promise.resolve();
         }
     };
 };

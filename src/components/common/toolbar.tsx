@@ -3,18 +3,28 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { goToHome, goToWallet } from '../../store/actions';
+import { getWeb3State } from '../../store/selectors';
+import { errorsWallet } from '../../util/error_messages';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
+import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
+import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
 import { PriceChange } from './price_change';
 
-interface Props {
+interface StateProps {
+    web3State?: Web3State;
+}
+
+interface DispatchProps {
     onGoToHome: () => any;
     onGoToWallet: () => any;
 }
+
+type Props = StateProps & DispatchProps;
 
 const separatorTopbar = `
     &:after {
@@ -103,6 +113,9 @@ const PriceChangeStyled = styled(PriceChange)`
 `;
 
 const Toolbar = (props: Props) => {
+    const isMmLocked = props.web3State === Web3State.Locked;
+    const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
+
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
         props.onGoToHome();
@@ -120,15 +133,29 @@ const Toolbar = (props: Props) => {
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
                 <PriceChangeStyled />
             </ToolbarStart>
-            <ToolbarEnd>
-                <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
-                    My Wallet
-                </MyWalletLink>
-                <WalletDropdown />
-                <NotificationsDropdownContainer />
-            </ToolbarEnd>
+            {isMmLocked ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
+            ) : null}
+            {isMmNotInstalled ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
+            ) : null}
+            {!isMmLocked && !isMmNotInstalled ? (
+                <ToolbarEnd>
+                    <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
+                        My Wallet
+                    </MyWalletLink>
+                    <WalletDropdown />
+                    <NotificationsDropdownContainer />
+                </ToolbarEnd>
+            ) : null}
         </ToolbarWrapper>
     );
+};
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        web3State: getWeb3State(state),
+    };
 };
 
 const mapDispatchToProps = {
@@ -137,7 +164,7 @@ const mapDispatchToProps = {
 };
 
 const ToolbarContainer = connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps,
 )(Toolbar);
 

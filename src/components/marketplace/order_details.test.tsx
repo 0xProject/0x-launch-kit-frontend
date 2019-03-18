@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { BigNumber } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
@@ -25,7 +29,7 @@ describe('OrderDetails', () => {
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(501);
         // @ts-ignore
-        CONSTANTS.MAKER_FEE = '1.0';
+        CONSTANTS.MAKER_FEE = new BigNumber('1000000000000000000');
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
             return new BigNumber(ZEROX_WETH_PRICE);

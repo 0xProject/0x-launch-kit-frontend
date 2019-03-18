@@ -3,22 +3,25 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getBaseToken, getQuoteToken, getUserOrders } from '../../store/selectors';
+import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
+import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderSide, StoreState, TabItem, Token, UIOrder } from '../../util/types';
+import { OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
+import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { CardLoading } from '../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
 
 interface StateProps {
-    orders: UIOrder[];
     baseToken: Token | null;
+    orders: UIOrder[];
     quoteToken: Token | null;
+    web3State?: Web3State;
 }
 
 enum Tab {
@@ -64,7 +67,7 @@ class OrderHistory extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orders, baseToken, quoteToken } = this.props;
+        const { orders, baseToken, quoteToken, web3State } = this.props;
         const openOrders = orders.filter(order => order.status === OrderStatus.Fillable);
         const filledOrders = orders.filter(order => order.status === OrderStatus.FullyFilled);
         const ordersToShow = this.state.tab === Tab.Open ? openOrders : filledOrders;
@@ -85,27 +88,45 @@ class OrderHistory extends React.Component<Props, State> {
         ];
 
         let content: React.ReactNode;
-
-        if (!baseToken || !quoteToken) {
-            content = <CardLoading />;
-        } else if (!ordersToShow.length) {
-            content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
-        } else {
-            content = (
-                <Table isResponsive={true}>
-                    <THead>
-                        <TR>
-                            <TH>Side</TH>
-                            <TH styles={{ textAlign: 'center' }}>Size ({baseToken.symbol})</TH>
-                            <TH styles={{ textAlign: 'center' }}>Filled ({baseToken.symbol})</TH>
-                            <TH styles={{ textAlign: 'center' }}>Price ({quoteToken.symbol})</TH>
-                            <TH>Status</TH>
-                            <TH>&nbsp;</TH>
-                        </TR>
-                    </THead>
-                    <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, baseToken))}</tbody>
-                </Table>
-            );
+        switch (web3State) {
+            case Web3State.Locked: {
+                content = <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />;
+                break;
+            }
+            case Web3State.NotInstalled: {
+                content = (
+                    <ErrorCard
+                        fontSize={FontSize.Large}
+                        text={errorsWallet.mmNotInstalled}
+                        icon={ErrorIcons.Metamask}
+                    />
+                );
+                break;
+            }
+            default: {
+                if (!baseToken || !quoteToken) {
+                    content = <CardLoading />;
+                } else if (!ordersToShow.length) {
+                    content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+                } else {
+                    content = (
+                        <Table isResponsive={true}>
+                            <THead>
+                                <TR>
+                                    <TH>Side</TH>
+                                    <TH styles={{ textAlign: 'center' }}>Size ({baseToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'center' }}>Filled ({baseToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'center' }}>Price ({quoteToken.symbol})</TH>
+                                    <TH>Status</TH>
+                                    <TH>&nbsp;</TH>
+                                </TR>
+                            </THead>
+                            <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, baseToken))}</tbody>
+                        </Table>
+                    );
+                }
+                break;
+            }
         }
 
         return (
@@ -118,9 +139,10 @@ class OrderHistory extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        orders: getUserOrders(state),
         baseToken: getBaseToken(state),
+        orders: getUserOrders(state),
         quoteToken: getQuoteToken(state),
+        web3State: getWeb3State(state),
     };
 };
 

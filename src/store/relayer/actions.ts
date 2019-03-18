@@ -91,13 +91,8 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
-        const baseToken = getBaseToken(state) as Token;
-
-        const contractWrappers = await getContractWrappers();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
-
         const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
@@ -107,6 +102,10 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
         );
 
         if (canBeFilled) {
+            const baseToken = getBaseToken(state) as Token;
+
+            const contractWrappers = await getContractWrappers();
+            const web3Wrapper = await getWeb3WrapperOrThrow();
             const txHash = await contractWrappers.exchange.batchFillOrdersAsync(
                 ordersToFill,
                 amounts,
@@ -127,6 +126,8 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
                     timestamp: new Date(),
                 }),
             );
+
+            return txHash;
         } else {
             window.alert('There are no enough orders to fill this amount');
         }
