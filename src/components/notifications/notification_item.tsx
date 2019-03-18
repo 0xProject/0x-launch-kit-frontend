@@ -137,7 +137,7 @@ class NotificationItem extends React.Component<Props, State> {
     };
 
     private readonly _getTextFromItem = (item: Notification): React.ReactNode => {
-        const formatter = (value: any, unit: any, suffix: any) => {
+        const formatter = (value: number, unit: string, suffix: string) => {
             if (unit === 'second') {
                 return 'Just now';
             } else {
