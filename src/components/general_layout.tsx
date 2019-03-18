@@ -18,12 +18,19 @@ const Content = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    overflow: auto;
+    min-height: fit-content;
     padding: 10px;
 
     @media (min-width: ${themeBreakPoints.xl}) {
         flex-direction: row;
     }
+`;
+
+const ContentScroll = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
 `;
 
 interface GeneralLayoutProps {
@@ -36,8 +43,10 @@ export const GeneralLayout = (props: React.Props<any> | GeneralLayoutProps) => {
     return (
         <General>
             <Toolbar />
-            <Content>{children}</Content>
-            <Footer />
+            <ContentScroll>
+                <Content>{children}</Content>
+                <Footer />
+            </ContentScroll>
             <StepsModalContainer />
         </General>
     );

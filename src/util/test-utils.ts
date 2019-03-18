@@ -1,5 +1,8 @@
 import { assetDataUtils, BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
+import * as Factory from 'factory.ts';
+
+import { TokenMetaData } from '../common/tokens_meta_data';
 
 import { OrderSide, Token, UIOrder } from './types';
 
@@ -99,3 +102,33 @@ export const closedOrder = (params = {}): UIOrder => {
         ...params,
     });
 };
+
+const repeat = (x: any, times: number) => [...Array(times)].map(() => x);
+
+export const addressFactory = Factory.Sync.makeFactory<{ address: string }>({
+    address: Factory.each((i: number) => {
+        const prefix = '0x';
+        const zeros = repeat('0', 39 - Math.floor(Math.log(i + 1) / Math.log(10))).join('');
+        const suffix = i.toString();
+
+        return `${prefix}${zeros}${suffix}`;
+    }),
+});
+
+export const tokenFactory = Factory.Sync.makeFactory<Token>({
+    address: Factory.each(() => addressFactory.build().address),
+    decimals: 0,
+    name: Factory.each(i => `Mock Token ${i}`),
+    primaryColor: '#ff0000',
+    symbol: Factory.each(i => `MOCK${i}`),
+});
+
+export const tokenMetaDataFactory = Factory.Sync.makeFactory<TokenMetaData>({
+    addresses: Factory.each(() => ({
+        50: addressFactory.build().address,
+    })),
+    decimals: 0,
+    name: Factory.each(i => `Mock Token ${i}`),
+    primaryColor: '#ff0000',
+    symbol: Factory.each(i => `MOCK${i}`),
+});
