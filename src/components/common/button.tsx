@@ -13,9 +13,11 @@ interface ButtonColors {
     [primary: string]: string;
     secondary: string;
     tertiary: string;
+    error: string;
 }
 
 const buttonColors: ButtonColors = {
+    error: themeColors.errorButtonBackground,
     primary: themeColors.darkBlue,
     secondary: themeColors.darkGray,
     tertiary: themeColors.orange,

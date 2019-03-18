@@ -1,22 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Toolbar Toolbar to match snapshot 1`] = `
-<styled.div>
-  <styled.div>
-    <Styled(Logo) />
-    <Styled(Connect(MarketsDropdown))
-      shouldCloseDropdownBodyOnClick={false}
-    />
-    <Styled(PriceChange) />
-  </styled.div>
-  <styled.div>
-    <Styled(Link)
-      to="/my-wallet"
-    >
-      My Wallet
-    </Styled(Link)>
-    <Styled(Connect(WalletConnectionStatus)) />
-    <Connect(NotificationsDropdown) />
-  </styled.div>
-</styled.div>
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
 `;

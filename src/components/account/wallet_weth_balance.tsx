@@ -127,7 +127,7 @@ const Note = styled.p`
     font-weight: normal;
     line-height: 24px;
     margin: -10px 0 30px;
-    padding: 0 40px;
+    padding: 20px 40px 0;
     text-align: center;
 `;
 
