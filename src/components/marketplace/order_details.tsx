@@ -92,7 +92,6 @@ enum OrderDetailsType {
 
 class OrderDetails extends React.Component<Props, State> {
     // TODO: Refactor with hooks (needs react version update)
-
     public state = {
         orderDetailType: OrderDetailsType.Eth,
         zeroXFeeInUSD: new BigNumber(0),
@@ -108,35 +107,29 @@ class OrderDetails extends React.Component<Props, State> {
         if (!selectedToken) {
             return;
         }
-        const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
 
+        const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
         const results = await Promise.all(promisesArray);
         const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+
         // Calculates total cost in wETH
-        let zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
+        const zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
         const totalPriceWithoutFeeInWeth = tokenAmount.mul(tokenPrice);
-        let totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
-        let zeroXFeeInZrx = MAKER_FEE;
+        const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
+        const zeroXFeeInZrx = MAKER_FEE;
+
         // Calculates total cost in USD
-        let zeroXFeeInUSD = zeroXPriceInUSD.mul(MAKER_FEE);
+        const zeroXFeeInUSD = zeroXPriceInUSD.mul(MAKER_FEE);
         const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
-        let totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
+        const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
 
-        // Converts all the values to values that could be shown on the GUI
-        zeroXFeeInWeth = tokenAmountInUnitsToBigNumber(zeroXFeeInWeth, selectedToken.decimals);
-        zeroXFeeInZrx = tokenAmountInUnitsToBigNumber(zeroXFeeInZrx, selectedToken.decimals);
-        zeroXFeeInUSD = tokenAmountInUnitsToBigNumber(zeroXFeeInUSD, selectedToken.decimals);
-        totalCostInWeth = tokenAmountInUnitsToBigNumber(totalCostInWeth, selectedToken.decimals);
-        totalCostInUSD = tokenAmountInUnitsToBigNumber(totalCostInUSD, selectedToken.decimals);
-
-        this.setState({
-            ...this.state,
+        this._updateFeeAndTotalCostValues(
             zeroXFeeInWeth,
             zeroXFeeInZrx,
             zeroXFeeInUSD,
             totalCostInWeth,
             totalCostInUSD,
-        });
+        );
     };
 
     public updateMarketOrderState = async () => {
@@ -144,9 +137,11 @@ class OrderDetails extends React.Component<Props, State> {
         if (!selectedToken) {
             return;
         }
+
         const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
         const results = await Promise.all(promisesArray);
         const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+
         let ordersToFill: SignedOrder[];
         let canOrderBeFilled: boolean;
         let totalFee;
@@ -175,30 +170,23 @@ class OrderDetails extends React.Component<Props, State> {
         );
 
         // Calculates total cost in wETH
-        let zeroXFeeInZrx = totalFee;
-        let zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
-        let totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
+        const zeroXFeeInZrx = totalFee;
+        const zeroXFeeInWeth = zeroXFeeInZrx.mul(zeroXPriceInWeth);
+        const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
 
         // Calculates total cost in USD
-        let zeroXFeeInUSD = zeroXFeeInZrx.mul(zeroXPriceInUSD);
+        const zeroXFeeInUSD = zeroXFeeInZrx.mul(zeroXPriceInUSD);
         const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
-        let totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
+        const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
 
-        // Converts all the values to values that could be shown on the GUI
-        zeroXFeeInWeth = tokenAmountInUnitsToBigNumber(zeroXFeeInWeth, selectedToken.decimals);
-        zeroXFeeInZrx = tokenAmountInUnitsToBigNumber(zeroXFeeInZrx, selectedToken.decimals);
-        zeroXFeeInUSD = tokenAmountInUnitsToBigNumber(zeroXFeeInUSD, selectedToken.decimals);
-        totalCostInWeth = tokenAmountInUnitsToBigNumber(totalCostInWeth, selectedToken.decimals);
-        totalCostInUSD = tokenAmountInUnitsToBigNumber(totalCostInUSD, selectedToken.decimals);
-
-        this.setState({
+        this._updateFeeAndTotalCostValues(
             zeroXFeeInWeth,
             zeroXFeeInZrx,
             zeroXFeeInUSD,
             totalCostInWeth,
             totalCostInUSD,
             canOrderBeFilled,
-        });
+        );
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) => {
@@ -283,6 +271,25 @@ class OrderDetails extends React.Component<Props, State> {
                 </LabelContainer>
             </>
         );
+    };
+
+    private readonly _updateFeeAndTotalCostValues = (
+        zeroXFeeInWeth: BigNumber,
+        zeroXFeeInZrx: BigNumber,
+        zeroXFeeInUSD: BigNumber,
+        totalCostInWeth: BigNumber,
+        totalCostInUSD: BigNumber,
+        canOrderBeFilled?: boolean,
+    ) => {
+        const selectedToken = this.props.selectedToken as Token;
+        this.setState({
+            zeroXFeeInWeth: tokenAmountInUnitsToBigNumber(zeroXFeeInWeth, selectedToken.decimals),
+            zeroXFeeInZrx: tokenAmountInUnitsToBigNumber(zeroXFeeInZrx, selectedToken.decimals),
+            zeroXFeeInUSD: tokenAmountInUnitsToBigNumber(zeroXFeeInUSD, selectedToken.decimals),
+            totalCostInWeth: tokenAmountInUnitsToBigNumber(totalCostInWeth, selectedToken.decimals),
+            totalCostInUSD: tokenAmountInUnitsToBigNumber(totalCostInUSD, selectedToken.decimals),
+            canOrderBeFilled,
+        });
     };
 
     private readonly _switchToUsd = () => {
