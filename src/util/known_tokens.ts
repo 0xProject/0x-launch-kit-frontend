@@ -1,4 +1,4 @@
-import { RELAYER_NETWORK_ID, WETH_TOKEN_SYMBOL } from '../common/constants';
+import { RELAYER_NETWORK_ID, WETH_TOKEN_SYMBOL, ZRX_TOKEN_SYMBOL } from '../common/constants';
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 import {
     getWethTokenFromTokensMetaDataByNetworkId,
@@ -65,4 +65,12 @@ export const getColorBySymbol = (symbol: string): string => {
     }
 
     return token.primaryColor;
+};
+
+export const isZrx = (token: Token): boolean => {
+    return token.symbol.toLowerCase() === ZRX_TOKEN_SYMBOL.toLowerCase();
+};
+
+export const isWeth = (token: Token): boolean => {
+    return token.symbol.toLowerCase() === WETH_TOKEN_SYMBOL.toLowerCase();
 };
