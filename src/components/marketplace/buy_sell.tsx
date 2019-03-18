@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
 import { getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { OrderSide, StoreState, Token } from '../../util/types';
+import { OrderSide, OrderType, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
@@ -25,11 +25,6 @@ interface DispatchProps {
 }
 
 type Props = StateProps & DispatchProps;
-
-enum OrderType {
-    Limit,
-    Market,
-}
 
 interface State {
     makerAmount: BigNumber;

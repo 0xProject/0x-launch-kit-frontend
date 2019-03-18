@@ -5,14 +5,9 @@ import React from 'react';
 import * as CONSTANTS from '../../common/constants';
 import * as storeFns from '../../store/selectors';
 import * as dollarUtils from '../../util/market_prices';
-import { OrderSide, UIOrder } from '../../util/types';
+import { OrderSide, OrderType, UIOrder } from '../../util/types';
 
 import { OrderDetails } from './order_details';
-
-enum OrderType {
-    Limit,
-    Market,
-}
 
 describe('OrderDetails', () => {
     it('Calculates total cost for limit orders', done => {
@@ -102,7 +97,8 @@ describe('OrderDetails', () => {
         const makerAmount = new BigNumber(10000000000000000000);
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(2);
-        // MAKER_FEE = 20
+        // TAKER_FEE = 20
+        const TAKER_FEE = new BigNumber(1000000000000000000);
         const MAKER_FEE = new BigNumber(1000000000000000000);
 
         const signedOrder1 = {
@@ -120,7 +116,7 @@ describe('OrderDetails', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
-            takerFee: new BigNumber(1),
+            takerFee: TAKER_FEE,
         };
 
         const signedOrder2 = {
@@ -138,7 +134,7 @@ describe('OrderDetails', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
-            takerFee: new BigNumber(1),
+            takerFee: TAKER_FEE,
         };
 
         const sellOrder1 = {
@@ -224,8 +220,9 @@ describe('OrderDetails', () => {
         const makerAmount = new BigNumber(10000000000000000000);
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(17);
-        // MAKER_FEE = 20
+        // TAKER_FEE = 20
         const MAKER_FEE = new BigNumber(1000000000000000000);
+        const TAKER_FEE = new BigNumber(1000000000000000000);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -242,7 +239,7 @@ describe('OrderDetails', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
-            takerFee: new BigNumber(1),
+            takerFee: TAKER_FEE,
         };
 
         const signedOrder2 = {
@@ -260,7 +257,7 @@ describe('OrderDetails', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
-            takerFee: new BigNumber(1),
+            takerFee: TAKER_FEE,
         };
 
         const sellOrder1 = {
