@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { BigNumber, OrderStatus } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
