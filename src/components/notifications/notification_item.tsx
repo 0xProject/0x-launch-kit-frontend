@@ -137,7 +137,15 @@ class NotificationItem extends React.Component<Props, State> {
     };
 
     private readonly _getTextFromItem = (item: Notification): React.ReactNode => {
-        return <TimeAgo date={item.timestamp} />;
+        const formatter = (value: any, unit: any, suffix: any) => {
+            if (unit === 'second') {
+                return 'Just now';
+            } else {
+                return `${value}  ${unit}${value > 1 ? 's' : ''} ${suffix}`;
+            }
+        };
+
+        return <TimeAgo date={item.timestamp} formatter={formatter} />;
     };
 
     private readonly _getNotificationIcon = (item: Notification) => {
