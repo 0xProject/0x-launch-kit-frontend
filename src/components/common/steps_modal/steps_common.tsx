@@ -57,7 +57,7 @@ const StepStatusError = (props: React.Props<WithChildren>) => (
     </>
 );
 
-const sleep = (timeout: number) => new Promise(resolve => setTimeout(resolve, timeout));
+const sleep = (timeout: number) => new Promise<void>(resolve => setTimeout(resolve, timeout));
 
 const iconMarginBottom = '30px';
 
