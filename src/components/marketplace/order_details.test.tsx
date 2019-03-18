@@ -28,9 +28,12 @@ describe('OrderDetails', () => {
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
-        const makerAmount = new BigNumber(50);
+
+        // makerAmount = 50
+        const makerAmount = new BigNumber(50000000000000000000);
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(501);
+        // MAKER_FEE = 20
         // @ts-ignore
         CONSTANTS.MAKER_FEE = new BigNumber('1000000000000000000');
         // @ts-ignore
@@ -81,12 +84,13 @@ describe('OrderDetails', () => {
             done();
         }, 0);
     });
+
     it('Calculates fees for market orders', done => {
         // given
         const orderType = OrderType.Market;
         const token = {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
+            decimals: 18,
             name: '0x',
             symbol: 'zrx',
             primaryColor: '',
@@ -94,10 +98,12 @@ describe('OrderDetails', () => {
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
-        const makerAmount = new BigNumber(10);
+        // makerAmount = 10
+        const makerAmount = new BigNumber(10000000000000000000);
         const tokenPrice = new BigNumber(10);
-        const resultExpected = new BigNumber(40);
-        const MAKER_FEE = new BigNumber(20);
+        const resultExpected = new BigNumber(2);
+        // MAKER_FEE = 20
+        const MAKER_FEE = new BigNumber(1000000000000000000);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -138,7 +144,7 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: new BigNumber(10),
+            size: new BigNumber(10000000000000000000), // size = 10
             filled: new BigNumber(0),
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
@@ -147,7 +153,7 @@ describe('OrderDetails', () => {
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: new BigNumber(5),
+            size: new BigNumber(5000000000000000000), // size = 5
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
@@ -178,7 +184,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
-                operationType={OrderSide.Sell}
+                operationType={OrderSide.Buy}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
             />,
@@ -200,12 +206,13 @@ describe('OrderDetails', () => {
             done();
         }, 0);
     });
+
     it('Calculates total cost for market orders', done => {
         // given
         const orderType = OrderType.Market;
         const token = {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
+            decimals: 18,
             name: '0x',
             symbol: 'zrx',
             primaryColor: '',
@@ -213,10 +220,12 @@ describe('OrderDetails', () => {
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
-        const makerAmount = new BigNumber(10);
+        // makerAmount = 10
+        const makerAmount = new BigNumber(10000000000000000000);
         const tokenPrice = new BigNumber(10);
-        const resultExpected = new BigNumber(55);
-        const MAKER_FEE = new BigNumber(20);
+        const resultExpected = new BigNumber(17);
+        // MAKER_FEE = 20
+        const MAKER_FEE = new BigNumber(1000000000000000000);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -257,7 +266,7 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: new BigNumber(10),
+            size: new BigNumber(10000000000000000000), // size = 10
             filled: new BigNumber(0),
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
@@ -266,7 +275,7 @@ describe('OrderDetails', () => {
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: new BigNumber(5),
+            size: new BigNumber(5000000000000000000), // size = 5
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
@@ -302,7 +311,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
-                operationType={OrderSide.Sell}
+                operationType={OrderSide.Buy}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
             />,
@@ -326,12 +335,13 @@ describe('OrderDetails', () => {
             done();
         }, 0);
     });
+
     it('Do not displays a value if the order amount is not fillable on market', done => {
         // given
         const orderType = OrderType.Market;
         const token = {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
+            decimals: 18,
             name: '0x',
             symbol: 'zrx',
             primaryColor: '',

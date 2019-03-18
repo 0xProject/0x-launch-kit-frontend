@@ -64,6 +64,5 @@ export const getAllOrdersToFillMarketOrderAndAmountsToPay = (
         ordersToFillReturn = [];
         amountToPayForEachOrderReturn = [];
     }
-
     return [ordersToFillReturn, amountToPayForEachOrderReturn, canBeFilled];
 };

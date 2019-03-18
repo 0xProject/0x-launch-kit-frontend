@@ -176,9 +176,8 @@ class OrderDetails extends React.Component<Props, State> {
             let totalFee;
             let amountToPayForEachOrder: BigNumber[];
             let totalPriceWithoutFeeInWeth;
-
             let uiOrders: UIOrder[];
-            operationType === OrderSide.Sell ? (uiOrders = openSellOrders) : (uiOrders = openBuyOrders);
+            operationType === OrderSide.Sell ? (uiOrders = openBuyOrders) : (uiOrders = openSellOrders);
             // Gets all the orders needed to fill the order
             [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = getAllOrdersToFillMarketOrderAndAmountsToPay(
                 tokenAmount,
@@ -190,6 +189,7 @@ class OrderDetails extends React.Component<Props, State> {
             totalFee = ordersToFill.reduce((totalFeeSum: BigNumber, currentOrder: SignedOrder) => {
                 return totalFeeSum.add(currentOrder.makerFee);
             }, new BigNumber(0));
+
             // Takes the sum of all the orders price
             totalPriceWithoutFeeInWeth = amountToPayForEachOrder.reduce(
                 (totalPriceSum: BigNumber, currentPrice: BigNumber) => {
