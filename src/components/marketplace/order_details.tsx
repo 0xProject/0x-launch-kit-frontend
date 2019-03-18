@@ -288,7 +288,7 @@ class OrderDetails extends React.Component<Props, State> {
         totalCostInWeth: BigNumber,
         totalCostInUSD: BigNumber,
     ) => {
-        const { orderType, selectedToken } = this.props;
+        const { orderType } = this.props;
         const ethUsdTabs = [
             {
                 active: orderDetailType === OrderDetailsType.Eth,
