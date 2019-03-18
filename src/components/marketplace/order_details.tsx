@@ -133,19 +133,21 @@ class OrderDetails extends React.Component<Props, State> {
         if (selectedToken) {
             // Reduces decimals of the token amount
             const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
+            const makerFeeConverted = tokenAmountInUnitsToBigNumber(MAKER_FEE, selectedToken.decimals);
             // This could be refactored with promise all
             const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
 
             const results = await Promise.all(promisesArray);
             const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+
             // Calculates total cost in wETH
-            const zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
+            const zeroXFeeInWeth = zeroXPriceInWeth.mul(makerFeeConverted);
             const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
             const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
-            const zeroXFeeInZrx = new BigNumber(MAKER_FEE);
+            const zeroXFeeInZrx = makerFeeConverted;
 
             // Calculates total cost in USD
-            const zeroXFeeInUSD = zeroXPriceInUSD.mul(MAKER_FEE);
+            const zeroXFeeInUSD = zeroXPriceInUSD.mul(makerFeeConverted);
             const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
             const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
 
@@ -316,10 +318,7 @@ class OrderDetails extends React.Component<Props, State> {
                 ({totalCostInWeth.toFixed(2)} wETH) {`$ ${totalCostInUSD.toFixed(2)}`}
             </Value>
         );
-        let zeroXFeeInZrxConverted;
-        if (selectedToken) {
-            zeroXFeeInZrxConverted = tokenAmountInUnitsToBigNumber(zeroXFeeInZrx, selectedToken.decimals);
-        }
+
         return (
             <>
                 <LabelContainer>
@@ -332,7 +331,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>
                         {orderDetailType === OrderDetailsType.Usd
                             ? `$ ${zeroXFeeInUSD.toFixed(2)}`
-                            : `${zeroXFeeInZrxConverted} ZRX`}
+                            : `${zeroXFeeInZrx} ZRX`}
                     </Value>
                 </Row>
                 <LabelContainer>
