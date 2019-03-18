@@ -102,28 +102,20 @@ class OrderDetails extends React.Component<Props, State> {
         canOrderBeFilled: true,
     };
 
-    public updateLimitOrderState = async () => {
-        const { tokenAmount, tokenPrice, selectedToken } = this.props;
-        if (!selectedToken) {
-            return;
-        }
-
-        const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
-        const results = await Promise.all(promisesArray);
-        const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
-
+    public updateLimitOrderState = (zeroXPriceInWeth: BigNumber, zeroXPriceInUSD: BigNumber, ethInUSD: BigNumber) => {
+        const { tokenAmount, tokenPrice } = this.props;
         // Calculates total cost in wETH
-        const zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
         const totalPriceWithoutFeeInWeth = tokenAmount.mul(tokenPrice);
-        const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
         const zeroXFeeInZrx = MAKER_FEE;
+        const zeroXFeeInWeth = zeroXPriceInWeth.mul(MAKER_FEE);
+        const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
 
         // Calculates total cost in USD
         const zeroXFeeInUSD = zeroXPriceInUSD.mul(MAKER_FEE);
         const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
         const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
 
-        this._updateFeeAndTotalCostValues(
+        this._formatTotalCostAndFeeValuesInState(
             zeroXFeeInWeth,
             zeroXFeeInZrx,
             zeroXFeeInUSD,
@@ -132,15 +124,8 @@ class OrderDetails extends React.Component<Props, State> {
         );
     };
 
-    public updateMarketOrderState = async () => {
-        const { tokenAmount, selectedToken, operationType, openSellOrders, openBuyOrders } = this.props;
-        if (!selectedToken) {
-            return;
-        }
-
-        const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
-        const results = await Promise.all(promisesArray);
-        const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+    public updateMarketOrderState = (zeroXPriceInWeth: BigNumber, zeroXPriceInUSD: BigNumber, ethInUSD: BigNumber) => {
+        const { tokenAmount, operationType, openSellOrders, openBuyOrders } = this.props;
 
         let ordersToFill: SignedOrder[];
         let canOrderBeFilled: boolean;
@@ -179,7 +164,7 @@ class OrderDetails extends React.Component<Props, State> {
         const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
         const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
 
-        this._updateFeeAndTotalCostValues(
+        this._formatTotalCostAndFeeValuesInState(
             zeroXFeeInWeth,
             zeroXFeeInZrx,
             zeroXFeeInUSD,
@@ -189,7 +174,7 @@ class OrderDetails extends React.Component<Props, State> {
         );
     };
 
-    public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) => {
+    public componentDidUpdate = async (prevProps: Readonly<Props>) => {
         const newProps = this.props;
         if (
             newProps.tokenPrice !== prevProps.tokenPrice ||
@@ -198,23 +183,12 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.selectedToken !== prevProps.selectedToken ||
             newProps.operationType !== prevProps.operationType
         ) {
-            if (newProps.orderType === OrderType.Limit) {
-                await this.updateLimitOrderState();
-            }
-            if (newProps.orderType === OrderType.Market) {
-                await this.updateMarketOrderState();
-            }
+            await this._updateOrderDetailsState();
         }
     };
 
     public componentDidMount = async () => {
-        const { orderType } = this.props;
-        if (orderType === OrderType.Limit) {
-            await this.updateLimitOrderState();
-        }
-        if (orderType === OrderType.Market) {
-            await this.updateMarketOrderState();
-        }
+        await this._updateOrderDetailsState();
     };
 
     public render = () => {
@@ -273,7 +247,24 @@ class OrderDetails extends React.Component<Props, State> {
         );
     };
 
-    private readonly _updateFeeAndTotalCostValues = (
+    private readonly _updateOrderDetailsState = async () => {
+        const { selectedToken, orderType } = this.props;
+        if (!selectedToken) {
+            return;
+        }
+
+        const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
+        const results = await Promise.all(promisesArray);
+        const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+
+        if (orderType === OrderType.Limit) {
+            this.updateLimitOrderState(zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD);
+        } else {
+            this.updateMarketOrderState(zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD);
+        }
+    };
+
+    private readonly _formatTotalCostAndFeeValuesInState = (
         zeroXFeeInWeth: BigNumber,
         zeroXFeeInZrx: BigNumber,
         zeroXFeeInUSD: BigNumber,
