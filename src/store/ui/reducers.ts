@@ -1,6 +1,6 @@
 import { getType } from 'typesafe-actions';
 
-import { Step, StepsModalState, UIState } from '../../util/types';
+import { NotificationKind, OrderFilledNotification, Step, StepsModalState, UIState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
@@ -50,12 +50,29 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
     switch (action.type) {
         case getType(actions.setHasUnreadNotifications):
             return { ...state, hasUnreadNotifications: action.payload };
-        case getType(actions.addNotification):
-            return {
-                ...state,
-                notifications: [action.payload, ...state.notifications],
-                hasUnreadNotifications: true,
-            };
+        case getType(actions.setNotifications):
+            return { ...state, notifications: action.payload };
+        case getType(actions.addNotification): {
+            let alreadyExists = false;
+            if (action.payload.kind === NotificationKind.OrderFilled) {
+                const newNotification = action.payload as OrderFilledNotification;
+
+                alreadyExists = state.notifications
+                    .filter(notification => notification.kind === NotificationKind.OrderFilled)
+                    .map(notification => notification as OrderFilledNotification)
+                    .some(notification => notification.txHash === newNotification.txHash);
+            }
+
+            if (alreadyExists) {
+                return state;
+            } else {
+                return {
+                    ...state,
+                    notifications: [action.payload, ...state.notifications],
+                    hasUnreadNotifications: true,
+                };
+            }
+        }
     }
 
     return {

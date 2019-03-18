@@ -1,8 +1,9 @@
-import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
+import { BigNumber, BlockParam, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
+import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
@@ -10,7 +11,7 @@ import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, TokenBalance, Web3State } from '../../util/types';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
-import { addNotification } from '../ui/actions';
+import { addNotification, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
@@ -39,6 +40,8 @@ export const setWethBalance = createAction('SET_WETH_BALANCE', resolve => {
 export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolve => {
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
 });
+
+const localStorage = new LocalStorage(window.localStorage);
 
 export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
     return async (dispatch: any, getState: any) => {
@@ -137,7 +140,40 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         dispatch(setEthAccount(ethAccount));
 
+        dispatch(setNotifications(localStorage.getNotifications(ethAccount)));
+        dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount)));
+
+        const web3Wrapper = await getWeb3WrapperOrThrow();
         const contractWrappers = await getContractWrappers();
+
+        const blockNumber = await web3Wrapper.getBlockNumberAsync();
+
+        const fromBlock = localStorage.getLastBlockChecked(ethAccount) + 1;
+
+        const pastFillEvents = await contractWrappers.exchange.getLogsAsync<ExchangeFillEventArgs>(
+            ExchangeEvents.Fill,
+            {
+                fromBlock,
+                toBlock: blockNumber,
+            },
+            {
+                makerAddress: ethAccount,
+            },
+        );
+
+        pastFillEvents.forEach(async fillEvent => {
+            const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
+            const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+            dispatch(
+                addNotification({
+                    ...notification,
+                    timestamp: new Date(timestamp * 1000),
+                }),
+            );
+        });
+
+        localStorage.saveLastBlockChecked(blockNumber, ethAccount);
+
         contractWrappers.exchange.subscribe(
             ExchangeEvents.Fill,
             { makerAddress: ethAccount },
@@ -147,7 +183,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
                     console.error('There was a problem with the ExchangeFill event', err, logEvent);
                     return;
                 }
-                const notification = buildOrderFilledNotification(logEvent.log.args, knownTokens);
+                const notification = buildOrderFilledNotification(logEvent.log, knownTokens);
                 dispatch(addNotification(notification));
             },
         );

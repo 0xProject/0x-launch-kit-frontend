@@ -16,6 +16,10 @@ export const addNotification = createAction('ADD_NOTIFICATION', resolve => {
     return (newNotification: Notification) => resolve(newNotification);
 });
 
+export const setNotifications = createAction('SET_NOTIFICATIONS', resolve => {
+    return (notifications: Notification[]) => resolve(notifications);
+});
+
 export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
     return (pendingSteps: Step[]) => resolve(pendingSteps);
 });

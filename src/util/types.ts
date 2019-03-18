@@ -139,6 +139,7 @@ export interface OrderFilledNotification extends BaseNotification {
     amount: BigNumber;
     token: Token;
     side: OrderSide;
+    txHash: string;
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
