@@ -14,39 +14,6 @@ import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderSide, OrderType, StoreState, Token, UIOrder } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
 
-enum OrderDetailsType {
-    Eth,
-    Usd,
-}
-
-interface State {
-    orderDetailType: OrderDetailsType;
-    feeInZrx: BigNumber;
-    totalPriceWithoutFeeInWeth: BigNumber;
-    canOrderBeFilled?: boolean;
-    // @TODO: this should live in the store and bound via props
-    prices: {
-        zrxInWeth: BigNumber;
-        zrxInUsd: BigNumber;
-        ethInUsd: BigNumber;
-    };
-}
-
-interface PropsInterface {
-    orderType: OrderType;
-    tokenAmount: BigNumber;
-    tokenPrice: BigNumber;
-    selectedToken: Token | null;
-    operationType: OrderSide;
-}
-
-interface StateProps {
-    openSellOrders: UIOrder[];
-    openBuyOrders: UIOrder[];
-}
-
-type Props = StateProps & PropsInterface;
-
 const Row = styled.div`
     align-items: center;
     border-bottom: solid 1px ${themeColors.borderColor};
@@ -93,6 +60,39 @@ const Label = styled.label<{ color?: string }>`
 const InnerTabs = styled(CardTabSelector)`
     font-size: 14px;
 `;
+
+enum OrderDetailsType {
+    Eth,
+    Usd,
+}
+
+interface OwnProps {
+    orderType: OrderType;
+    tokenAmount: BigNumber;
+    tokenPrice: BigNumber;
+    selectedToken: Token | null;
+    operationType: OrderSide;
+}
+
+interface StateProps {
+    openSellOrders: UIOrder[];
+    openBuyOrders: UIOrder[];
+}
+
+type Props = StateProps & OwnProps;
+
+interface State {
+    orderDetailType: OrderDetailsType;
+    feeInZrx: BigNumber;
+    totalPriceWithoutFeeInWeth: BigNumber;
+    canOrderBeFilled?: boolean;
+    // @TODO: this should live in the store and bound via props
+    prices: {
+        zrxInWeth: BigNumber;
+        zrxInUsd: BigNumber;
+        ethInUsd: BigNumber;
+    };
+}
 
 class OrderDetails extends React.Component<Props, State> {
     public state = {

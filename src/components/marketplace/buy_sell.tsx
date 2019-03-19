@@ -12,7 +12,7 @@ import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
 
-import { OrderDetailsContainer as OrderDetails } from './order_details';
+import { OrderDetailsContainer } from './order_details';
 
 interface StateProps {
     selectedTokenSymbol: string;
@@ -210,7 +210,7 @@ class BuySell extends React.Component<Props, State> {
                             </FieldContainer>
                         </>
                     )}
-                    <OrderDetails
+                    <OrderDetailsContainer
                         orderType={orderType}
                         operationType={tab}
                         tokenAmount={this.state.makerAmount}
