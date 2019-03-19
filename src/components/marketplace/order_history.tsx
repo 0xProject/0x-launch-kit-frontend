@@ -43,10 +43,9 @@ const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
     const size = tokenAmountInUnits(order.size, selectedToken.decimals);
     let filled = null;
     let status = '--';
-    let isOrderFillable;
-    if (order.filled) {
-        filled = tokenAmountInUnits(order.filled, selectedToken.decimals);
-    }
+    let isOrderFillable = false;
+
+    order.filled ? (filled = tokenAmountInUnits(order.filled, selectedToken.decimals)) : (filled = null);
     if (order.status) {
         isOrderFillable = order.status === OrderStatus.Fillable;
         status = isOrderFillable ? 'Open' : 'Filled';
