@@ -165,41 +165,39 @@ export const initWallet = () => {
         dispatch(setWeb3State(Web3State.Loading));
         try {
             const web3Wrapper = await getWeb3WrapperOrThrow();
-            if (web3Wrapper) {
-                const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-                const networkId = await web3Wrapper.getNetworkIdAsync();
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
 
-                const knownTokens = getKnownTokens(networkId);
+            const knownTokens = getKnownTokens(networkId);
 
-                const tokenBalances = await Promise.all(
-                    knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-                );
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
 
-                const wethToken = knownTokens.getWethToken();
-                const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
+            const wethToken = knownTokens.getWethToken();
+            const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
-                const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-                const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
 
-                dispatch(setConnectedUser(ethAccount, networkId));
-                dispatch(
-                    initializeBlockchainData({
-                        web3State: Web3State.Done,
-                        ethBalance,
-                        wethTokenBalance,
-                        tokenBalances,
-                    }),
-                );
-                dispatch(
-                    initializeRelayerData({
-                        orders: [],
-                        userOrders: [],
-                        selectedToken,
-                    }),
-                );
-                dispatch(getOrderbookAndUserOrders());
-            }
+            dispatch(setConnectedUser(ethAccount, networkId));
+            dispatch(
+                initializeBlockchainData({
+                    web3State: Web3State.Done,
+                    ethBalance,
+                    wethTokenBalance,
+                    tokenBalances,
+                }),
+            );
+            dispatch(
+                initializeRelayerData({
+                    orders: [],
+                    userOrders: [],
+                    selectedToken,
+                }),
+            );
+            dispatch(getOrderbookAndUserOrders());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
             const selectedToken = knownTokens.getTokenBySymbol('ZRX');
