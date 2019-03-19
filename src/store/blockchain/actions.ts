@@ -1,4 +1,4 @@
-import { BigNumber, BlockParam, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
+import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../../common/constants';

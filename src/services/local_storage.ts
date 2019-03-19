@@ -9,7 +9,7 @@ const hasUnreadNotificationsKey = addPrefix('hasUnreadNotifications');
 const lastBlockCheckedKey = addPrefix('lastBlockChecked');
 
 export class LocalStorage {
-    private _storage: Storage;
+    private readonly _storage: Storage;
 
     constructor(storage: Storage = localStorage) {
         this._storage = storage;

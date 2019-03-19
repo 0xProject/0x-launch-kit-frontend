@@ -53,17 +53,17 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
         case getType(actions.setNotifications):
             return { ...state, notifications: action.payload };
         case getType(actions.addNotification): {
-            let alreadyExists = false;
+            let doesAlreadyExist = false;
             if (action.payload.kind === NotificationKind.OrderFilled) {
                 const newNotification = action.payload as OrderFilledNotification;
 
-                alreadyExists = state.notifications
+                doesAlreadyExist = state.notifications
                     .filter(notification => notification.kind === NotificationKind.OrderFilled)
                     .map(notification => notification as OrderFilledNotification)
                     .some(notification => notification.txHash === newNotification.txHash);
             }
 
-            if (alreadyExists) {
+            if (doesAlreadyExist) {
                 return state;
             } else {
                 return {
