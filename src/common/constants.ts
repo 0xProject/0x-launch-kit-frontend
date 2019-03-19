@@ -13,6 +13,7 @@ export const TX_DEFAULTS = {
 };
 
 export const WETH_TOKEN_SYMBOL = 'weth';
+export const ZRX_TOKEN_SYMBOL = 'zrx';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 

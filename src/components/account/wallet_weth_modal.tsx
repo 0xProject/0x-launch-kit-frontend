@@ -62,15 +62,6 @@ const Button = styled(ButtonBase)`
     width: 100%;
 `;
 
-const CloseButtonContainer = styled.div`
-    align-items: center;
-    display: flex;
-    height: 20px;
-    justify-content: flex-end;
-    margin-right: -10px;
-    margin-top: -10px;
-`;
-
 const Title = styled.h1`
     color: #000;
     font-size: 20px;
@@ -186,9 +177,7 @@ class WethModal extends React.Component<Props, State> {
 
         return (
             <Modal {...restProps}>
-                <CloseButtonContainer>
-                    <CloseModalButton onClick={this._closeModal} />
-                </CloseButtonContainer>
+                <CloseModalButton onClick={this._closeModal} />
                 <Title>Available Balance</Title>
                 <EthBoxes>
                     <EthBox>

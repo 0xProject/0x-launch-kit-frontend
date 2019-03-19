@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { mount } from 'enzyme';
 import React from 'react';
 

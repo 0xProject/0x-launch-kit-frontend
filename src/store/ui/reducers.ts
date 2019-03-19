@@ -26,7 +26,10 @@ export function stepsModal(state: StepsModalState = initialStepsModalState, acti
             return { ...state, currentStep: action.payload };
         case getType(actions.stepsModalAdvanceStep):
             const { doneSteps, currentStep, pendingSteps } = state;
-            if (pendingSteps.length === 0 && currentStep !== null) {
+            // This first condition may happen in async scenarios
+            if (currentStep === null && pendingSteps.length === 0) {
+                return state;
+            } else if (pendingSteps.length === 0 && currentStep !== null) {
                 return {
                     ...state,
                     doneSteps: doneSteps.concat([currentStep as Step]),

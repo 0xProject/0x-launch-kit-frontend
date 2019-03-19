@@ -13,7 +13,7 @@ import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 import { addNotification } from '../ui/actions';
@@ -233,6 +233,42 @@ export const initWallet = () => {
                     break;
                 }
             }
+        }
+    };
+};
+
+export const addWethToBalance = (amount: BigNumber) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+
+        const wethToken = getKnownTokens().getWethToken();
+        const wethAddress = wethToken.address;
+
+        const contractWrappers = await getContractWrappers();
+        return contractWrappers.etherToken.depositAsync(wethAddress, amount, ethAccount);
+    };
+};
+
+export const unlockToken = (token: Token) => {
+    return async (dispatch: any, getState: any): Promise<any> => {
+        const state = getState();
+
+        let tokenBalance: TokenBalance;
+        if (token.symbol === WETH_TOKEN_SYMBOL) {
+            tokenBalance = getWethTokenBalance(state) as TokenBalance;
+        } else {
+            tokenBalance = getTokenBalances(state).find(
+                balance => balance.token.address === token.address,
+            ) as TokenBalance;
+        }
+
+        if (!tokenBalance.isUnlocked) {
+            const ethAccount = getEthAccount(state);
+            const contractWrappers = await getContractWrappers();
+            return contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+        } else {
+            return Promise.resolve();
         }
     };
 };
