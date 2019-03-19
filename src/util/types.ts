@@ -135,11 +135,11 @@ interface LimitNotification extends BaseNotification {
 }
 
 export interface OrderFilledNotification extends BaseNotification {
+    id: string;
     kind: NotificationKind.OrderFilled;
     amount: BigNumber;
     token: Token;
     side: OrderSide;
-    txHash: string;
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;

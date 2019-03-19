@@ -60,7 +60,7 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
                 doesAlreadyExist = state.notifications
                     .filter(notification => notification.kind === NotificationKind.OrderFilled)
                     .map(notification => notification as OrderFilledNotification)
-                    .some(notification => notification.txHash === newNotification.txHash);
+                    .some(notification => notification.id === newNotification.id);
             }
 
             if (doesAlreadyExist) {

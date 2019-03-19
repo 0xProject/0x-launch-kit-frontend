@@ -27,11 +27,11 @@ export const buildOrderFilledNotification = (
     const exchangedToken = knownTokens.getTokenByAddress(exchangedTokenAddress);
 
     return {
+        id: `${log.transactionHash}-${log.logIndex}`,
         kind: NotificationKind.OrderFilled,
         amount: side === OrderSide.Buy ? args.takerAssetFilledAmount : args.makerAssetFilledAmount,
         side,
         timestamp: new Date(),
         token: exchangedToken,
-        txHash: log.transactionHash,
     };
 };
