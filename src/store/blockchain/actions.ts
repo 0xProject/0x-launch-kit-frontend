@@ -42,8 +42,6 @@ export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolv
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
 });
 
-const localStorage = new LocalStorage(window.localStorage);
-
 export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
@@ -139,6 +137,7 @@ let fillEventsSubscription: string | null = null;
 export const setConnectedUser = (ethAccount: string, networkId: number) => {
     return async (dispatch: any) => {
         const knownTokens = getKnownTokens(networkId);
+        const localStorage = new LocalStorage(window.localStorage);
 
         dispatch(setEthAccount(ethAccount));
 
