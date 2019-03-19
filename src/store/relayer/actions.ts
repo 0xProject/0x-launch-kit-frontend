@@ -112,9 +112,10 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
                 ethAccount,
                 TX_DEFAULTS,
             );
-            dispatch(getOrderbookAndUserOrders());
 
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
+
+            dispatch(getOrderbookAndUserOrders());
 
             dispatch(
                 addNotification({
