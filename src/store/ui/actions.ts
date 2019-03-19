@@ -1,12 +1,32 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { ZRX_TOKEN_SYMBOL } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
-import { buildLimitOrder } from '../../util/orders';
-import { Notification, OrderSide, Step, StepKind, Token } from '../../util/types';
-import { getEthAccount, getSelectedToken } from '../selectors';
+import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
+import {
+    Notification,
+    NotificationKind,
+    OrderSide,
+    Step,
+    StepKind,
+    StepUnlockToken,
+    StepWrapEth,
+    StoreState,
+    Token,
+    TokenBalance,
+} from '../../util/types';
+import {
+    getEthAccount,
+    getOpenBuyOrders,
+    getOpenSellOrders,
+    getSelectedToken,
+    getTokenBalances,
+    getWethBalance,
+    getWethTokenBalance,
+} from '../selectors';
 
 export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
     return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
@@ -33,18 +53,139 @@ export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
 
 export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
-    return async (dispatch: any) => {
-        const step: Step = {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        const buySellLimitFlow: Step[] = [];
+
+        const wrapEthStep = getWrapEthStepIfNeeded(amount, price, side, state);
+        if (wrapEthStep) {
+            buySellLimitFlow.push(wrapEthStep);
+        }
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            buySellLimitFlow.push(unlockZrxStep);
+        }
+        const unlockSelectedTokenStep = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedTokenStep) {
+            buySellLimitFlow.push(unlockSelectedTokenStep);
+        }
+
+        buySellLimitFlow.push({
             kind: StepKind.BuySellLimit,
             amount,
             price,
             side,
-        };
-        const pendingSteps: Step[] = [];
-        dispatch(setStepsModalPendingSteps(pendingSteps));
-        dispatch(setStepsModalCurrentStep(step));
+        });
+
+        dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellLimitFlow.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
+};
+
+export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+        const [, , canBeFilled] = buildMarketOrders(
+            {
+                amount,
+                orders,
+            },
+            side,
+        );
+        if (!canBeFilled) {
+            window.alert('There are no enough orders to fill this amount');
+            return;
+        }
+
+        const buySellMarketFlow: Step[] = [];
+
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
+        if (unlockZrxStep) {
+            buySellMarketFlow.push(unlockZrxStep);
+        }
+        const unlockSelectedTokenStep = getUnlockSelectedTokenStepIfNeeded(side, state);
+        if (unlockSelectedTokenStep) {
+            buySellMarketFlow.push(unlockSelectedTokenStep);
+        }
+
+        const selectedToken = getSelectedToken(state) as Token;
+        buySellMarketFlow.push({
+            kind: StepKind.BuySellMarket,
+            amount,
+            side,
+            token: selectedToken,
+        });
+
+        dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellMarketFlow.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+const getWrapEthStepIfNeeded = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+    state: StoreState,
+): StepWrapEth | null => {
+    // Weth needed only when creating a buy order
+    if (side === OrderSide.Sell) {
+        return null;
+    }
+
+    const wethAmount = amount.mul(price);
+    const wethBalance = getWethBalance(state);
+    const deltaWeth = wethBalance.sub(wethAmount);
+    // Need to wrap eth only if weth balance is not enough
+    if (deltaWeth.lessThan(0)) {
+        return {
+            kind: StepKind.WrapEth,
+            amount: deltaWeth.abs(),
+        };
+    } else {
+        return null;
+    }
+};
+
+const getUnlockZrxStepIfNeeded = (state: StoreState): StepUnlockToken | null => {
+    const tokenBalances = getTokenBalances(state);
+    const zrxTokenBalance: TokenBalance = tokenBalances.find(
+        tokenBalance => tokenBalance.token.symbol === ZRX_TOKEN_SYMBOL,
+    ) as TokenBalance;
+    if (zrxTokenBalance.isUnlocked) {
+        return null;
+    } else {
+        return {
+            kind: StepKind.UnlockToken,
+            token: zrxTokenBalance.token,
+        };
+    }
+};
+
+const getUnlockSelectedTokenStepIfNeeded = (side: OrderSide, state: StoreState): StepUnlockToken | null => {
+    const tokenBalances = getTokenBalances(state);
+    let selectedTokenBalance: TokenBalance;
+    if (side === OrderSide.Sell) {
+        const selectedToken = getSelectedToken(state) as Token;
+        selectedTokenBalance = tokenBalances.find(
+            tokenBalance => tokenBalance.token.symbol === selectedToken.symbol,
+        ) as TokenBalance;
+    } else {
+        selectedTokenBalance = getWethTokenBalance(state) as TokenBalance;
+    }
+
+    if (selectedTokenBalance.isUnlocked) {
+        return null;
+    } else {
+        return {
+            kind: StepKind.UnlockToken,
+            token: selectedTokenBalance.token,
+        };
+    }
 };
 
 export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
@@ -72,5 +213,20 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
 
         const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
         return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+    };
+};
+
+export const addMarketBuySellNotification = (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => {
+    return async (dispatch: any) => {
+        dispatch(
+            addNotification({
+                kind: NotificationKind.Market,
+                amount,
+                token,
+                side,
+                tx,
+                timestamp: new Date(),
+            }),
+        );
     };
 };

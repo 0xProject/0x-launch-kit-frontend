@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { MAKER_FEE } from '../../common/constants';
+import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
 import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../util/tokens';
@@ -206,7 +206,7 @@ class OrderDetails extends React.Component<Props, State> {
             {
                 active: orderDetailType === OrderDetailsType.Eth,
                 onClick: this._switchToEth,
-                text: 'ZRX',
+                text: ZRX_TOKEN_SYMBOL.toUpperCase(),
             },
             {
                 active: orderDetailType === OrderDetailsType.Usd,
