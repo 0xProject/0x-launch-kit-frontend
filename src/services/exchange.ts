@@ -39,7 +39,7 @@ export const subscribeToFillEvents = async ({
         },
     );
 
-    pastFillEvents.forEach(x => fillEventCallback);
+    pastFillEvents.forEach(fillEventCallback);
 
     return subscription;
 };
