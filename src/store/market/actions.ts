@@ -24,6 +24,7 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
         dispatch(
             push({
                 ...state.router.location,
+                pathname: '/',
                 search: newSearch,
             }),
         );
