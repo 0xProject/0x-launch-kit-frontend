@@ -1,15 +1,20 @@
 import { BigNumber } from '0x.js';
-import { SignedOrder } from '@0x/connect';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
+import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { stepsModalAdvanceStep } from '../../../store/actions';
+import { addWethToBalance } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
-import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
+import { getKnownTokens } from '../../../util/known_tokens';
+import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
+import { StepWrapEth, StoreState } from '../../../util/types';
 
 import {
+    DONE_STATUS_VISIBILITY_TIME,
     ModalText,
     ModalTextClickable,
+    sleep,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
@@ -19,12 +24,12 @@ import {
 } from './steps_common';
 
 interface StateProps {
-    step: StepBuySellLimitOrder;
+    step: StepWrapEth;
 }
 
 interface DispatchProps {
-    createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<SignedOrder>;
-    submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
+    convertWeth: (amount: BigNumber) => Promise<any>;
+    advanceStep: () => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -33,16 +38,19 @@ interface State {
     status: StepStatus;
 }
 
-class SignOrderStep extends React.Component<Props, State> {
+class WrapEthStep extends React.Component<Props, State> {
     public state = {
         status: StepStatus.ConfirmOnMetamask,
     };
 
     public componentDidMount = async () => {
-        await this._getSignedOrder();
+        await this._convertWeth();
     };
 
     public render = () => {
+        const { amount } = this.props.step;
+        const wethToken = getKnownTokens().getWethToken();
+        const ethAmount = tokenAmountInUnitsToBigNumber(amount, wethToken.decimals).toString();
         const { status } = this.state;
         const retry = () => this._retry();
         let content;
@@ -51,14 +59,14 @@ class SignOrderStep extends React.Component<Props, State> {
             case StepStatus.Loading:
                 content = (
                     <StepStatusLoading>
-                        <ModalText>Submitting order.</ModalText>
+                        <ModalText>Converting {ethAmount} ETH for trading (ETH to wETH).</ModalText>
                     </StepStatusLoading>
                 );
                 break;
             case StepStatus.Done:
                 content = (
                     <StepStatusDone>
-                        <ModalText>Order successfully placed! (may not be filled immediately)</ModalText>
+                        <ModalText>Converted {ethAmount} ETH for trading (ETH to wETH).</ModalText>
                     </StepStatusDone>
                 );
                 break;
@@ -66,7 +74,7 @@ class SignOrderStep extends React.Component<Props, State> {
                 content = (
                     <StepStatusError>
                         <ModalText>
-                            Error signing/submitting order.{' '}
+                            Error converting {ethAmount} ETH for trading (ETH to wETH).{' '}
                             <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
                         </ModalText>
                     </StepStatusError>
@@ -75,7 +83,7 @@ class SignOrderStep extends React.Component<Props, State> {
             default:
                 content = (
                     <StepStatusConfirmOnMetamask>
-                        <ModalText>Confirm signature on Metamask to submit order.</ModalText>
+                        <ModalText>Confirm on Metamask to convert {ethAmount} ETH into wETH.</ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
                 break;
@@ -88,14 +96,18 @@ class SignOrderStep extends React.Component<Props, State> {
         );
     };
 
-    private readonly _getSignedOrder = async () => {
-        const { amount, price, side } = this.props.step;
+    private readonly _convertWeth = async () => {
+        const { step, advanceStep } = this.props;
+        const { amount } = step;
         try {
-            const signedOrder = await this.props.createSignedOrder(amount, price, side);
+            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const convertTxHash = await this.props.convertWeth(amount);
             this.setState({ status: StepStatus.Loading });
 
-            await this.props.submitLimitOrder(signedOrder, amount, side);
+            await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
             this.setState({ status: StepStatus.Done });
+            await sleep(DONE_STATUS_VISIBILITY_TIME);
+            advanceStep();
         } catch (err) {
             this.setState({ status: StepStatus.Error });
         }
@@ -103,26 +115,24 @@ class SignOrderStep extends React.Component<Props, State> {
 
     private readonly _retry = async () => {
         this.setState({ status: StepStatus.Error });
-        await this._getSignedOrder();
+        await this._convertWeth();
     };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        step: getStepsModalCurrentStep(state) as StepBuySellLimitOrder,
+        step: getStepsModalCurrentStep(state) as StepWrapEth,
     };
 };
 
-const SignOrderStepContainer = connect(
+const WrapEthStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) =>
-                dispatch(submitLimitOrder(signedOrder, amount, side)),
-            createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
-                dispatch(createSignedOrder(amount, price, side)),
+            convertWeth: (amount: BigNumber) => dispatch(addWethToBalance(amount)),
+            advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },
-)(SignOrderStep);
+)(WrapEthStep);
 
-export { SignOrderStep, SignOrderStepContainer };
+export { WrapEthStep, WrapEthStepContainer };

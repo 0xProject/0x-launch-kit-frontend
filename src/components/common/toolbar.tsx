@@ -1,14 +1,24 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getWeb3State } from '../../store/selectors';
+import { errorsWallet } from '../../util/error_messages';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
+import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
+import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
 import { PriceChange } from './price_change';
+
+interface StateProps {
+    web3State?: Web3State;
+}
+type Props = StateProps;
 
 const separatorTopbar = `
     &:after {
@@ -96,17 +106,40 @@ const PriceChangeStyled = styled(PriceChange)`
     }
 `;
 
-export const Toolbar = () => (
-    <ToolbarWrapper>
-        <ToolbarStart>
-            <LogoHeader />
-            <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-            <PriceChangeStyled />
-        </ToolbarStart>
-        <ToolbarEnd>
-            <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
-            <WalletDropdown />
-            <NotificationsDropdownContainer />
-        </ToolbarEnd>
-    </ToolbarWrapper>
-);
+const _Toolbar = (props: Props) => {
+    const isMmLocked = props.web3State === Web3State.Locked;
+    const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
+
+    return (
+        <ToolbarWrapper>
+            <ToolbarStart>
+                <LogoHeader />
+                <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
+                <PriceChangeStyled />
+            </ToolbarStart>
+            {isMmLocked ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
+            ) : null}
+            {isMmNotInstalled ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
+            ) : null}
+            {!isMmLocked && !isMmNotInstalled ? (
+                <ToolbarEnd>
+                    <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
+                    <WalletDropdown />
+                    <NotificationsDropdownContainer />
+                </ToolbarEnd>
+            ) : null}
+        </ToolbarWrapper>
+    );
+};
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        web3State: getWeb3State(state),
+    };
+};
+
+const Toolbar = connect(mapStateToProps)(_Toolbar);
+
+export { Toolbar };

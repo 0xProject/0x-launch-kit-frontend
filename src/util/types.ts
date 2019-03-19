@@ -23,9 +23,11 @@ export interface TokenBalance {
 }
 
 export enum Web3State {
-    Done,
-    Error,
-    Loading,
+    Done = 'Done',
+    Error = 'Error',
+    Loading = 'Loading',
+    NotInstalled = 'NotInstalled',
+    Locked = 'Locked',
 }
 
 export interface BlockchainState {
@@ -56,7 +58,20 @@ export interface StoreState {
 }
 
 export enum StepKind {
-    BuySellLimit,
+    WrapEth = 'WrapEth',
+    UnlockToken = 'UnlockToken',
+    BuySellLimit = 'BuySellLimit',
+    BuySellMarket = 'BuySellMarket',
+}
+
+export interface StepWrapEth {
+    kind: StepKind.WrapEth;
+    amount: BigNumber;
+}
+
+export interface StepUnlockToken {
+    kind: StepKind.UnlockToken;
+    token: Token;
 }
 
 export interface StepBuySellLimitOrder {
@@ -66,7 +81,14 @@ export interface StepBuySellLimitOrder {
     side: OrderSide;
 }
 
-export type Step = StepBuySellLimitOrder;
+export interface StepBuySellMarket {
+    kind: StepKind.BuySellMarket;
+    amount: BigNumber;
+    side: OrderSide;
+    token: Token;
+}
+
+export type Step = StepWrapEth | StepUnlockToken | StepBuySellLimitOrder | StepBuySellMarket;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];

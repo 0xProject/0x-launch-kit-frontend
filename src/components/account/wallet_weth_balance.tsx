@@ -127,7 +127,7 @@ const Note = styled.p`
     font-weight: normal;
     line-height: 24px;
     margin: -10px 0 30px;
-    padding: 0 40px;
+    padding: 20px 40px 0;
     text-align: center;
 `;
 
@@ -163,7 +163,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <LabelWrapper>
                             <Label>wETH</Label>{' '}
                             <Tooltip
-                                description="Some text to show in this simple tooltip..."
+                                description="ETH cannot be traded with other tokens directly. You need to convert it to WETH first. WETH can be converted back to ETH at any time."
                                 iconType={IconType.Fill}
                                 tooltipPosition={TooltipPosition.Bottom}
                             />

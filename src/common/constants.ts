@@ -10,6 +10,7 @@ export const TX_DEFAULTS = {
 };
 
 export const WETH_TOKEN_SYMBOL = 'weth';
+export const ZRX_TOKEN_SYMBOL = 'zrx';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
@@ -33,3 +34,8 @@ export const UI_UPDATE_CHECK_INTERVAL: number =
 
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
+
+export const METAMASK_USER_DENIED_AUTH = 'User denied Auth';
+export const METAMASK_NOT_INSTALLED = 'User does not have metamask installed';
+
+export const METAMASK_EXTENSION_URL = 'https://metamask.io/';

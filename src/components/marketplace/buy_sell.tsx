@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { startBuySellLimitSteps, submitMarketOrder } from '../../store/actions';
 import { getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
+import { startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/ui/actions';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { OrderSide, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -291,7 +291,7 @@ const BuySellContainer = connect(
     mapStateToProps,
     {
         onSubmitLimitOrder: startBuySellLimitSteps,
-        onSubmitMarketOrder: submitMarketOrder,
+        onSubmitMarketOrder: startBuySellMarketSteps,
     },
 )(BuySell);
 

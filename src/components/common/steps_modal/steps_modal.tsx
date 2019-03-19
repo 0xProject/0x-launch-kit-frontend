@@ -4,9 +4,15 @@ import { connect } from 'react-redux';
 
 import { stepsModalReset } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { themeModalStyle } from '../../../util/theme';
 import { Step, StepKind, StoreState } from '../../../util/types';
+import { CloseModalButton } from '../icons/close_modal_button';
 
+import { BuySellTokenStepContainer } from './buy_sell_token_step';
 import { SignOrderStepContainer } from './sign_order_step';
+import { ModalContent } from './steps_common';
+import { UnlockTokensStepContainer } from './unlock_token_step';
+import { WrapEthStepContainer } from './wrap_eth_step';
 
 interface StateProps {
     currentStep: Step | null;
@@ -23,11 +29,14 @@ class StepsModal extends React.Component<Props> {
         const { currentStep, reset } = this.props;
         const isOpen = currentStep !== null;
         return (
-            <Modal isOpen={isOpen}>
-                <button type="button" onClick={reset}>
-                    x
-                </button>
-                {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
+            <Modal isOpen={isOpen} style={themeModalStyle}>
+                <CloseModalButton onClick={reset} />
+                <ModalContent>
+                    {currentStep && currentStep.kind === StepKind.UnlockToken && <UnlockTokensStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.BuySellMarket && <BuySellTokenStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.WrapEth && <WrapEthStepContainer />}
+                </ModalContent>
             </Modal>
         );
     };
