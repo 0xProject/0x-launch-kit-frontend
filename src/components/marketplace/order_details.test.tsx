@@ -3,7 +3,7 @@
  */
 
 import { BigNumber, OrderStatus } from '0x.js';
-import { mount } from 'enzyme';
+import { HTMLAttributes, mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
@@ -12,6 +12,15 @@ import * as dollarUtils from '../../util/market_prices';
 import { OrderSide, OrderType, UIOrder } from '../../util/types';
 
 import { OrderDetails } from './order_details';
+
+// Helper that returns the weth and usd texts from the corresponding element
+const getValuesFromTotalCostText = (el: ReactWrapper<HTMLAttributes, any>) => {
+    return el
+        .text()
+        .slice(1)
+        .replace('wETH) $', '')
+        .split(' ');
+};
 
 describe('OrderDetails', () => {
     it('Calculates total cost for limit orders', done => {
@@ -68,15 +77,11 @@ describe('OrderDetails', () => {
         // then
         // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(10);
-            // then
-            const resultsArray = mySizeRowValue
-                .text()
-                .replace('Total Cost(', '')
-                .split(' ');
+            const mySizeRowValue = wrapper.find('StyledComponent').at(11);
+            const resultsArray = getValuesFromTotalCostText(mySizeRowValue);
 
             const totalCostInWeth = resultsArray[0];
-            const totalCostInUSD = resultsArray[3];
+            const totalCostInUSD = resultsArray[1];
             expect(totalCostInWeth).toEqual(resultExpected.toFixed(2));
             expect(totalCostInUSD).toEqual(resultExpected.toFixed(2));
             wrapper.unmount();
@@ -193,15 +198,14 @@ describe('OrderDetails', () => {
         // then
         // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(9);
-            // then
+            const mySizeRowValue = wrapper.find('StyledComponent').at(8);
             const resultsArray = mySizeRowValue
                 .text()
                 .replace(' ZRX', '')
                 .split(' ');
 
             const feeInZrx = resultsArray[0];
-            expect(feeInZrx).toEqual(resultExpected.toString());
+            expect(feeInZrx).toEqual(resultExpected.toFixed(2));
             wrapper.unmount();
             done();
         }, 0);
@@ -321,15 +325,10 @@ describe('OrderDetails', () => {
         // then
         // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(10);
-            // then
-            const resultsArray = mySizeRowValue
-                .text()
-                .replace('Total Cost(', '')
-                .split(' ');
-
+            const mySizeRowValue = wrapper.find('StyledComponent').at(11);
+            const resultsArray = getValuesFromTotalCostText(mySizeRowValue);
             const totalCostInWeth = resultsArray[0];
-            const totalCostInUSD = resultsArray[3];
+            const totalCostInUSD = resultsArray[1];
             expect(totalCostInWeth).toEqual(resultExpected.toFixed(2));
             expect(totalCostInUSD).toEqual(resultExpected.toFixed(2));
             wrapper.unmount();
@@ -352,7 +351,7 @@ describe('OrderDetails', () => {
         const ZEROX_USD_PRICE = 1;
         const makerAmount = new BigNumber(50);
         const tokenPrice = new BigNumber(10);
-        const resultExpected = 'Total Cost---';
+        const resultExpected = '---';
         const MAKER_FEE = new BigNumber(20);
 
         const signedOrder1 = {
@@ -448,7 +447,7 @@ describe('OrderDetails', () => {
         // then
         // Wait until component is fully updated to check if the values are generated
         setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(10);
+            const mySizeRowValue = wrapper.find('StyledComponent').at(11);
             // then
             expect(mySizeRowValue.text()).toEqual(resultExpected);
             wrapper.unmount();

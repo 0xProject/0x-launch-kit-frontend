@@ -169,7 +169,7 @@ class OrderDetails extends React.Component<Props, State> {
             ...this.state,
             prices: { zrxInWeth, zrxInUsd, ethInUsd },
         });
-    }
+    };
 
     private readonly _updateOrderDetailsState = async () => {
         const { selectedToken } = this.props;
@@ -177,11 +177,15 @@ class OrderDetails extends React.Component<Props, State> {
             return;
         }
         // Get order details' numbers needed to calculate total cost and total fee
-        const {feeInZrx, totalPriceWithoutFeeInWeth, canOrderBeFilled} = this._calculateFeeAndTotalCostInWeth();
-        this.setState({feeInZrx, totalPriceWithoutFeeInWeth, canOrderBeFilled});
+        const { feeInZrx, totalPriceWithoutFeeInWeth, canOrderBeFilled } = this._calculateFeeAndTotalCostInWeth();
+        this.setState({ feeInZrx, totalPriceWithoutFeeInWeth, canOrderBeFilled });
     };
 
-    private readonly _calculateFeeAndTotalCostInWeth = (): { feeInZrx: BigNumber; totalPriceWithoutFeeInWeth: BigNumber; canOrderBeFilled?: boolean } => {
+    private readonly _calculateFeeAndTotalCostInWeth = (): {
+        feeInZrx: BigNumber;
+        totalPriceWithoutFeeInWeth: BigNumber;
+        canOrderBeFilled?: boolean;
+    } => {
         const { orderType } = this.props;
         if (orderType === OrderType.Limit) {
             const { tokenAmount, tokenPrice } = this.props;
@@ -230,7 +234,7 @@ class OrderDetails extends React.Component<Props, State> {
             const feeFormatted = tokenAmountInUnits(feeInZrx, zrxTokenDecimals);
             return `${feeFormatted} ${ZRX_TOKEN_SYMBOL.toUpperCase()}`;
         }
-    }
+    };
 
     private readonly _getTotalCostStringForRender = () => {
         const { canOrderBeFilled } = this.state;
@@ -250,7 +254,7 @@ class OrderDetails extends React.Component<Props, State> {
         const totalCostInWethString = tokenAmountInUnits(totalCostInWeth, wethTokenDecimals);
         const totalCostInUsdString = tokenAmountInUnits(totalCostInUsd, wethTokenDecimals);
         return `(${totalCostInWethString} wETH) $${totalCostInUsdString}`;
-    }
+    };
 
     private readonly _switchToUsd = () => {
         this.setState({ orderDetailType: OrderDetailsType.Usd });
