@@ -1,15 +1,18 @@
-import { BigNumber } from '0x.js';
-import { SignedOrder } from '@0x/connect';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
+import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
+import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { unlockToken } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
-import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
+import { stepsModalAdvanceStep } from '../../../store/ui/actions';
+import { StepUnlockToken, StoreState, Token } from '../../../util/types';
 
 import {
+    DONE_STATUS_VISIBILITY_TIME,
     ModalText,
     ModalTextClickable,
+    sleep,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
@@ -19,12 +22,12 @@ import {
 } from './steps_common';
 
 interface StateProps {
-    step: StepBuySellLimitOrder;
+    step: StepUnlockToken;
 }
 
 interface DispatchProps {
-    createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<SignedOrder>;
-    submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
+    unlockToken: (token: Token) => Promise<any>;
+    advanceStep: () => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -33,16 +36,30 @@ interface State {
     status: StepStatus;
 }
 
-class SignOrderStep extends React.Component<Props, State> {
+class UnlockTokensStep extends React.Component<Props, State> {
     public state = {
         status: StepStatus.ConfirmOnMetamask,
     };
 
     public componentDidMount = async () => {
-        await this._getSignedOrder();
+        await this._unlockToken();
+    };
+
+    public componentDidUpdate = async (prevProps: Props) => {
+        // If there are consecutive StepUnlockToken in the flow, this will force the step "restart"
+        if (this.props.step.token.address !== prevProps.step.token.address) {
+            this.setState({ status: StepStatus.ConfirmOnMetamask });
+            await this._unlockToken();
+        }
     };
 
     public render = () => {
+        const { token } = this.props.step;
+        let tokenSymbol = token.symbol.toUpperCase();
+        if (tokenSymbol === WETH_TOKEN_SYMBOL.toUpperCase()) {
+            tokenSymbol = 'wETH';
+        }
+
         const { status } = this.state;
         const retry = () => this._retry();
         let content;
@@ -51,14 +68,14 @@ class SignOrderStep extends React.Component<Props, State> {
             case StepStatus.Loading:
                 content = (
                     <StepStatusLoading>
-                        <ModalText>Submitting order.</ModalText>
+                        <ModalText>Unlocking {tokenSymbol}. It will remain unlocked for future trades</ModalText>
                     </StepStatusLoading>
                 );
                 break;
             case StepStatus.Done:
                 content = (
                     <StepStatusDone>
-                        <ModalText>Order successfully placed! (may not be filled immediately)</ModalText>
+                        <ModalText>Unlocked {tokenSymbol}. It will remain unlocked for future trades</ModalText>
                     </StepStatusDone>
                 );
                 break;
@@ -66,7 +83,7 @@ class SignOrderStep extends React.Component<Props, State> {
                 content = (
                     <StepStatusError>
                         <ModalText>
-                            Error signing/submitting order.{' '}
+                            Unlocking {tokenSymbol} for future trades failed.{' '}
                             <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
                         </ModalText>
                     </StepStatusError>
@@ -75,7 +92,7 @@ class SignOrderStep extends React.Component<Props, State> {
             default:
                 content = (
                     <StepStatusConfirmOnMetamask>
-                        <ModalText>Confirm signature on Metamask to submit order.</ModalText>
+                        <ModalText>Confirm on Metamask to unlock {tokenSymbol} for trading on 0x.</ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
                 break;
@@ -88,14 +105,17 @@ class SignOrderStep extends React.Component<Props, State> {
         );
     };
 
-    private readonly _getSignedOrder = async () => {
-        const { amount, price, side } = this.props.step;
+    private readonly _unlockToken = async () => {
+        const { step, advanceStep } = this.props;
         try {
-            const signedOrder = await this.props.createSignedOrder(amount, price, side);
+            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const unlockTxHash = await this.props.unlockToken(step.token);
             this.setState({ status: StepStatus.Loading });
 
-            await this.props.submitLimitOrder(signedOrder, amount, side);
+            await web3Wrapper.awaitTransactionSuccessAsync(unlockTxHash);
             this.setState({ status: StepStatus.Done });
+            await sleep(DONE_STATUS_VISIBILITY_TIME);
+            advanceStep();
         } catch (err) {
             this.setState({ status: StepStatus.Error });
         }
@@ -103,26 +123,24 @@ class SignOrderStep extends React.Component<Props, State> {
 
     private readonly _retry = async () => {
         this.setState({ status: StepStatus.Error });
-        await this._getSignedOrder();
+        await this._unlockToken();
     };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        step: getStepsModalCurrentStep(state) as StepBuySellLimitOrder,
+        step: getStepsModalCurrentStep(state) as StepUnlockToken,
     };
 };
 
-const SignOrderStepContainer = connect(
+const UnlockTokensStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) =>
-                dispatch(submitLimitOrder(signedOrder, amount, side)),
-            createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
-                dispatch(createSignedOrder(amount, price, side)),
+            unlockToken: (token: Token) => dispatch(unlockToken(token)),
+            advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },
-)(SignOrderStep);
+)(UnlockTokensStep);
 
-export { SignOrderStep, SignOrderStepContainer };
+export { UnlockTokensStep, UnlockTokensStepContainer };
