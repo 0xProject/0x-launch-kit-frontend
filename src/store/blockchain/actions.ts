@@ -3,6 +3,7 @@ import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS, WETH_TOKEN_SYMBOL } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
+import { subscribeToFillEvents } from '../../services/exchange';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
@@ -134,6 +135,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
+let fillEventsSubscription: string | null = null;
 export const setConnectedUser = (ethAccount: string, networkId: number) => {
     return async (dispatch: any) => {
         const knownTokens = getKnownTokens(networkId);
@@ -149,44 +151,31 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
 
         const fromBlock = localStorage.getLastBlockChecked(ethAccount) + 1;
+        const toBlock = blockNumber;
 
-        const pastFillEvents = await contractWrappers.exchange.getLogsAsync<ExchangeFillEventArgs>(
-            ExchangeEvents.Fill,
-            {
-                fromBlock,
-                toBlock: blockNumber,
+        const subscription = await subscribeToFillEvents({
+            exchange: contractWrappers.exchange,
+            fromBlock,
+            toBlock,
+            ethAccount,
+            fillEventCallback: async fillEvent => {
+                const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
+                const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                dispatch(
+                    addNotification({
+                        ...notification,
+                        timestamp: new Date(timestamp * 1000),
+                    }),
+                );
             },
-            {
-                makerAddress: ethAccount,
-            },
-        );
-
-        pastFillEvents.forEach(async fillEvent => {
-            const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
-            const notification = buildOrderFilledNotification(fillEvent, knownTokens);
-            dispatch(
-                addNotification({
-                    ...notification,
-                    timestamp: new Date(timestamp * 1000),
-                }),
-            );
         });
 
-        localStorage.saveLastBlockChecked(blockNumber, ethAccount);
+        if (fillEventsSubscription) {
+            contractWrappers.exchange.unsubscribe(fillEventsSubscription);
+        }
+        fillEventsSubscription = subscription;
 
-        contractWrappers.exchange.subscribe(
-            ExchangeEvents.Fill,
-            { makerAddress: ethAccount },
-            (err: Error | null, logEvent?: DecodedLogEvent<ExchangeFillEventArgs>) => {
-                if (err || !logEvent) {
-                    // tslint:disable-next-line:no-console
-                    console.error('There was a problem with the ExchangeFill event', err, logEvent);
-                    return;
-                }
-                const notification = buildOrderFilledNotification(logEvent.log, knownTokens);
-                dispatch(addNotification(notification));
-            },
-        );
+        localStorage.saveLastBlockChecked(blockNumber, ethAccount);
     };
 };
 
