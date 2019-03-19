@@ -16,7 +16,7 @@ const knownTokens = new KnownTokens(50, [...tokens, wethToken]);
 describe('buildOrderFilledNotification', () => {
     it('should create a notification for a fill of a buy order', () => {
         // given
-        const log: ExchangeFillEventArgs = {
+        const args: ExchangeFillEventArgs = {
             feeRecipientAddress: addressFactory.build().address,
             makerAddress: addressFactory.build().address,
             takerAddress: addressFactory.build().address,
@@ -29,6 +29,10 @@ describe('buildOrderFilledNotification', () => {
             makerAssetData: assetDataUtils.encodeERC20AssetData(wethToken.addresses[50]),
             takerAssetData: assetDataUtils.encodeERC20AssetData(tokens[0].addresses[50]),
         };
+        const log: any = {
+            args,
+            transactionHash: '',
+        };
 
         // when
         const notification = buildOrderFilledNotification(log, knownTokens);
@@ -40,7 +44,7 @@ describe('buildOrderFilledNotification', () => {
 
     it('should create a notification for a fill of a sell order', () => {
         // given
-        const log: ExchangeFillEventArgs = {
+        const args: ExchangeFillEventArgs = {
             feeRecipientAddress: addressFactory.build().address,
             makerAddress: addressFactory.build().address,
             takerAddress: addressFactory.build().address,
@@ -53,6 +57,10 @@ describe('buildOrderFilledNotification', () => {
             makerAssetData: assetDataUtils.encodeERC20AssetData(tokens[0].addresses[50]),
             takerAssetData: assetDataUtils.encodeERC20AssetData(wethToken.addresses[50]),
         };
+        const log: any = {
+            args,
+            transactionHash: '',
+        };
 
         // when
         const notification = buildOrderFilledNotification(log, knownTokens);
@@ -64,7 +72,7 @@ describe('buildOrderFilledNotification', () => {
 
     it('should throw if neither side of the filling is weth', () => {
         // given
-        const log: ExchangeFillEventArgs = {
+        const args: ExchangeFillEventArgs = {
             feeRecipientAddress: addressFactory.build().address,
             makerAddress: addressFactory.build().address,
             takerAddress: addressFactory.build().address,
@@ -76,6 +84,10 @@ describe('buildOrderFilledNotification', () => {
             orderHash: '',
             makerAssetData: assetDataUtils.encodeERC20AssetData(tokens[0].addresses[50]),
             takerAssetData: assetDataUtils.encodeERC20AssetData(tokens[1].addresses[50]),
+        };
+        const log: any = {
+            args,
+            transactionHash: '',
         };
 
         // when
