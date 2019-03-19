@@ -1,5 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router';
 import styled from 'styled-components';
 
 import { getOrderbookAndUserOrders, setSelectedToken } from '../../store/actions';
@@ -17,8 +18,8 @@ import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
 interface DispatchProps {
-    setSelectedToken: (token: Token) => Promise<any>;
-    getOrderbookAndUserOrders: () => any;
+    refreshSelectedToken: (token: Token) => any;
+    refreshOrders: () => any;
 }
 
 interface PropsToken {
@@ -26,7 +27,7 @@ interface PropsToken {
     selectedToken: Token | null;
 }
 
-type Props = PropsDivElement & PropsToken & DispatchProps;
+type Props = PropsDivElement & PropsToken & DispatchProps & RouteComponentProps;
 
 interface State {
     selectedFilter: number;
@@ -389,9 +390,10 @@ class MarketsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _setSelectedMarket: any = async (token: Token) => {
-        await this.props.setSelectedToken(token);
-        this.props.getOrderbookAndUserOrders();
+        this.props.refreshSelectedToken(token);
+        this.props.refreshOrders();
         this._closeDropdown();
+        this.props.history.push('/');
     };
 
     private readonly _getDayChange: any = (item: Token) => {
@@ -440,14 +442,16 @@ const mapStateToProps = (state: StoreState): PropsToken => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        setSelectedToken: (token: Token) => dispatch(setSelectedToken(token)),
-        getOrderbookAndUserOrders: () => dispatch(getOrderbookAndUserOrders()),
+        refreshSelectedToken: (token: Token) => dispatch(setSelectedToken(token)),
+        refreshOrders: () => dispatch(getOrderbookAndUserOrders()),
     };
 };
 
-const MarketsDropdownContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(MarketsDropdown);
+const MarketsDropdownContainer = withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(MarketsDropdown),
+);
 
 export { MarketsDropdown, MarketsDropdownContainer };
