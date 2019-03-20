@@ -13,6 +13,7 @@ import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapp
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
+import { updateMarketPriceEther } from '../market/actions';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 import { addNotification } from '../ui/actions';
@@ -197,6 +198,7 @@ export const initWallet = () => {
                 }),
             );
             dispatch(getOrderbookAndUserOrders());
+            dispatch(updateMarketPriceEther());
         } catch (error) {
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {
