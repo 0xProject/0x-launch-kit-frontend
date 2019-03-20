@@ -148,7 +148,7 @@ const MagnifierIconWrapper = styled.div`
 `;
 
 const TableWrapper = styled.div`
-    height: 420px;
+    max-height: 420px;
     overflow: auto;
     position: relative;
 `;
@@ -184,13 +184,25 @@ const CustomTDStyled = styled(CustomTD)`
 `;
 
 const CustomTDFirstStyled = styled(CustomTDFirst)`
-    font-weight: 700;
-
     ${verticalCellPadding};
 `;
 
 const CustomTDLastStyled = styled(CustomTDLast)`
     ${verticalCellPadding};
+`;
+
+const TokenIconAndLabel = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+`;
+
+const TokenLabel = styled.div`
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 0 15px;
 `;
 
 const DayChange = styled.span<{ status?: string }>`
@@ -353,10 +365,12 @@ class MarketsDropdown extends React.Component<Props, State> {
                         return (
                             <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    <TokenIcon symbol={cp.base} primaryColor={primaryColor} />
-                                    <span>
-                                        {cp.base.toUpperCase()}/{cp.quote.toUpperCase()}
-                                    </span>
+                                    <TokenIconAndLabel>
+                                        <TokenIcon symbol={cp.base} primaryColor={primaryColor} />
+                                        <TokenLabel>
+                                            {cp.base.toUpperCase()} / {cp.quote.toUpperCase()}
+                                        </TokenLabel>
+                                    </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
                                 <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
                                     {this._getPrice(baseToken)}
