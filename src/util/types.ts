@@ -134,6 +134,11 @@ export interface CurrencyPair {
     quote: string;
 }
 
+export interface CurrencyPairBalance {
+    quoteBalance: BigNumber;
+    baseBalance: BigNumber;
+}
+
 export enum NotificationKind {
     CancelOrder = 'CancelOrder',
     Market = 'Market',

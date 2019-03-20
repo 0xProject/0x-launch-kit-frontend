@@ -5,11 +5,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
+import { getTokenBalance } from '../../services/tokens';
 import { connectWallet } from '../../store/actions';
-import { getWeb3State } from '../../store/selectors';
+import { getBaseToken, getCurrencyPair, getEthAccount, getQuoteToken, getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
-import { StoreState, Web3State } from '../../util/types';
+import { tokenAmountInUnits } from '../../util/tokens';
+import { CurrencyPair, StoreState, Token, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
@@ -129,6 +131,10 @@ const ButtonStyled = styled(Button)`
 
 interface StateProps {
     web3State: Web3State;
+    currencyPair: CurrencyPair;
+    baseToken: Token | null;
+    quoteToken: Token | null;
+    ethAccount: string;
 }
 
 interface DispatchProps {
@@ -176,70 +182,6 @@ const getWalletTitle = (web3State: Web3State) => {
     return title;
 };
 
-const getWalletContent = (web3State: Web3State, onConnectCb: () => any) => {
-    let content: any = null;
-
-    if (web3State === Web3State.Done) {
-        content = (
-            <>
-                <LabelTitleWrapper>
-                    <LabelTitle>Token</LabelTitle>
-                    <LabelTitle>Amount</LabelTitle>
-                </LabelTitleWrapper>
-                <LabelWrapper>
-                    <Label>ZRX</Label>
-                    <Value>233.344</Value>
-                </LabelWrapper>
-                <LabelWrapper>
-                    <Label>
-                        ETH <TooltipStyled type="full" />
-                    </Label>
-                    <Value>10.00</Value>
-                </LabelWrapper>
-            </>
-        );
-    }
-
-    if (web3State === Web3State.Locked) {
-        content = (
-            <WalletErrorContainer>
-                <ErrorCardStyled
-                    fontSize={FontSize.Large}
-                    icon={ErrorIcons.Lock}
-                    text={errorsWallet.mmConnect}
-                    textAlign="center"
-                    onClick={onConnectCb}
-                />
-                <WalletErrorFiller top="0" left="0">
-                    {fillerBig()}
-                </WalletErrorFiller>
-                <WalletErrorFiller top="0" right="0">
-                    {fillerBig()}
-                </WalletErrorFiller>
-                <WalletErrorFiller bottom="0" left="0">
-                    {fillerSmall()}
-                </WalletErrorFiller>
-                <WalletErrorFiller bottom="0" right="0">
-                    {fillerSmall()}
-                </WalletErrorFiller>
-            </WalletErrorContainer>
-        );
-    }
-
-    if (web3State === Web3State.NotInstalled) {
-        content = (
-            <>
-                <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
-                    {errorsWallet.mmGetExtension}
-                </ButtonStyled>
-            </>
-        );
-    }
-
-    return content;
-};
-
 const openMetamaskExtensionUrl = () => {
     const win = window.open(METAMASK_EXTENSION_URL, '_blank');
     if (win) {
@@ -247,18 +189,129 @@ const openMetamaskExtensionUrl = () => {
     }
 };
 
-const WalletBalance: React.FC<Props> = props => {
-    const { web3State, onConnectWallet } = props;
-    return (
-        <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
-            {getWalletContent(web3State, onConnectWallet)}
-        </Card>
-    );
-};
+class WalletBalance extends React.Component<Props> {
+    public state = {
+        quoteBalance: '0.0',
+        baseBalance: '0.0',
+    };
+
+    public componentDidMount = async () => {
+        await this._updateState();
+    };
+
+    public componentDidUpdate = async (prevProps: Readonly<Props>) => {
+        const { onConnectWallet, currencyPair, ethAccount, quoteToken, baseToken, web3State } = this.props;
+        if (
+            prevProps.onConnectWallet !== onConnectWallet ||
+            prevProps.currencyPair !== currencyPair ||
+            prevProps.ethAccount !== ethAccount ||
+            prevProps.quoteToken !== quoteToken ||
+            prevProps.baseToken !== baseToken ||
+            prevProps.web3State !== web3State
+        ) {
+            await this._updateState();
+        }
+    };
+
+    public render = () => {
+        const { web3State } = this.props;
+        const walletContent = this._getWalletContent();
+        return (
+            <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
+                {walletContent}
+            </Card>
+        );
+    };
+
+    private readonly _updateState = async () => {
+        const { baseToken, quoteToken, ethAccount } = this.props;
+        let quoteBalance = '0.0';
+        let baseBalance = '0.0';
+        if (quoteToken && baseToken && ethAccount) {
+            const quoteBalanceBN = await getTokenBalance(quoteToken, ethAccount);
+            const baseBalanceBN = await getTokenBalance(baseToken, ethAccount);
+            quoteBalance = tokenAmountInUnits(quoteBalanceBN, quoteToken.decimals);
+            baseBalance = tokenAmountInUnits(baseBalanceBN, baseToken.decimals);
+        }
+        this.setState({
+            quoteBalance,
+            baseBalance,
+        });
+    };
+
+    private readonly _getWalletContent = () => {
+        let content: any = null;
+        const { web3State, currencyPair, onConnectWallet } = this.props;
+
+        if (web3State === Web3State.Done) {
+            content = (
+                <>
+                    <LabelTitleWrapper>
+                        <LabelTitle>Token</LabelTitle>
+                        <LabelTitle>Amount</LabelTitle>
+                    </LabelTitleWrapper>
+                    <LabelWrapper>
+                        <Label>{currencyPair.quote}</Label>
+                        <Value>{this.state.quoteBalance}</Value>
+                    </LabelWrapper>
+                    <LabelWrapper>
+                        <Label>
+                            {currencyPair.base} <TooltipStyled type="full" />
+                        </Label>
+                        <Value>{this.state.baseBalance}</Value>
+                    </LabelWrapper>
+                </>
+            );
+        }
+
+        if (web3State === Web3State.Locked) {
+            content = (
+                <WalletErrorContainer>
+                    <ErrorCardStyled
+                        fontSize={FontSize.Large}
+                        icon={ErrorIcons.Lock}
+                        text={errorsWallet.mmConnect}
+                        textAlign="center"
+                        onClick={onConnectWallet}
+                    />
+                    <WalletErrorFiller top="0" left="0">
+                        {fillerBig()}
+                    </WalletErrorFiller>
+                    <WalletErrorFiller top="0" right="0">
+                        {fillerBig()}
+                    </WalletErrorFiller>
+                    <WalletErrorFiller bottom="0" left="0">
+                        {fillerSmall()}
+                    </WalletErrorFiller>
+                    <WalletErrorFiller bottom="0" right="0">
+                        {fillerSmall()}
+                    </WalletErrorFiller>
+                </WalletErrorContainer>
+            );
+        }
+
+        if (web3State === Web3State.NotInstalled) {
+            content = (
+                <>
+                    <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
+                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                        {errorsWallet.mmGetExtension}
+                    </ButtonStyled>
+                </>
+            );
+        }
+
+        return content;
+    };
+}
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
+        currencyPair: getCurrencyPair(state),
+        baseToken: getBaseToken(state),
+        quoteToken: getQuoteToken(state),
+        ethAccount: getEthAccount(state),
     };
 };
 
