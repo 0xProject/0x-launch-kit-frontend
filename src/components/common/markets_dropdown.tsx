@@ -193,11 +193,6 @@ const CustomTDLastStyled = styled(CustomTDLast)`
     ${verticalCellPadding};
 `;
 
-const DayChange = styled.span<{ status?: string }>`
-    ${props => (props.status === 'less' ? `color: ${themeColors.orange};` : '')}
-    ${props => (props.status === 'more' ? `color: ${themeColors.green};` : '')}
-`;
-
 const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
 const MARKETS_LIST = [
     {
@@ -339,8 +334,6 @@ class MarketsDropdown extends React.Component<Props, State> {
                     <TR>
                         <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
                         <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
-                        <THStyled styles={{ textAlign: 'center' }}>24H change</THStyled>
-                        <THLastStyled styles={{ textAlign: 'center' }}>24H Vol (usd)</THLastStyled>
                     </TR>
                 </THead>
                 <TBody>
@@ -361,12 +354,6 @@ class MarketsDropdown extends React.Component<Props, State> {
                                 <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
                                     {this._getPrice(baseToken)}
                                 </CustomTDStyled>
-                                <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
-                                    {this._getDayChange(baseToken)}
-                                </CustomTDStyled>
-                                <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {this._getDayVolumen(baseToken)}
-                                </CustomTDLastStyled>
                             </TRStyled>
                         );
                     })}
@@ -379,35 +366,6 @@ class MarketsDropdown extends React.Component<Props, State> {
         await this.props.changeMarket(currencyPair);
         this.props.getOrderbookAndUserOrders();
         this._closeDropdown();
-    };
-
-    private readonly _getDayChange: any = (item: Token) => {
-        const tokenDummy = MARKETS_LIST.find(obj => {
-            return obj.symbol === item.symbol;
-        });
-
-        if (!tokenDummy) {
-            return <DayChange />;
-        }
-
-        const previousDay: number = parseFloat(tokenDummy.previousDay);
-        const currentDay: number = parseFloat(tokenDummy.currentDay);
-        const percentChange: string = (((currentDay - previousDay) / previousDay) * 100).toFixed(2);
-
-        if (currentDay > previousDay) {
-            return <DayChange status={'more'}>+{percentChange}%</DayChange>;
-        } else if (currentDay < previousDay) {
-            return <DayChange status={'less'}>{percentChange}%</DayChange>;
-        }
-
-        return <DayChange>{percentChange}%</DayChange>;
-    };
-
-    private readonly _getDayVolumen: any = (item: Token) => {
-        const tokenDummy = MARKETS_LIST.find(obj => {
-            return obj.symbol === item.symbol;
-        });
-        return tokenDummy ? tokenDummy.dayVol : '';
     };
 
     private readonly _getPrice: any = (item: Token) => {
