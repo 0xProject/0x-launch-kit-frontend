@@ -2,6 +2,7 @@ import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } fro
 import { createAction } from 'typesafe-actions';
 
 import {
+    MAINNET_ID,
     METAMASK_NOT_INSTALLED,
     METAMASK_USER_DENIED_AUTH,
     TX_DEFAULTS,
@@ -9,12 +10,12 @@ import {
 } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { tokenToTokenBalance } from '../../services/tokens';
-import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
+import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
 import { setMarketTokens, updateMarketPriceEther } from '../market/actions';
-import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
+import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 import { addNotification } from '../ui/actions';
 
@@ -167,7 +168,7 @@ export const initWallet = () => {
 
         dispatch(setWeb3State(Web3State.Loading));
         try {
-            const web3Wrapper = await getWeb3Wrapper();
+            const web3Wrapper = await getWeb3WrapperOrThrow();
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();
 
@@ -204,13 +205,35 @@ export const initWallet = () => {
             dispatch(getOrderbookAndUserOrders());
             dispatch(updateMarketPriceEther());
         } catch (error) {
+            const knownTokens = getKnownTokens(MAINNET_ID);
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {
                     dispatch(setWeb3State(Web3State.Locked));
+                    dispatch(
+                        initializeRelayerData({
+                            orders: [],
+                            userOrders: [],
+                        }),
+                    );
+                    dispatch(setMarketTokens({ baseToken, quoteToken }));
+                    dispatch(getOrderBook());
+                    dispatch(updateMarketPriceEther());
                     break;
                 }
                 case METAMASK_NOT_INSTALLED: {
                     dispatch(setWeb3State(Web3State.NotInstalled));
+                    dispatch(
+                        initializeRelayerData({
+                            orders: [],
+                            userOrders: [],
+                        }),
+                    );
+                    dispatch(setMarketTokens({ baseToken, quoteToken }));
+                    dispatch(getOrderBook());
+                    dispatch(updateMarketPriceEther());
                     break;
                 }
                 default: {
@@ -255,5 +278,12 @@ export const unlockToken = (token: Token) => {
         } else {
             return Promise.resolve();
         }
+    };
+};
+
+export const connectWallet = () => {
+    return async (dispatch: any) => {
+        await reconnectWallet();
+        dispatch(initWallet());
     };
 };

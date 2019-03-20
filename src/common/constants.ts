@@ -5,6 +5,8 @@ export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhos
 // Must be the same a as the relayer
 export const RELAYER_NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_RELAYER_NETWORK_ID as string, 10) || 50;
 
+export const MAINNET_ID: number = Number.parseInt(process.env.REACT_APP_MAINNET_ID as string, 10) || 1;
+
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
 };
@@ -37,6 +39,7 @@ export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
 
 export const METAMASK_USER_DENIED_AUTH = 'User denied Auth';
 export const METAMASK_NOT_INSTALLED = 'User does not have metamask installed';
+export const METAMASK_DEFAULT_ERROR = 'An error ocurred with metamask';
 
 export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
 

@@ -36,7 +36,7 @@ class App extends React.Component<Props> {
         const { web3State } = this.props;
         if (web3State !== prevProps.web3State) {
             if (web3State === Web3State.Done) {
-                /* Enables realtime updates of the store using pooling */
+                // Enables realtime updates of the store using pooling
                 if (!this._updateStoreInterval) {
                     this._updateStoreInterval = window.setInterval(async () => {
                         this.props.onUpdateStore();
@@ -53,7 +53,7 @@ class App extends React.Component<Props> {
                     }, UPDATE_ETHER_PRICE_INTERVAL);
                 }
             } else {
-                /* If the user is currently using the dApp with the interval and he change the metamask status, the polling is removed **/
+                // If the user is currently using the dApp with the interval and he change the metamask status, the polling is removed
                 if (this._updateStoreInterval) {
                     clearInterval(this._updateStoreInterval);
                     this._updateStoreInterval = undefined;

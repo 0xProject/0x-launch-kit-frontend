@@ -141,3 +141,9 @@ export const getOrderbookAndUserOrders = () => {
         dispatch(getUserOrders());
     };
 };
+
+export const getOrderBook = () => {
+    return async (dispatch: any) => {
+        dispatch(getAllOrders());
+    };
+};
