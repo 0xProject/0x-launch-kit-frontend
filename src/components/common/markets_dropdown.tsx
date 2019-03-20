@@ -13,7 +13,7 @@ import { Dropdown } from './dropdown';
 import { ChevronDownIcon } from './icons/chevron_down_icon';
 import { MagnifierIcon } from './icons/magnifier_icon';
 import { TokenIcon } from './icons/token_icon';
-import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst, THLast, TR } from './table';
+import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from './table';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
@@ -167,19 +167,11 @@ const TRStyled = styled(TR)<MarketRowProps>`
     }
 `;
 
-const THStyled = styled(TH)`
-    ${verticalCellPadding};
-`;
-
 const THFirstStyled = styled(THFirst)`
     ${verticalCellPadding};
 `;
 
 const THLastStyled = styled(THLast)`
-    ${verticalCellPadding};
-`;
-
-const CustomTDStyled = styled(CustomTD)`
     ${verticalCellPadding};
 `;
 
@@ -312,9 +304,9 @@ class MarketsDropdown extends React.Component<Props, State> {
                                         {market.currencyPair.quote.toUpperCase()}
                                     </span>
                                 </CustomTDFirstStyled>
-                                <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
+                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true }}>
                                     {this._getPrice(market)}
-                                </CustomTDStyled>
+                                </CustomTDLastStyled>
                             </TRStyled>
                         );
                     })}

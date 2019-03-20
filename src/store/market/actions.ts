@@ -1,4 +1,3 @@
-import { BigNumber } from '0x.js';
 import { push } from 'connected-react-router';
 import queryString from 'query-string';
 import { createAction } from 'typesafe-actions';

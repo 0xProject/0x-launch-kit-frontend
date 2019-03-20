@@ -1,4 +1,4 @@
-import { AssetData, BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
+import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import {
