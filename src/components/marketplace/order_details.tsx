@@ -3,10 +3,10 @@ import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
-import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
+import { getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../util/tokens';
-import { Token } from '../../util/types';
+import { MarketPrice, Token } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {}
@@ -32,6 +32,7 @@ interface Props {
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
     selectedToken: Token | null;
+    marketPriceEther: MarketPrice | null;
 }
 
 const Row = styled.div`
@@ -107,15 +108,16 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public updateLimitOrderState = async () => {
-        const { tokenAmount, tokenPrice, selectedToken } = this.props;
-        if (selectedToken) {
+        const { tokenAmount, tokenPrice, selectedToken, marketPriceEther } = this.props;
+        if (selectedToken && marketPriceEther) {
             /* Reduces decimals of the token amount */
             const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, selectedToken.decimals);
             /* This could be refactored with promise all  */
-            const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
+            const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD()];
 
             const results = await Promise.all(promisesArray);
-            const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+            const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
+            const ethInUSD = marketPriceEther.priceUSD;
             /* Calculates total cost in wETH */
             const zeroXFeeInWeth = zeroXPriceInWeth.mul(tokenAmountInUnits(MAKER_FEE, 18));
             const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
@@ -151,7 +153,8 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.selectedToken !== prevProps.selectedToken
+            newProps.selectedToken !== prevProps.selectedToken ||
+            newProps.marketPriceEther !== prevProps.marketPriceEther
         ) {
             if (newProps.orderType === OrderType.Limit) {
                 await this.updateLimitOrderState();

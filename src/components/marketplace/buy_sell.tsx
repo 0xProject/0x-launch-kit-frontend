@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
+import { getMarketPriceEther, getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { OrderSide, StoreState, Token } from '../../util/types';
+import { MarketPrice, OrderSide, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
@@ -17,6 +17,7 @@ import { OrderDetails } from './order_details';
 interface StateProps {
     selectedTokenSymbol: string;
     selectedToken: Token | null;
+    marketPriceEther: MarketPrice | null;
 }
 
 interface DispatchProps {
@@ -220,6 +221,7 @@ class BuySell extends React.Component<Props, State> {
                         tokenAmount={this.state.makerAmount}
                         tokenPrice={this.state.price}
                         selectedToken={this.props.selectedToken}
+                        marketPriceEther={this.props.marketPriceEther}
                     />
                     <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
                         {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
@@ -284,6 +286,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         selectedTokenSymbol: getSelectedTokenSymbol(state),
         selectedToken: getSelectedToken(state),
+        marketPriceEther: getMarketPriceEther(state),
     };
 };
 

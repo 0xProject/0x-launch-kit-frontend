@@ -27,18 +27,30 @@ describe('OrderDetails', () => {
             symbol: 'zrx',
             primaryColor: '',
         };
+        const marketPriceEther = {
+            symbol: '',
+            priceUSD: new BigNumber(1),
+            priceDAI: new BigNumber(1),
+            priceETHER: new BigNumber(1),
+            volumeUSD: new BigNumber(1000),
+            percentChange: new BigNumber(1),
+        };
+
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
         const makerAmount = new BigNumber(50);
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(501);
+
         // @ts-ignore
         CONSTANTS.MAKER_FEE = new BigNumber('1000000000000000000');
+
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
             return new BigNumber(ZEROX_WETH_PRICE);
         });
+
         // @ts-ignore
         dollarUtils.getZeroXPriceInUSD = jest.fn(() => {
             return new BigNumber(ZEROX_USD_PRICE);
@@ -56,6 +68,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 selectedToken={token}
+                marketPriceEther={marketPriceEther}
             />,
         );
 
