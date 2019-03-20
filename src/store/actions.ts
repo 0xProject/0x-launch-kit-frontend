@@ -8,6 +8,7 @@ import { getOrderbookAndUserOrders } from './relayer/actions';
 export * from './blockchain/actions';
 export * from './relayer/actions';
 export * from './ui/actions';
+export * from './market/actions';
 
 export const updateStore = () => {
     return async (dispatch: any) => {

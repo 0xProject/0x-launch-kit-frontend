@@ -19,6 +19,9 @@ export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnre
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
+export const getMarket = (state: StoreState) => state.market;
+export const getMarketPrices = (state: StoreState) => state.market.prices;
+export const getMarketPriceEther = (state: StoreState) => state.market.prices.eth;
 
 export const getOpenOrders = createSelector(
     getOrders,
