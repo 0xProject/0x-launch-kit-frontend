@@ -53,6 +53,7 @@ export interface MarketState {
     currencyPair: CurrencyPair;
     baseToken: Token | null;
     quoteToken: Token | null;
+    prices: MarketPriceState;
 }
 
 export interface StoreState {
@@ -183,10 +184,6 @@ export interface MarketPrice {
     readonly priceDAI: BigNumber;
     readonly volumeUSD: BigNumber;
     readonly percentChange: BigNumber;
-}
-
-export interface MarketState {
-    readonly prices: MarketPriceState;
 }
 
 export interface MarketPriceState {
