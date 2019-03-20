@@ -28,7 +28,7 @@ class App extends React.Component<Props> {
     private _updateStoreInterval: number | undefined;
     private _updatePriceEtherInterval: number | undefined;
 
-    public componentWillMount = () => {
+    public componentDidMount = () => {
         this.props.onInitWallet();
     };
 
