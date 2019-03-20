@@ -1,7 +1,7 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { createSelector } from 'reselect';
 
-import { OrderBook, OrderSide, StoreState, Token } from '../util/types';
+import { OrderBook, OrderSide, StoreState, Token, Web3State } from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
@@ -22,11 +22,21 @@ export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
 export const getBaseToken = (state: StoreState) => state.market.baseToken;
 export const getQuoteToken = (state: StoreState) => state.market.quoteToken;
 export const getMarkets = (state: StoreState) => state.market.markets;
+export const getEthInUsd = (state: StoreState) => state.market.ethInUsd;
 
 export const getOpenOrders = createSelector(
     getOrders,
-    orders => {
-        return orders.filter(order => order.status === OrderStatus.Fillable);
+    getWeb3State,
+    (orders, web3State) => {
+        switch (web3State) {
+            case Web3State.NotInstalled:
+            case Web3State.Locked: {
+                return orders;
+            }
+            default: {
+                return orders.filter(order => order.status === OrderStatus.Fillable);
+            }
+        }
     },
 );
 
@@ -50,8 +60,12 @@ export const getMySizeOrders = createSelector(
         return userOrders
             .filter(userOrder => userOrder.status === OrderStatus.Fillable)
             .map(order => {
+                let newSize = order.size;
+                if (order.filled) {
+                    newSize = order.size.minus(order.filled);
+                }
                 return {
-                    size: order.size.minus(order.filled),
+                    size: newSize,
                     side: order.side,
                     price: order.price,
                 };
@@ -80,12 +94,13 @@ export const getOrderBook = createSelector(
     getMySizeOrders,
     getSpread,
     (sellOrders, buyOrders, mySizeOrders, spread): OrderBook => {
-        return {
+        const orderBook = {
             sellOrders: mergeByPrice(sellOrders),
             buyOrders: mergeByPrice(buyOrders),
             mySizeOrders,
             spread,
         };
+        return orderBook;
     },
 );
 

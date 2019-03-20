@@ -1,8 +1,10 @@
+import { BigNumber } from '0x.js';
 import { push } from 'connected-react-router';
 import queryString from 'query-string';
 import { createAction } from 'typesafe-actions';
 
 import { availableMarkets } from '../../common/markets';
+import { getMarketPriceEther } from '../../services/markets';
 import { getRelayer } from '../../services/relayer';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
@@ -18,6 +20,19 @@ export const setCurrencyPair = createAction('SET_CURRENCY_PAIR', resolve => {
 
 export const setMarkets = createAction('SET_MARKETS', resolve => {
     return (markets: Market[]) => resolve(markets);
+});
+
+// Market Price Ether Actions
+export const fetchMarketPriceEtherError = createAction('FETCH_MARKET_PRICE_ETHER_ERROR', resolve => {
+    return (payload: any) => resolve(payload);
+});
+
+export const fetchMarketPriceEtherStart = createAction('FETCH_MARKET_PRICE_ETHER_START', resolve => {
+    return () => resolve();
+});
+
+export const fetchMarketPriceEtherUpdate = createAction('FETCH_MARKET_PRICE_ETHER_UPDATE', resolve => {
+    return (ethInUsd: BigNumber) => resolve(ethInUsd);
 });
 
 export const changeMarket = (currencyPair: CurrencyPair) => {
@@ -63,5 +78,18 @@ export const getMarkets = () => {
         );
 
         dispatch(setMarkets(markets));
+    };
+};
+
+export const updateMarketPriceEther = () => {
+    return async (dispatch: any, getState: any) => {
+        dispatch(fetchMarketPriceEtherStart());
+
+        try {
+            const marketPriceEtherData = await getMarketPriceEther();
+            dispatch(fetchMarketPriceEtherUpdate(marketPriceEtherData));
+        } catch (err) {
+            dispatch(fetchMarketPriceEtherError(err));
+        }
     };
 };

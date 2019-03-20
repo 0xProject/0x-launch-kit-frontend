@@ -27,7 +27,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -62,7 +62,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -108,7 +108,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(2);
@@ -151,7 +151,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -186,7 +186,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -227,7 +227,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const functionCall = () => ordersToUIOrders(orders, ordersInfo, baseToken);
+        const functionCall = () => ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(functionCall).toThrow();

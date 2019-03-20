@@ -26,7 +26,6 @@ export class Relayer {
             })
             .then(page => page.records)
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-
         return [...sellOrders, ...buyOrders];
     }
 

@@ -50,10 +50,11 @@ export interface UIState {
 }
 
 export interface MarketState {
-    currencyPair: CurrencyPair;
-    baseToken: Token | null;
-    quoteToken: Token | null;
-    markets: Market[] | null;
+    readonly currencyPair: CurrencyPair;
+    readonly baseToken: Token | null;
+    readonly quoteToken: Token | null;
+    readonly ethInUsd: BigNumber | null;
+    readonly markets: Market[] | null;
 }
 
 export interface StoreState {
@@ -112,9 +113,9 @@ export interface UIOrder {
     rawOrder: SignedOrder;
     side: OrderSide;
     size: BigNumber;
-    filled: BigNumber;
+    filled: BigNumber | null;
     price: BigNumber;
-    status: OrderStatus;
+    status: OrderStatus | null;
 }
 
 export interface OrderBookItem {
