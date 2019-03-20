@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
 import { connectWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getBaseToken, getCurrencyPair, getWeb3State } from '../../store/selectors';
+import { getBaseToken, getCurrencyPair, getEthInUsd, getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { CurrencyPair, OrderSide, StoreState, Token, Web3State } from '../../util/types';
@@ -20,6 +20,7 @@ interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
     baseToken: Token | null;
+    ethInUsd: BigNumber | null;
 }
 
 interface DispatchProps {
@@ -244,6 +245,7 @@ class BuySell extends React.Component<Props, State> {
                         tokenAmount={this.state.makerAmount}
                         tokenPrice={this.state.price}
                         baseToken={this.props.baseToken}
+                        ethInUsd={this.props.ethInUsd}
                     />
                     {errorBtn ? errorBtn : buySellBtn}
                 </Content>
@@ -347,6 +349,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         web3State: getWeb3State(state),
         baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
+        ethInUsd: getEthInUsd(state),
     };
 };
 

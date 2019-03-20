@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { UI_UPDATE_CHECK_INTERVAL } from '../common/constants';
-import { initWallet, updateStore } from '../store/actions';
+import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
+import { initWallet, updateMarketPriceEther, updateStore } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { StoreState, Web3State } from '../util/types';
 
@@ -19,14 +19,16 @@ interface StateProps {
 interface DispatchProps {
     onInitWallet: () => any;
     onUpdateStore: () => any;
+    onUpdateMarketPriceEther: () => any;
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
 
 class App extends React.Component<Props> {
     private _updateStoreInterval: number | undefined;
+    private _updatePriceEtherInterval: number | undefined;
 
-    public componentWillMount = () => {
+    public componentDidMount = () => {
         this.props.onInitWallet();
     };
 
@@ -34,7 +36,7 @@ class App extends React.Component<Props> {
         const { web3State } = this.props;
         if (web3State !== prevProps.web3State) {
             if (web3State === Web3State.Done) {
-                // Enables realtime updates of the store using pooling
+                // Enables realtime updates of the store using polling
                 if (!this._updateStoreInterval) {
                     this._updateStoreInterval = window.setInterval(async () => {
                         this.props.onUpdateStore();
@@ -43,11 +45,23 @@ class App extends React.Component<Props> {
                         });
                     }, UI_UPDATE_CHECK_INTERVAL);
                 }
+
+                // Enables realtime updates of the price ether using polling
+                if (!this._updatePriceEtherInterval) {
+                    this._updatePriceEtherInterval = window.setInterval(async () => {
+                        this.props.onUpdateMarketPriceEther();
+                    }, UPDATE_ETHER_PRICE_INTERVAL);
+                }
             } else {
                 // If the user is currently using the dApp with the interval and he change the metamask status, the polling is removed
                 if (this._updateStoreInterval) {
                     clearInterval(this._updateStoreInterval);
                     this._updateStoreInterval = undefined;
+                }
+
+                if (this._updatePriceEtherInterval) {
+                    clearInterval(this._updatePriceEtherInterval);
+                    this._updatePriceEtherInterval = undefined;
                 }
             }
         }
@@ -55,6 +69,7 @@ class App extends React.Component<Props> {
 
     public componentWillUnmount = () => {
         clearInterval(this._updateStoreInterval);
+        clearInterval(this._updatePriceEtherInterval);
     };
 
     public render = () => this.props.children;
@@ -70,6 +85,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     return {
         onInitWallet: () => dispatch(initWallet()),
         onUpdateStore: () => dispatch(updateStore()),
+        onUpdateMarketPriceEther: () => dispatch(updateMarketPriceEther()),
     };
 };
 

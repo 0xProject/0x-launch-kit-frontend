@@ -3,7 +3,7 @@ import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
-import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
+import { getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../util/tokens';
 import { Token } from '../../util/types';
@@ -32,6 +32,7 @@ interface Props {
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
     baseToken: Token | null;
+    ethInUsd: BigNumber | null;
 }
 
 const Row = styled.div`
@@ -107,15 +108,16 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public updateLimitOrderState = async () => {
-        const { tokenAmount, tokenPrice, baseToken } = this.props;
-        if (baseToken) {
+        const { tokenAmount, tokenPrice, baseToken, ethInUsd } = this.props;
+        if (baseToken && ethInUsd) {
             /* Reduces decimals of the token amount */
             const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, baseToken.decimals);
             /* This could be refactored with promise all  */
-            const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD(), getEthereumPriceInUSD()];
+            const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD()];
 
             const results = await Promise.all(promisesArray);
-            const [zeroXPriceInWeth, zeroXPriceInUSD, ethInUSD] = results;
+            const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
+            const ethInUSD = ethInUsd;
             /* Calculates total cost in wETH */
             const zeroXFeeInWeth = zeroXPriceInWeth.mul(tokenAmountInUnits(MAKER_FEE, 18));
             const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
@@ -151,7 +153,8 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.baseToken !== prevProps.baseToken
+            newProps.baseToken !== prevProps.baseToken ||
+            newProps.ethInUsd !== prevProps.ethInUsd
         ) {
             if (newProps.orderType === OrderType.Limit) {
                 await this.updateLimitOrderState();

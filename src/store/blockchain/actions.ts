@@ -14,7 +14,7 @@ import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrap
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
-import { setMarketTokens } from '../market/actions';
+import { setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 import { addNotification } from '../ui/actions';
@@ -203,6 +203,7 @@ export const initWallet = () => {
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
+            dispatch(updateMarketPriceEther());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
@@ -219,6 +220,7 @@ export const initWallet = () => {
                     );
                     dispatch(setMarketTokens({ baseToken, quoteToken }));
                     dispatch(getOrderBook());
+                    dispatch(updateMarketPriceEther());
                     break;
                 }
                 case METAMASK_NOT_INSTALLED: {
@@ -231,6 +233,7 @@ export const initWallet = () => {
                     );
                     dispatch(setMarketTokens({ baseToken, quoteToken }));
                     dispatch(getOrderBook());
+                    dispatch(updateMarketPriceEther());
                     break;
                 }
                 default: {
