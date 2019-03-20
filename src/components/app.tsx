@@ -36,7 +36,7 @@ class App extends React.Component<Props> {
         const { web3State } = this.props;
         if (web3State !== prevProps.web3State) {
             if (web3State === Web3State.Done) {
-                // Enables realtime updates of the store using pooling
+                // Enables realtime updates of the store using polling
                 if (!this._updateStoreInterval) {
                     this._updateStoreInterval = window.setInterval(async () => {
                         this.props.onUpdateStore();
@@ -46,7 +46,7 @@ class App extends React.Component<Props> {
                     }, UI_UPDATE_CHECK_INTERVAL);
                 }
 
-                /* Enables realtime updates of the price ether using pooling */
+                // Enables realtime updates of the price ether using polling
                 if (!this._updatePriceEtherInterval) {
                     this._updatePriceEtherInterval = window.setInterval(async () => {
                         this.props.onUpdateMarketPriceEther();
