@@ -1,10 +1,11 @@
+import { MAINNET_ID } from '../common/constants';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
-import { getWeb3Wrapper } from '../services/web3_wrapper';
+import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
 import { setEthBalance, setTokenBalances, setWethBalance } from './blockchain/actions';
 import { setMarketTokens } from './market/actions';
-import { getOrderbookAndUserOrders } from './relayer/actions';
+import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair } from './selectors';
 
 export * from './blockchain/actions';
@@ -16,9 +17,9 @@ export * from './ui/actions';
 export const updateStore = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
-        const web3Wrapper = await getWeb3Wrapper();
+        try {
+            const web3Wrapper = await getWeb3WrapperOrThrow();
 
-        if (web3Wrapper) {
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();
 
@@ -40,6 +41,13 @@ export const updateStore = () => {
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
+        } catch (error) {
+            const knownTokens = getKnownTokens(MAINNET_ID);
+            const currencyPair = getCurrencyPair(state);
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
+            dispatch(getOrderBook());
         }
     };
 };

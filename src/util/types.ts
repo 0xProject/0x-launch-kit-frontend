@@ -111,9 +111,9 @@ export interface UIOrder {
     rawOrder: SignedOrder;
     side: OrderSide;
     size: BigNumber;
-    filled: BigNumber;
+    filled: BigNumber | null;
     price: BigNumber;
-    status: OrderStatus;
+    status: OrderStatus | null;
 }
 
 export interface OrderBookItem {

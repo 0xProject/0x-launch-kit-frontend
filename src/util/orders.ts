@@ -64,7 +64,10 @@ export const buildMarketOrders = (
         const order = sortedOrders[i];
         ordersToFill.push(order.rawOrder);
 
-        const available = order.size.sub(order.filled);
+        let available = order.size;
+        if (order.filled) {
+            available = order.size.sub(order.filled);
+        }
         if (filledAmount.plus(available).greaterThan(amount)) {
             amounts.push(amount.sub(filledAmount));
             filledAmount = amount;
