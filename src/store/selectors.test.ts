@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 
 import { closedOrder, openOrder } from '../util/test-utils';
-import { OrderSide } from '../util/types';
+import { OrderSide, Web3State } from '../util/types';
 
 import * as selectors from './selectors';
 
@@ -14,6 +14,9 @@ describe('selectors', () => {
         const state: any = {
             relayer: {
                 orders: [openOrder1, openOrder2, closedOrder(), openOrder3],
+            },
+            blockchain: {
+                web3State: Web3State.Done,
             },
         };
 
@@ -33,6 +36,9 @@ describe('selectors', () => {
             relayer: {
                 orders: [openSellOrder1, openBuyOrder1, closedOrder(), openSellOrder2],
             },
+            blockchain: {
+                web3State: Web3State.Done,
+            },
         };
 
         // when
@@ -50,6 +56,9 @@ describe('selectors', () => {
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3],
+            },
+            blockchain: {
+                web3State: Web3State.Done,
             },
         };
 
@@ -69,6 +78,9 @@ describe('selectors', () => {
             relayer: {
                 orders: [openSellOrder1, openBuyOrder1, closedOrder(), openSellOrder2],
             },
+            blockchain: {
+                web3State: Web3State.Done,
+            },
         };
 
         // when
@@ -87,6 +99,9 @@ describe('selectors', () => {
         const state: any = {
             relayer: {
                 orders: [openBuyOrder1, openBuyOrder2, openBuyOrder3],
+            },
+            blockchain: {
+                web3State: Web3State.Done,
             },
         };
 
@@ -109,6 +124,9 @@ describe('selectors', () => {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3, openBuyOrder1, openBuyOrder2, openBuyOrder3],
             },
+            blockchain: {
+                web3State: Web3State.Done,
+            },
         };
 
         // when
@@ -127,6 +145,9 @@ describe('selectors', () => {
             relayer: {
                 orders: [openBuyOrder1, openBuyOrder2, openBuyOrder3],
             },
+            blockchain: {
+                web3State: Web3State.Done,
+            },
         };
 
         // when
@@ -144,6 +165,9 @@ describe('selectors', () => {
         const state: any = {
             relayer: {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3],
+            },
+            blockchain: {
+                web3State: Web3State.Done,
             },
         };
 
@@ -179,6 +203,9 @@ describe('selectors', () => {
                 orders: [openSellOrder1, openSellOrder2, openSellOrder3, openBuyOrder1, openBuyOrder2, openBuyOrder3],
                 mySizeOrders: [],
                 userOrders: [],
+            },
+            blockchain: {
+                web3State: Web3State.Done,
             },
         };
 

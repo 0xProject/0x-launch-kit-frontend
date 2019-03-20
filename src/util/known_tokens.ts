@@ -1,10 +1,8 @@
 import { RELAYER_NETWORK_ID, WETH_TOKEN_SYMBOL, ZRX_TOKEN_SYMBOL } from '../common/constants';
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
-import {
-    getWethTokenFromTokensMetaDataByNetworkId,
-    mapTokensMetaDataToTokenByNetworkId,
-} from '../util/token_meta_data';
-import { Token } from '../util/types';
+
+import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
+import { Token } from './types';
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
