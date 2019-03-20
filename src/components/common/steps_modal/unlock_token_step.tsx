@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 
 import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
-import { stepsModalAdvanceStep, unlockToken } from '../../../store/actions';
+import { unlockToken } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { stepsModalAdvanceStep } from '../../../store/ui/actions';
 import { StepUnlockToken, StoreState, Token } from '../../../util/types';
 
 import {

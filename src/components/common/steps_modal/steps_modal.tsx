@@ -6,7 +6,7 @@ import { stepsModalReset } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { themeModalStyle } from '../../../util/theme';
 import { Step, StepKind, StoreState } from '../../../util/types';
-import { CloseModalButton } from '../../common/icons/close_modal_button';
+import { CloseModalButton } from '../icons/close_modal_button';
 
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
 import { SignOrderStepContainer } from './sign_order_step';

@@ -192,7 +192,8 @@ const getWalletContent = (web3State: Web3State, onConnectCb: () => any) => {
                 </LabelWrapper>
                 <LabelWrapper>
                     <Label>
-                        ETH <TooltipStyled type="full" />
+                        ETH{' '}
+                        <TooltipStyled description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
                     </Label>
                     <Value>10.00</Value>
                 </LabelWrapper>

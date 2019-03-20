@@ -218,7 +218,7 @@ class WethModal extends React.Component<Props, State> {
                         )}
                         <EthBoxUnit>wETH</EthBoxUnit>
                         <TooltipStyled>
-                            <Tooltip />
+                            <Tooltip description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
                         </TooltipStyled>
                     </EthBox>
                 </EthBoxes>
