@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getSelectedToken, getSelectedTokenSymbol } from '../../store/selectors';
+import { getBaseToken, getCurrencyPair } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { OrderSide, StoreState, Token } from '../../util/types';
+import { CurrencyPair, OrderSide, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
@@ -15,8 +15,8 @@ import { CardTabSelector } from '../common/card_tab_selector';
 import { OrderDetails } from './order_details';
 
 interface StateProps {
-    selectedTokenSymbol: string;
-    selectedToken: Token | null;
+    currencyPair: CurrencyPair;
+    baseToken: Token | null;
 }
 
 interface DispatchProps {
@@ -155,7 +155,7 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { selectedTokenSymbol } = this.props;
+        const { currencyPair } = this.props;
         const { makerAmount, price, tab, orderType } = this.state;
 
         const buySellInnerTabs = [
@@ -194,7 +194,7 @@ class BuySell extends React.Component<Props, State> {
                             value={makerAmount}
                         />
                         <TokenContainer>
-                            <TokenTextUppercase>{selectedTokenSymbol}</TokenTextUppercase>
+                            <TokenTextUppercase>{currencyPair.base}</TokenTextUppercase>
                         </TokenContainer>
                     </FieldContainer>
                     {orderType === OrderType.Limit && (
@@ -210,7 +210,7 @@ class BuySell extends React.Component<Props, State> {
                                     value={price}
                                 />
                                 <TokenContainer>
-                                    <TokenText>wETH</TokenText>
+                                    <TokenText>{currencyPair.quote}</TokenText>
                                 </TokenContainer>
                             </FieldContainer>
                         </>
@@ -219,11 +219,11 @@ class BuySell extends React.Component<Props, State> {
                         orderType={orderType}
                         tokenAmount={this.state.makerAmount}
                         tokenPrice={this.state.price}
-                        selectedToken={this.props.selectedToken}
+                        baseToken={this.props.baseToken}
                     />
                     <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
                         {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
-                        <TokenTextButtonUppercase>{selectedTokenSymbol}</TokenTextButtonUppercase>
+                        <TokenTextButtonUppercase>{currencyPair.base}</TokenTextButtonUppercase>
                     </Button>
                 </Content>
             </BuySellWrapper>
@@ -282,8 +282,8 @@ class BuySell extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        selectedTokenSymbol: getSelectedTokenSymbol(state),
-        selectedToken: getSelectedToken(state),
+        baseToken: getBaseToken(state),
+        currencyPair: getCurrencyPair(state),
     };
 };
 

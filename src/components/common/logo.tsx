@@ -1,13 +1,13 @@
 import React, { HTMLAttributes } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../util/theme';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-const LogoLink = styled<any>(Link)`
+const LogoLink = styled.a<any>`
     align-items: center;
+    cursor: pointer;
     display: flex;
     height: 33px;
     font-family: 'Inter var', sans-serif;
@@ -37,10 +37,10 @@ const LogoSVG = () => (
 );
 
 export const Logo: React.FC<Props> = props => {
-    const { ...restProps } = props;
+    const { onClick, ...restProps } = props;
 
     return (
-        <LogoLink to="/" {...restProps}>
+        <LogoLink onClick={onClick} {...restProps}>
             <LogoSVG />
             <LogoText>Launch Kit</LogoText>
         </LogoLink>

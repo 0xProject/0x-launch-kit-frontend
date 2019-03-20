@@ -3,7 +3,7 @@ import { SignedOrder } from '@0x/connect';
 
 import { OrderBookItem, OrderSide, Token, UIOrder } from '../util/types';
 
-export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[], selectedToken: Token): UIOrder[] => {
+export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[], baseToken: Token): UIOrder[] => {
     if (ordersInfo.length !== orders.length) {
         throw new Error(
             `AssertionError: Orders info length does not match orders length: ${ordersInfo.length} !== ${
@@ -12,12 +12,12 @@ export const ordersToUIOrders = (orders: SignedOrder[], ordersInfo: OrderInfo[],
         );
     }
 
-    const selectedTokenEncoded = assetDataUtils.encodeERC20AssetData(selectedToken.address);
+    const baseTokenEncoded = assetDataUtils.encodeERC20AssetData(baseToken.address);
 
     return orders.map((order, i) => {
         const orderInfo = ordersInfo[i];
 
-        const side = order.takerAssetData === selectedTokenEncoded ? OrderSide.Buy : OrderSide.Sell;
+        const side = order.takerAssetData === baseTokenEncoded ? OrderSide.Buy : OrderSide.Sell;
         const size = side === OrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
         const filled =
             side === OrderSide.Sell
