@@ -24,7 +24,7 @@ export const ETH_MARKET_PRICE_API_ENDPOINT =
     process.env.REACT_APP_ETH_MARKET_PRICE_API_ENDPOINT || 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
 
 export const ZEROX_MARKET_PRICE_API_ENDPOINT =
-    process.env.REACT_APP_MARKET_PRICE_API_ENDPOINT || 'https://api.coinmarketcap.com/v1/ticker/0x/';
+    process.env.REACT_APP_ZEROX_MARKET_PRICE_API_ENDPOINT || 'https://api.coinmarketcap.com/v1/ticker/0x/';
 
 export const CACHE_CHECK_INTERVAL: number =
     Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10) || 60000;
@@ -39,3 +39,6 @@ export const METAMASK_USER_DENIED_AUTH = 'User denied Auth';
 export const METAMASK_NOT_INSTALLED = 'User does not have metamask installed';
 
 export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
+
+export const UPDATE_ETHER_PRICE_INTERVAL: number =
+    Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10) || 3600000;
