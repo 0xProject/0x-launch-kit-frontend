@@ -8,6 +8,7 @@ import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
 import * as dollarUtils from '../../util/market_prices';
+import { tokenFactory } from '../../util/test-utils';
 
 import { OrderDetails } from './order_details';
 
@@ -20,13 +21,13 @@ describe('OrderDetails', () => {
     it('Calculates total cost for limit orders', done => {
         // given
         const orderType = OrderType.Limit;
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
-            name: '0x',
-            symbol: 'zrx',
-            primaryColor: '',
-        };
+        const token = tokenFactory.build();
+        const DOLAR_PRICE = 1;
+        const ZEROX_WETH_PRICE = 1;
+        const ZEROX_USD_PRICE = 1;
+        const makerAmount = new BigNumber(50);
+        const tokenPrice = new BigNumber(10);
+        const resultExpected = new BigNumber(501);
         const marketPriceEther = {
             symbol: '',
             priceUSD: new BigNumber(1),
@@ -35,22 +36,12 @@ describe('OrderDetails', () => {
             volumeUSD: new BigNumber(1000),
             percentChange: new BigNumber(1),
         };
-
-        const DOLAR_PRICE = 1;
-        const ZEROX_WETH_PRICE = 1;
-        const ZEROX_USD_PRICE = 1;
-        const makerAmount = new BigNumber(50);
-        const tokenPrice = new BigNumber(10);
-        const resultExpected = new BigNumber(501);
-
         // @ts-ignore
         CONSTANTS.MAKER_FEE = new BigNumber('1000000000000000000');
-
         // @ts-ignore
         dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
             return new BigNumber(ZEROX_WETH_PRICE);
         });
-
         // @ts-ignore
         dollarUtils.getZeroXPriceInUSD = jest.fn(() => {
             return new BigNumber(ZEROX_USD_PRICE);
@@ -63,13 +54,7 @@ describe('OrderDetails', () => {
 
         // when
         const wrapper = mount(
-            <OrderDetails
-                orderType={orderType}
-                tokenAmount={makerAmount}
-                tokenPrice={tokenPrice}
-                selectedToken={token}
-                marketPriceEther={marketPriceEther}
-            />,
+            <OrderDetails orderType={orderType} tokenAmount={makerAmount} tokenPrice={tokenPrice} baseToken={token} marketPriceEther={marketPriceEther} />,
         );
 
         // then

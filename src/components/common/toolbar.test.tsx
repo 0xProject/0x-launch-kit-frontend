@@ -6,7 +6,7 @@ import { Toolbar } from './toolbar';
 describe('Toolbar', () => {
     it('Toolbar to match snapshot', () => {
         // given
-        const toolbar = <Toolbar />;
+        const toolbar = <Toolbar onGoToHome={jest.fn()} onGoToWallet={jest.fn()} />;
 
         // when
         const wrapper = shallow(toolbar);

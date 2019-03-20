@@ -1,20 +1,23 @@
 import { BigNumber, OrderInfo, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
-import { makeBuyOrder, makeSellOrder, mockToken1, uiOrder } from './test-utils';
+import { makeOrder, tokenFactory, uiOrder } from './test-utils';
 import { OrderSide, UIOrder } from './types';
 import { mergeByPrice, ordersToUIOrders } from './ui_orders';
 
 describe('ordersToUIOrders', () => {
     it('should convert a sell Order to a UIOrder', async () => {
         // given
+        const baseToken = tokenFactory.build({ decimals: 18 });
+        const quoteToken = tokenFactory.build({ decimals: 18 });
         const orders: SignedOrder[] = [
-            makeSellOrder({
+            makeOrder({
                 makerAssetAmount: '1',
                 takerAssetAmount: '50',
+                makerTokenAddress: baseToken.address,
+                takerTokenAddress: quoteToken.address,
             }),
         ];
-        const selectedToken = mockToken1;
         const ordersInfo: OrderInfo[] = [
             {
                 orderHash: '',
@@ -24,7 +27,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -40,13 +43,16 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a buy Order to a UIOrder', async () => {
         // given
+        const baseToken = tokenFactory.build({ decimals: 18 });
+        const quoteToken = tokenFactory.build({ decimals: 18 });
         const orders: SignedOrder[] = [
-            makeBuyOrder({
+            makeOrder({
                 makerAssetAmount: '100',
                 takerAssetAmount: '1',
+                makerTokenAddress: quoteToken.address,
+                takerTokenAddress: baseToken.address,
             }),
         ];
-        const selectedToken = mockToken1;
         const ordersInfo: OrderInfo[] = [
             {
                 orderHash: '',
@@ -56,7 +62,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -72,17 +78,22 @@ describe('ordersToUIOrders', () => {
 
     it('should convert buy and sell Orders to UIOrders', async () => {
         // given
+        const baseToken = tokenFactory.build({ decimals: 18 });
+        const quoteToken = tokenFactory.build({ decimals: 18 });
         const orders: SignedOrder[] = [
-            makeSellOrder({
+            makeOrder({
                 makerAssetAmount: '1',
                 takerAssetAmount: '50',
+                makerTokenAddress: baseToken.address,
+                takerTokenAddress: quoteToken.address,
             }),
-            makeBuyOrder({
+            makeOrder({
                 makerAssetAmount: '100',
                 takerAssetAmount: '1',
+                makerTokenAddress: quoteToken.address,
+                takerTokenAddress: baseToken.address,
             }),
         ];
-        const selectedToken = mockToken1;
         const ordersInfo: OrderInfo[] = [
             {
                 orderHash: '',
@@ -97,7 +108,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
 
         // then
         expect(uiOrders).toHaveLength(2);
@@ -121,13 +132,16 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a partially filled sell Order to a UIOrder', async () => {
         // given
+        const baseToken = tokenFactory.build({ decimals: 18 });
+        const quoteToken = tokenFactory.build({ decimals: 18 });
         const orders: SignedOrder[] = [
-            makeSellOrder({
+            makeOrder({
                 makerAssetAmount: '1',
                 takerAssetAmount: '50',
+                makerTokenAddress: baseToken.address,
+                takerTokenAddress: quoteToken.address,
             }),
         ];
-        const selectedToken = mockToken1;
         const ordersInfo: OrderInfo[] = [
             {
                 orderHash: '',
@@ -137,7 +151,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -153,13 +167,16 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a partially filled buy Order to a UIOrder', async () => {
         // given
+        const baseToken = tokenFactory.build({ decimals: 18 });
+        const quoteToken = tokenFactory.build({ decimals: 18 });
         const orders: SignedOrder[] = [
-            makeBuyOrder({
+            makeOrder({
                 makerAssetAmount: '100',
                 takerAssetAmount: '1',
+                makerTokenAddress: quoteToken.address,
+                takerTokenAddress: baseToken.address,
             }),
         ];
-        const selectedToken = mockToken1;
         const ordersInfo: OrderInfo[] = [
             {
                 orderHash: '',
@@ -169,7 +186,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, ordersInfo, selectedToken);
+        const uiOrders = ordersToUIOrders(orders, ordersInfo, baseToken);
 
         // then
         expect(uiOrders).toHaveLength(1);
@@ -185,17 +202,22 @@ describe('ordersToUIOrders', () => {
 
     it("should throw if orders length and ordersInfo length don't match", async () => {
         // given
+        const baseToken = tokenFactory.build({ decimals: 18 });
+        const quoteToken = tokenFactory.build({ decimals: 18 });
         const orders: SignedOrder[] = [
-            makeBuyOrder({
+            makeOrder({
                 makerAssetAmount: '1',
                 takerAssetAmount: '100',
+                makerTokenAddress: quoteToken.address,
+                takerTokenAddress: baseToken.address,
             }),
-            makeSellOrder({
+            makeOrder({
                 makerAssetAmount: '100',
                 takerAssetAmount: '1',
+                makerTokenAddress: baseToken.address,
+                takerTokenAddress: quoteToken.address,
             }),
         ];
-        const selectedToken = mockToken1;
         const ordersInfo: OrderInfo[] = [
             {
                 orderHash: '',
@@ -205,7 +227,7 @@ describe('ordersToUIOrders', () => {
         ];
 
         // when
-        const functionCall = () => ordersToUIOrders(orders, ordersInfo, selectedToken);
+        const functionCall = () => ordersToUIOrders(orders, ordersInfo, baseToken);
 
         // then
         expect(functionCall).toThrow();

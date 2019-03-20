@@ -13,9 +13,9 @@ import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapp
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
-import { updateMarketPriceEther } from '../market/actions';
+import { setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
-import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 import { addNotification } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
@@ -161,7 +161,10 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 };
 
 export const initWallet = () => {
-    return async (dispatch: any) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const currencyPair = getCurrencyPair(state);
+
         dispatch(setWeb3State(Web3State.Loading));
         try {
             const web3Wrapper = await getWeb3Wrapper();
@@ -179,7 +182,8 @@ export const initWallet = () => {
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
             dispatch(setConnectedUser(ethAccount, networkId));
             dispatch(
@@ -194,9 +198,9 @@ export const initWallet = () => {
                 initializeRelayerData({
                     orders: [],
                     userOrders: [],
-                    selectedToken,
                 }),
             );
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
             dispatch(updateMarketPriceEther());
         } catch (error) {
