@@ -11,7 +11,7 @@ import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { CardLoading } from '../common/loading';
-import { IconType, Tooltip, TooltipPosition } from '../common/tooltip';
+import { IconType, Tooltip } from '../common/tooltip';
 
 import { WethModal } from './wallet_weth_modal';
 
@@ -44,7 +44,6 @@ const Row = styled.div`
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
     position: relative;
-    z-index: 1;
 
     &:first-child {
         padding-top: 5px;
@@ -163,9 +162,8 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <LabelWrapper>
                             <Label>wETH</Label>{' '}
                             <Tooltip
-                                description="ETH cannot be traded with other tokens directly. You need to convert it to WETH first. WETH can be converted back to ETH at any time."
+                                description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
                                 iconType={IconType.Fill}
-                                tooltipPosition={TooltipPosition.Bottom}
                             />
                         </LabelWrapper>
                         <Value>{formattedWeth}</Value>

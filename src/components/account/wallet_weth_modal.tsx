@@ -8,7 +8,7 @@ import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
-import { Tooltip, TooltipPosition } from '../common/tooltip';
+import { Tooltip } from '../common/tooltip';
 
 enum Editing {
     Eth,
@@ -218,10 +218,7 @@ class WethModal extends React.Component<Props, State> {
                         )}
                         <EthBoxUnit>wETH</EthBoxUnit>
                         <TooltipStyled>
-                            <Tooltip
-                                description="ETH cannot be traded with other tokens directly. You need to convert it to WETH first. WETH can be converted back to ETH at any time."
-                                tooltipPosition={TooltipPosition.Left}
-                            />
+                            <Tooltip description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
                         </TooltipStyled>
                     </EthBox>
                 </EthBoxes>
