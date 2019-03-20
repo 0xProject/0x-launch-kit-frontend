@@ -1,16 +1,16 @@
-import { BigNumber } from '0x.js';
+import { assetDataUtils, BigNumber } from '0x.js';
 
 import { buildLimitOrder, buildMarketOrders } from './orders';
-import { uiOrder } from './test-utils';
+import { addressFactory, uiOrder } from './test-utils';
 import { OrderSide } from './types';
 
 describe('buildLimitOrder', () => {
     it('should build a buy order', async () => {
         // given
-        const account = '0x0000000000000000000000000000000000000001';
-        const tokenAddress = '0x0000000000000000000000000000000000000002';
-        const wethAddress = '0x0000000000000000000000000000000000000003';
-        const exchangeAddress = '0x0000000000000000000000000000000000000004';
+        const account = addressFactory.build().address;
+        const baseTokenAddress = addressFactory.build().address;
+        const quoteTokenAddress = addressFactory.build().address;
+        const exchangeAddress = addressFactory.build().address;
         const amount = new BigNumber('100');
         const price = new BigNumber(0.1);
 
@@ -18,8 +18,8 @@ describe('buildLimitOrder', () => {
         const order = buildLimitOrder(
             {
                 account,
-                tokenAddress,
-                wethAddress,
+                baseTokenAddress,
+                quoteTokenAddress,
                 amount,
                 price,
                 exchangeAddress,
@@ -31,22 +31,18 @@ describe('buildLimitOrder', () => {
         expect(order.exchangeAddress).toEqual(exchangeAddress);
         expect(order.makerAddress).toEqual(account);
         expect(order.makerAssetAmount).toEqual(new BigNumber('10'));
-        expect(order.makerAssetData).toEqual(
-            '0xf47261b00000000000000000000000000000000000000000000000000000000000000003',
-        );
+        expect(order.makerAssetData).toEqual(assetDataUtils.encodeERC20AssetData(quoteTokenAddress));
         expect(order.takerAddress).toEqual('0x0000000000000000000000000000000000000000');
         expect(order.takerAssetAmount).toEqual(new BigNumber('100'));
-        expect(order.takerAssetData).toEqual(
-            '0xf47261b00000000000000000000000000000000000000000000000000000000000000002',
-        );
+        expect(order.takerAssetData).toEqual(assetDataUtils.encodeERC20AssetData(baseTokenAddress));
     });
 
     it('should build a sell order', async () => {
         // given
-        const account = '0x0000000000000000000000000000000000000001';
-        const tokenAddress = '0x0000000000000000000000000000000000000002';
-        const wethAddress = '0x0000000000000000000000000000000000000003';
-        const exchangeAddress = '0x0000000000000000000000000000000000000004';
+        const account = addressFactory.build().address;
+        const baseTokenAddress = addressFactory.build().address;
+        const quoteTokenAddress = addressFactory.build().address;
+        const exchangeAddress = addressFactory.build().address;
         const amount = new BigNumber('100');
         const price = new BigNumber(0.1);
 
@@ -54,8 +50,8 @@ describe('buildLimitOrder', () => {
         const order = buildLimitOrder(
             {
                 account,
-                tokenAddress,
-                wethAddress,
+                baseTokenAddress,
+                quoteTokenAddress,
                 amount,
                 price,
                 exchangeAddress,
@@ -67,14 +63,10 @@ describe('buildLimitOrder', () => {
         expect(order.exchangeAddress).toEqual(exchangeAddress);
         expect(order.makerAddress).toEqual(account);
         expect(order.makerAssetAmount).toEqual(new BigNumber('100'));
-        expect(order.makerAssetData).toEqual(
-            '0xf47261b00000000000000000000000000000000000000000000000000000000000000002',
-        );
+        expect(order.makerAssetData).toEqual(assetDataUtils.encodeERC20AssetData(baseTokenAddress));
         expect(order.takerAddress).toEqual('0x0000000000000000000000000000000000000000');
         expect(order.takerAssetAmount).toEqual(new BigNumber('10'));
-        expect(order.takerAssetData).toEqual(
-            '0xf47261b00000000000000000000000000000000000000000000000000000000000000003',
-        );
+        expect(order.takerAssetData).toEqual(assetDataUtils.encodeERC20AssetData(quoteTokenAddress));
     });
 });
 describe('buildMarketOrders', () => {

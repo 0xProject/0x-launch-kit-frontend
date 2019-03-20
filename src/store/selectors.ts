@@ -13,12 +13,14 @@ export const getWethBalance = (state: StoreState) =>
     state.blockchain.wethTokenBalance ? state.blockchain.wethTokenBalance.balance : new BigNumber(0);
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
-export const getSelectedToken = (state: StoreState) => state.relayer.selectedToken;
 export const getNotifications = (state: StoreState) => state.ui.notifications;
 export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnreadNotifications;
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
+export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
+export const getBaseToken = (state: StoreState) => state.market.baseToken;
+export const getQuoteToken = (state: StoreState) => state.market.quoteToken;
 
 export const getOpenOrders = createSelector(
     getOrders,
@@ -84,11 +86,6 @@ export const getOrderBook = createSelector(
             spread,
         };
     },
-);
-
-export const getSelectedTokenSymbol = createSelector(
-    getSelectedToken,
-    token => (token ? token.symbol : ''),
 );
 
 export const getTokens = createSelector(

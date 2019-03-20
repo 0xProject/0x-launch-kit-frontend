@@ -8,6 +8,7 @@ import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
 import * as dollarUtils from '../../util/market_prices';
+import { tokenFactory } from '../../util/test-utils';
 
 import { OrderDetails } from './order_details';
 
@@ -20,13 +21,7 @@ describe('OrderDetails', () => {
     it('Calculates total cost for limit orders', done => {
         // given
         const orderType = OrderType.Limit;
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 0,
-            name: '0x',
-            symbol: 'zrx',
-            primaryColor: '',
-        };
+        const token = tokenFactory.build();
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
@@ -51,12 +46,7 @@ describe('OrderDetails', () => {
 
         // when
         const wrapper = mount(
-            <OrderDetails
-                orderType={orderType}
-                tokenAmount={makerAmount}
-                tokenPrice={tokenPrice}
-                selectedToken={token}
-            />,
+            <OrderDetails orderType={orderType} tokenAmount={makerAmount} tokenPrice={tokenPrice} baseToken={token} />,
         );
 
         // then
