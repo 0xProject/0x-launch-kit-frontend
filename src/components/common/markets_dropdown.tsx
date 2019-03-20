@@ -148,7 +148,7 @@ const MagnifierIconWrapper = styled.div`
 `;
 
 const TableWrapper = styled.div`
-    height: 420px;
+    max-height: 420px;
     overflow: auto;
     position: relative;
 `;
@@ -176,13 +176,25 @@ const THLastStyled = styled(THLast)`
 `;
 
 const CustomTDFirstStyled = styled(CustomTDFirst)`
-    font-weight: 700;
-
     ${verticalCellPadding};
 `;
 
 const CustomTDLastStyled = styled(CustomTDLast)`
     ${verticalCellPadding};
+`;
+
+const TokenIconAndLabel = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+`;
+
+const TokenLabel = styled.div`
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 0 15px;
 `;
 
 const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
@@ -295,14 +307,18 @@ class MarketsDropdown extends React.Component<Props, State> {
 
                         const primaryColor = getColorBySymbol(market.currencyPair.base);
 
+                        const baseSymbol = market.currencyPair.base.toUpperCase();
+                        const quoteSymbol = market.currencyPair.quote.toUpperCase();
+
                         return (
                             <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    <TokenIcon symbol={market.currencyPair.base} primaryColor={primaryColor} />
-                                    <span>
-                                        {market.currencyPair.base.toUpperCase()}/
-                                        {market.currencyPair.quote.toUpperCase()}
-                                    </span>
+                                    <TokenIconAndLabel>
+                                        <TokenIcon symbol={market.currencyPair.base} primaryColor={primaryColor} />
+                                        <TokenLabel>
+                                            {baseSymbol} / {quoteSymbol}
+                                        </TokenLabel>
+                                    </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
                                 <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true }}>
                                     {this._getPrice(market)}
