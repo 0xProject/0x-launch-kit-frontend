@@ -1,14 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { goToHome, goToWallet } from '../../store/actions';
+import { getWeb3State } from '../../store/selectors';
+import { errorsWallet } from '../../util/error_messages';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
+import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
+import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
 import { PriceChange } from './price_change';
+
+interface StateProps {
+    web3State?: Web3State;
+}
+
+interface DispatchProps {
+    onGoToHome: () => any;
+    onGoToWallet: () => any;
+}
+
+type Props = StateProps & DispatchProps;
 
 const separatorTopbar = `
     &:after {
@@ -39,7 +55,7 @@ const ToolbarWrapper = styled.div`
     z-index: 123;
 `;
 
-const MyWalletLink = styled(Link)`
+const MyWalletLink = styled.a`
     align-items: center;
     color: #333333;
     display: flex;
@@ -96,17 +112,60 @@ const PriceChangeStyled = styled(PriceChange)`
     }
 `;
 
-export const Toolbar = () => (
-    <ToolbarWrapper>
-        <ToolbarStart>
-            <LogoHeader />
-            <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-            <PriceChangeStyled />
-        </ToolbarStart>
-        <ToolbarEnd>
-            <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
-            <WalletDropdown />
-            <NotificationsDropdownContainer />
-        </ToolbarEnd>
-    </ToolbarWrapper>
-);
+const Toolbar = (props: Props) => {
+    const isMmLocked = props.web3State === Web3State.Locked;
+    const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
+
+    const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        props.onGoToHome();
+    };
+
+    const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        props.onGoToWallet();
+    };
+
+    return (
+        <ToolbarWrapper>
+            <ToolbarStart>
+                <LogoHeader onClick={handleLogoClick} />
+                <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
+                <PriceChangeStyled />
+            </ToolbarStart>
+            {isMmLocked ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
+            ) : null}
+            {isMmNotInstalled ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
+            ) : null}
+            {!isMmLocked && !isMmNotInstalled ? (
+                <ToolbarEnd>
+                    <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
+                        My Wallet
+                    </MyWalletLink>
+                    <WalletDropdown />
+                    <NotificationsDropdownContainer />
+                </ToolbarEnd>
+            ) : null}
+        </ToolbarWrapper>
+    );
+};
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        web3State: getWeb3State(state),
+    };
+};
+
+const mapDispatchToProps = {
+    onGoToHome: goToHome,
+    onGoToWallet: goToWallet,
+};
+
+const ToolbarContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Toolbar);
+
+export { Toolbar, ToolbarContainer };

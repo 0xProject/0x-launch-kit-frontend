@@ -5,7 +5,7 @@ import { themeBreakPoints } from '../util/theme';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
-import { Toolbar } from './common/toolbar';
+import { ToolbarContainer } from './common/toolbar';
 
 const General = styled.div`
     background: #f5f5f5;
@@ -42,7 +42,7 @@ export const GeneralLayout = (props: React.Props<any> | GeneralLayoutProps) => {
 
     return (
         <General>
-            <Toolbar />
+            <ToolbarContainer />
             <ContentScroll>
                 <Content>{children}</Content>
                 <Footer />
