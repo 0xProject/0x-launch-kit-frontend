@@ -50,9 +50,10 @@ export interface UIState {
 }
 
 export interface MarketState {
-    currencyPair: CurrencyPair;
-    baseToken: Token | null;
-    quoteToken: Token | null;
+    readonly currencyPair: CurrencyPair;
+    readonly baseToken: Token | null;
+    readonly quoteToken: Token | null;
+    readonly ethInUsd: BigNumber | null;
 }
 
 export interface StoreState {

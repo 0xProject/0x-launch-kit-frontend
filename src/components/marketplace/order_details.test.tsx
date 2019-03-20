@@ -28,6 +28,7 @@ describe('OrderDetails', () => {
         const makerAmount = new BigNumber(50);
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(501);
+        const ethInUsd = new BigNumber(1);
         // @ts-ignore
         CONSTANTS.MAKER_FEE = new BigNumber('1000000000000000000');
         // @ts-ignore
@@ -46,7 +47,13 @@ describe('OrderDetails', () => {
 
         // when
         const wrapper = mount(
-            <OrderDetails orderType={orderType} tokenAmount={makerAmount} tokenPrice={tokenPrice} baseToken={token} />,
+            <OrderDetails
+                orderType={orderType}
+                tokenAmount={makerAmount}
+                tokenPrice={tokenPrice}
+                baseToken={token}
+                ethInUsd={ethInUsd}
+            />,
         );
 
         // then
