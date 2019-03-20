@@ -53,6 +53,7 @@ export interface MarketState {
     currencyPair: CurrencyPair;
     baseToken: Token | null;
     quoteToken: Token | null;
+    markets: Market[] | null;
 }
 
 export interface StoreState {
@@ -132,6 +133,11 @@ export interface OrderBook {
 export interface CurrencyPair {
     base: string;
     quote: string;
+}
+
+export interface Market {
+    currencyPair: CurrencyPair;
+    price: BigNumber | null;
 }
 
 export enum NotificationKind {

@@ -1,4 +1,4 @@
-import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
+import { AssetData, BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import {
@@ -13,7 +13,7 @@ import { getWeb3Wrapper, getWeb3WrapperOrThrow } from '../../services/web3_wrapp
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
-import { setMarketTokens } from '../market/actions';
+import { getMarkets, setMarketTokens } from '../market/actions';
 import { getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 import { addNotification } from '../ui/actions';
@@ -202,6 +202,7 @@ export const initWallet = () => {
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
+            dispatch(getMarkets());
         } catch (error) {
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {

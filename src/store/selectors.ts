@@ -21,6 +21,7 @@ export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsMod
 export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
 export const getBaseToken = (state: StoreState) => state.market.baseToken;
 export const getQuoteToken = (state: StoreState) => state.market.quoteToken;
+export const getMarkets = (state: StoreState) => state.market.markets;
 
 export const getOpenOrders = createSelector(
     getOrders,

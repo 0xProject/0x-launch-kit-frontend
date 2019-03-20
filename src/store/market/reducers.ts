@@ -12,6 +12,7 @@ const initialMarketState: MarketState = {
     },
     baseToken: null,
     quoteToken: null,
+    markets: null,
 };
 
 export function market(state: MarketState = initialMarketState, action: RootAction): MarketState {
@@ -20,6 +21,8 @@ export function market(state: MarketState = initialMarketState, action: RootActi
             return { ...state, baseToken: action.payload.baseToken, quoteToken: action.payload.quoteToken };
         case getType(actions.setCurrencyPair):
             return { ...state, currencyPair: action.payload };
+        case getType(actions.setMarkets):
+            return { ...state, markets: action.payload };
     }
     return state;
 }
