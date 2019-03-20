@@ -6,7 +6,7 @@ import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
 import { getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../util/tokens';
-import { MarketPrice, Token } from '../../util/types';
+import { Token } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {}
@@ -32,7 +32,7 @@ interface Props {
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
     baseToken: Token | null;
-    marketPriceEther: MarketPrice | null;
+    ethInUsd: BigNumber | null;
 }
 
 const Row = styled.div`
@@ -108,8 +108,8 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public updateLimitOrderState = async () => {
-        const { tokenAmount, tokenPrice, baseToken, marketPriceEther } = this.props;
-        if (baseToken && marketPriceEther) {
+        const { tokenAmount, tokenPrice, baseToken, ethInUsd } = this.props;
+        if (baseToken && ethInUsd) {
             /* Reduces decimals of the token amount */
             const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, baseToken.decimals);
             /* This could be refactored with promise all  */
@@ -117,7 +117,7 @@ class OrderDetails extends React.Component<Props, State> {
 
             const results = await Promise.all(promisesArray);
             const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
-            const ethInUSD = marketPriceEther.priceUSD;
+            const ethInUSD = ethInUsd;
             /* Calculates total cost in wETH */
             const zeroXFeeInWeth = zeroXPriceInWeth.mul(tokenAmountInUnits(MAKER_FEE, 18));
             const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
@@ -154,7 +154,7 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
             newProps.baseToken !== prevProps.baseToken ||
-            newProps.marketPriceEther !== prevProps.marketPriceEther
+            newProps.ethInUsd !== prevProps.ethInUsd
         ) {
             if (newProps.orderType === OrderType.Limit) {
                 await this.updateLimitOrderState();

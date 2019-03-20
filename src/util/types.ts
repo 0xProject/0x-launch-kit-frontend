@@ -50,10 +50,10 @@ export interface UIState {
 }
 
 export interface MarketState {
-    currencyPair: CurrencyPair;
-    baseToken: Token | null;
-    quoteToken: Token | null;
-    prices: MarketPriceState;
+    readonly currencyPair: CurrencyPair;
+    readonly baseToken: Token | null;
+    readonly quoteToken: Token | null;
+    readonly ethInUsd: BigNumber | null;
 }
 
 export interface StoreState {
@@ -176,16 +176,3 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
-
-export interface MarketPrice {
-    readonly symbol: string;
-    readonly priceUSD: BigNumber;
-    readonly priceETHER: BigNumber;
-    readonly priceDAI: BigNumber;
-    readonly volumeUSD: BigNumber;
-    readonly percentChange: BigNumber;
-}
-
-export interface MarketPriceState {
-    eth: MarketPrice | null;
-}

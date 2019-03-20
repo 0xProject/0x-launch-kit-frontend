@@ -28,14 +28,7 @@ describe('OrderDetails', () => {
         const makerAmount = new BigNumber(50);
         const tokenPrice = new BigNumber(10);
         const resultExpected = new BigNumber(501);
-        const marketPriceEther = {
-            symbol: '',
-            priceUSD: new BigNumber(1),
-            priceDAI: new BigNumber(1),
-            priceETHER: new BigNumber(1),
-            volumeUSD: new BigNumber(1000),
-            percentChange: new BigNumber(1),
-        };
+        const ethInUsd = new BigNumber(1);
         // @ts-ignore
         CONSTANTS.MAKER_FEE = new BigNumber('1000000000000000000');
         // @ts-ignore
@@ -59,7 +52,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 baseToken={token}
-                marketPriceEther={marketPriceEther}
+                ethInUsd={ethInUsd}
             />,
         );
 

@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { createAction } from 'typesafe-actions';
 
 import { getMarketPriceEther } from '../../services/markets';
-import { CurrencyPair, MarketPrice, MarketPriceState, StoreState, Token } from '../../util/types';
+import { CurrencyPair, StoreState, Token } from '../../util/types';
 
 export const setMarketTokens = createAction('SET_MARKET_TOKENS', resolve => {
     return ({ baseToken, quoteToken }: { baseToken: Token; quoteToken: Token }) => resolve({ baseToken, quoteToken });
@@ -20,11 +20,11 @@ export const fetchMarketPriceEtherError = createAction('FETCH_MARKET_PRICE_ETHER
 });
 
 export const fetchMarketPriceEtherStart = createAction('FETCH_MARKET_PRICE_ETHER_START', resolve => {
-    return (payload: MarketPrice) => resolve(payload);
+    return () => resolve();
 });
 
 export const fetchMarketPriceEtherUpdate = createAction('FETCH_MARKET_PRICE_ETHER_UPDATE', resolve => {
-    return (payload: MarketPriceState) => resolve(payload);
+    return (ethInUsd: BigNumber) => resolve(ethInUsd);
 });
 
 export const changeMarket = (currencyPair: CurrencyPair) => {
@@ -50,20 +50,11 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
 
 export const updateMarketPriceEther = () => {
     return async (dispatch: any, getState: any) => {
-        dispatch(
-            fetchMarketPriceEtherStart({
-                symbol: '',
-                priceUSD: new BigNumber(0),
-                priceDAI: new BigNumber(0),
-                priceETHER: new BigNumber(0),
-                volumeUSD: new BigNumber(0),
-                percentChange: new BigNumber(0),
-            }),
-        );
+        dispatch(fetchMarketPriceEtherStart());
 
         try {
             const marketPriceEtherData = await getMarketPriceEther();
-            dispatch(fetchMarketPriceEtherUpdate({ eth: marketPriceEtherData }));
+            dispatch(fetchMarketPriceEtherUpdate(marketPriceEtherData));
         } catch (err) {
             dispatch(fetchMarketPriceEtherError(err));
         }
