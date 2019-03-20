@@ -55,6 +55,7 @@ export interface StoreState {
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
     readonly ui: UIState;
+    readonly market: MarketState;
 }
 
 export enum StepKind {
@@ -164,3 +165,20 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
+
+export interface MarketPrice {
+    readonly symbol: string;
+    readonly priceUSD: BigNumber;
+    readonly priceETHER: BigNumber;
+    readonly priceDAI: BigNumber;
+    readonly volumeUSD: BigNumber;
+    readonly percentChange: BigNumber;
+}
+
+export interface MarketState {
+    readonly prices: MarketPriceState;
+}
+
+export interface MarketPriceState {
+    eth: MarketPrice | null;
+}
