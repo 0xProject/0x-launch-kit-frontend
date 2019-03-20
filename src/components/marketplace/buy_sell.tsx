@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getMarketPriceEther, getBaseToken, getCurrencyPair } from '../../store/selectors';
+import { getBaseToken, getCurrencyPair, getMarketPriceEther } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { MarketPrice, CurrencyPair, OrderSide, StoreState, Token } from '../../util/types';
+import { CurrencyPair, MarketPrice, OrderSide, StoreState, Token } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
