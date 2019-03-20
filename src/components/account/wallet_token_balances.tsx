@@ -87,7 +87,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const totalEthRow = (
             <TR>
                 <TokenTD>
-                    <TokenIconStyled token={wethToken} />
+                    <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>ETH Total (ETH + wETH)</CustomTDTokenName>
                 <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedTotalEthBalance}</CustomTD>
@@ -110,7 +110,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             return (
                 <TR key={symbol}>
                     <TokenTD>
-                        <TokenIconStyled token={token} />
+                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} />
                     </TokenTD>
                     <CustomTDTokenName styles={{ borderBottom: true }}>
                         <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}

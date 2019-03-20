@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { goToHome, goToWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
@@ -18,7 +18,13 @@ import { PriceChange } from './price_change';
 interface StateProps {
     web3State?: Web3State;
 }
-type Props = StateProps;
+
+interface DispatchProps {
+    onGoToHome: () => any;
+    onGoToWallet: () => any;
+}
+
+type Props = StateProps & DispatchProps;
 
 const separatorTopbar = `
     &:after {
@@ -49,7 +55,7 @@ const ToolbarWrapper = styled.div`
     z-index: 123;
 `;
 
-const MyWalletLink = styled(Link)`
+const MyWalletLink = styled.a`
     align-items: center;
     color: #333333;
     display: flex;
@@ -106,14 +112,24 @@ const PriceChangeStyled = styled(PriceChange)`
     }
 `;
 
-const _Toolbar = (props: Props) => {
+const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
+
+    const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        props.onGoToHome();
+    };
+
+    const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        props.onGoToWallet();
+    };
 
     return (
         <ToolbarWrapper>
             <ToolbarStart>
-                <LogoHeader />
+                <LogoHeader onClick={handleLogoClick} />
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
                 <PriceChangeStyled />
             </ToolbarStart>
@@ -125,7 +141,9 @@ const _Toolbar = (props: Props) => {
             ) : null}
             {!isMmLocked && !isMmNotInstalled ? (
                 <ToolbarEnd>
-                    <MyWalletLink to="/my-wallet">My Wallet</MyWalletLink>
+                    <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
+                        My Wallet
+                    </MyWalletLink>
                     <WalletDropdown />
                     <NotificationsDropdownContainer />
                 </ToolbarEnd>
@@ -140,6 +158,14 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const Toolbar = connect(mapStateToProps)(_Toolbar);
+const mapDispatchToProps = {
+    onGoToHome: goToHome,
+    onGoToWallet: goToWallet,
+};
 
-export { Toolbar };
+const ToolbarContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Toolbar);
+
+export { Toolbar, ToolbarContainer };

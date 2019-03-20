@@ -9,6 +9,7 @@ import React from 'react';
 import * as CONSTANTS from '../../common/constants';
 import * as storeFns from '../../store/selectors';
 import * as dollarUtils from '../../util/market_prices';
+import { tokenFactory } from '../../util/test-utils';
 import { OrderSide, OrderType, UIOrder } from '../../util/types';
 
 import { OrderDetails } from './order_details';
@@ -26,13 +27,7 @@ describe('OrderDetails', () => {
     it('Calculates total cost for limit orders', done => {
         // given
         const orderType = OrderType.Limit;
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 18,
-            name: '0x',
-            symbol: 'zrx',
-            primaryColor: '',
-        };
+        const token = tokenFactory.build({ decimals: 18 });
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
@@ -67,7 +62,7 @@ describe('OrderDetails', () => {
                 orderType={orderType}
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
-                selectedToken={token}
+                baseToken={token}
                 operationType={OrderSide.Sell}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
@@ -92,13 +87,7 @@ describe('OrderDetails', () => {
     it('Calculates fees for market orders', done => {
         // given
         const orderType = OrderType.Market;
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 18,
-            name: '0x',
-            symbol: 'zrx',
-            primaryColor: '',
-        };
+        const token = tokenFactory.build({ decimals: 18 });
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
@@ -188,7 +177,7 @@ describe('OrderDetails', () => {
                 orderType={orderType}
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
-                selectedToken={token}
+                baseToken={token}
                 operationType={OrderSide.Buy}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
@@ -214,13 +203,7 @@ describe('OrderDetails', () => {
     it('Calculates total cost for market orders', done => {
         // given
         const orderType = OrderType.Market;
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 18,
-            name: '0x',
-            symbol: 'zrx',
-            primaryColor: '',
-        };
+        const token = tokenFactory.build({ decimals: 18 });
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
@@ -315,7 +298,7 @@ describe('OrderDetails', () => {
                 orderType={orderType}
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
-                selectedToken={token}
+                baseToken={token}
                 operationType={OrderSide.Buy}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
@@ -339,13 +322,7 @@ describe('OrderDetails', () => {
     it('Do not displays a value if the order amount is not fillable on market', done => {
         // given
         const orderType = OrderType.Market;
-        const token = {
-            address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            decimals: 18,
-            name: '0x',
-            symbol: 'zrx',
-            primaryColor: '',
-        };
+        const token = tokenFactory.build({ decimals: 18 });
         const DOLAR_PRICE = 1;
         const ZEROX_WETH_PRICE = 1;
         const ZEROX_USD_PRICE = 1;
@@ -437,7 +414,7 @@ describe('OrderDetails', () => {
                 orderType={orderType}
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
-                selectedToken={token}
+                baseToken={token}
                 operationType={OrderSide.Sell}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}

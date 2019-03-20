@@ -5,13 +5,9 @@ import { MarketsDropdownContainer } from './markets_dropdown';
 
 describe('Markets Dropdown', () => {
     let wrapper;
-    const mapStateToProps = {
-        tokens: [],
-        selectedToken: '',
-    };
 
     beforeEach(() => {
-        wrapper = shallow(<MarketsDropdownContainer {...mapStateToProps} />);
+        wrapper = shallow(<MarketsDropdownContainer />);
     });
 
     it('Render the component', () => {

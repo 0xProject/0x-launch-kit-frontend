@@ -41,7 +41,6 @@ export interface BlockchainState {
 export interface RelayerState {
     readonly orders: UIOrder[];
     readonly userOrders: UIOrder[];
-    readonly selectedToken: Token | null;
 }
 
 export interface UIState {
@@ -50,11 +49,18 @@ export interface UIState {
     readonly stepsModal: StepsModalState;
 }
 
+export interface MarketState {
+    currencyPair: CurrencyPair;
+    baseToken: Token | null;
+    quoteToken: Token | null;
+}
+
 export interface StoreState {
     readonly router: RouterState;
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
     readonly ui: UIState;
+    readonly market: MarketState;
 }
 
 export enum StepKind {
@@ -121,6 +127,11 @@ export interface OrderBook {
     sellOrders: OrderBookItem[];
     mySizeOrders: OrderBookItem[];
     spread: BigNumber;
+}
+
+export interface CurrencyPair {
+    base: string;
+    quote: string;
 }
 
 export enum NotificationKind {

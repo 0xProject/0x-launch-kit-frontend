@@ -70,7 +70,7 @@ interface OwnProps {
     orderType: OrderType;
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
-    selectedToken: Token | null;
+    baseToken: Token | null;
     operationType: OrderSide;
 }
 
@@ -113,7 +113,7 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.selectedToken !== prevProps.selectedToken ||
+            newProps.baseToken !== prevProps.baseToken ||
             newProps.operationType !== prevProps.operationType
         ) {
             await this._updateOrderDetailsState();
@@ -172,8 +172,8 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     private readonly _updateOrderDetailsState = async () => {
-        const { selectedToken } = this.props;
-        if (!selectedToken) {
+        const { baseToken } = this.props;
+        if (!baseToken) {
             return;
         }
         // Get order details' numbers needed to calculate total cost and total fee
