@@ -54,7 +54,13 @@ describe('OrderDetails', () => {
 
         // when
         const wrapper = mount(
-            <OrderDetails orderType={orderType} tokenAmount={makerAmount} tokenPrice={tokenPrice} baseToken={token} marketPriceEther={marketPriceEther} />,
+            <OrderDetails
+                orderType={orderType}
+                tokenAmount={makerAmount}
+                tokenPrice={tokenPrice}
+                baseToken={token}
+                marketPriceEther={marketPriceEther}
+            />,
         );
 
         // then
