@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
-import { getOrderBook, getSelectedToken, getUserOrders, getWeb3State } from '../../store/selectors';
+import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
@@ -16,7 +16,8 @@ import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } f
 
 interface StateProps {
     orderBook: OrderBook;
-    selectedToken: Token | null;
+    baseToken: Token | null;
+    quoteToken: Token | null;
     userOrders: UIOrder[];
     web3State?: Web3State;
 }
@@ -36,11 +37,11 @@ const orderToRow = (
     order: OrderBookItem,
     index: number,
     count: number,
-    selectedToken: Token,
+    baseToken: Token,
     mySizeOrders: OrderBookItem[] = [],
     web3State?: Web3State,
 ) => {
-    const size = tokenAmountInUnits(order.size, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+    const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const price = order.price.toString();
     const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
     const time: string = '';
@@ -53,7 +54,7 @@ const orderToRow = (
         return sumSize;
     }, new BigNumber(0));
 
-    const mySizeConverted = tokenAmountInUnits(mySize, selectedToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+    const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
             <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
@@ -83,7 +84,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, selectedToken, web3State } = this.props;
+        const { orderBook, baseToken, quoteToken, web3State } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -110,7 +111,8 @@ class OrderBookTable extends React.Component<Props, State> {
         });
 
         let content: React.ReactNode;
-        if (!selectedToken) {
+
+        if (!baseToken || !quoteToken) {
             content = <CardLoading />;
         } else if (!buyOrders.length && !sellOrders.length) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
@@ -125,13 +127,13 @@ class OrderBookTable extends React.Component<Props, State> {
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
                             {mySizeHeader}
-                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price (ETH)</TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price ({quoteToken.symbol})</TH>
                             <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
                         </TR>
                     </THead>
                     <tbody>
                         {sellOrders.map((order, index) =>
-                            orderToRow(order, index, sellOrders.length, selectedToken, mySizeSellArray, web3State),
+                            orderToRow(order, index, sellOrders.length, baseToken, mySizeSellArray, web3State),
                         )}
                         <TR>
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
@@ -153,7 +155,7 @@ class OrderBookTable extends React.Component<Props, State> {
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
-                            orderToRow(order, index, buyOrders.length, selectedToken, mySizeBuyArray, web3State),
+                            orderToRow(order, index, buyOrders.length, baseToken, mySizeBuyArray, web3State),
                         )}
                     </tbody>
                 </Table>
@@ -171,8 +173,9 @@ class OrderBookTable extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         orderBook: getOrderBook(state),
-        selectedToken: getSelectedToken(state),
+        baseToken: getBaseToken(state),
         userOrders: getUserOrders(state),
+        quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
     };
 };

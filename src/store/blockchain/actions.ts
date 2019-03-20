@@ -14,8 +14,9 @@ import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrap
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
+import { setMarketTokens } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
-import { getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
 import { addNotification } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
@@ -161,7 +162,10 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 };
 
 export const initWallet = () => {
-    return async (dispatch: any) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const currencyPair = getCurrencyPair(state);
+
         dispatch(setWeb3State(Web3State.Loading));
         try {
             const web3Wrapper = await getWeb3WrapperOrThrow();
@@ -179,7 +183,8 @@ export const initWallet = () => {
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
             dispatch(setConnectedUser(ethAccount, networkId));
             dispatch(
@@ -194,13 +199,15 @@ export const initWallet = () => {
                 initializeRelayerData({
                     orders: [],
                     userOrders: [],
-                    selectedToken,
                 }),
             );
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {
                     dispatch(setWeb3State(Web3State.Locked));
@@ -208,9 +215,9 @@ export const initWallet = () => {
                         initializeRelayerData({
                             orders: [],
                             userOrders: [],
-                            selectedToken,
                         }),
                     );
+                    dispatch(setMarketTokens({ baseToken, quoteToken }));
                     dispatch(getOrderBook());
                     break;
                 }
@@ -220,9 +227,9 @@ export const initWallet = () => {
                         initializeRelayerData({
                             orders: [],
                             userOrders: [],
-                            selectedToken,
                         }),
                     );
+                    dispatch(setMarketTokens({ baseToken, quoteToken }));
                     dispatch(getOrderBook());
                     break;
                 }

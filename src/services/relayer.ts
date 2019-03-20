@@ -9,34 +9,42 @@ export class Relayer {
         this.client = client;
     }
 
-    public async getAllOrdersAsync(assetData: string): Promise<SignedOrder[]> {
+    public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
         const sellOrders = await this.client
             .getOrdersAsync({
-                makerAssetData: assetData,
+                makerAssetData: baseTokenAssetData,
+                takerAssetData: quoteTokenAssetData,
             })
             .then(page => page.records)
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
         const buyOrders = await this.client
             .getOrdersAsync({
-                takerAssetData: assetData,
+                makerAssetData: quoteTokenAssetData,
+                takerAssetData: baseTokenAssetData,
             })
             .then(page => page.records)
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
         return [...sellOrders, ...buyOrders];
     }
 
-    public async getUserOrdersAsync(account: string, assetData: string): Promise<SignedOrder[]> {
+    public async getUserOrdersAsync(
+        account: string,
+        baseTokenAssetData: string,
+        quoteTokenAssetData: string,
+    ): Promise<SignedOrder[]> {
         const userSellOrders = await this.client
             .getOrdersAsync({
                 makerAddress: account,
-                makerAssetData: assetData,
+                makerAssetData: baseTokenAssetData,
+                takerAssetData: quoteTokenAssetData,
             })
             .then(page => page.records)
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
         const userBuyOrders = await this.client
             .getOrdersAsync({
                 makerAddress: account,
-                takerAssetData: assetData,
+                makerAssetData: quoteTokenAssetData,
+                takerAssetData: baseTokenAssetData,
             })
             .then(page => page.records)
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));

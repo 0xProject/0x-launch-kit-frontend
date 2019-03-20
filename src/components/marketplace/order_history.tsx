@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getSelectedToken, getUserOrders, getWeb3State } from '../../store/selectors';
+import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
@@ -18,8 +18,9 @@ import { CustomTD, Table, TH, THead, TR } from '../common/table';
 import { CancelOrderButtonContainer } from './cancel_order_button';
 
 interface StateProps {
+    baseToken: Token | null;
     orders: UIOrder[];
-    selectedToken: Token | null;
+    quoteToken: Token | null;
     web3State?: Web3State;
 }
 
@@ -38,14 +39,14 @@ const SideTD = styled(CustomTD)<{ side: OrderSide }>`
     color: ${props => (props.side === OrderSide.Buy ? themeColors.green : themeColors.orange)};
 `;
 
-const orderToRow = (order: UIOrder, index: number, selectedToken: Token) => {
+const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
     const sideLabel = order.side === OrderSide.Sell ? 'Sell' : 'Buy';
-    const size = tokenAmountInUnits(order.size, selectedToken.decimals);
+    const size = tokenAmountInUnits(order.size, baseToken.decimals);
     let filled = null;
     let status = '--';
     let isOrderFillable = false;
 
-    order.filled ? (filled = tokenAmountInUnits(order.filled, selectedToken.decimals)) : (filled = null);
+    order.filled ? (filled = tokenAmountInUnits(order.filled, baseToken.decimals)) : (filled = null);
     if (order.status) {
         isOrderFillable = order.status === OrderStatus.Fillable;
         status = isOrderFillable ? 'Open' : 'Filled';
@@ -72,7 +73,7 @@ class OrderHistory extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orders, selectedToken, web3State } = this.props;
+        const { orders, baseToken, quoteToken, web3State } = this.props;
         const openOrders = orders.filter(order => order.status === OrderStatus.Fillable);
         const filledOrders = orders.filter(order => order.status === OrderStatus.FullyFilled);
         const ordersToShow = this.state.tab === Tab.Open ? openOrders : filledOrders;
@@ -109,7 +110,7 @@ class OrderHistory extends React.Component<Props, State> {
                 break;
             }
             default: {
-                if (!selectedToken) {
+                if (!baseToken || !quoteToken) {
                     content = <CardLoading />;
                 } else if (!ordersToShow.length) {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
@@ -119,14 +120,14 @@ class OrderHistory extends React.Component<Props, State> {
                             <THead>
                                 <TR>
                                     <TH>Side</TH>
-                                    <TH styles={{ textAlign: 'center' }}>Size ({selectedToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'center' }}>Filled ({selectedToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'center' }}>Price (WETH)</TH>
+                                    <TH styles={{ textAlign: 'center' }}>Size ({baseToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'center' }}>Filled ({baseToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'center' }}>Price ({quoteToken.symbol})</TH>
                                     <TH>Status</TH>
                                     <TH>&nbsp;</TH>
                                 </TR>
                             </THead>
-                            <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, selectedToken))}</tbody>
+                            <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, baseToken))}</tbody>
                         </Table>
                     );
                 }
@@ -144,8 +145,9 @@ class OrderHistory extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        baseToken: getBaseToken(state),
         orders: getUserOrders(state),
-        selectedToken: getSelectedToken(state),
+        quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
     };
 };

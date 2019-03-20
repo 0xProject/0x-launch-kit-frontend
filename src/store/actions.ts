@@ -4,14 +4,19 @@ import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
 import { setEthBalance, setTokenBalances, setWethBalance } from './blockchain/actions';
-import { getOrderBook, getOrderbookAndUserOrders, setSelectedToken } from './relayer/actions';
+import { setMarketTokens } from './market/actions';
+import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
+import { getCurrencyPair } from './selectors';
 
 export * from './blockchain/actions';
+export * from './market/actions';
 export * from './relayer/actions';
+export * from './router/actions';
 export * from './ui/actions';
 
 export const updateStore = () => {
-    return async (dispatch: any) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
         try {
             const web3Wrapper = await getWeb3WrapperOrThrow();
 
@@ -27,14 +32,21 @@ export const updateStore = () => {
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
             const wethBalance = await getTokenBalance(wethToken, ethAccount);
 
+            const currencyPair = getCurrencyPair(state);
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
-            const selectedToken = knownTokens.getTokenBySymbol('ZRX');
-            dispatch(setSelectedToken(selectedToken));
+            const currencyPair = getCurrencyPair(state);
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderBook());
         }
     };
