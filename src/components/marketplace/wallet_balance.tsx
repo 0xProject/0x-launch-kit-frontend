@@ -10,13 +10,14 @@ import { getTokenBalance } from '../../services/tokens';
 import { connectWallet } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getEthAccount, getQuoteToken, getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
+import { isWeth } from '../../util/known_tokens';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { CurrencyPair, StoreState, Token, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
-import { Tooltip } from '../common/tooltip';
+import { IconType, Tooltip } from '../common/tooltip';
 
 const LabelTitleWrapper = styled.div`
     align-items: center;
@@ -248,6 +249,12 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Done && quoteToken && baseToken) {
             const quoteBalanceString = tokenAmountInUnits(this.state.quoteBalance, quoteToken.decimals);
             const baseBalanceString = tokenAmountInUnits(this.state.baseBalance, baseToken.decimals);
+            const toolTip = isWeth(quoteToken) ? (
+                <TooltipStyled
+                    description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
+                    iconType={IconType.Fill}
+                />
+            ) : null;
             content = (
                 <>
                     <LabelTitleWrapper>
@@ -255,13 +262,14 @@ class WalletBalance extends React.Component<Props, State> {
                         <LabelTitle>Amount</LabelTitle>
                     </LabelTitleWrapper>
                     <LabelWrapper>
-                        <Label>
-                            {currencyPair.base} <TooltipStyled />
-                        </Label>
+                        <Label>{currencyPair.base}</Label>
                         <Value>{baseBalanceString}</Value>
                     </LabelWrapper>
                     <LabelWrapper>
-                        <Label>{currencyPair.quote}</Label>
+                        <Label>
+                            {currencyPair.quote}
+                            {toolTip}
+                        </Label>
                         <Value>{quoteBalanceString}</Value>
                     </LabelWrapper>
                 </>
