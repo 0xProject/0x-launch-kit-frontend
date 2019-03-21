@@ -3,7 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
-import { addWethToBalance, stepsModalAdvanceStep } from '../../../store/actions';
+import { stepsModalAdvanceStep } from '../../../store/actions';
+import { addWethToBalance } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';

@@ -6,7 +6,8 @@ import { MetamaskLarge } from '../icons/icon_metamask_large';
 import { NotificationCancelIcon } from '../icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../icons/notification_checkmark_icon';
 import { NotificationProcessingIcon } from '../icons/notification_processing_icon';
-import { StepsProgress } from '../steps_modal/steps_progress';
+
+import { StepsProgress } from './steps_progress';
 
 const DONE_STATUS_VISIBILITY_TIME: number = 4000;
 

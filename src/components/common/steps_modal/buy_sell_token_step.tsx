@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 
 import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
-import { addMarketBuySellNotification, getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
+import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { addMarketBuySellNotification } from '../../../store/ui/actions';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
