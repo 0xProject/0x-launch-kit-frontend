@@ -1,103 +1,68 @@
-/**
- * @jest-environment jsdom
- */
-
 import { BigNumber, OrderStatus } from '0x.js';
-import { HTMLAttributes, mount, ReactWrapper } from 'enzyme';
+import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
-import * as storeFns from '../../store/selectors';
-import * as dollarUtils from '../../util/market_prices';
-import { tokenFactory } from '../../util/test-utils';
-import { OrderSide, OrderType, UIOrder } from '../../util/types';
+import { unitsInTokenAmount } from '../../util/tokens';
+import { OrderSide, OrderType } from '../../util/types';
 
-import { OrderDetails } from './order_details';
-
-// Helper that returns the weth and usd texts from the corresponding element
-const getValuesFromTotalCostText = (el: ReactWrapper<HTMLAttributes, any>) => {
-    return el
-        .text()
-        .slice(1)
-        .replace('wETH) $', '')
-        .split(' ');
-};
+import { OrderDetails, Value } from './order_details';
 
 describe('OrderDetails', () => {
-    it('Calculates total cost for limit orders', done => {
+    const getExpectedTotalCostText = (amount: number, symbol: string): string => {
+        return `${new BigNumber(amount).toFixed(2)} ${symbol}`;
+    };
+    const getExpectedFeeText = (amount: number): string => {
+        return `${new BigNumber(amount).toFixed(2)} ${CONSTANTS.ZRX_TOKEN_SYMBOL.toUpperCase()}`;
+    };
+    const getAmountTextFromWrapper = (wrapper: ShallowWrapper): string =>
+        wrapper
+            .find(Value)
+            .at(0)
+            .text();
+    const getFeeTextFromWrapper = (wrapper: ShallowWrapper): string =>
+        wrapper
+            .find(Value)
+            .at(1)
+            .text();
+
+    const currencyPair = {
+        base: 'ZRX',
+        quote: 'WETH',
+    };
+
+    it('Calculates total cost for limit orders', () => {
         // given
-        const orderType = OrderType.Limit;
-        const token = tokenFactory.build({ decimals: 18 });
-        const DOLAR_PRICE = 1;
-        const ZEROX_WETH_PRICE = 1;
-        const ZEROX_USD_PRICE = 1;
-
-        // makerAmount = 50
-        const makerAmount = new BigNumber(50000000000000000000);
-        const tokenPrice = new BigNumber(10);
-        const resultExpected = new BigNumber(501);
-        // MAKER_FEE = 20
+        const makerAmount = unitsInTokenAmount('13', 18);
+        const tokenPrice = new BigNumber(3);
         // @ts-ignore
-        CONSTANTS.MAKER_FEE = new BigNumber('1000000000000000000');
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
-            return new BigNumber(ZEROX_WETH_PRICE);
-        });
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInUSD = jest.fn(() => {
-            return new BigNumber(ZEROX_USD_PRICE);
-        });
-
-        // @ts-ignore
-        dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
-            return new BigNumber(DOLAR_PRICE);
-        });
-
-        const openSellOrders: UIOrder[] = [];
-        const openBuyOrders: UIOrder[] = [];
+        CONSTANTS.MAKER_FEE = unitsInTokenAmount('7', 18);
 
         // when
-        const wrapper = mount(
+        const wrapper = shallow(
             <OrderDetails
-                orderType={orderType}
-                tokenAmount={makerAmount}
-                tokenPrice={tokenPrice}
-                baseToken={token}
                 orderSide={OrderSide.Sell}
-                openBuyOrders={openBuyOrders}
-                openSellOrders={openSellOrders}
+                orderType={OrderType.Limit}
+                tokenAmount={makerAmount}
+                tokenPrice={tokenPrice}
+                currencyPair={currencyPair}
+                openBuyOrders={[]}
+                openSellOrders={[]}
             />,
         );
 
-        // then
-        // Wait until component is fully updated to check if the values are generated
-        setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(11);
-            const resultsArray = getValuesFromTotalCostText(mySizeRowValue);
-
-            const totalCostInWeth = resultsArray[0];
-            const totalCostInUSD = resultsArray[1];
-            expect(totalCostInWeth).toEqual(resultExpected.toFixed(2));
-            expect(totalCostInUSD).toEqual(resultExpected.toFixed(2));
-            wrapper.unmount();
-            done();
-        }, 0);
+        const amountText = getAmountTextFromWrapper(wrapper);
+        expect(amountText).toEqual(getExpectedTotalCostText(39, currencyPair.quote));
+        const feeText = getFeeTextFromWrapper(wrapper);
+        expect(feeText).toEqual(getExpectedFeeText(7));
     });
 
-    it('Calculates fees for market orders', done => {
+    it('Calculates fees for market orders', () => {
         // given
-        const orderType = OrderType.Market;
-        const token = tokenFactory.build({ decimals: 18 });
-        const DOLAR_PRICE = 1;
-        const ZEROX_WETH_PRICE = 1;
-        const ZEROX_USD_PRICE = 1;
-        // makerAmount = 10
-        const makerAmount = new BigNumber(10000000000000000000);
-        const tokenPrice = new BigNumber(10);
-        const resultExpected = new BigNumber(2);
-        // TAKER_FEE = 20
-        const TAKER_FEE = new BigNumber(1000000000000000000);
-        const MAKER_FEE = new BigNumber(1000000000000000000);
+        const makerAmount = unitsInTokenAmount('10', 18);
+        const tokenPrice = new BigNumber(2);
+        const MAKER_FEE = unitsInTokenAmount('3', 18);
+        const TAKER_FEE = unitsInTokenAmount('7', 18);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -116,7 +81,6 @@ describe('OrderDetails', () => {
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
             takerFee: TAKER_FEE,
         };
-
         const signedOrder2 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
@@ -138,82 +102,45 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: new BigNumber(10000000000000000000), // size = 10
+            size: unitsInTokenAmount('5', 18),
             filled: new BigNumber(0),
-            price: new BigNumber(2),
+            price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
-
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: new BigNumber(5000000000000000000), // size = 5
+            size: unitsInTokenAmount('5', 18),
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
 
-        const openSellOrders = [sellOrder1, sellOrder2];
-        const openBuyOrders: UIOrder[] = [];
-
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
-            return new BigNumber(ZEROX_WETH_PRICE);
-        });
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInUSD = jest.fn(() => {
-            return new BigNumber(ZEROX_USD_PRICE);
-        });
-
-        // @ts-ignore
-        dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
-            return new BigNumber(DOLAR_PRICE);
-        });
-
         // when
-        // @ts-ignore
-        const wrapper = mount(
+        const wrapper = shallow(
             <OrderDetails
-                orderType={orderType}
+                orderType={OrderType.Market}
+                orderSide={OrderSide.Buy}
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
-                baseToken={token}
-                orderSide={OrderSide.Buy}
-                openBuyOrders={openBuyOrders}
-                openSellOrders={openSellOrders}
+                currencyPair={currencyPair}
+                openBuyOrders={[]}
+                openSellOrders={[sellOrder1, sellOrder2]}
             />,
         );
 
         // then
-        // Wait until component is fully updated to check if the values are generated
-        setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(8);
-            const resultsArray = mySizeRowValue
-                .text()
-                .replace(' ZRX', '')
-                .split(' ');
-
-            const feeInZrx = resultsArray[0];
-            expect(feeInZrx).toEqual(resultExpected.toFixed(2));
-            wrapper.unmount();
-            done();
-        }, 0);
+        const feeText = getFeeTextFromWrapper(wrapper);
+        expect(feeText).toEqual(getExpectedFeeText(14));
     });
 
-    it('Calculates total cost for market orders', done => {
+    it('Calculates total cost for market orders', () => {
         // given
-        const orderType = OrderType.Market;
-        const token = tokenFactory.build({ decimals: 18 });
-        const DOLAR_PRICE = 1;
-        const ZEROX_WETH_PRICE = 1;
-        const ZEROX_USD_PRICE = 1;
         // makerAmount = 10
-        const makerAmount = new BigNumber(10000000000000000000);
+        const makerAmount = unitsInTokenAmount('10', 18);
         const tokenPrice = new BigNumber(10);
-        const resultExpected = new BigNumber(17);
-        // TAKER_FEE = 20
-        const MAKER_FEE = new BigNumber(1000000000000000000);
-        const TAKER_FEE = new BigNumber(1000000000000000000);
+        const MAKER_FEE = unitsInTokenAmount('1', 18);
+        const TAKER_FEE = unitsInTokenAmount('1', 18);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -232,7 +159,6 @@ describe('OrderDetails', () => {
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
             takerFee: TAKER_FEE,
         };
-
         const signedOrder2 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
@@ -254,82 +180,43 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: new BigNumber(10000000000000000000), // size = 10
+            size: unitsInTokenAmount('10', 18),
             filled: new BigNumber(0),
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
         };
-
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: new BigNumber(5000000000000000000), // size = 5
+            size: unitsInTokenAmount('3', 18),
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
 
-        const openSellOrders = [sellOrder1, sellOrder2];
-        const openBuyOrders: UIOrder[] = [];
-
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
-            return new BigNumber(ZEROX_WETH_PRICE);
-        });
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInUSD = jest.fn(() => {
-            return new BigNumber(ZEROX_USD_PRICE);
-        });
-
-        // @ts-ignore
-        dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
-            return new BigNumber(DOLAR_PRICE);
-        });
-
-        // @ts-ignore
-        storeFns.getOrders = jest.fn(() => {
-            return [sellOrder1, sellOrder2];
-        });
-
         // when
-        // @ts-ignore
-        const wrapper = mount(
+        const wrapper = shallow(
             <OrderDetails
-                orderType={orderType}
+                orderType={OrderType.Market}
+                orderSide={OrderSide.Buy}
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
-                baseToken={token}
-                orderSide={OrderSide.Buy}
-                openBuyOrders={openBuyOrders}
-                openSellOrders={openSellOrders}
+                currencyPair={currencyPair}
+                openBuyOrders={[]}
+                openSellOrders={[sellOrder1, sellOrder2]}
             />,
         );
 
         // then
-        // Wait until component is fully updated to check if the values are generated
-        setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(11);
-            const resultsArray = getValuesFromTotalCostText(mySizeRowValue);
-            const totalCostInWeth = resultsArray[0];
-            const totalCostInUSD = resultsArray[1];
-            expect(totalCostInWeth).toEqual(resultExpected.toFixed(2));
-            expect(totalCostInUSD).toEqual(resultExpected.toFixed(2));
-            wrapper.unmount();
-            done();
-        }, 0);
+        const amountText = getAmountTextFromWrapper(wrapper);
+        expect(amountText).toEqual(getExpectedTotalCostText(17, currencyPair.quote));
     });
 
-    it('Do not displays a value if the order amount is not fillable on market', done => {
+    it('Do not displays a value if the order amount is not fillable on market', () => {
         // given
-        const orderType = OrderType.Market;
-        const token = tokenFactory.build({ decimals: 18 });
-        const DOLAR_PRICE = 1;
-        const ZEROX_WETH_PRICE = 1;
-        const ZEROX_USD_PRICE = 1;
-        const makerAmount = new BigNumber(50);
-        const tokenPrice = new BigNumber(10);
-        const resultExpected = '---';
-        const MAKER_FEE = new BigNumber(20);
+        const makerAmount = unitsInTokenAmount('50', 18);
+        const tokenPrice = new BigNumber(1);
+        const MAKER_FEE = unitsInTokenAmount('1', 18);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -348,7 +235,6 @@ describe('OrderDetails', () => {
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
             takerFee: new BigNumber(1),
         };
-
         const signedOrder2 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
@@ -370,65 +256,35 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: new BigNumber(10),
+            size: unitsInTokenAmount('10', 18),
             filled: new BigNumber(0),
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
         };
-
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: new BigNumber(5),
+            size: unitsInTokenAmount('1', 18),
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
 
-        const openSellOrders = [sellOrder1, sellOrder2];
-        const openBuyOrders: UIOrder[] = [];
-
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInWeth = jest.fn(() => {
-            return new BigNumber(ZEROX_WETH_PRICE);
-        });
-        // @ts-ignore
-        dollarUtils.getZeroXPriceInUSD = jest.fn(() => {
-            return new BigNumber(ZEROX_USD_PRICE);
-        });
-
-        // @ts-ignore
-        dollarUtils.getEthereumPriceInUSD = jest.fn(() => {
-            return new BigNumber(DOLAR_PRICE);
-        });
-
-        // @ts-ignore
-        storeFns.getOrders = jest.fn(() => {
-            return [sellOrder1, sellOrder2];
-        });
-
         // when
-        // @ts-ignore
-        const wrapper = mount(
+        const wrapper = shallow(
             <OrderDetails
-                orderType={orderType}
+                orderType={OrderType.Market}
+                orderSide={OrderSide.Buy}
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
-                baseToken={token}
-                orderSide={OrderSide.Sell}
-                openBuyOrders={openBuyOrders}
-                openSellOrders={openSellOrders}
+                currencyPair={currencyPair}
+                openBuyOrders={[]}
+                openSellOrders={[sellOrder1, sellOrder2]}
             />,
         );
 
         // then
-        // Wait until component is fully updated to check if the values are generated
-        setTimeout(() => {
-            const mySizeRowValue = wrapper.find('StyledComponent').at(11);
-            // then
-            expect(mySizeRowValue.text()).toEqual(resultExpected);
-            wrapper.unmount();
-            done();
-        }, 0);
+        const amountText = getAmountTextFromWrapper(wrapper);
+        expect(amountText).toEqual('---');
     });
 });

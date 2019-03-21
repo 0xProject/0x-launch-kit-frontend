@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
 import { connectWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getBaseToken, getCurrencyPair, getEthInUsd, getWeb3State } from '../../store/selectors';
+import { getCurrencyPair, getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { CurrencyPair, OrderSide, OrderType, StoreState, Token, Web3State } from '../../util/types';
+import { CurrencyPair, OrderSide, OrderType, StoreState, Web3State } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
@@ -19,8 +19,6 @@ import { OrderDetailsContainer } from './order_details';
 interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
-    baseToken: Token | null;
-    ethInUsd: BigNumber | null;
 }
 
 interface DispatchProps {
@@ -238,9 +236,9 @@ class BuySell extends React.Component<Props, State> {
                     <OrderDetailsContainer
                         orderType={orderType}
                         orderSide={tab}
-                        tokenAmount={this.state.makerAmount}
-                        tokenPrice={this.state.price}
-                        baseToken={this.props.baseToken}
+                        tokenAmount={makerAmount}
+                        tokenPrice={price}
+                        currencyPair={currencyPair}
                     />
                     {errorBtn ? errorBtn : buySellBtn}
                 </Content>
@@ -342,9 +340,7 @@ class BuySell extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
-        baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
-        ethInUsd: getEthInUsd(state),
     };
 };
 

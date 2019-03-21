@@ -8,11 +8,9 @@ import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
 import { getAllOrdersToFillMarketOrderAndAmountsToPay } from '../../services/orders';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
 import { getKnownTokens } from '../../util/known_tokens';
-import { getEthereumPriceInUSD, getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderSide, OrderType, StoreState, Token, UIOrder } from '../../util/types';
-import { CardTabSelector } from '../common/card_tab_selector';
+import { CurrencyPair, OrderSide, OrderType, StoreState, UIOrder } from '../../util/types';
 
 const Row = styled.div`
     align-items: center;
@@ -57,21 +55,12 @@ const Label = styled.label<{ color?: string }>`
     margin: 0;
 `;
 
-const InnerTabs = styled(CardTabSelector)`
-    font-size: 14px;
-`;
-
-enum OrderDetailsType {
-    Eth,
-    Usd,
-}
-
 interface OwnProps {
     orderType: OrderType;
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
     orderSide: OrderSide;
-    baseToken: Token | null;
+    currencyPair: CurrencyPair;
 }
 
 interface StateProps {
@@ -82,29 +71,16 @@ interface StateProps {
 type Props = StateProps & OwnProps;
 
 interface State {
-    orderDetailType: OrderDetailsType;
     feeInZrx: BigNumber;
-    totalPriceWithoutFeeInWeth: BigNumber;
+    totalPriceWithoutFeeInQuoteToken: BigNumber;
     canOrderBeFilled?: boolean;
-    // @TODO: this should live in the store and bound via props
-    prices: {
-        zrxInWeth: BigNumber;
-        zrxInUsd: BigNumber;
-        ethInUsd: BigNumber;
-    };
 }
 
 class OrderDetails extends React.Component<Props, State> {
     public state = {
-        orderDetailType: OrderDetailsType.Eth,
         feeInZrx: new BigNumber(0),
-        totalPriceWithoutFeeInWeth: new BigNumber(0),
+        totalPriceWithoutFeeInQuoteToken: new BigNumber(0),
         canOrderBeFilled: true,
-        prices: {
-            zrxInWeth: new BigNumber(0),
-            zrxInUsd: new BigNumber(0),
-            ethInUsd: new BigNumber(0),
-        },
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>) => {
@@ -113,7 +89,7 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.baseToken !== prevProps.baseToken ||
+            newProps.currencyPair !== prevProps.currencyPair ||
             newProps.orderSide !== prevProps.orderSide
         ) {
             await this._updateOrderDetailsState();
@@ -121,80 +97,44 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public componentDidMount = async () => {
-        await this._setPricesInState();
         await this._updateOrderDetailsState();
     };
 
     public render = () => {
-        const { orderDetailType } = this.state;
-        const ethUsdTabs = [
-            {
-                active: orderDetailType === OrderDetailsType.Eth,
-                onClick: this._switchToEth,
-                text: ZRX_TOKEN_SYMBOL.toUpperCase(),
-            },
-            {
-                active: orderDetailType === OrderDetailsType.Usd,
-                onClick: this._switchToUsd,
-                text: 'USD',
-            },
-        ];
+        const { orderSide } = this.props;
         const fee = this._getFeeStringForRender();
         const totalCost = this._getTotalCostStringForRender();
         return (
             <>
                 <LabelContainer>
                     <Label>Order Details</Label>
-                    <InnerTabs tabs={ethUsdTabs} />
                 </LabelContainer>
+                <Row>
+                    <Label color={themeColors.textLight}>{orderSide === OrderSide.Buy ? 'Selling' : 'Buying'}</Label>
+                    <Value>{totalCost}</Value>
+                </Row>
                 <Row>
                     <Label color={themeColors.textLight}>Fee</Label>
                     <Value>{fee}</Value>
-                </Row>
-                <Row>
-                    <Label color={themeColors.textLight}>Total Cost</Label>
-                    <Value>{totalCost}</Value>
                 </Row>
             </>
         );
     };
 
-    private readonly _setPricesInState = async () => {
-        const [zrxInWeth, zrxInUsd, ethInUsd] = await Promise.all([
-            getZeroXPriceInWeth(),
-            getZeroXPriceInUSD(),
-            getEthereumPriceInUSD(),
-        ]);
-        this.setState({
-            ...this.state,
-            prices: { zrxInWeth, zrxInUsd, ethInUsd },
-        });
-    };
-
     private readonly _updateOrderDetailsState = async () => {
-        const { baseToken } = this.props;
-        if (!baseToken) {
+        const { currencyPair, orderType } = this.props;
+        if (!currencyPair) {
             return;
         }
-        // Get order details' numbers needed to calculate total cost and total fee
-        const { feeInZrx, totalPriceWithoutFeeInWeth, canOrderBeFilled } = this._calculateFeeAndTotalCostInWeth();
-        this.setState({ feeInZrx, totalPriceWithoutFeeInWeth, canOrderBeFilled });
-    };
 
-    private readonly _calculateFeeAndTotalCostInWeth = (): {
-        feeInZrx: BigNumber;
-        totalPriceWithoutFeeInWeth: BigNumber;
-        canOrderBeFilled?: boolean;
-    } => {
-        const { orderType } = this.props;
         if (orderType === OrderType.Limit) {
             const { tokenAmount, tokenPrice } = this.props;
             const feeInZrx = MAKER_FEE;
-            const totalPriceWithoutFeeInWeth = tokenAmount.mul(tokenPrice);
-            return {
+            const totalPriceWithoutFeeInQuoteToken = tokenAmount.mul(tokenPrice);
+            this.setState({
                 feeInZrx,
-                totalPriceWithoutFeeInWeth,
-            };
+                totalPriceWithoutFeeInQuoteToken,
+            });
         } else {
             const { tokenAmount, orderSide, openSellOrders, openBuyOrders } = this.props;
             // Gets the fillable orders and sum their fee and amounts
@@ -208,32 +148,22 @@ class OrderDetails extends React.Component<Props, State> {
                 (totalFeeSum: BigNumber, currentOrder: SignedOrder) => totalFeeSum.add(currentOrder.takerFee),
                 new BigNumber(0),
             );
-            const totalPriceWithoutFeeInWeth = amountToPayForEachOrder.reduce(
+            const totalPriceWithoutFeeInQuoteToken = amountToPayForEachOrder.reduce(
                 (totalPriceSum: BigNumber, currentPrice: BigNumber) => totalPriceSum.add(currentPrice),
                 new BigNumber(0),
             );
-            return {
+            this.setState({
                 feeInZrx,
-                totalPriceWithoutFeeInWeth,
+                totalPriceWithoutFeeInQuoteToken,
                 canOrderBeFilled,
-            };
+            });
         }
     };
 
     private readonly _getFeeStringForRender = () => {
-        const { orderDetailType, feeInZrx } = this.state;
-        const { zrxInUsd } = this.state.prices;
-
-        if (orderDetailType === OrderDetailsType.Usd) {
-            const feeInUSD = feeInZrx.mul(zrxInUsd);
-            const wethTokenDecimals = getKnownTokens().getWethToken().decimals;
-            const feeFormatted = tokenAmountInUnits(feeInUSD, wethTokenDecimals);
-            return `$ ${feeFormatted}`;
-        } else {
-            const zrxTokenDecimals = getKnownTokens().getTokenBySymbol(ZRX_TOKEN_SYMBOL).decimals;
-            const feeFormatted = tokenAmountInUnits(feeInZrx, zrxTokenDecimals);
-            return `${feeFormatted} ${ZRX_TOKEN_SYMBOL.toUpperCase()}`;
-        }
+        const { feeInZrx } = this.state;
+        const zrxDecimals = getKnownTokens().getTokenBySymbol(ZRX_TOKEN_SYMBOL).decimals;
+        return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${ZRX_TOKEN_SYMBOL.toUpperCase()}`;
     };
 
     private readonly _getTotalCostStringForRender = () => {
@@ -243,25 +173,13 @@ class OrderDetails extends React.Component<Props, State> {
             return `---`;
         }
 
-        // Calculate total cost in weth and usd
-        const { feeInZrx, totalPriceWithoutFeeInWeth } = this.state;
-        const { zrxInWeth, zrxInUsd, ethInUsd } = this.state.prices;
-        const totalCostInWeth = totalPriceWithoutFeeInWeth.add(feeInZrx.mul(zrxInWeth));
-        const totalCostInUsd = totalPriceWithoutFeeInWeth.mul(ethInUsd).add(feeInZrx.mul(zrxInUsd));
+        const { quote } = this.props.currencyPair;
+        const quoteTokenDecimals = getKnownTokens().getTokenBySymbol(quote).decimals;
 
-        // Format the number
-        const wethTokenDecimals = getKnownTokens().getWethToken().decimals;
-        const totalCostInWethString = tokenAmountInUnits(totalCostInWeth, wethTokenDecimals);
-        const totalCostInUsdString = tokenAmountInUnits(totalCostInUsd, wethTokenDecimals);
-        return `(${totalCostInWethString} wETH) $${totalCostInUsdString}`;
-    };
+        const { totalPriceWithoutFeeInQuoteToken } = this.state;
+        const totalCostString = `${tokenAmountInUnits(totalPriceWithoutFeeInQuoteToken, quoteTokenDecimals)} ${quote}`;
 
-    private readonly _switchToUsd = () => {
-        this.setState({ orderDetailType: OrderDetailsType.Usd });
-    };
-
-    private readonly _switchToEth = () => {
-        this.setState({ orderDetailType: OrderDetailsType.Eth });
+        return `${totalCostString}`;
     };
 }
 
@@ -274,4 +192,4 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const OrderDetailsContainer = connect(mapStateToProps)(OrderDetails);
 
-export { OrderDetails, OrderDetailsContainer };
+export { OrderDetails, OrderDetailsContainer, Value };
