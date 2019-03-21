@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import BigNumber from '0x.js';
+import { BigNumber } from '0x.js';
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 
@@ -45,17 +45,21 @@ describe('WalletBalance', () => {
             base: 'WETH',
             quote: 'ZRX',
         };
-        const ethAccount = '';
+        const ethAccount = 'This is a test';
 
         const resultExpected1 = 'WETH';
         const resultExpected2 = 'ZRX';
         const amountExpected = '2.0';
         const onConnectWalletFn = jest.fn();
+
         // @ts-ignore
-        tokenServices.getTokenBalance = jest.fn(() => {
-            // @ts-ignore
-            return new BigNumber('2.0');
-        });
+        tokenServices.getTokenBalance = jest.fn(
+            (): Promise<BigNumber> => {
+                return new Promise((resolve: (bn: BigNumber) => any) => {
+                    resolve(new BigNumber('2.0'));
+                });
+            },
+        );
         // when
         const wrapper = shallow(
             <WalletBalance
@@ -68,8 +72,7 @@ describe('WalletBalance', () => {
             />,
         );
 
-        wrapper.update();
-
+        // then
         setTimeout(() => {
             const quoteTokenResult = wrapper
                 .childAt(1)
@@ -87,13 +90,12 @@ describe('WalletBalance', () => {
                 .childAt(2)
                 .childAt(1)
                 .text();
-            //  console.log("quote value result ", quoteValueResult.debug())
             expect(baseTokenResult).toContain(resultExpected1);
             expect(quoteTokenResult).toContain(resultExpected2);
             expect(quoteValueResult).toContain(amountExpected);
             expect(baseValueResult).toContain(amountExpected);
+            expect(tokenServices.getTokenBalance).toHaveBeenCalledTimes(2);
             done();
         }, 0);
-        // then
     });
 });

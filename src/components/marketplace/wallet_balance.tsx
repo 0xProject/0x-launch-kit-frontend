@@ -1,3 +1,4 @@
+import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -143,6 +144,11 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
+interface State {
+    quoteBalance: BigNumber;
+    baseBalance: BigNumber;
+}
+
 const fillerBig = () => {
     return (
         <svg width="67" height="14" viewBox="0 0 67 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -189,10 +195,10 @@ const openMetamaskExtensionUrl = () => {
     }
 };
 
-class WalletBalance extends React.Component<Props> {
+class WalletBalance extends React.Component<Props, State> {
     public state = {
-        quoteBalance: '0.0',
-        baseBalance: '0.0',
+        quoteBalance: new BigNumber('0.0'),
+        baseBalance: new BigNumber('0.0'),
     };
 
     public componentDidMount = async () => {
@@ -225,25 +231,23 @@ class WalletBalance extends React.Component<Props> {
 
     private readonly _updateState = async () => {
         const { baseToken, quoteToken, ethAccount } = this.props;
-        let quoteBalance = '0.0';
-        let baseBalance = '0.0';
         if (quoteToken && baseToken && ethAccount) {
-            const quoteBalanceBN = await getTokenBalance(quoteToken, ethAccount);
-            const baseBalanceBN = await getTokenBalance(baseToken, ethAccount);
-            quoteBalance = tokenAmountInUnits(quoteBalanceBN, quoteToken.decimals);
-            baseBalance = tokenAmountInUnits(baseBalanceBN, baseToken.decimals);
+            const quoteBalance = await getTokenBalance(quoteToken, ethAccount);
+            const baseBalance = await getTokenBalance(baseToken, ethAccount);
+            this.setState({
+                quoteBalance,
+                baseBalance,
+            });
         }
-        this.setState({
-            quoteBalance,
-            baseBalance,
-        });
     };
 
     private readonly _getWalletContent = () => {
         let content: any = null;
-        const { web3State, currencyPair, onConnectWallet } = this.props;
+        const { web3State, currencyPair, onConnectWallet, quoteToken, baseToken } = this.props;
 
-        if (web3State === Web3State.Done) {
+        if (web3State === Web3State.Done && quoteToken && baseToken) {
+            const quoteBalanceString = tokenAmountInUnits(this.state.quoteBalance, quoteToken.decimals);
+            const baseBalanceString = tokenAmountInUnits(this.state.baseBalance, baseToken.decimals);
             content = (
                 <>
                     <LabelTitleWrapper>
@@ -252,13 +256,13 @@ class WalletBalance extends React.Component<Props> {
                     </LabelTitleWrapper>
                     <LabelWrapper>
                         <Label>{currencyPair.quote}</Label>
-                        <Value>{this.state.quoteBalance}</Value>
+                        <Value>{quoteBalanceString}</Value>
                     </LabelWrapper>
                     <LabelWrapper>
                         <Label>
                             {currencyPair.base} <TooltipStyled />
                         </Label>
-                        <Value>{this.state.baseBalance}</Value>
+                        <Value>{baseBalanceString}</Value>
                     </LabelWrapper>
                 </>
             );
