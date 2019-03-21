@@ -237,7 +237,7 @@ class BuySell extends React.Component<Props, State> {
                     )}
                     <OrderDetailsContainer
                         orderType={orderType}
-                        operationType={tab}
+                        orderSide={tab}
                         tokenAmount={this.state.makerAmount}
                         tokenPrice={this.state.price}
                         baseToken={this.props.baseToken}

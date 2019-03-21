@@ -63,7 +63,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 baseToken={token}
-                operationType={OrderSide.Sell}
+                orderSide={OrderSide.Sell}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
             />,
@@ -178,7 +178,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 baseToken={token}
-                operationType={OrderSide.Buy}
+                orderSide={OrderSide.Buy}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
             />,
@@ -299,7 +299,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 baseToken={token}
-                operationType={OrderSide.Buy}
+                orderSide={OrderSide.Buy}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
             />,
@@ -415,7 +415,7 @@ describe('OrderDetails', () => {
                 tokenAmount={makerAmount}
                 tokenPrice={tokenPrice}
                 baseToken={token}
-                operationType={OrderSide.Sell}
+                orderSide={OrderSide.Sell}
                 openBuyOrders={openBuyOrders}
                 openSellOrders={openSellOrders}
             />,

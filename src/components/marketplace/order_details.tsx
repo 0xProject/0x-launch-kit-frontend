@@ -70,8 +70,8 @@ interface OwnProps {
     orderType: OrderType;
     tokenAmount: BigNumber;
     tokenPrice: BigNumber;
+    orderSide: OrderSide;
     baseToken: Token | null;
-    operationType: OrderSide;
 }
 
 interface StateProps {
@@ -114,7 +114,7 @@ class OrderDetails extends React.Component<Props, State> {
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
             newProps.baseToken !== prevProps.baseToken ||
-            newProps.operationType !== prevProps.operationType
+            newProps.orderSide !== prevProps.orderSide
         ) {
             await this._updateOrderDetailsState();
         }
@@ -196,14 +196,14 @@ class OrderDetails extends React.Component<Props, State> {
                 totalPriceWithoutFeeInWeth,
             };
         } else {
-            const { tokenAmount, operationType, openSellOrders, openBuyOrders } = this.props;
+            const { tokenAmount, orderSide, openSellOrders, openBuyOrders } = this.props;
             // Gets the fillable orders and sum their fee and amounts
-            const uiOrders = operationType === OrderSide.Sell ? openBuyOrders : openSellOrders;
+            const uiOrders = orderSide === OrderSide.Sell ? openBuyOrders : openSellOrders;
             const [
                 ordersToFill,
                 amountToPayForEachOrder,
                 canOrderBeFilled,
-            ] = getAllOrdersToFillMarketOrderAndAmountsToPay(tokenAmount, operationType, uiOrders);
+            ] = getAllOrdersToFillMarketOrderAndAmountsToPay(tokenAmount, orderSide, uiOrders);
             const feeInZrx = ordersToFill.reduce(
                 (totalFeeSum: BigNumber, currentOrder: SignedOrder) => totalFeeSum.add(currentOrder.takerFee),
                 new BigNumber(0),
