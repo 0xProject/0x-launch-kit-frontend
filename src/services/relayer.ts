@@ -37,11 +37,11 @@ export class Relayer {
         makerAddress?: string,
     ): Promise<SignedOrder[]> {
         const recordsToReturn: SignedOrder[] = [];
-        let shouldLoop = true;
+        let hasMorePages = true;
 
         let page = 1;
 
-        while (shouldLoop) {
+        while (hasMorePages) {
             const { total, records, perPage } = await this.client.getOrdersAsync({
                 makerAssetData,
                 takerAssetData,
@@ -56,9 +56,8 @@ export class Relayer {
             );
 
             page += 1;
-            if (page > Math.ceil(total / perPage)) {
-                shouldLoop = false;
-            }
+            const lastPage = Math.ceil(total / perPage);
+            hasMorePages = page <= lastPage;
         }
         return recordsToReturn;
     }
