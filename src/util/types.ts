@@ -174,6 +174,7 @@ interface LimitNotification extends BaseNotification {
 }
 
 export interface OrderFilledNotification extends BaseNotification {
+    id: string;
     kind: NotificationKind.OrderFilled;
     amount: BigNumber;
     token: Token;

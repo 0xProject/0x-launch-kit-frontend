@@ -1,4 +1,4 @@
-import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
+import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import {
@@ -9,6 +9,8 @@ import {
     WETH_TOKEN_SYMBOL,
 } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
+import { subscribeToFillEvents } from '../../services/exchange';
+import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
@@ -17,7 +19,7 @@ import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/type
 import { setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
-import { addNotification } from '../ui/actions';
+import { addNotification, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
@@ -138,26 +140,48 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
+let fillEventsSubscription: string | null = null;
 export const setConnectedUser = (ethAccount: string, networkId: number) => {
     return async (dispatch: any) => {
         const knownTokens = getKnownTokens(networkId);
+        const localStorage = new LocalStorage(window.localStorage);
 
         dispatch(setEthAccount(ethAccount));
 
+        dispatch(setNotifications(localStorage.getNotifications(ethAccount)));
+        dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount)));
+
+        const web3Wrapper = await getWeb3WrapperOrThrow();
         const contractWrappers = await getContractWrappers();
-        contractWrappers.exchange.subscribe(
-            ExchangeEvents.Fill,
-            { makerAddress: ethAccount },
-            (err: Error | null, logEvent?: DecodedLogEvent<ExchangeFillEventArgs>) => {
-                if (err || !logEvent) {
-                    // tslint:disable-next-line:no-console
-                    console.error('There was a problem with the ExchangeFill event', err, logEvent);
-                    return;
-                }
-                const notification = buildOrderFilledNotification(logEvent.log.args, knownTokens);
-                dispatch(addNotification(notification));
+
+        const blockNumber = await web3Wrapper.getBlockNumberAsync();
+
+        const fromBlock = localStorage.getLastBlockChecked(ethAccount) + 1;
+        const toBlock = blockNumber;
+
+        const subscription = await subscribeToFillEvents({
+            exchange: contractWrappers.exchange,
+            fromBlock,
+            toBlock,
+            ethAccount,
+            fillEventCallback: async fillEvent => {
+                const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
+                const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                dispatch(
+                    addNotification({
+                        ...notification,
+                        timestamp: new Date(timestamp * 1000),
+                    }),
+                );
             },
-        );
+        });
+
+        if (fillEventsSubscription) {
+            contractWrappers.exchange.unsubscribe(fillEventsSubscription);
+        }
+        fillEventsSubscription = subscription;
+
+        localStorage.saveLastBlockChecked(blockNumber, ethAccount);
     };
 };
 
