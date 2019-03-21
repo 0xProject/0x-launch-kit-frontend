@@ -10,21 +10,14 @@ export class Relayer {
     }
 
     public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
-        const sellOrders = await this.client
-            .getOrdersAsync({
-                makerAssetData: baseTokenAssetData,
-                takerAssetData: quoteTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-        const buyOrders = await this.client
-            .getOrdersAsync({
-                makerAssetData: quoteTokenAssetData,
-                takerAssetData: baseTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-        return [...sellOrders, ...buyOrders];
+        const orders = await Promise.all([
+            this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData),
+            this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData),
+        ]);
+
+        return orders.reduce((acc, result) => {
+            return acc.concat(result);
+        }, []);
     }
 
     public async getUserOrdersAsync(
@@ -32,24 +25,46 @@ export class Relayer {
         baseTokenAssetData: string,
         quoteTokenAssetData: string,
     ): Promise<SignedOrder[]> {
-        const userSellOrders = await this.client
-            .getOrdersAsync({
-                makerAddress: account,
-                makerAssetData: baseTokenAssetData,
-                takerAssetData: quoteTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-        const userBuyOrders = await this.client
-            .getOrdersAsync({
-                makerAddress: account,
-                makerAssetData: quoteTokenAssetData,
-                takerAssetData: baseTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
+        const orders = await Promise.all([
+            this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData, account),
+            this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData, account),
+        ]);
 
-        return [...userSellOrders, ...userBuyOrders];
+        return orders.reduce((acc, result) => {
+            return acc.concat(result);
+        }, []);
+    }
+
+    private async _getOrdersAsync(
+        makerAssetData: string,
+        takerAssetData: string,
+        makerAddress?: string,
+    ): Promise<SignedOrder[]> {
+        const recordsToReturn: SignedOrder[] = [];
+        let shouldLoop = true;
+
+        const requestOpts = {
+            makerAssetData,
+            takerAssetData,
+            makerAddress,
+            page: 1,
+        };
+
+        while (shouldLoop) {
+            const { total, records, perPage } = await this.client.getOrdersAsync(requestOpts);
+            recordsToReturn.push.apply(
+                recordsToReturn,
+                records.map(apiOrder => {
+                    return apiOrder.order;
+                }),
+            );
+
+            requestOpts.page += 1;
+            if (requestOpts.page > Math.ceil(total / perPage)) {
+                shouldLoop = false;
+            }
+        }
+        return recordsToReturn;
     }
 }
 
