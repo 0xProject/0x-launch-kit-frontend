@@ -296,7 +296,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                 <THead>
                     <TR>
                         <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
-                        <THLastStyled styles={{ textAlign: 'center' }}>Price (USD)</THLastStyled>
+                        <THLastStyled styles={{ textAlign: 'center' }}>Price</THLastStyled>
                     </TR>
                 </THead>
                 <TBody>
