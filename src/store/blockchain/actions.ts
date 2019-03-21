@@ -189,7 +189,7 @@ export const initWallet = () => {
             dispatch(setConnectedUser(ethAccount, networkId));
             dispatch(
                 initializeBlockchainData({
-                    web3State: Web3State.Done,
+                    web3State: Web3State.Loading,
                     ethBalance,
                     wethTokenBalance,
                     tokenBalances,
