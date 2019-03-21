@@ -74,19 +74,23 @@ describe('WalletBalance', () => {
 
         // then
         setTimeout(() => {
-            const quoteTokenResult = wrapper
+            // Base name ex: 'zrx'
+            const baseTokenResult = wrapper
                 .childAt(1)
                 .childAt(0)
                 .text();
-            const quoteValueResult = wrapper
+            // Base value ex: 2.0
+            const baseValueResult = wrapper
                 .childAt(1)
                 .childAt(1)
                 .text();
-            const baseTokenResult = wrapper
+            // Quote name ex: 'zrx'
+            const quoteTokenResult = wrapper
                 .childAt(2)
                 .childAt(0)
                 .text();
-            const baseValueResult = wrapper
+            // Quote value ex: 2.0
+            const quoteValueResult = wrapper
                 .childAt(2)
                 .childAt(1)
                 .text();

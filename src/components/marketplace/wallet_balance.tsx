@@ -255,14 +255,14 @@ class WalletBalance extends React.Component<Props, State> {
                         <LabelTitle>Amount</LabelTitle>
                     </LabelTitleWrapper>
                     <LabelWrapper>
-                        <Label>{currencyPair.quote}</Label>
-                        <Value>{quoteBalanceString}</Value>
-                    </LabelWrapper>
-                    <LabelWrapper>
                         <Label>
                             {currencyPair.base} <TooltipStyled />
                         </Label>
                         <Value>{baseBalanceString}</Value>
+                    </LabelWrapper>
+                    <LabelWrapper>
+                        <Label>{currencyPair.quote}</Label>
+                        <Value>{quoteBalanceString}</Value>
                     </LabelWrapper>
                 </>
             );
