@@ -233,8 +233,9 @@ class WalletBalance extends React.Component<Props, State> {
     private readonly _updateState = async () => {
         const { baseToken, quoteToken, ethAccount } = this.props;
         if (quoteToken && baseToken && ethAccount) {
-            const quoteBalance = await getTokenBalance(quoteToken, ethAccount);
-            const baseBalance = await getTokenBalance(baseToken, ethAccount);
+            const quoteBalanceProm = getTokenBalance(quoteToken, ethAccount);
+            const baseBalanceProm = getTokenBalance(baseToken, ethAccount);
+            const [quoteBalance, baseBalance] = await Promise.all([quoteBalanceProm, baseBalanceProm]);
             this.setState({
                 quoteBalance,
                 baseBalance,
