@@ -256,7 +256,7 @@ class WalletBalance extends React.Component<Props> {
                     </LabelWrapper>
                     <LabelWrapper>
                         <Label>
-                            {currencyPair.base} <TooltipStyled type="full" />
+                            {currencyPair.base} <TooltipStyled />
                         </Label>
                         <Value>{this.state.baseBalance}</Value>
                     </LabelWrapper>
