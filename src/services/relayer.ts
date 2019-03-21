@@ -37,15 +37,18 @@ export class Relayer {
         makerAddress?: string,
     ): Promise<SignedOrder[]> {
         const recordsToReturn: SignedOrder[] = [];
-        let hasMorePages = true;
+        const requestOpts = {
+            makerAssetData,
+            takerAssetData,
+            makerAddress,
+        };
 
+        let hasMorePages = true;
         let page = 1;
 
         while (hasMorePages) {
             const { total, records, perPage } = await this.client.getOrdersAsync({
-                makerAssetData,
-                takerAssetData,
-                makerAddress,
+                ...requestOpts,
                 page,
             });
             recordsToReturn.push.apply(
