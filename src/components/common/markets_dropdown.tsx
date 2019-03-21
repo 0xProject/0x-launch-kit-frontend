@@ -2,6 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, getOrderbookAndUserOrders } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
@@ -339,7 +340,7 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _getPrice: any = (market: Market) => {
         if (market.price) {
-            return market.price.toFixed(2); // fvtodo use proper constant
+            return market.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
         }
 
         return '-';
