@@ -39,15 +39,15 @@ export class Relayer {
         const recordsToReturn: SignedOrder[] = [];
         let shouldLoop = true;
 
-        const requestOpts = {
-            makerAssetData,
-            takerAssetData,
-            makerAddress,
-            page: 1,
-        };
+        let page = 1;
 
         while (shouldLoop) {
-            const { total, records, perPage } = await this.client.getOrdersAsync(requestOpts);
+            const { total, records, perPage } = await this.client.getOrdersAsync({
+                makerAssetData,
+                takerAssetData,
+                makerAddress,
+                page,
+            });
             recordsToReturn.push.apply(
                 recordsToReturn,
                 records.map(apiOrder => {
@@ -55,8 +55,8 @@ export class Relayer {
                 }),
             );
 
-            requestOpts.page += 1;
-            if (requestOpts.page > Math.ceil(total / perPage)) {
+            page += 1;
+            if (page > Math.ceil(total / perPage)) {
                 shouldLoop = false;
             }
         }
