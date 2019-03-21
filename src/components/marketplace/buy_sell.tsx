@@ -313,7 +313,7 @@ class BuySell extends React.Component<Props, State> {
                 error = (
                     <>
                         <ButtonStyled theme={'tertiary'} onClick={onConnectWallet}>
-                            {errorsWallet.mmLoading}{' '}
+                            {errorsWallet.mmLoading}
                         </ButtonStyled>
                     </>
                 );
