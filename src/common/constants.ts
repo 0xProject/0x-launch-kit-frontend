@@ -45,3 +45,6 @@ export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
 
 export const UPDATE_ETHER_PRICE_INTERVAL: number =
     Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10) || 3600000;
+
+export const LIMIT_NUMBER_OF_NOTIFICATIONS: number =
+    Number.parseInt(process.env.REACT_APP_LIMIT_NUMBER_OF_NOTIFICATIONS as string, 10) || 20;
