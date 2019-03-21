@@ -312,7 +312,9 @@ class BuySell extends React.Component<Props, State> {
             case Web3State.Loading: {
                 error = (
                     <>
-                        <ButtonStyled theme={'tertiary'} onClick={onConnectWallet}>{errorsWallet.mmLoading} </ButtonStyled>
+                        <ButtonStyled theme={'tertiary'} onClick={onConnectWallet}>
+                            {errorsWallet.mmLoading}{' '}
+                        </ButtonStyled>
                     </>
                 );
                 break;

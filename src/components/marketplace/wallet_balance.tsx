@@ -317,9 +317,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled theme={'tertiary'}>
-                        {errorsWallet.mmLoading}
-                    </ButtonStyled>
+                    <ButtonStyled theme={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
             );
         }
