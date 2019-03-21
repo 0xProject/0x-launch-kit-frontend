@@ -314,6 +314,17 @@ class WalletBalance extends React.Component<Props, State> {
             );
         }
 
+        if (web3State === Web3State.Loading) {
+            content = (
+                <>
+                    <WalletErrorText>{errorsWallet.mmLoading}</WalletErrorText>
+                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                        {errorsWallet.mmConnect}
+                    </ButtonStyled>
+                </>
+            );
+        }
+
         return content;
     };
 }

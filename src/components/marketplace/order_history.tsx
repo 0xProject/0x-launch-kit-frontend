@@ -109,6 +109,12 @@ class OrderHistory extends React.Component<Props, State> {
                 );
                 break;
             }
+            case Web3State.Loading: {
+                content = (
+                    <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
+                );
+                break;
+            }
             default: {
                 if (!baseToken || !quoteToken) {
                     content = <CardLoading />;

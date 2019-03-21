@@ -309,6 +309,14 @@ class BuySell extends React.Component<Props, State> {
                 );
                 break;
             }
+            case Web3State.Loading: {
+                error = (
+                    <>
+                        <ButtonStyled theme={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
+                    </>
+                );
+                break;
+            }
             default: {
                 error = null;
                 break;
