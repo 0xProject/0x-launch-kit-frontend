@@ -10,14 +10,12 @@ export class Relayer {
     }
 
     public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
-        const orders = await Promise.all([
+        const [sellOrders, buyOrders] = await Promise.all([
             this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData),
             this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData),
         ]);
 
-        return orders.reduce((acc, result) => {
-            return acc.concat(result);
-        }, []);
+        return [...sellOrders, ...buyOrders];
     }
 
     public async getUserOrdersAsync(
@@ -25,14 +23,12 @@ export class Relayer {
         baseTokenAssetData: string,
         quoteTokenAssetData: string,
     ): Promise<SignedOrder[]> {
-        const orders = await Promise.all([
+        const [sellOrders, buyOrders] = await Promise.all([
             this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData, account),
             this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData, account),
         ]);
 
-        return orders.reduce((acc, result) => {
-            return acc.concat(result);
-        }, []);
+        return [...sellOrders, ...buyOrders];
     }
 
     private async _getOrdersAsync(
