@@ -2,19 +2,19 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { availableMarkets } from '../../common/markets';
+import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, getOrderbookAndUserOrders } from '../../store/actions';
-import { getBaseToken, getCurrencyPair } from '../../store/selectors';
+import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { CurrencyPair, StoreState, Token } from '../../util/types';
+import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
 
 import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
 import { ChevronDownIcon } from './icons/chevron_down_icon';
 import { MagnifierIcon } from './icons/magnifier_icon';
 import { TokenIcon } from './icons/token_icon';
-import { CustomTD, CustomTDFirst, CustomTDLast, Table, TBody, TH, THead, THFirst, THLast, TR } from './table';
+import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from './table';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
@@ -26,6 +26,7 @@ interface DispatchProps {
 interface PropsToken {
     baseToken: Token | null;
     currencyPair: CurrencyPair;
+    markets: Market[] | null;
 }
 
 type Props = PropsDivElement & PropsToken & DispatchProps;
@@ -148,7 +149,7 @@ const MagnifierIconWrapper = styled.div`
 `;
 
 const TableWrapper = styled.div`
-    height: 420px;
+    max-height: 420px;
     overflow: auto;
     position: relative;
 `;
@@ -167,10 +168,6 @@ const TRStyled = styled(TR)<MarketRowProps>`
     }
 `;
 
-const THStyled = styled(TH)`
-    ${verticalCellPadding};
-`;
-
 const THFirstStyled = styled(THFirst)`
     ${verticalCellPadding};
 `;
@@ -179,13 +176,7 @@ const THLastStyled = styled(THLast)`
     ${verticalCellPadding};
 `;
 
-const CustomTDStyled = styled(CustomTD)`
-    ${verticalCellPadding};
-`;
-
 const CustomTDFirstStyled = styled(CustomTDFirst)`
-    font-weight: 700;
-
     ${verticalCellPadding};
 `;
 
@@ -193,54 +184,21 @@ const CustomTDLastStyled = styled(CustomTDLast)`
     ${verticalCellPadding};
 `;
 
-const DayChange = styled.span<{ status?: string }>`
-    ${props => (props.status === 'less' ? `color: ${themeColors.orange};` : '')}
-    ${props => (props.status === 'more' ? `color: ${themeColors.green};` : '')}
+const TokenIconAndLabel = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+`;
+
+const TokenLabel = styled.div`
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 0 15px;
 `;
 
 const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
-const MARKETS_LIST = [
-    {
-        name: 'ZRX / ETH',
-        symbol: 'zrx',
-        price: '0.25',
-        previousDay: '100',
-        currentDay: '150',
-        dayVol: '515235.00',
-    },
-    {
-        name: 'ABC / ETH',
-        symbol: 'mkr',
-        price: '0.55',
-        previousDay: '90',
-        currentDay: '45',
-        dayVol: '435345.48',
-    },
-    {
-        name: 'DEF / ETH',
-        symbol: 'rep',
-        price: '0.675',
-        previousDay: '900',
-        currentDay: '900',
-        dayVol: '3453463.04',
-    },
-    {
-        name: 'GHI / ETH',
-        symbol: 'dgd',
-        price: '0.643',
-        previousDay: '78',
-        currentDay: '90',
-        dayVol: '456.23',
-    },
-    {
-        name: 'ZRX / DAI',
-        symbol: 'mln',
-        price: '0.978687',
-        previousDay: '12',
-        currentDay: '26',
-        dayVol: '24534.56',
-    },
-];
 
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
@@ -320,16 +278,16 @@ class MarketsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _getMarkets = () => {
-        const { baseToken, currencyPair } = this.props;
+        const { baseToken, currencyPair, markets } = this.props;
         const { search } = this.state;
 
-        if (!baseToken) {
+        if (!baseToken || !markets) {
             return null;
         }
 
-        const filteredMarkets = availableMarkets.filter(cp => {
-            const baseLowerCase = cp.base.toLowerCase();
-            const quoteLowerCase = cp.quote.toLowerCase();
+        const filteredMarkets = markets.filter(market => {
+            const baseLowerCase = market.currencyPair.base.toLowerCase();
+            const quoteLowerCase = market.currencyPair.quote.toLowerCase();
             return `${baseLowerCase}/${quoteLowerCase}`.indexOf(search.toLowerCase()) !== -1;
         });
 
@@ -338,34 +296,33 @@ class MarketsDropdown extends React.Component<Props, State> {
                 <THead>
                     <TR>
                         <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
-                        <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
-                        <THStyled styles={{ textAlign: 'center' }}>24H change</THStyled>
-                        <THLastStyled styles={{ textAlign: 'center' }}>24H Vol (usd)</THLastStyled>
+                        <THLastStyled styles={{ textAlign: 'center' }}>Price</THLastStyled>
                     </TR>
                 </THead>
                 <TBody>
-                    {filteredMarkets.map((cp, index) => {
-                        const isActive = cp.base === currencyPair.base && cp.quote === currencyPair.quote;
-                        const setSelectedMarket = () => this._setSelectedMarket(cp);
+                    {filteredMarkets.map((market, index) => {
+                        const isActive =
+                            market.currencyPair.base === currencyPair.base &&
+                            market.currencyPair.quote === currencyPair.quote;
+                        const setSelectedMarket = () => this._setSelectedMarket(market.currencyPair);
 
-                        const primaryColor = getColorBySymbol(cp.base);
+                        const primaryColor = getColorBySymbol(market.currencyPair.base);
+
+                        const baseSymbol = market.currencyPair.base.toUpperCase();
+                        const quoteSymbol = market.currencyPair.quote.toUpperCase();
 
                         return (
                             <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    <TokenIcon symbol={cp.base} primaryColor={primaryColor} />
-                                    <span>
-                                        {cp.base.toUpperCase()}/{cp.quote.toUpperCase()}
-                                    </span>
+                                    <TokenIconAndLabel>
+                                        <TokenIcon symbol={market.currencyPair.base} primaryColor={primaryColor} />
+                                        <TokenLabel>
+                                            {baseSymbol} / {quoteSymbol}
+                                        </TokenLabel>
+                                    </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
-                                <CustomTDStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {this._getPrice(baseToken)}
-                                </CustomTDStyled>
-                                <CustomTDStyled styles={{ textAlign: 'center', borderBottom: true }}>
-                                    {this._getDayChange(baseToken)}
-                                </CustomTDStyled>
-                                <CustomTDLastStyled styles={{ textAlign: 'right', borderBottom: true }}>
-                                    {this._getDayVolumen(baseToken)}
+                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true }}>
+                                    {this._getPrice(market)}
                                 </CustomTDLastStyled>
                             </TRStyled>
                         );
@@ -381,40 +338,12 @@ class MarketsDropdown extends React.Component<Props, State> {
         this._closeDropdown();
     };
 
-    private readonly _getDayChange: any = (item: Token) => {
-        const tokenDummy = MARKETS_LIST.find(obj => {
-            return obj.symbol === item.symbol;
-        });
-
-        if (!tokenDummy) {
-            return <DayChange />;
+    private readonly _getPrice: any = (market: Market) => {
+        if (market.price) {
+            return market.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
         }
 
-        const previousDay: number = parseFloat(tokenDummy.previousDay);
-        const currentDay: number = parseFloat(tokenDummy.currentDay);
-        const percentChange: string = (((currentDay - previousDay) / previousDay) * 100).toFixed(2);
-
-        if (currentDay > previousDay) {
-            return <DayChange status={'more'}>+{percentChange}%</DayChange>;
-        } else if (currentDay < previousDay) {
-            return <DayChange status={'less'}>{percentChange}%</DayChange>;
-        }
-
-        return <DayChange>{percentChange}%</DayChange>;
-    };
-
-    private readonly _getDayVolumen: any = (item: Token) => {
-        const tokenDummy = MARKETS_LIST.find(obj => {
-            return obj.symbol === item.symbol;
-        });
-        return tokenDummy ? tokenDummy.dayVol : '';
-    };
-
-    private readonly _getPrice: any = (item: Token) => {
-        const tokenDummy = MARKETS_LIST.find(obj => {
-            return obj.symbol === item.symbol;
-        });
-        return tokenDummy ? tokenDummy.price : '';
+        return '-';
     };
 }
 
@@ -422,6 +351,7 @@ const mapStateToProps = (state: StoreState): PropsToken => {
     return {
         baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
+        markets: getMarkets(state),
     };
 };
 

@@ -13,7 +13,6 @@ import { NotificationsDropdownContainer } from '../notifications/notifications_d
 import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
-import { PriceChange } from './price_change';
 
 interface StateProps {
     web3State?: Web3State;
@@ -104,14 +103,6 @@ const WalletDropdown = styled(WalletConnectionStatusContainer)`
     }
 `;
 
-const PriceChangeStyled = styled(PriceChange)`
-    display: none;
-
-    @media (min-width: ${themeBreakPoints.lg}) {
-        display: flex;
-    }
-`;
-
 const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
@@ -131,7 +122,6 @@ const Toolbar = (props: Props) => {
             <ToolbarStart>
                 <LogoHeader onClick={handleLogoClick} />
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-                <PriceChangeStyled />
             </ToolbarStart>
             {isMmLocked ? (
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />

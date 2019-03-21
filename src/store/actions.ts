@@ -4,7 +4,7 @@ import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
 import { setEthBalance, setTokenBalances, setWethBalance } from './blockchain/actions';
-import { setMarketTokens } from './market/actions';
+import { getMarkets, setMarketTokens } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair } from './selectors';
 
@@ -42,6 +42,7 @@ export const updateStore = () => {
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
+            dispatch(getMarkets());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
             const currencyPair = getCurrencyPair(state);

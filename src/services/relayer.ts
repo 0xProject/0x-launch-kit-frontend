@@ -1,6 +1,8 @@
+import { assetDataUtils, BigNumber } from '0x.js';
 import { HttpClient, SignedOrder } from '@0x/connect';
 
 import { RELAYER_URL } from '../common/constants';
+import { Token } from '../util/types';
 
 export class Relayer {
     public readonly client: HttpClient;
@@ -50,6 +52,23 @@ export class Relayer {
             .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
 
         return [...userSellOrders, ...userBuyOrders];
+    }
+
+    public async getCurrencyPairPriceAsync(baseToken: Token, quoteToken: Token): Promise<BigNumber | null> {
+        const { asks } = await this.client.getOrderbookAsync({
+            baseAssetData: assetDataUtils.encodeERC20AssetData(baseToken.address),
+            quoteAssetData: assetDataUtils.encodeERC20AssetData(quoteToken.address),
+        });
+
+        if (asks.records.length) {
+            const lowestPriceAsk = asks.records[0];
+
+            const { makerAssetAmount, takerAssetAmount } = lowestPriceAsk.order;
+
+            return takerAssetAmount.div(makerAssetAmount);
+        }
+
+        return null;
     }
 }
 

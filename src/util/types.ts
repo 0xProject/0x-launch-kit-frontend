@@ -54,6 +54,7 @@ export interface MarketState {
     readonly baseToken: Token | null;
     readonly quoteToken: Token | null;
     readonly ethInUsd: BigNumber | null;
+    readonly markets: Market[] | null;
 }
 
 export interface StoreState {
@@ -133,6 +134,11 @@ export interface OrderBook {
 export interface CurrencyPair {
     base: string;
     quote: string;
+}
+
+export interface Market {
+    currencyPair: CurrencyPair;
+    price: BigNumber | null;
 }
 
 export interface CurrencyPairBalance {
