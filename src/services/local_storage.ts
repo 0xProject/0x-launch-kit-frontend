@@ -26,8 +26,8 @@ export class LocalStorage {
 
         // Sort array by timestamp property
         newNotifications[account] = newNotifications[account].sort((a: Notification, b: Notification) => {
-            const aTimestamp = a != null && a.timestamp ? a.timestamp.getTime() : 0;
-            const bTimestamp = b != null && b.timestamp ? b.timestamp.getTime() : 0;
+            const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
+            const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
             return bTimestamp - aTimestamp;
         });
 
