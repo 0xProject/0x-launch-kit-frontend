@@ -69,7 +69,7 @@ describe('WalletTokenBalances', () => {
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
-                onToggleTokenLock={noop}
+                onStartToggleTokenLockSteps={noop}
                 web3State={Web3State.Done}
             />,
         );
@@ -121,7 +121,7 @@ describe('WalletTokenBalances', () => {
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
-                onToggleTokenLock={noop}
+                onStartToggleTokenLockSteps={noop}
                 web3State={Web3State.Done}
             />,
         );
@@ -182,7 +182,7 @@ describe('WalletTokenBalances', () => {
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
-                onToggleTokenLock={onToggleTokenLock}
+                onStartToggleTokenLockSteps={onToggleTokenLock}
                 web3State={Web3State.Done}
             />,
         );
@@ -193,7 +193,7 @@ describe('WalletTokenBalances', () => {
             .simulate('click');
 
         // then
-        expect(onToggleTokenLock).toHaveBeenCalledWith(tokenBalances[1]);
+        expect(onToggleTokenLock).toHaveBeenCalledWith(tokenBalances[1].token, tokenBalances[1].isUnlocked);
     });
 
     it('should call the onToggleTokenLock function when a unlocked token is clicked', () => {
@@ -240,7 +240,7 @@ describe('WalletTokenBalances', () => {
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
-                onToggleTokenLock={onToggleTokenLock}
+                onStartToggleTokenLockSteps={onToggleTokenLock}
                 web3State={Web3State.Done}
             />,
         );
@@ -250,6 +250,6 @@ describe('WalletTokenBalances', () => {
             .simulate('click');
 
         // then
-        expect(onToggleTokenLock).toHaveBeenCalledWith(tokenBalances[0]);
+        expect(onToggleTokenLock).toHaveBeenCalledWith(tokenBalances[0].token, tokenBalances[0].isUnlocked);
     });
 });

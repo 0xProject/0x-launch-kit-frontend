@@ -11,7 +11,7 @@ import {
     OrderSide,
     Step,
     StepKind,
-    StepUnlockToken,
+    StepToggleTokenLock,
     StepWrapEth,
     StoreState,
     Token,
@@ -95,6 +95,16 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
     };
 };
 
+export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => {
+    return async (dispatch: any) => {
+        const toggleTokenLockStep = isUnlocked ? getLockTokenStep(token) : getUnlockTokenStep(token);
+
+        dispatch(setStepsModalCurrentStep(toggleTokenLockStep));
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
 export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
@@ -169,20 +179,22 @@ const getWrapEthStepIfNeeded = (
     }
 };
 
-const getUnlockZrxStepIfNeeded = (state: StoreState): StepUnlockToken | null => {
+const getUnlockZrxStepIfNeeded = (state: StoreState): StepToggleTokenLock | null => {
     const tokenBalances = selectors.getTokenBalances(state);
     const zrxTokenBalance: TokenBalance = tokenBalances.find(tokenBalance => isZrx(tokenBalance.token)) as TokenBalance;
     if (zrxTokenBalance.isUnlocked) {
         return null;
     } else {
         return {
-            kind: StepKind.UnlockToken,
+            kind: StepKind.ToggleTokenLock,
             token: zrxTokenBalance.token,
+            isUnlocked: false,
+            context: 'order',
         };
     }
 };
 
-const getUnlockTokenStepIfNeeded = (token: Token, state: StoreState): StepUnlockToken | null => {
+const getUnlockTokenStepIfNeeded = (token: Token, state: StoreState): StepToggleTokenLock | null => {
     const tokenBalances = selectors.getTokenBalances(state);
 
     let tokenBalance: TokenBalance;
@@ -198,10 +210,30 @@ const getUnlockTokenStepIfNeeded = (token: Token, state: StoreState): StepUnlock
         return null;
     } else {
         return {
-            kind: StepKind.UnlockToken,
+            kind: StepKind.ToggleTokenLock,
             token: tokenBalance.token,
+            isUnlocked: false,
+            context: 'order',
         };
     }
+};
+
+const getUnlockTokenStep = (token: Token): StepToggleTokenLock => {
+    return {
+        kind: StepKind.ToggleTokenLock,
+        token,
+        isUnlocked: false,
+        context: 'standalone',
+    };
+};
+
+const getLockTokenStep = (token: Token): StepToggleTokenLock => {
+    return {
+        kind: StepKind.ToggleTokenLock,
+        token,
+        isUnlocked: true,
+        context: 'standalone',
+    };
 };
 
 export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {

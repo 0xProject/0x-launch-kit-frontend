@@ -49,22 +49,23 @@ export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolv
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
 });
 
-export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
+export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
 
         const contractWrappers = await getContractWrappers();
 
+        let tx: string;
         if (isUnlocked) {
-            await contractWrappers.erc20Token.setProxyAllowanceAsync(
+            tx = await contractWrappers.erc20Token.setProxyAllowanceAsync(
                 token.address,
                 ethAccount,
                 new BigNumber('0'),
                 TX_DEFAULTS,
             );
         } else {
-            await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+            tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
         }
 
         const isWeth = token.symbol === WETH_TOKEN_SYMBOL;
@@ -91,6 +92,8 @@ export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
 
             dispatch(setTokenBalances(updatedTokenBalances));
         }
+
+        return tx;
     };
 };
 
@@ -285,24 +288,13 @@ export const addWethToBalance = (amount: BigNumber) => {
 
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any): Promise<any> => {
-        const state = getState();
+        return dispatch(toggleTokenLock(token, false));
+    };
+};
 
-        let tokenBalance: TokenBalance;
-        if (token.symbol === WETH_TOKEN_SYMBOL) {
-            tokenBalance = getWethTokenBalance(state) as TokenBalance;
-        } else {
-            tokenBalance = getTokenBalances(state).find(
-                balance => balance.token.address === token.address,
-            ) as TokenBalance;
-        }
-
-        if (!tokenBalance.isUnlocked) {
-            const ethAccount = getEthAccount(state);
-            const contractWrappers = await getContractWrappers();
-            return contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
-        } else {
-            return Promise.resolve();
-        }
+export const lockToken = (token: Token) => {
+    return async (dispatch: any, getState: any): Promise<any> => {
+        return dispatch(toggleTokenLock(token, true));
     };
 };
 

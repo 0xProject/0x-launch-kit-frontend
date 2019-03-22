@@ -67,7 +67,7 @@ export interface StoreState {
 
 export enum StepKind {
     WrapEth = 'WrapEth',
-    UnlockToken = 'UnlockToken',
+    ToggleTokenLock = 'ToggleTokenLock',
     BuySellLimit = 'BuySellLimit',
     BuySellMarket = 'BuySellMarket',
 }
@@ -77,9 +77,11 @@ export interface StepWrapEth {
     amount: BigNumber;
 }
 
-export interface StepUnlockToken {
-    kind: StepKind.UnlockToken;
+export interface StepToggleTokenLock {
+    kind: StepKind.ToggleTokenLock;
     token: Token;
+    isUnlocked: boolean;
+    context: 'order' | 'standalone';
 }
 
 export interface StepBuySellLimitOrder {
@@ -96,7 +98,7 @@ export interface StepBuySellMarket {
     token: Token;
 }
 
-export type Step = StepWrapEth | StepUnlockToken | StepBuySellLimitOrder | StepBuySellMarket;
+export type Step = StepWrapEth | StepToggleTokenLock | StepBuySellLimitOrder | StepBuySellMarket;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];

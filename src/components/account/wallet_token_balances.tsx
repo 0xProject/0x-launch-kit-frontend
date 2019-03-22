@@ -4,10 +4,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { toggleTokenLock } from '../../store/actions';
+import { startToggleTokenLockSteps } from '../../store/actions';
 import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, TokenBalance, Web3State } from '../../util/types';
+import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
@@ -20,7 +20,7 @@ interface StateProps {
     wethTokenBalance: TokenBalance | null;
 }
 interface DispatchProps {
-    onToggleTokenLock: (tokenBalance: TokenBalance) => void;
+    onStartToggleTokenLockSteps: (token: Token, isUnlocked: boolean) => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -73,7 +73,7 @@ const LockCell = ({ styles, isUnlocked, onClick }: LockCellProps) => {
 
 class WalletTokenBalances extends React.PureComponent<Props> {
     public render = () => {
-        const { ethBalance, tokenBalances, onToggleTokenLock, web3State, wethTokenBalance } = this.props;
+        const { ethBalance, tokenBalances, onStartToggleTokenLockSteps, web3State, wethTokenBalance } = this.props;
 
         if (!wethTokenBalance) {
             return null;
@@ -82,7 +82,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const wethToken = wethTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
         const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals);
-        const onTotalEthClick = () => onToggleTokenLock(wethTokenBalance);
+        const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
 
         const totalEthRow = (
             <TR>
@@ -105,7 +105,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
             const formattedBalance = tokenAmountInUnits(balance, token.decimals);
-            const onClick = () => onToggleTokenLock(tokenBalance);
+            const onClick = () => onStartToggleTokenLockSteps(tokenBalance.token, tokenBalance.isUnlocked);
 
             return (
                 <TR key={symbol}>
@@ -164,7 +164,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 const mapDispatchToProps = {
-    onToggleTokenLock: toggleTokenLock,
+    onStartToggleTokenLockSteps: startToggleTokenLockSteps,
 };
 
 const WalletTokenBalancesContainer = connect(

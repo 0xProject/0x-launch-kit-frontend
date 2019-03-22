@@ -11,7 +11,7 @@ import { CloseModalButton } from '../icons/close_modal_button';
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
 import { SignOrderStepContainer } from './sign_order_step';
 import { ModalContent } from './steps_common';
-import { UnlockTokensStepContainer } from './unlock_token_step';
+import { ToggleTokenLockStepContainer } from './toggle_token_lock_step';
 import { WrapEthStepContainer } from './wrap_eth_step';
 
 interface StateProps {
@@ -32,7 +32,7 @@ class StepsModal extends React.Component<Props> {
             <Modal isOpen={isOpen} style={themeModalStyle}>
                 <CloseModalButton onClick={reset} />
                 <ModalContent>
-                    {currentStep && currentStep.kind === StepKind.UnlockToken && <UnlockTokensStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.ToggleTokenLock && <ToggleTokenLockStepContainer />}
                     {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
                     {currentStep && currentStep.kind === StepKind.BuySellMarket && <BuySellTokenStepContainer />}
                     {currentStep && currentStep.kind === StepKind.WrapEth && <WrapEthStepContainer />}
