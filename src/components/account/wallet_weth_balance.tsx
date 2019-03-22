@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { updateWethBalance } from '../../store/actions';
+import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getWeb3State, getWethBalance } from '../../store/selectors';
 import { themeColors, themeDimensions, themeModalStyle } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
@@ -21,7 +21,7 @@ interface StateProps {
     web3State: Web3State;
 }
 interface DispatchProps {
-    onUpdateWethBalance: (newBalance: BigNumber) => Promise<any>;
+    onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -205,7 +205,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
             isSubmitting: true,
         });
         try {
-            await this.props.onUpdateWethBalance(newWeth);
+            await this.props.onStartWrapEtherSteps(newWeth);
         } finally {
             this.setState({
                 isSubmitting: false,
@@ -235,7 +235,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 const mapDispatchToProps = {
-    onUpdateWethBalance: updateWethBalance,
+    onStartWrapEtherSteps: startWrapEtherSteps,
 };
 
 const WalletWethBalanceContainer = connect(
