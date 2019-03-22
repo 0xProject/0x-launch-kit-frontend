@@ -12,20 +12,11 @@ export class Relayer {
     }
 
     public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
-        const sellOrders = await this.client
-            .getOrdersAsync({
-                makerAssetData: baseTokenAssetData,
-                takerAssetData: quoteTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-        const buyOrders = await this.client
-            .getOrdersAsync({
-                makerAssetData: quoteTokenAssetData,
-                takerAssetData: baseTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
+        const [sellOrders, buyOrders] = await Promise.all([
+            this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData),
+            this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData),
+        ]);
+
         return [...sellOrders, ...buyOrders];
     }
 
@@ -34,24 +25,45 @@ export class Relayer {
         baseTokenAssetData: string,
         quoteTokenAssetData: string,
     ): Promise<SignedOrder[]> {
-        const userSellOrders = await this.client
-            .getOrdersAsync({
-                makerAddress: account,
-                makerAssetData: baseTokenAssetData,
-                takerAssetData: quoteTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
-        const userBuyOrders = await this.client
-            .getOrdersAsync({
-                makerAddress: account,
-                makerAssetData: quoteTokenAssetData,
-                takerAssetData: baseTokenAssetData,
-            })
-            .then(page => page.records)
-            .then(apiOrders => apiOrders.map(apiOrder => apiOrder.order));
+        const [sellOrders, buyOrders] = await Promise.all([
+            this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData, account),
+            this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData, account),
+        ]);
 
-        return [...userSellOrders, ...userBuyOrders];
+        return [...sellOrders, ...buyOrders];
+    }
+
+    private async _getOrdersAsync(
+        makerAssetData: string,
+        takerAssetData: string,
+        makerAddress?: string,
+    ): Promise<SignedOrder[]> {
+        let recordsToReturn: SignedOrder[] = [];
+        const requestOpts = {
+            makerAssetData,
+            takerAssetData,
+            makerAddress,
+        };
+
+        let hasMorePages = true;
+        let page = 1;
+
+        while (hasMorePages) {
+            const { total, records, perPage } = await this.client.getOrdersAsync({
+                ...requestOpts,
+                page,
+            });
+
+            const recordsMapped = records.map(apiOrder => {
+                return apiOrder.order;
+            });
+            recordsToReturn = [...recordsToReturn, ...recordsMapped];
+
+            page += 1;
+            const lastPage = Math.ceil(total / perPage);
+            hasMorePages = page <= lastPage;
+        }
+        return recordsToReturn;
     }
 
     public async getCurrencyPairPriceAsync(baseToken: Token, quoteToken: Token): Promise<BigNumber | null> {
