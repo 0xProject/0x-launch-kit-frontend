@@ -10,7 +10,7 @@ import { getAllOrdersAsUIOrders } from '../services/orders';
 import { getWeb3Wrapper } from '../services/web3_wrapper';
 
 import { getKnownTokens } from './known_tokens';
-import { OrderSide } from './types';
+import { OrderSide, TokenSymbols } from './types';
 
 let ethPriceInUSD: BigNumber | null;
 let zeroXPriceInUSD: BigNumber | null;
@@ -48,7 +48,7 @@ export const getZeroXPriceInWeth = async (): Promise<BigNumber> => {
         if (web3Wrapper) {
             const networkId = await web3Wrapper.getNetworkIdAsync();
             const knownTokens = getKnownTokens(networkId);
-            const zeroXToken = knownTokens.getTokenBySymbol('ZRX');
+            const zeroXToken = knownTokens.getTokenBySymbol(TokenSymbols.Zrx);
             const wethToken = knownTokens.getWethToken();
             let sellOrders = await getAllOrdersAsUIOrders(zeroXToken, wethToken);
             if (sellOrders.length > 0) {

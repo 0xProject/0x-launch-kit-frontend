@@ -190,3 +190,12 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
+
+export enum TokenSymbols {
+    Weth = 'weth',
+    Zrx = 'zrx',
+    Mkr = 'mkr',
+    Rep = 'rep',
+    Dgd = 'dgd',
+    Mln = 'mln',
+}

@@ -263,12 +263,12 @@ class WalletBalance extends React.Component<Props, State> {
                         <LabelTitle>Amount</LabelTitle>
                     </LabelTitleWrapper>
                     <LabelWrapper>
-                        <Label>{currencyPair.base}</Label>
+                        <Label>{currencyPair.base.toUpperCase()}</Label>
                         <Value>{baseBalanceString}</Value>
                     </LabelWrapper>
                     <LabelWrapper>
                         <Label>
-                            {currencyPair.quote}
+                            {currencyPair.quote.toUpperCase()}
                             {toolTip}
                         </Label>
                         <Value>{quoteBalanceString}</Value>
