@@ -106,6 +106,7 @@ const WalletDropdown = styled(WalletConnectionStatusContainer)`
 const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
+    const isMmLoading = props.web3State === Web3State.Loading;
 
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -129,7 +130,10 @@ const Toolbar = (props: Props) => {
             {isMmNotInstalled ? (
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
             ) : null}
-            {!isMmLocked && !isMmNotInstalled ? (
+            {isMmLoading ? (
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
+            ) : null}
+            {!isMmLocked && !isMmNotInstalled && !isMmLoading ? (
                 <ToolbarEnd>
                     <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
                         My Wallet
