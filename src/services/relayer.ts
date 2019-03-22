@@ -36,7 +36,7 @@ export class Relayer {
         takerAssetData: string,
         makerAddress?: string,
     ): Promise<SignedOrder[]> {
-        const recordsToReturn: SignedOrder[] = [];
+        let recordsToReturn: SignedOrder[] = [];
         const requestOpts = {
             makerAssetData,
             takerAssetData,
@@ -51,12 +51,11 @@ export class Relayer {
                 ...requestOpts,
                 page,
             });
-            recordsToReturn.push.apply(
-                recordsToReturn,
-                records.map(apiOrder => {
-                    return apiOrder.order;
-                }),
-            );
+
+            const recordsMapped = records.map(apiOrder => {
+                return apiOrder.order;
+            });
+            recordsToReturn = [...recordsToReturn, ...recordsMapped];
 
             page += 1;
             const lastPage = Math.ceil(total / perPage);
