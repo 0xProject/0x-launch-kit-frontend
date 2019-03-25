@@ -3,10 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { METAMASK_EXTENSION_URL } from '../../common/constants';
 import { connectWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getEthInUsd, getWeb3State } from '../../store/selectors';
-import { errorsWallet } from '../../util/error_messages';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { CurrencyPair, OrderSide, StoreState, Token, Web3State } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -151,18 +149,6 @@ const TokenTextButtonUppercase = styled.span`
     text-transform: uppercase;
 `;
 
-const WalletErrorText = styled.p`
-    font-size: 16px;
-    font-weight: normal;
-    line-height: 23px;
-    margin: 0;
-    padding: 20px 0;
-`;
-
-const ButtonStyled = styled(Button)`
-    width: 100%;
-`;
-
 class BuySell extends React.Component<Props, State> {
     public state = {
         makerAmount: new BigNumber(0),
@@ -172,7 +158,7 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { currencyPair } = this.props;
+        const { currencyPair, web3State } = this.props;
         const { makerAmount, price, tab, orderType } = this.state;
 
         const buySellInnerTabs = [
@@ -188,13 +174,7 @@ class BuySell extends React.Component<Props, State> {
             },
         ];
 
-        const errorBtn = this._getErrorBtn();
-        const buySellBtn = (
-            <Button theme="secondary" onClick={tab === OrderSide.Buy ? this.buy : this.sell}>
-                {tab === OrderSide.Buy ? 'Buy' : 'Sell'}{' '}
-                <TokenTextButtonUppercase>{currencyPair.base}</TokenTextButtonUppercase>
-            </Button>
-        );
+        const isBtnDisabled = web3State === Web3State.NotInstalled || web3State === Web3State.Locked;
 
         return (
             <BuySellWrapper>
@@ -247,7 +227,14 @@ class BuySell extends React.Component<Props, State> {
                         baseToken={this.props.baseToken}
                         ethInUsd={this.props.ethInUsd}
                     />
-                    {errorBtn ? errorBtn : buySellBtn}
+                    <Button
+                        theme="secondary"
+                        onClick={tab === OrderSide.Buy ? this.buy : this.sell}
+                        disabled={isBtnDisabled}
+                    >
+                        {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
+                        <TokenTextButtonUppercase>{currencyPair.base}</TokenTextButtonUppercase>
+                    </Button>
                 </Content>
             </BuySellWrapper>
         );
@@ -281,57 +268,6 @@ class BuySell extends React.Component<Props, State> {
             await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Sell);
         }
         this._reset();
-    };
-
-    private readonly _getErrorBtn = () => {
-        const { onConnectWallet, web3State } = this.props;
-        let error;
-        switch (web3State) {
-            case Web3State.NotInstalled: {
-                error = (
-                    <>
-                        <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                        <ButtonStyled theme={'tertiary'} onClick={this._openMetamaskExtensionUrl}>
-                            {errorsWallet.mmGetExtension}
-                        </ButtonStyled>
-                    </>
-                );
-                break;
-            }
-            case Web3State.Locked: {
-                error = (
-                    <>
-                        <WalletErrorText>Accept metamask permissions in order to make trades.</WalletErrorText>
-                        <ButtonStyled theme={'tertiary'} onClick={onConnectWallet}>
-                            {errorsWallet.mmConnect}
-                        </ButtonStyled>
-                    </>
-                );
-                break;
-            }
-            case Web3State.Loading: {
-                error = (
-                    <>
-                        <ButtonStyled theme={'tertiary'} onClick={onConnectWallet}>
-                            {errorsWallet.mmLoading}
-                        </ButtonStyled>
-                    </>
-                );
-                break;
-            }
-            default: {
-                error = null;
-                break;
-            }
-        }
-        return error;
-    };
-
-    private readonly _openMetamaskExtensionUrl = () => {
-        const win = window.open(METAMASK_EXTENSION_URL, '_blank');
-        if (win) {
-            win.focus();
-        }
     };
 
     private readonly _reset = () => {
