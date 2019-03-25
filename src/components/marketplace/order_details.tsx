@@ -8,43 +8,41 @@ import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
 import { getAllOrdersToFillMarketOrderAndAmountsToPay } from '../../services/orders';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
 import { getKnownTokens } from '../../util/known_tokens';
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, UIOrder } from '../../util/types';
 
 const Row = styled.div`
     align-items: center;
-    border-bottom: solid 1px ${themeColors.borderColor};
+    border-top: dashed 1px ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
-    padding: 15px ${themeDimensions.horizontalPadding};
+    padding: 15px 0;
     position: relative;
     z-index: 1;
 
-    &:first-child {
-        padding-top: 5px;
-    }
-
-    &:last-child {
-        border-bottom: none;
-        padding-bottom: 5px;
+    &: last-of-type {
+        margin-bottom: 20px;
     }
 `;
 
 const Value = styled.div`
     color: #000;
     flex-shrink: 0;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 14px;
     line-height: 1.2;
     white-space: nowrap;
+`;
+
+const TotalCostValue = styled(Value)`
+    font-weight: bold;
 `;
 
 const LabelContainer = styled.div`
     align-items: flex-end;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin: 15px 0;
 `;
 
 const Label = styled.label<{ color?: string }>`
@@ -53,6 +51,19 @@ const Label = styled.label<{ color?: string }>`
     font-weight: 500;
     line-height: normal;
     margin: 0;
+`;
+
+const MainLabel = styled(Label)`
+    font-size: 12px;
+    text-transform: uppercase;
+`;
+
+const FeeLabel = styled(Label)`
+    font-weight: normal;
+`;
+
+const TotalCostLabel = styled(Label)`
+    font-weight: bold;
 `;
 
 interface OwnProps {
@@ -101,21 +112,20 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderSide } = this.props;
         const fee = this._getFeeStringForRender();
         const totalCost = this._getTotalCostStringForRender();
         return (
             <>
                 <LabelContainer>
-                    <Label>Order Details</Label>
+                    <MainLabel>Order Details</MainLabel>
                 </LabelContainer>
                 <Row>
-                    <Label color={themeColors.textLight}>{orderSide === OrderSide.Buy ? 'Selling' : 'Buying'}</Label>
-                    <Value>{totalCost}</Value>
+                    <FeeLabel color={themeColors.textLight}>Fee</FeeLabel>
+                    <Value>{fee}</Value>
                 </Row>
                 <Row>
-                    <Label color={themeColors.textLight}>Fee</Label>
-                    <Value>{fee}</Value>
+                    <TotalCostLabel>Cost</TotalCostLabel>
+                    <TotalCostValue>{totalCost}</TotalCostValue>
                 </Row>
             </>
         );
