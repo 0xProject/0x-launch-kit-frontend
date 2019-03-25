@@ -12,7 +12,7 @@ import { GeneralLayout } from './components/general_layout';
 import './icons';
 import './index.css';
 import { Marketplace } from './pages/marketplace';
-import { MyWallet } from './pages/my_wallet';
+import { MyWalletContainer } from './pages/my_wallet';
 import * as serviceWorker from './serviceWorker';
 import { history, store } from './store';
 
@@ -27,7 +27,7 @@ const Web3WrappedApp = (
                 <GeneralLayout>
                     <Switch>
                         <Route exact={true} path="/" component={Marketplace} />
-                        <Route exact={true} path="/my-wallet" component={MyWallet} />
+                        <Route exact={true} path="/my-wallet" component={MyWalletContainer} />
                         <Route component={RedirectToHome} />
                     </Switch>
                 </GeneralLayout>

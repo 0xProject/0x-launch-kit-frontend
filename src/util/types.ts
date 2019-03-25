@@ -190,3 +190,8 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
+
+export enum ModalDisplay {
+    InstallMetamask = 'INSTALL_METAMASK',
+    EnablePermissions = 'ACCEPT_PERMISSIONS',
+}

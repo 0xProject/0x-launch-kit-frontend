@@ -33,6 +33,23 @@ export class Relayer {
         return [...sellOrders, ...buyOrders];
     }
 
+    public async getCurrencyPairPriceAsync(baseToken: Token, quoteToken: Token): Promise<BigNumber | null> {
+        const { asks } = await this.client.getOrderbookAsync({
+            baseAssetData: assetDataUtils.encodeERC20AssetData(baseToken.address),
+            quoteAssetData: assetDataUtils.encodeERC20AssetData(quoteToken.address),
+        });
+
+        if (asks.records.length) {
+            const lowestPriceAsk = asks.records[0];
+
+            const { makerAssetAmount, takerAssetAmount } = lowestPriceAsk.order;
+
+            return takerAssetAmount.div(makerAssetAmount);
+        }
+
+        return null;
+    }
+
     private async _getOrdersAsync(
         makerAssetData: string,
         takerAssetData: string,
@@ -64,23 +81,6 @@ export class Relayer {
             hasMorePages = page <= lastPage;
         }
         return recordsToReturn;
-    }
-
-    public async getCurrencyPairPriceAsync(baseToken: Token, quoteToken: Token): Promise<BigNumber | null> {
-        const { asks } = await this.client.getOrderbookAsync({
-            baseAssetData: assetDataUtils.encodeERC20AssetData(baseToken.address),
-            quoteAssetData: assetDataUtils.encodeERC20AssetData(quoteToken.address),
-        });
-
-        if (asks.records.length) {
-            const lowestPriceAsk = asks.records[0];
-
-            const { makerAssetAmount, takerAssetAmount } = lowestPriceAsk.order;
-
-            return takerAssetAmount.div(makerAssetAmount);
-        }
-
-        return null;
     }
 }
 
