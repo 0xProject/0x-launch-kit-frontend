@@ -3,7 +3,8 @@ import Modal from 'react-modal';
 import { connect } from 'react-redux';
 
 import { stepsModalReset } from '../../../store/actions';
-import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { getStepsModalCurrentStep, getStepsModalDoneSteps, getStepsModalPendingSteps } from '../../../store/selectors';
+import { getStepTitle } from '../../../util/steps';
 import { themeModalStyle } from '../../../util/theme';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
@@ -11,11 +12,14 @@ import { CloseModalButton } from '../icons/close_modal_button';
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
 import { SignOrderStepContainer } from './sign_order_step';
 import { ModalContent } from './steps_common';
+import { StepItem } from './steps_progress';
 import { ToggleTokenLockStepContainer } from './toggle_token_lock_step';
 import { WrapEthStepContainer } from './wrap_eth_step';
 
 interface StateProps {
     currentStep: Step | null;
+    doneSteps: Step[];
+    pendingSteps: Step[];
 }
 
 interface DispatchProps {
@@ -26,16 +30,39 @@ type Props = StateProps & DispatchProps;
 
 class StepsModal extends React.Component<Props> {
     public render = () => {
-        const { currentStep, reset } = this.props;
+        const { currentStep, doneSteps, pendingSteps, reset } = this.props;
         const isOpen = currentStep !== null;
+
+        const buildStepsProgress = (currentStepItem: StepItem): StepItem[] => [
+            ...doneSteps.map(doneStep => ({
+                title: getStepTitle(doneStep),
+                progress: '100',
+                active: false,
+            })),
+            currentStepItem,
+            ...pendingSteps.map(pendingStep => ({
+                title: getStepTitle(pendingStep),
+                progress: '0',
+                active: false,
+            })),
+        ];
+
         return (
             <Modal isOpen={isOpen} style={themeModalStyle}>
                 <CloseModalButton onClick={reset} />
                 <ModalContent>
-                    {currentStep && currentStep.kind === StepKind.ToggleTokenLock && <ToggleTokenLockStepContainer />}
-                    {currentStep && currentStep.kind === StepKind.BuySellLimit && <SignOrderStepContainer />}
-                    {currentStep && currentStep.kind === StepKind.BuySellMarket && <BuySellTokenStepContainer />}
-                    {currentStep && currentStep.kind === StepKind.WrapEth && <WrapEthStepContainer />}
+                    {currentStep && currentStep.kind === StepKind.ToggleTokenLock && (
+                        <ToggleTokenLockStepContainer buildStepsProgress={buildStepsProgress} />
+                    )}
+                    {currentStep && currentStep.kind === StepKind.BuySellLimit && (
+                        <SignOrderStepContainer buildStepsProgress={buildStepsProgress} />
+                    )}
+                    {currentStep && currentStep.kind === StepKind.BuySellMarket && (
+                        <BuySellTokenStepContainer buildStepsProgress={buildStepsProgress} />
+                    )}
+                    {currentStep && currentStep.kind === StepKind.WrapEth && (
+                        <WrapEthStepContainer buildStepsProgress={buildStepsProgress} />
+                    )}
                 </ModalContent>
             </Modal>
         );
@@ -45,6 +72,8 @@ class StepsModal extends React.Component<Props> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         currentStep: getStepsModalCurrentStep(state),
+        doneSteps: getStepsModalDoneSteps(state),
+        pendingSteps: getStepsModalPendingSteps(state),
     };
 };
 
