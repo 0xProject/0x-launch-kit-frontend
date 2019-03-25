@@ -1,5 +1,6 @@
 import { BigNumber } from '0x.js';
 
+import { NOTIFICATIONS_LIMIT } from '../common/constants';
 import { Notification } from '../util/types';
 
 const addPrefix = (key: string) => `0x-launch-kit-frontend.${key}`;
@@ -22,6 +23,18 @@ export class LocalStorage {
             ...currentNotifications,
             [account]: notifications,
         };
+
+        // Sort array by timestamp property
+        newNotifications[account] = newNotifications[account].sort((a: Notification, b: Notification) => {
+            const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
+            const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
+            return bTimestamp - aTimestamp;
+        });
+
+        // Limit number of notifications
+        if (newNotifications[account].length > NOTIFICATIONS_LIMIT) {
+            newNotifications[account].length = NOTIFICATIONS_LIMIT;
+        }
 
         this._storage.setItem(notificationsKey, JSON.stringify(newNotifications));
     }
