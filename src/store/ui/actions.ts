@@ -198,13 +198,9 @@ const getUnlockTokenStepIfNeeded = (token: Token, state: StoreState): StepToggle
     const tokenBalances = selectors.getTokenBalances(state);
 
     let tokenBalance: TokenBalance;
-    if (isWeth(token)) {
-        tokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
-    } else {
-        tokenBalance = tokenBalances.find(
-            tb => tb.token.symbol.toLowerCase() === token.symbol.toLowerCase(),
-        ) as TokenBalance;
-    }
+    isWeth(token)
+        ? (tokenBalance = selectors.getWethTokenBalance(state) as TokenBalance)
+        : (tokenBalance = tokenBalances.find(tb => tb.token.symbol === token.symbol) as TokenBalance);
 
     if (tokenBalance.isUnlocked) {
         return null;

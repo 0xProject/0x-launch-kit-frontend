@@ -10,7 +10,7 @@ export class KnownTokens {
 
     constructor(networkId: number, knownTokensMetadata: TokenMetaData[]) {
         this._tokens = mapTokensMetaDataToTokenByNetworkId(networkId, knownTokensMetadata).filter(
-            token => token.symbol !== TokenSymbols.Weth,
+            token => !isWeth(token),
         );
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(networkId, knownTokensMetadata);
     }
@@ -65,10 +65,10 @@ export const getColorBySymbol = (symbol: string): string => {
     return token.primaryColor;
 };
 
-export const isZrx = (token: Token): boolean => {
-    return token.symbol.toLowerCase() === TokenSymbols.Zrx.toLowerCase();
+export const isZrx = (token: Token | string): boolean => {
+    return typeof token !== 'string' ? token.symbol === TokenSymbols.Zrx : token === TokenSymbols.Zrx;
 };
 
-export const isWeth = (token: Token): boolean => {
-    return token.symbol.toLowerCase() === TokenSymbols.Zrx.toLowerCase();
+export const isWeth = (token: Token | string): boolean => {
+    return typeof token !== 'string' ? token.symbol === TokenSymbols.Weth : token === TokenSymbols.Weth;
 };

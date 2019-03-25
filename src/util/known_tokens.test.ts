@@ -7,7 +7,7 @@ const networkId = 50;
 const dummyTokensMetaData: TokenMetaData[] = [
     {
         decimals: 18,
-        symbol: 'weth',
+        symbol: TokenSymbols.Weth,
         name: 'Wrapped Ether',
         addresses: {
             50: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
@@ -15,7 +15,7 @@ const dummyTokensMetaData: TokenMetaData[] = [
     },
     {
         decimals: 18,
-        symbol: 'zrx',
+        symbol: TokenSymbols.Zrx,
         name: '0x',
         addresses: {
             50: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',

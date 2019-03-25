@@ -1,3 +1,5 @@
+import { TokenSymbols } from '../util/types';
+
 export interface TokenMetaData {
     addresses: { [key: number]: string };
     symbol: string;
@@ -9,7 +11,7 @@ export interface TokenMetaData {
 export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     {
         decimals: 18,
-        symbol: 'weth',
+        symbol: TokenSymbols.Weth,
         name: 'Wrapped Ether',
         primaryColor: '#3333ff',
         addresses: {
@@ -20,7 +22,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
-        symbol: 'zrx',
+        symbol: TokenSymbols.Zrx,
         name: '0x',
         primaryColor: '#333333',
         addresses: {
@@ -31,7 +33,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
-        symbol: 'mkr',
+        symbol: TokenSymbols.Mkr,
         name: 'Maker',
         primaryColor: '#68CCBB',
         addresses: {
@@ -42,7 +44,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
-        symbol: 'rep',
+        symbol: TokenSymbols.Rep,
         name: 'Augur',
         primaryColor: '#512D80',
         addresses: {
@@ -52,7 +54,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 9,
-        symbol: 'dgd',
+        symbol: TokenSymbols.Dgd,
         name: 'DigixDao',
         primaryColor: '#E1AA3E',
         addresses: {
@@ -63,7 +65,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
-        symbol: 'mln',
+        symbol: TokenSymbols.Mln,
         name: 'Melon',
         primaryColor: '#333333',
         addresses: {

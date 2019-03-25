@@ -7,9 +7,9 @@ import { subscribeToFillEvents } from '../../services/exchange';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
-import { getKnownTokens } from '../../util/known_tokens';
+import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, Token, TokenBalance, TokenSymbols, Web3State } from '../../util/types';
+import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
 import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
@@ -62,8 +62,7 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
             tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
         }
 
-        const isWeth = token.symbol === TokenSymbols.Weth;
-        if (isWeth) {
+        if (isWeth(token)) {
             const wethTokenBalance = getWethTokenBalance(state) as TokenBalance;
             dispatch(
                 setWethTokenBalance({
