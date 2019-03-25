@@ -49,6 +49,7 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
         const ethAccount = getEthAccount(state);
 
         const contractWrappers = await getContractWrappers();
+        const web3Wrapper = await getWeb3WrapperOrThrow();
 
         let tx: string;
         if (isUnlocked) {
@@ -61,6 +62,10 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
         } else {
             tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
         }
+
+        web3Wrapper.awaitTransactionSuccessAsync(tx).then(() => {
+            dispatch(updateTokenBalancesOnToggleTokenLock(token, isUnlocked));
+        });
 
         return tx;
     };
