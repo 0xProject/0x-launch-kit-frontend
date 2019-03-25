@@ -2,13 +2,12 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
-import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
+import { OrderSide, StepBuySellMarket, StoreState, Token, TokenSymbols } from '../../../util/types';
 
 import {
     ModalText,
@@ -52,7 +51,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
 
         const isBuyOrSell = step.side === OrderSide.Buy;
         let tokenSymbol = step.token.symbol.toUpperCase();
-        if (tokenSymbol === WETH_TOKEN_SYMBOL.toUpperCase()) {
+        if (tokenSymbol === TokenSymbols.Weth.toUpperCase()) {
             tokenSymbol = 'wETH';
         }
 

@@ -1,7 +1,5 @@
 import { BigNumber } from '0x.js';
 
-import { TokenSymbols } from '../util/types';
-
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
 
 // Must be the same a as the relayer
@@ -12,9 +10,6 @@ export const MAINNET_ID: number = Number.parseInt(process.env.REACT_APP_MAINNET_
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
 };
-
-export const WETH_TOKEN_SYMBOL = TokenSymbols.Weth;
-export const ZRX_TOKEN_SYMBOL = TokenSymbols.Zrx;
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 

@@ -1,15 +1,13 @@
 import { assetDataUtils, BigNumber, ExchangeFillEventArgs } from '0x.js';
 
-import { WETH_TOKEN_SYMBOL } from '../common/constants';
-
 import { KnownTokens } from './known_tokens';
 import { buildOrderFilledNotification } from './notifications';
 import { addressFactory, tokenMetaDataFactory } from './test-utils';
-import { OrderSide } from './types';
+import { OrderSide, TokenSymbols } from './types';
 
 const tokens = tokenMetaDataFactory.buildList(5);
 const wethToken = tokenMetaDataFactory.build({
-    symbol: WETH_TOKEN_SYMBOL,
+    symbol: TokenSymbols.Weth,
 });
 const knownTokens = new KnownTokens(50, [...tokens, wethToken]);
 

@@ -1,13 +1,7 @@
 import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import {
-    MAINNET_ID,
-    METAMASK_NOT_INSTALLED,
-    METAMASK_USER_DENIED_AUTH,
-    TX_DEFAULTS,
-    WETH_TOKEN_SYMBOL,
-} from '../../common/constants';
+import { MAINNET_ID, METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { LocalStorage } from '../../services/local_storage';
@@ -15,7 +9,7 @@ import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, Token, TokenBalance, TokenSymbols, Web3State } from '../../util/types';
 import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
@@ -68,7 +62,7 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
             tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
         }
 
-        const isWeth = token.symbol === WETH_TOKEN_SYMBOL;
+        const isWeth = token.symbol === TokenSymbols.Weth;
         if (isWeth) {
             const wethTokenBalance = getWethTokenBalance(state) as TokenBalance;
             dispatch(

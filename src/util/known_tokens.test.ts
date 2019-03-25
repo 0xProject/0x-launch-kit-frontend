@@ -1,8 +1,7 @@
-import { WETH_TOKEN_SYMBOL } from '../common/constants';
 import { TokenMetaData } from '../common/tokens_meta_data';
 
 import { getKnownTokens, KnownTokens } from './known_tokens';
-import { Token } from './types';
+import { Token, TokenSymbols } from './types';
 
 const networkId = 50;
 const dummyTokensMetaData: TokenMetaData[] = [
@@ -50,7 +49,7 @@ describe('KnownTokens', () => {
     });
     it('should throw when TokenMetada[] does not contain weth metadata for the specified networkId', async () => {
         const wrongTokensMetadata = dummyTokensMetaData.filter(
-            tokenMetaData => tokenMetaData.symbol !== WETH_TOKEN_SYMBOL,
+            tokenMetaData => tokenMetaData.symbol !== TokenSymbols.Weth,
         );
         expect(() => new KnownTokens(networkId, wrongTokensMetadata)).toThrow();
     });
