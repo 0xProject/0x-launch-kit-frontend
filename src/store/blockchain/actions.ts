@@ -1,13 +1,7 @@
 import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import {
-    MAINNET_ID,
-    METAMASK_NOT_INSTALLED,
-    METAMASK_USER_DENIED_AUTH,
-    TX_DEFAULTS,
-    WETH_TOKEN_SYMBOL,
-} from '../../common/constants';
+import { MAINNET_ID, METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { LocalStorage } from '../../services/local_storage';
