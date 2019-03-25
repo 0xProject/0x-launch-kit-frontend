@@ -145,7 +145,7 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
             kind: StepKind.BuySellMarket,
             amount,
             side,
-            token: tokenToUnlock,
+            token: baseToken,
         });
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
