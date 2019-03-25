@@ -12,6 +12,7 @@ const dummyTokensMetaData: TokenMetaData[] = [
         addresses: {
             50: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
         },
+        primaryColor: '#ccc',
     },
     {
         decimals: 18,
@@ -20,6 +21,7 @@ const dummyTokensMetaData: TokenMetaData[] = [
         addresses: {
             50: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         },
+        primaryColor: '#ccc',
     },
 ];
 const wethToken: Token = {
@@ -27,12 +29,14 @@ const wethToken: Token = {
     symbol: dummyTokensMetaData[0].symbol,
     decimals: dummyTokensMetaData[0].decimals,
     name: dummyTokensMetaData[0].name,
+    primaryColor: '#ccc',
 };
 const zrxToken: Token = {
     address: dummyTokensMetaData[1].addresses[networkId],
     symbol: dummyTokensMetaData[1].symbol,
     decimals: dummyTokensMetaData[1].decimals,
     name: dummyTokensMetaData[1].name,
+    primaryColor: '#ccc',
 };
 
 describe('getKnownTokens', () => {
