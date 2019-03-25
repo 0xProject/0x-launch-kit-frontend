@@ -6,7 +6,7 @@ import { MAKER_FEE } from '../../common/constants';
 import { getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../util/tokens';
-import { Token, TokenSymbols } from '../../util/types';
+import { Token, TokenSymbol } from '../../util/types';
 import { CardTabSelector } from '../common/card_tab_selector';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {}
@@ -209,7 +209,7 @@ class OrderDetails extends React.Component<Props, State> {
             {
                 active: orderDetailType === OrderDetailsType.Eth,
                 onClick: this._switchToEth,
-                text: TokenSymbols.Zrx.toUpperCase(),
+                text: TokenSymbol.Zrx.toUpperCase(),
             },
             {
                 active: orderDetailType === OrderDetailsType.Usd,

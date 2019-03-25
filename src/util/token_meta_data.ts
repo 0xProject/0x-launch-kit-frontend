@@ -1,13 +1,13 @@
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { Token, TokenSymbols } from './types';
+import { Token, TokenSymbol } from './types';
 
 export const getWethTokenFromTokensMetaDataByNetworkId = (
     networkId: number,
     tokensMetaData: TokenMetaData[],
 ): Token => {
     const tokenMetadata = tokensMetaData.find(
-        tokenMetaData => tokenMetaData.symbol === TokenSymbols.Weth,
+        tokenMetaData => tokenMetaData.symbol === TokenSymbol.Weth,
     ) as TokenMetaData;
     return {
         address: tokenMetadata.addresses[networkId],

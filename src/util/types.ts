@@ -12,7 +12,7 @@ export interface Token {
     address: string;
     decimals: number;
     name: string;
-    symbol: string;
+    symbol: TokenSymbol;
     primaryColor: string;
 }
 
@@ -188,7 +188,7 @@ export interface OrderFilledNotification extends BaseNotification {
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
 
-export enum TokenSymbols {
+export enum TokenSymbol {
     Weth = 'weth',
     Zrx = 'zrx',
     Mkr = 'mkr',

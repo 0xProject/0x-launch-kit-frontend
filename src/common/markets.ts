@@ -1,16 +1,16 @@
-import { CurrencyPair, TokenSymbols } from '../util/types';
+import { CurrencyPair, TokenSymbol } from '../util/types';
 
 export const availableMarkets: CurrencyPair[] = [
     {
-        base: TokenSymbols.Zrx,
-        quote: TokenSymbols.Weth,
+        base: TokenSymbol.Zrx,
+        quote: TokenSymbol.Weth,
     },
     {
-        base: TokenSymbols.Mkr,
-        quote: TokenSymbols.Weth,
+        base: TokenSymbol.Mkr,
+        quote: TokenSymbol.Weth,
     },
     {
-        base: TokenSymbols.Zrx,
-        quote: TokenSymbols.Mkr,
+        base: TokenSymbol.Zrx,
+        quote: TokenSymbol.Mkr,
     },
 ];

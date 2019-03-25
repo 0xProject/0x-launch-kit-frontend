@@ -3,11 +3,11 @@ import { assetDataUtils, BigNumber, ExchangeFillEventArgs } from '0x.js';
 import { KnownTokens } from './known_tokens';
 import { buildOrderFilledNotification } from './notifications';
 import { addressFactory, tokenMetaDataFactory } from './test-utils';
-import { OrderSide, TokenSymbols } from './types';
+import { OrderSide, TokenSymbol } from './types';
 
 const tokens = tokenMetaDataFactory.buildList(5);
 const wethToken = tokenMetaDataFactory.build({
-    symbol: TokenSymbols.Weth,
+    symbol: TokenSymbol.Weth,
 });
 const knownTokens = new KnownTokens(50, [...tokens, wethToken]);
 
