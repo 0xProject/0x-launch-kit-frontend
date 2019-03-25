@@ -15,12 +15,12 @@ class Marketplace extends React.PureComponent {
                     <WalletBalanceContainer />
                     <BuySellContainer />
                 </Sidebar>
-                <MainContent>
-                    <OrderBookTableContainer />
-                </MainContent>
                 <Sidebar>
-                    <OrderHistoryContainer />
+                    <OrderBookTableContainer />
                 </Sidebar>
+                <MainContent>
+                    <OrderHistoryContainer />
+                </MainContent>
             </>
         );
     };
