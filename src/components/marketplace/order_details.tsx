@@ -1,5 +1,4 @@
 import { BigNumber } from '0x.js';
-import { SignedOrder } from '@0x/connect';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -34,7 +33,7 @@ const Value = styled.div`
     white-space: nowrap;
 `;
 
-const TotalCostValue = styled(Value)`
+const CostValue = styled(Value)`
     font-weight: bold;
 `;
 
@@ -62,7 +61,7 @@ const FeeLabel = styled(Label)`
     font-weight: normal;
 `;
 
-const TotalCostLabel = styled(Label)`
+const CostLabel = styled(Label)`
     font-weight: bold;
 `;
 
@@ -83,14 +82,14 @@ type Props = StateProps & OwnProps;
 
 interface State {
     feeInZrx: BigNumber;
-    totalPriceWithoutFeeInQuoteToken: BigNumber;
+    quoteTokenAmount: BigNumber;
     canOrderBeFilled?: boolean;
 }
 
 class OrderDetails extends React.Component<Props, State> {
     public state = {
         feeInZrx: new BigNumber(0),
-        totalPriceWithoutFeeInQuoteToken: new BigNumber(0),
+        quoteTokenAmount: new BigNumber(0),
         canOrderBeFilled: true,
     };
 
@@ -113,7 +112,7 @@ class OrderDetails extends React.Component<Props, State> {
 
     public render = () => {
         const fee = this._getFeeStringForRender();
-        const totalCost = this._getTotalCostStringForRender();
+        const cost = this._getCostStringForRender();
         return (
             <>
                 <LabelContainer>
@@ -124,8 +123,8 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>{fee}</Value>
                 </Row>
                 <Row>
-                    <TotalCostLabel>Cost</TotalCostLabel>
-                    <TotalCostValue>{totalCost}</TotalCostValue>
+                    <CostLabel>Cost</CostLabel>
+                    <CostValue>{cost}</CostValue>
                 </Row>
             </>
         );
@@ -139,32 +138,24 @@ class OrderDetails extends React.Component<Props, State> {
 
         if (orderType === OrderType.Limit) {
             const { tokenAmount, tokenPrice } = this.props;
-            const feeInZrx = MAKER_FEE;
-            const totalPriceWithoutFeeInQuoteToken = tokenAmount.mul(tokenPrice);
+            const quoteTokenAmount = tokenAmount.mul(tokenPrice);
             this.setState({
-                feeInZrx,
-                totalPriceWithoutFeeInQuoteToken,
+                feeInZrx: MAKER_FEE,
+                quoteTokenAmount,
             });
         } else {
             const { tokenAmount, orderSide, openSellOrders, openBuyOrders } = this.props;
-            // Gets the fillable orders and sum their fee and amounts
             const uiOrders = orderSide === OrderSide.Sell ? openBuyOrders : openSellOrders;
             const [
                 ordersToFill,
                 amountToPayForEachOrder,
                 canOrderBeFilled,
             ] = getAllOrdersToFillMarketOrderAndAmountsToPay(tokenAmount, orderSide, uiOrders);
-            const feeInZrx = ordersToFill.reduce(
-                (totalFeeSum: BigNumber, currentOrder: SignedOrder) => totalFeeSum.add(currentOrder.takerFee),
-                new BigNumber(0),
-            );
-            const totalPriceWithoutFeeInQuoteToken = amountToPayForEachOrder.reduce(
-                (totalPriceSum: BigNumber, currentPrice: BigNumber) => totalPriceSum.add(currentPrice),
-                new BigNumber(0),
-            );
+            const feeInZrx = ordersToFill.reduce((sum, order) => sum.add(order.takerFee), new BigNumber(0));
+            const quoteTokenAmount = amountToPayForEachOrder.reduce((sum, amount) => sum.add(amount), new BigNumber(0));
             this.setState({
                 feeInZrx,
-                totalPriceWithoutFeeInQuoteToken,
+                quoteTokenAmount,
                 canOrderBeFilled,
             });
         }
@@ -176,7 +167,7 @@ class OrderDetails extends React.Component<Props, State> {
         return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${ZRX_TOKEN_SYMBOL.toUpperCase()}`;
     };
 
-    private readonly _getTotalCostStringForRender = () => {
+    private readonly _getCostStringForRender = () => {
         const { canOrderBeFilled } = this.state;
         const { orderType } = this.props;
         if (orderType === OrderType.Market && !canOrderBeFilled) {
@@ -185,11 +176,8 @@ class OrderDetails extends React.Component<Props, State> {
 
         const { quote } = this.props.currencyPair;
         const quoteTokenDecimals = getKnownTokens().getTokenBySymbol(quote).decimals;
-
-        const { totalPriceWithoutFeeInQuoteToken } = this.state;
-        const totalCostString = `${tokenAmountInUnits(totalPriceWithoutFeeInQuoteToken, quoteTokenDecimals)} ${quote}`;
-
-        return `${totalCostString}`;
+        const { quoteTokenAmount } = this.state;
+        return `${tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals)} ${quote}`;
     };
 }
 
@@ -202,4 +190,4 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const OrderDetailsContainer = connect(mapStateToProps)(OrderDetails);
 
-export { OrderDetails, OrderDetailsContainer, Value };
+export { CostValue, OrderDetails, OrderDetailsContainer, Value };

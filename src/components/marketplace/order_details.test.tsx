@@ -6,7 +6,7 @@ import * as CONSTANTS from '../../common/constants';
 import { unitsInTokenAmount } from '../../util/tokens';
 import { OrderSide, OrderType } from '../../util/types';
 
-import { OrderDetails, Value } from './order_details';
+import { CostValue, OrderDetails, Value } from './order_details';
 
 describe('OrderDetails', () => {
     const getExpectedTotalCostText = (amount: number, symbol: string): string => {
@@ -17,13 +17,13 @@ describe('OrderDetails', () => {
     };
     const getAmountTextFromWrapper = (wrapper: ShallowWrapper): string =>
         wrapper
-            .find(Value)
+            .find(CostValue)
             .at(0)
             .text();
     const getFeeTextFromWrapper = (wrapper: ShallowWrapper): string =>
         wrapper
             .find(Value)
-            .at(1)
+            .at(0)
             .text();
 
     const currencyPair = {
