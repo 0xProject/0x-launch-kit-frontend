@@ -12,7 +12,7 @@ import { getBaseToken, getCurrencyPair, getEthAccount, getQuoteToken, getWeb3Sta
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits } from '../../util/tokens';
+import { tokenAmountInUnits, tokenSymbolWithDisplayRules } from '../../util/tokens';
 import { CurrencyPair, StoreState, Token, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
@@ -263,12 +263,12 @@ class WalletBalance extends React.Component<Props, State> {
                         <LabelTitle>Amount</LabelTitle>
                     </LabelTitleWrapper>
                     <LabelWrapper>
-                        <Label>{currencyPair.base.toUpperCase()}</Label>
+                        <Label>{tokenSymbolWithDisplayRules(currencyPair.base)}</Label>
                         <Value>{baseBalanceString}</Value>
                     </LabelWrapper>
                     <LabelWrapper>
                         <Label>
-                            {currencyPair.quote.toUpperCase()}
+                            {tokenSymbolWithDisplayRules(currencyPair.quote)}
                             {toolTip}
                         </Label>
                         <Value>{quoteBalanceString}</Value>
