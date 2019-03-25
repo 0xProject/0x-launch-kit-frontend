@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
-import { lockToken, unlockToken } from '../../../store/blockchain/actions';
+import { lockToken, unlockToken, updateTokenBalancesOnToggleTokenLock } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
 import { isWeth } from '../../../util/known_tokens';
@@ -28,6 +28,7 @@ interface StateProps {
 interface DispatchProps {
     lockToken: (token: Token) => Promise<any>;
     unlockToken: (token: Token) => Promise<any>;
+    updateTokenBalancesOnToggleTokenLock: (token: Token, isUnlocked: boolean) => Promise<any>;
     advanceStep: () => void;
 }
 
@@ -132,6 +133,7 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
             this.setState({ status: StepStatus.Loading });
 
             await web3Wrapper.awaitTransactionSuccessAsync(lockTxHash);
+            await this.props.updateTokenBalancesOnToggleTokenLock(step.token, true);
             this.setState({ status: StepStatus.Done });
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
@@ -148,6 +150,7 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
             this.setState({ status: StepStatus.Loading });
 
             await web3Wrapper.awaitTransactionSuccessAsync(unlockTxHash);
+            await this.props.updateTokenBalancesOnToggleTokenLock(step.token, false);
             this.setState({ status: StepStatus.Done });
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
@@ -181,6 +184,8 @@ const ToggleTokenLockStepContainer = connect(
         return {
             lockToken: (token: Token) => dispatch(lockToken(token)),
             unlockToken: (token: Token) => dispatch(unlockToken(token)),
+            updateTokenBalancesOnToggleTokenLock: (token: Token, isUnlocked: boolean) =>
+                dispatch(updateTokenBalancesOnToggleTokenLock(token, isUnlocked)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },
