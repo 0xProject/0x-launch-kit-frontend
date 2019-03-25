@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { MainContent } from '../components/common/main_content';
+import { ColumnNarrow } from '../components/common/Column_narrow';
+import { ColumnWide } from '../components/common/Column_wide';
 import { Sidebar } from '../components/common/sidebar';
 import { BuySellContainer } from '../components/marketplace/buy_sell';
 import { OrderBookTableContainer } from '../components/marketplace/order_book';
@@ -15,12 +16,12 @@ class Marketplace extends React.PureComponent {
                     <WalletBalanceContainer />
                     <BuySellContainer />
                 </Sidebar>
-                <Sidebar>
+                <ColumnNarrow>
                     <OrderBookTableContainer />
-                </Sidebar>
-                <MainContent>
+                </ColumnNarrow>
+                <ColumnWide>
                     <OrderHistoryContainer />
-                </MainContent>
+                </ColumnWide>
             </>
         );
     };
