@@ -145,11 +145,6 @@ export interface Market {
     price: BigNumber | null;
 }
 
-export interface CurrencyPairBalance {
-    quoteBalance: BigNumber;
-    baseBalance: BigNumber;
-}
-
 export enum NotificationKind {
     CancelOrder = 'CancelOrder',
     Market = 'Market',
