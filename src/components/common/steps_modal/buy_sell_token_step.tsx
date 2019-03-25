@@ -6,8 +6,9 @@ import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
+import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
-import { OrderSide, StepBuySellMarket, StoreState, Token, TokenSymbols } from '../../../util/types';
+import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
 import {
     ModalText,
@@ -50,10 +51,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const { status } = this.state;
 
         const isBuyOrSell = step.side === OrderSide.Buy;
-        let tokenSymbol = step.token.symbol.toUpperCase();
-        if (tokenSymbol === TokenSymbols.Weth.toUpperCase()) {
-            tokenSymbol = 'wETH';
-        }
+        const tokenSymbol = isWeth(step.token) ? 'wETH' : step.token.symbol.toUpperCase();
 
         const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
             step.amount,

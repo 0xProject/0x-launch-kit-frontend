@@ -121,18 +121,21 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
             return;
         }
 
-        await web3Wrapper.awaitTransactionSuccessAsync(tx);
-        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-        dispatch(setEthBalance(ethBalance));
+        web3Wrapper.awaitTransactionSuccessAsync(tx).then(async () => {
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            dispatch(setEthBalance(ethBalance));
 
-        const newWethTokenBalance = wethTokenBalance
-            ? {
-                  ...wethTokenBalance,
-                  balance: newWethBalance,
-              }
-            : null;
+            const newWethTokenBalance = wethTokenBalance
+                ? {
+                      ...wethTokenBalance,
+                      balance: newWethBalance,
+                  }
+                : null;
 
-        dispatch(setWethTokenBalance(newWethTokenBalance));
+            dispatch(setWethTokenBalance(newWethTokenBalance));
+        });
+
+        return tx;
     };
 };
 
@@ -263,19 +266,6 @@ export const initWallet = () => {
                 }
             }
         }
-    };
-};
-
-export const addWethToBalance = (amount: BigNumber) => {
-    return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const ethAccount = getEthAccount(state);
-
-        const wethToken = getKnownTokens().getWethToken();
-        const wethAddress = wethToken.address;
-
-        const contractWrappers = await getContractWrappers();
-        return contractWrappers.etherToken.depositAsync(wethAddress, amount, ethAccount);
     };
 };
 

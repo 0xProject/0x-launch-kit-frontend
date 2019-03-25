@@ -105,6 +105,24 @@ export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => 
     };
 };
 
+export const startWrapEtherSteps = (newWethBalance: BigNumber) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const currentWethBalance = selectors.getWethBalance(state);
+
+        const wrapEthStep: StepWrapEth = {
+            kind: StepKind.WrapEth,
+            currentWethBalance,
+            newWethBalance,
+            context: 'standalone',
+        };
+
+        dispatch(setStepsModalCurrentStep(wrapEthStep));
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
 export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
@@ -145,7 +163,7 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
             kind: StepKind.BuySellMarket,
             amount,
             side,
-            token: tokenToUnlock,
+            token: baseToken,
         });
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
@@ -172,7 +190,9 @@ const getWrapEthStepIfNeeded = (
     if (deltaWeth.lessThan(0)) {
         return {
             kind: StepKind.WrapEth,
-            amount: deltaWeth.abs(),
+            currentWethBalance: wethBalance,
+            newWethBalance: wethAmount,
+            context: 'order',
         };
     } else {
         return null;
