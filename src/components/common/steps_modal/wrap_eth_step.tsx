@@ -3,8 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
-import { stepsModalAdvanceStep } from '../../../store/actions';
-import { addWethToBalance } from '../../../store/blockchain/actions';
+import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
@@ -28,7 +27,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    convertWeth: (amount: BigNumber) => Promise<any>;
+    updateWeth: (newWethBalance: BigNumber) => Promise<any>;
     advanceStep: () => void;
 }
 
@@ -48,25 +47,44 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { amount } = this.props.step;
+        const { context, currentWethBalance, newWethBalance } = this.props.step;
+        const amount = newWethBalance.sub(currentWethBalance);
         const wethToken = getKnownTokens().getWethToken();
-        const ethAmount = tokenAmountInUnitsToBigNumber(amount, wethToken.decimals).toString();
+        const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toString();
         const { status } = this.state;
         const retry = () => this._retry();
         let content;
+
+        const ethToWeth = amount.greaterThan(0);
+        const convertingFrom = ethToWeth ? 'ETH' : 'wETH';
+        const convertingTo = ethToWeth ? 'wETH' : 'ETH';
+
+        const isOrder = context === 'order';
+
+        const buildMessage = (prefix: string) => {
+            return [
+                prefix,
+                ethAmount,
+                convertingFrom,
+                isOrder ? 'for trading' : null, // only show "for trading" when creating an order
+                `(${convertingFrom} to ${convertingTo}).`,
+            ]
+                .filter(x => x !== null)
+                .join(' ');
+        };
 
         switch (status) {
             case StepStatus.Loading:
                 content = (
                     <StepStatusLoading>
-                        <ModalText>Converting {ethAmount} ETH for trading (ETH to wETH).</ModalText>
+                        <ModalText>{buildMessage('Converting')}</ModalText>
                     </StepStatusLoading>
                 );
                 break;
             case StepStatus.Done:
                 content = (
                     <StepStatusDone>
-                        <ModalText>Converted {ethAmount} ETH for trading (ETH to wETH).</ModalText>
+                        <ModalText>{buildMessage('Converted')}</ModalText>
                     </StepStatusDone>
                 );
                 break;
@@ -74,7 +92,7 @@ class WrapEthStep extends React.Component<Props, State> {
                 content = (
                     <StepStatusError>
                         <ModalText>
-                            Error converting {ethAmount} ETH for trading (ETH to wETH).{' '}
+                            ${buildMessage('Error converting')}
                             <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
                         </ModalText>
                     </StepStatusError>
@@ -83,14 +101,19 @@ class WrapEthStep extends React.Component<Props, State> {
             default:
                 content = (
                     <StepStatusConfirmOnMetamask>
-                        <ModalText>Confirm on Metamask to convert {ethAmount} ETH into wETH.</ModalText>
+                        <ModalText>
+                            Confirm on Metamask to convert {ethAmount} {convertingFrom} into {convertingTo}.
+                        </ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
                 break;
         }
+
+        const title = context === 'order' ? 'Order setup' : 'Converting wETH';
+
         return (
             <>
-                <Title>Order Setup</Title>
+                <Title>{title}</Title>
                 {content}
             </>
         );
@@ -98,10 +121,10 @@ class WrapEthStep extends React.Component<Props, State> {
 
     private readonly _convertWeth = async () => {
         const { step, advanceStep } = this.props;
-        const { amount } = step;
+        const { newWethBalance } = step;
         try {
             const web3Wrapper = await getWeb3WrapperOrThrow();
-            const convertTxHash = await this.props.convertWeth(amount);
+            const convertTxHash = await this.props.updateWeth(newWethBalance);
             this.setState({ status: StepStatus.Loading });
 
             await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
@@ -129,7 +152,7 @@ const WrapEthStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            convertWeth: (amount: BigNumber) => dispatch(addWethToBalance(amount)),
+            updateWeth: (newWethBalance: BigNumber) => dispatch(updateWethBalance(newWethBalance)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },
