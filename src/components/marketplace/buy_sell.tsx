@@ -174,7 +174,7 @@ class BuySell extends React.Component<Props, State> {
             },
         ];
 
-        const isBtnDisabled = web3State === Web3State.NotInstalled || web3State === Web3State.Locked;
+        const isBtnDisabled = web3State !== Web3State.Done;
 
         return (
             <BuySellWrapper>
