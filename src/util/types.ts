@@ -54,6 +54,7 @@ export interface MarketState {
     readonly baseToken: Token | null;
     readonly quoteToken: Token | null;
     readonly ethInUsd: BigNumber | null;
+    readonly markets: Market[] | null;
 }
 
 export interface StoreState {
@@ -66,7 +67,7 @@ export interface StoreState {
 
 export enum StepKind {
     WrapEth = 'WrapEth',
-    UnlockToken = 'UnlockToken',
+    ToggleTokenLock = 'ToggleTokenLock',
     BuySellLimit = 'BuySellLimit',
     BuySellMarket = 'BuySellMarket',
 }
@@ -76,9 +77,11 @@ export interface StepWrapEth {
     amount: BigNumber;
 }
 
-export interface StepUnlockToken {
-    kind: StepKind.UnlockToken;
+export interface StepToggleTokenLock {
+    kind: StepKind.ToggleTokenLock;
     token: Token;
+    isUnlocked: boolean;
+    context: 'order' | 'standalone';
 }
 
 export interface StepBuySellLimitOrder {
@@ -95,7 +98,7 @@ export interface StepBuySellMarket {
     token: Token;
 }
 
-export type Step = StepWrapEth | StepUnlockToken | StepBuySellLimitOrder | StepBuySellMarket;
+export type Step = StepWrapEth | StepToggleTokenLock | StepBuySellLimitOrder | StepBuySellMarket;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];
@@ -135,6 +138,16 @@ export interface CurrencyPair {
     quote: string;
 }
 
+export interface Market {
+    currencyPair: CurrencyPair;
+    price: BigNumber | null;
+}
+
+export interface CurrencyPairBalance {
+    quoteBalance: BigNumber;
+    baseBalance: BigNumber;
+}
+
 export enum NotificationKind {
     CancelOrder = 'CancelOrder',
     Market = 'Market',
@@ -169,6 +182,7 @@ interface LimitNotification extends BaseNotification {
 }
 
 export interface OrderFilledNotification extends BaseNotification {
+    id: string;
     kind: NotificationKind.OrderFilled;
     amount: BigNumber;
     token: Token;

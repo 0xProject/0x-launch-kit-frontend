@@ -1,12 +1,13 @@
-import { assetDataUtils, ExchangeFillEventArgs } from '0x.js';
+import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
 import { KnownTokens } from './known_tokens';
 import { NotificationKind, OrderFilledNotification, OrderSide } from './types';
 
 export const buildOrderFilledNotification = (
-    args: ExchangeFillEventArgs,
+    log: LogWithDecodedArgs<ExchangeFillEventArgs>,
     knownTokens: KnownTokens,
 ): OrderFilledNotification => {
+    const { args } = log;
     const wethToken = knownTokens.getWethToken();
 
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethToken.address);
@@ -26,6 +27,7 @@ export const buildOrderFilledNotification = (
     const exchangedToken = knownTokens.getTokenByAddress(exchangedTokenAddress);
 
     return {
+        id: `${log.transactionHash}-${log.logIndex}`,
         kind: NotificationKind.OrderFilled,
         amount: side === OrderSide.Buy ? args.takerAssetFilledAmount : args.makerAssetFilledAmount,
         side,

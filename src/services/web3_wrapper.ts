@@ -38,14 +38,14 @@ export const getWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
             });
             web3Status = Web3State.Done;
         } catch (error) {
-            /* The user denied account access */
+            // The user denied account access
             web3Wrapper = null;
             web3Status = Web3State.Locked;
         }
     } else if (web3) {
         web3Wrapper = new Web3Wrapper(web3.currentProvider);
     } else {
-        /*  The user does not have metamask installed */
+        //  The user does not have metamask installed
         web3Wrapper = null;
         web3Status = Web3State.NotInstalled;
     }

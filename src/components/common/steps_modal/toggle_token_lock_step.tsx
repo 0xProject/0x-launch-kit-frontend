@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { WETH_TOKEN_SYMBOL } from '../../../common/constants';
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
-import { unlockToken } from '../../../store/blockchain/actions';
+import { lockToken, unlockToken } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
-import { StepUnlockToken, StoreState, Token } from '../../../util/types';
+import { isWeth } from '../../../util/known_tokens';
+import { StepToggleTokenLock, StoreState, Token } from '../../../util/types';
 
 import {
     DONE_STATUS_VISIBILITY_TIME,
@@ -22,10 +22,11 @@ import {
 } from './steps_common';
 
 interface StateProps {
-    step: StepUnlockToken;
+    step: StepToggleTokenLock;
 }
 
 interface DispatchProps {
+    lockToken: (token: Token) => Promise<any>;
     unlockToken: (token: Token) => Promise<any>;
     advanceStep: () => void;
 }
@@ -36,17 +37,22 @@ interface State {
     status: StepStatus;
 }
 
-class UnlockTokensStep extends React.Component<Props, State> {
+class ToggleTokenLockStep extends React.Component<Props, State> {
     public state = {
         status: StepStatus.ConfirmOnMetamask,
     };
 
     public componentDidMount = async () => {
-        await this._unlockToken();
+        const { isUnlocked } = this.props.step;
+        if (isUnlocked) {
+            await this._lockToken();
+        } else {
+            await this._unlockToken();
+        }
     };
 
     public componentDidUpdate = async (prevProps: Props) => {
-        // If there are consecutive StepUnlockToken in the flow, this will force the step "restart"
+        // If there are consecutive StepToggleTokenLock in the flow, this will force the step "restart"
         if (this.props.step.token.address !== prevProps.step.token.address) {
             this.setState({ status: StepStatus.ConfirmOnMetamask });
             await this._unlockToken();
@@ -54,9 +60,9 @@ class UnlockTokensStep extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { token } = this.props.step;
+        const { context, token, isUnlocked } = this.props.step;
         let tokenSymbol = token.symbol.toUpperCase();
-        if (tokenSymbol === WETH_TOKEN_SYMBOL.toUpperCase()) {
+        if (isWeth(token)) {
             tokenSymbol = 'wETH';
         }
 
@@ -68,14 +74,22 @@ class UnlockTokensStep extends React.Component<Props, State> {
             case StepStatus.Loading:
                 content = (
                     <StepStatusLoading>
-                        <ModalText>Unlocking {tokenSymbol}. It will remain unlocked for future trades</ModalText>
+                        <ModalText>
+                            {isUnlocked
+                                ? `Locking ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
+                                : `Unlocking ${tokenSymbol}. It will remain unlocked for future trades`}
+                        </ModalText>
                     </StepStatusLoading>
                 );
                 break;
             case StepStatus.Done:
                 content = (
                     <StepStatusDone>
-                        <ModalText>Unlocked {tokenSymbol}. It will remain unlocked for future trades</ModalText>
+                        <ModalText>
+                            {isUnlocked
+                                ? `Locked ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
+                                : `Unlocked ${tokenSymbol}. It will remain unlocked for future trades`}
+                        </ModalText>
                     </StepStatusDone>
                 );
                 break;
@@ -83,7 +97,7 @@ class UnlockTokensStep extends React.Component<Props, State> {
                 content = (
                     <StepStatusError>
                         <ModalText>
-                            Unlocking {tokenSymbol} for future trades failed.{' '}
+                            {isUnlocked ? 'Locking' : 'Unlocking'} {tokenSymbol} failed.{' '}
                             <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
                         </ModalText>
                     </StepStatusError>
@@ -92,17 +106,38 @@ class UnlockTokensStep extends React.Component<Props, State> {
             default:
                 content = (
                     <StepStatusConfirmOnMetamask>
-                        <ModalText>Confirm on Metamask to unlock {tokenSymbol} for trading on 0x.</ModalText>
+                        <ModalText>
+                            Confirm on Metamask to {isUnlocked ? 'lock' : 'unlock'} {tokenSymbol}.
+                        </ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
                 break;
         }
+
+        const title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock token' : 'Unlock token';
+
         return (
             <>
-                <Title>Order Setup</Title>
+                <Title>{title}</Title>
                 {content}
             </>
         );
+    };
+
+    private readonly _lockToken = async () => {
+        const { step, advanceStep } = this.props;
+        try {
+            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const lockTxHash = await this.props.lockToken(step.token);
+            this.setState({ status: StepStatus.Loading });
+
+            await web3Wrapper.awaitTransactionSuccessAsync(lockTxHash);
+            this.setState({ status: StepStatus.Done });
+            await sleep(DONE_STATUS_VISIBILITY_TIME);
+            advanceStep();
+        } catch (err) {
+            this.setState({ status: StepStatus.Error });
+        }
     };
 
     private readonly _unlockToken = async () => {
@@ -122,25 +157,33 @@ class UnlockTokensStep extends React.Component<Props, State> {
     };
 
     private readonly _retry = async () => {
+        const { isUnlocked } = this.props.step;
+
         this.setState({ status: StepStatus.Error });
-        await this._unlockToken();
+
+        if (isUnlocked) {
+            await this._lockToken();
+        } else {
+            await this._unlockToken();
+        }
     };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        step: getStepsModalCurrentStep(state) as StepUnlockToken,
+        step: getStepsModalCurrentStep(state) as StepToggleTokenLock,
     };
 };
 
-const UnlockTokensStepContainer = connect(
+const ToggleTokenLockStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
+            lockToken: (token: Token) => dispatch(lockToken(token)),
             unlockToken: (token: Token) => dispatch(unlockToken(token)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },
-)(UnlockTokensStep);
+)(ToggleTokenLockStep);
 
-export { UnlockTokensStep, UnlockTokensStepContainer };
+export { ToggleTokenLockStep, ToggleTokenLockStepContainer };

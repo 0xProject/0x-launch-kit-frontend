@@ -1,4 +1,4 @@
-import { BigNumber, DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs } from '0x.js';
+import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import {
@@ -9,15 +9,17 @@ import {
     WETH_TOKEN_SYMBOL,
 } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
+import { subscribeToFillEvents } from '../../services/exchange';
+import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
-import { setMarketTokens, updateMarketPriceEther } from '../market/actions';
+import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
-import { addNotification } from '../ui/actions';
+import { addNotification, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
@@ -47,22 +49,23 @@ export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolv
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
 });
 
-export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
+export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
 
         const contractWrappers = await getContractWrappers();
 
+        let tx: string;
         if (isUnlocked) {
-            await contractWrappers.erc20Token.setProxyAllowanceAsync(
+            tx = await contractWrappers.erc20Token.setProxyAllowanceAsync(
                 token.address,
                 ethAccount,
                 new BigNumber('0'),
                 TX_DEFAULTS,
             );
         } else {
-            await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+            tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
         }
 
         const isWeth = token.symbol === WETH_TOKEN_SYMBOL;
@@ -89,6 +92,8 @@ export const toggleTokenLock = ({ token, isUnlocked }: TokenBalance) => {
 
             dispatch(setTokenBalances(updatedTokenBalances));
         }
+
+        return tx;
     };
 };
 
@@ -138,26 +143,48 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
+let fillEventsSubscription: string | null = null;
 export const setConnectedUser = (ethAccount: string, networkId: number) => {
     return async (dispatch: any) => {
         const knownTokens = getKnownTokens(networkId);
+        const localStorage = new LocalStorage(window.localStorage);
 
         dispatch(setEthAccount(ethAccount));
 
+        dispatch(setNotifications(localStorage.getNotifications(ethAccount)));
+        dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount)));
+
+        const web3Wrapper = await getWeb3WrapperOrThrow();
         const contractWrappers = await getContractWrappers();
-        contractWrappers.exchange.subscribe(
-            ExchangeEvents.Fill,
-            { makerAddress: ethAccount },
-            (err: Error | null, logEvent?: DecodedLogEvent<ExchangeFillEventArgs>) => {
-                if (err || !logEvent) {
-                    // tslint:disable-next-line:no-console
-                    console.error('There was a problem with the ExchangeFill event', err, logEvent);
-                    return;
-                }
-                const notification = buildOrderFilledNotification(logEvent.log.args, knownTokens);
-                dispatch(addNotification(notification));
+
+        const blockNumber = await web3Wrapper.getBlockNumberAsync();
+
+        const fromBlock = localStorage.getLastBlockChecked(ethAccount) + 1;
+        const toBlock = blockNumber;
+
+        const subscription = await subscribeToFillEvents({
+            exchange: contractWrappers.exchange,
+            fromBlock,
+            toBlock,
+            ethAccount,
+            fillEventCallback: async fillEvent => {
+                const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
+                const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                dispatch(
+                    addNotification({
+                        ...notification,
+                        timestamp: new Date(timestamp * 1000),
+                    }),
+                );
             },
-        );
+        });
+
+        if (fillEventsSubscription) {
+            contractWrappers.exchange.unsubscribe(fillEventsSubscription);
+        }
+        fillEventsSubscription = subscription;
+
+        localStorage.saveLastBlockChecked(blockNumber, ethAccount);
     };
 };
 
@@ -203,6 +230,7 @@ export const initWallet = () => {
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
+            dispatch(getMarkets());
             dispatch(updateMarketPriceEther());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
@@ -260,24 +288,13 @@ export const addWethToBalance = (amount: BigNumber) => {
 
 export const unlockToken = (token: Token) => {
     return async (dispatch: any, getState: any): Promise<any> => {
-        const state = getState();
+        return dispatch(toggleTokenLock(token, false));
+    };
+};
 
-        let tokenBalance: TokenBalance;
-        if (token.symbol === WETH_TOKEN_SYMBOL) {
-            tokenBalance = getWethTokenBalance(state) as TokenBalance;
-        } else {
-            tokenBalance = getTokenBalances(state).find(
-                balance => balance.token.address === token.address,
-            ) as TokenBalance;
-        }
-
-        if (!tokenBalance.isUnlocked) {
-            const ethAccount = getEthAccount(state);
-            const contractWrappers = await getContractWrappers();
-            return contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
-        } else {
-            return Promise.resolve();
-        }
+export const lockToken = (token: Token) => {
+    return async (dispatch: any, getState: any): Promise<any> => {
+        return dispatch(toggleTokenLock(token, true));
     };
 };
 
