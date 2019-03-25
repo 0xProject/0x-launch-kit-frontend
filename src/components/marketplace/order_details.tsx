@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
-import { getAllOrdersToFillMarketOrderAndAmountsToPay } from '../../services/orders';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
 import { getKnownTokens } from '../../util/known_tokens';
+import { buildMarketOrders } from '../../util/orders';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, UIOrder } from '../../util/types';
@@ -145,12 +145,13 @@ class OrderDetails extends React.Component<Props, State> {
             });
         } else {
             const { tokenAmount, orderSide, openSellOrders, openBuyOrders } = this.props;
-            const uiOrders = orderSide === OrderSide.Sell ? openBuyOrders : openSellOrders;
-            const [
-                ordersToFill,
-                amountToPayForEachOrder,
-                canOrderBeFilled,
-            ] = getAllOrdersToFillMarketOrderAndAmountsToPay(tokenAmount, orderSide, uiOrders);
+            const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
+                {
+                    amount: tokenAmount,
+                    orders: OrderSide.Sell ? openBuyOrders : openSellOrders,
+                },
+                orderSide,
+            );
             const feeInZrx = ordersToFill.reduce((sum, order) => sum.add(order.takerFee), new BigNumber(0));
             const quoteTokenAmount = amountToPayForEachOrder.reduce((sum, amount) => sum.add(amount), new BigNumber(0));
             this.setState({

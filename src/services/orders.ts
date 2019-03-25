@@ -1,9 +1,8 @@
-import { assetDataUtils, BigNumber } from '0x.js';
+import { assetDataUtils } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
 import { TX_DEFAULTS } from '../common/constants';
-import { buildMarketOrders } from '../util/orders';
-import { OrderSide, Token, UIOrder } from '../util/types';
+import { Token } from '../util/types';
 import { ordersToUIOrders } from '../util/ui_orders';
 
 import { getContractWrappers } from './contract_wrappers';
@@ -50,28 +49,4 @@ export const cancelSignedOrder = async (order: SignedOrder) => {
     const web3Wrapper = await getWeb3WrapperOrThrow();
     const tx = await contractWrappers.exchange.cancelOrderAsync(order, TX_DEFAULTS);
     return web3Wrapper.awaitTransactionSuccessAsync(tx);
-};
-
-export const getAllOrdersToFillMarketOrderAndAmountsToPay = (
-    amount: BigNumber,
-    side: OrderSide,
-    orders: UIOrder[],
-): [SignedOrder[], BigNumber[], boolean] => {
-    let ordersToFillReturn: SignedOrder[];
-    let amountToPayForEachOrderReturn: BigNumber[];
-    const [ordersToFill, amountToPayForEachOrder, canBeFilled] = buildMarketOrders(
-        {
-            amount,
-            orders,
-        },
-        side,
-    );
-    if (canBeFilled) {
-        ordersToFillReturn = ordersToFill;
-        amountToPayForEachOrderReturn = amountToPayForEachOrder;
-    } else {
-        ordersToFillReturn = [];
-        amountToPayForEachOrderReturn = [];
-    }
-    return [ordersToFillReturn, amountToPayForEachOrderReturn, canBeFilled];
 };
