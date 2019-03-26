@@ -163,17 +163,20 @@ interface BaseNotification {
     timestamp: Date;
 }
 
-interface CancelOrderNotification extends BaseNotification {
+interface TransactionNotification extends BaseNotification {
+    tx: Promise<any>;
+}
+
+interface CancelOrderNotification extends TransactionNotification {
     kind: NotificationKind.CancelOrder;
     amount: BigNumber;
     token: Token;
 }
 
-interface MarketNotification extends BaseNotification {
+interface MarketNotification extends TransactionNotification {
     kind: NotificationKind.Market;
     amount: BigNumber;
     token: Token;
-    tx: Promise<any>;
     side: OrderSide;
 }
 

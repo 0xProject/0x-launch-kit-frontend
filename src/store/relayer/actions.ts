@@ -59,7 +59,7 @@ export const cancelOrder = (order: UIOrder) => {
         const baseToken = getBaseToken(state) as Token;
         const gasPrice = getGasPriceInWei(state);
 
-        await cancelSignedOrder(order.rawOrder, gasPrice);
+        const tx = cancelSignedOrder(order.rawOrder, gasPrice);
 
         dispatch(getOrderbookAndUserOrders());
         dispatch(
@@ -68,6 +68,7 @@ export const cancelOrder = (order: UIOrder) => {
                 amount: order.size,
                 token: baseToken,
                 timestamp: new Date(),
+                tx,
             }),
         );
     };

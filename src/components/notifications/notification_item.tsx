@@ -8,13 +8,15 @@ import { Notification, NotificationKind, OrderSide } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
 import { NotificationProcessingIcon } from '../common/icons/notification_processing_icon';
+import { Interval } from '../common/interval';
+import { PendingTime } from '../common/pending_time';
 
 interface Props {
     item: Notification;
+    estimatedTxTimeMs: number;
 }
 
 interface State {
-    active: boolean;
     pending: boolean;
 }
 
@@ -75,7 +77,6 @@ class NotificationItem extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            active: false,
             pending: false,
         };
     }
@@ -83,9 +84,8 @@ class NotificationItem extends React.Component<Props, State> {
     public componentDidMount = async () => {
         const { item } = this.props;
 
-        if (item.kind === NotificationKind.Market) {
+        if (item.kind === NotificationKind.Market || item.kind === NotificationKind.CancelOrder) {
             this.setState({
-                active: true,
                 pending: true,
             });
 
@@ -100,7 +100,7 @@ class NotificationItem extends React.Component<Props, State> {
         const text = this._getTextFromItem(item);
 
         return (
-            <NotificationWrapper active={this.state.active}>
+            <NotificationWrapper active={this.state.pending}>
                 <NotificationContent>
                     <NotificationTitle>{title}</NotificationTitle>
                     <NotificationText>{text}</NotificationText>
@@ -137,6 +137,16 @@ class NotificationItem extends React.Component<Props, State> {
     };
 
     private readonly _getTextFromItem = (item: Notification): React.ReactNode => {
+        const { estimatedTxTimeMs } = this.props;
+
+        if (this.state.pending) {
+            return (
+                <Interval delay={1000}>
+                    {now => <PendingTime now={now} startTime={item.timestamp} estimatedTimeMs={estimatedTxTimeMs} />}
+                </Interval>
+            );
+        }
+
         const formatter = (value: number, unit: string, suffix: string) => {
             if (unit === 'second') {
                 return 'Just now';

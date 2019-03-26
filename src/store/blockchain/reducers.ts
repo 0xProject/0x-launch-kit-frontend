@@ -13,7 +13,7 @@ const initialBlockchainState: BlockchainState = {
     wethTokenBalance: null,
     gasInfo: {
         gasPriceInWei: new BigNumber('3000000000'),
-        estimatedTimeMs: 5000,
+        estimatedTimeMs: 15000,
     },
 };
 
