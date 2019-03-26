@@ -192,3 +192,8 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
+
+export enum OrderType {
+    Limit = 'Limit',
+    Market = 'Market',
+}
