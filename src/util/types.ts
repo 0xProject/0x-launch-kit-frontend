@@ -136,8 +136,8 @@ export interface OrderBook {
 }
 
 export interface CurrencyPair {
-    base: string;
-    quote: string;
+    base: TokenSymbol;
+    quote: TokenSymbol;
 }
 
 export interface Market {

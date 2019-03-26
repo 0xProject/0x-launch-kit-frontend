@@ -67,7 +67,7 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         }
 
         // unlock zrx (for fees) if it's not one of the traded tokens
-        if (!isZrx(baseToken) && !isZrx(quoteToken)) {
+        if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol)) {
             const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
             if (unlockZrxStep) {
                 buySellLimitFlow.push(unlockZrxStep);
@@ -75,7 +75,7 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         }
 
         // wrap the necessary ether if it is one of the traded tokens
-        if (isWeth(baseToken) || isWeth(quoteToken)) {
+        if (isWeth(baseToken.symbol) || isWeth(quoteToken.symbol)) {
             const wrapEthStep = getWrapEthStepIfNeeded(amount, price, side, state);
             if (wrapEthStep) {
                 buySellLimitFlow.push(wrapEthStep);
@@ -150,7 +150,7 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
             buySellMarketFlow.push(unlockTokenStep);
         }
 
-        if (!isZrx(tokenToUnlock)) {
+        if (!isZrx(tokenToUnlock.symbol)) {
             const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
             if (unlockZrxStep) {
                 buySellMarketFlow.push(unlockZrxStep);
@@ -201,7 +201,9 @@ const getWrapEthStepIfNeeded = (
 
 const getUnlockZrxStepIfNeeded = (state: StoreState): StepToggleTokenLock | null => {
     const tokenBalances = selectors.getTokenBalances(state);
-    const zrxTokenBalance: TokenBalance = tokenBalances.find(tokenBalance => isZrx(tokenBalance.token)) as TokenBalance;
+    const zrxTokenBalance: TokenBalance = tokenBalances.find(tokenBalance =>
+        isZrx(tokenBalance.token.symbol),
+    ) as TokenBalance;
     if (zrxTokenBalance.isUnlocked) {
         return null;
     } else {
@@ -218,7 +220,7 @@ const getUnlockTokenStepIfNeeded = (token: Token, state: StoreState): StepToggle
     const tokenBalances = selectors.getTokenBalances(state);
 
     let tokenBalance: TokenBalance;
-    isWeth(token)
+    isWeth(token.symbol)
         ? (tokenBalance = selectors.getWethTokenBalance(state) as TokenBalance)
         : (tokenBalance = tokenBalances.find(tb => tb.token.symbol === token.symbol) as TokenBalance);
 

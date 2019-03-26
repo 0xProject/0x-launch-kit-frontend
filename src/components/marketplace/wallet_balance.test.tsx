@@ -8,7 +8,7 @@ import React from 'react';
 
 import * as tokenServices from '../../services/tokens';
 import { addressFactory, tokenFactory } from '../../util/test-utils';
-import { Web3State } from '../../util/types';
+import { TokenSymbol, Web3State } from '../../util/types';
 
 import { WalletBalance } from './wallet_balance';
 
@@ -92,12 +92,12 @@ describe('WalletBalance', () => {
         const baseToken = tokenFactory.build();
         const quoteToken = tokenFactory.build();
         const currencyPair = {
-            base: 'WETH',
-            quote: 'ZRX',
+            base: TokenSymbol.Weth,
+            quote: TokenSymbol.Zrx,
         };
         const ethAccount = 'This is a test';
 
-        const resultExpected1 = 'WETH';
+        const resultExpected1 = 'wETH';
         const resultExpected2 = 'ZRX';
         const amountExpected = '2.0';
         const onConnectWalletFn = jest.fn();

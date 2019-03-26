@@ -1,6 +1,7 @@
 import { BigNumber } from '0x.js';
 
 import { isWeth } from './known_tokens';
+import { TokenSymbol } from './types';
 
 export const tokenAmountInUnitsToBigNumber = (amount: BigNumber, decimals: number): BigNumber => {
     const decimalsPerToken = new BigNumber(10).pow(decimals);
@@ -17,6 +18,6 @@ export const unitsInTokenAmount = (units: string, decimals: number): BigNumber =
     return new BigNumber(units).mul(decimalsPerToken);
 };
 
-export const tokenSymbolToDisplayString = (symbol: string): string => {
+export const tokenSymbolToDisplayString = (symbol: TokenSymbol): string => {
     return isWeth(symbol) ? 'wETH' : symbol.toString().toUpperCase();
 };

@@ -250,7 +250,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Done && quoteToken && baseToken) {
             const quoteBalanceString = tokenAmountInUnits(this.state.quoteBalance, quoteToken.decimals);
             const baseBalanceString = tokenAmountInUnits(this.state.baseBalance, baseToken.decimals);
-            const toolTip = isWeth(quoteToken) ? (
+            const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled
                     description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
                     iconType={IconType.Fill}
