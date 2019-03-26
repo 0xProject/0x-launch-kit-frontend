@@ -1,4 +1,4 @@
-import { assetDataUtils } from '0x.js';
+import { assetDataUtils, BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
 import { TX_DEFAULTS } from '../common/constants';
@@ -44,9 +44,9 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
     return ordersToUIOrders(myOrders, baseToken, myOrdersInfo);
 };
 
-export const cancelSignedOrder = async (order: SignedOrder) => {
+export const cancelSignedOrder = async (order: SignedOrder, gasPrice: BigNumber) => {
     const contractWrappers = await getContractWrappers();
     const web3Wrapper = await getWeb3WrapperOrThrow();
-    const tx = await contractWrappers.exchange.cancelOrderAsync(order, TX_DEFAULTS);
+    const tx = await contractWrappers.exchange.cancelOrderAsync(order, { ...TX_DEFAULTS, gasPrice });
     return web3Wrapper.awaitTransactionSuccessAsync(tx);
 };

@@ -8,7 +8,14 @@ import { getRelayer } from '../../services/relayer';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { buildMarketOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
-import { getBaseToken, getEthAccount, getOpenBuyOrders, getOpenSellOrders, getQuoteToken } from '../selectors';
+import {
+    getBaseToken,
+    getEthAccount,
+    getGasPriceInWei,
+    getOpenBuyOrders,
+    getOpenSellOrders,
+    getQuoteToken,
+} from '../selectors';
 import { addNotification } from '../ui/actions';
 
 export const initializeRelayerData = createAction('INITIALIZE_RELAYER_DATA', resolve => {
@@ -50,8 +57,9 @@ export const cancelOrder = (order: UIOrder) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
+        const gasPrice = getGasPriceInWei(state);
 
-        await cancelSignedOrder(order.rawOrder);
+        await cancelSignedOrder(order.rawOrder, gasPrice);
 
         dispatch(getOrderbookAndUserOrders());
         dispatch(
@@ -91,6 +99,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
 
         const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
         const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
@@ -106,12 +115,10 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
             const contractWrappers = await getContractWrappers();
             const web3Wrapper = await getWeb3WrapperOrThrow();
-            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(
-                ordersToFill,
-                amounts,
-                ethAccount,
-                TX_DEFAULTS,
-            );
+            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, {
+                ...TX_DEFAULTS,
+                gasPrice,
+            });
 
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 

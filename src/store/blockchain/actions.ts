@@ -12,7 +12,14 @@ import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
 import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
-import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+import {
+    getCurrencyPair,
+    getEthAccount,
+    getGasPriceInWei,
+    getTokenBalances,
+    getWethBalance,
+    getWethTokenBalance,
+} from '../selectors';
 import { addNotification, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
@@ -47,6 +54,7 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
 
         const contractWrappers = await getContractWrappers();
         const web3Wrapper = await getWeb3WrapperOrThrow();
@@ -57,7 +65,10 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
                 token.address,
                 ethAccount,
                 new BigNumber('0'),
-                TX_DEFAULTS,
+                {
+                    ...TX_DEFAULTS,
+                    gasPrice,
+                },
             );
         } else {
             tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
@@ -105,6 +116,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
         const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
 
@@ -126,7 +138,10 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
                 wethAddress,
                 wethBalance.sub(newWethBalance),
                 ethAccount,
-                TX_DEFAULTS,
+                {
+                    ...TX_DEFAULTS,
+                    gasPrice,
+                },
             );
         } else {
             return;

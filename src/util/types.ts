@@ -36,6 +36,7 @@ export interface BlockchainState {
     readonly tokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
+    readonly gasInfo: GasInfo;
 }
 
 export interface RelayerState {
@@ -192,3 +193,8 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
+
+export interface GasInfo {
+    gasPriceInWei: BigNumber;
+    estimatedTimeMs: number;
+}

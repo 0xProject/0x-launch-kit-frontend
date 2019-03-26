@@ -11,6 +11,10 @@ const initialBlockchainState: BlockchainState = {
     tokenBalances: [],
     ethBalance: new BigNumber(0),
     wethTokenBalance: null,
+    gasInfo: {
+        gasPriceInWei: new BigNumber('3000000000'),
+        estimatedTimeMs: 5000,
+    },
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
