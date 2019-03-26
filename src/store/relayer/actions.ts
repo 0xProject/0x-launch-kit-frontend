@@ -61,7 +61,8 @@ export const cancelOrder = (order: UIOrder) => {
 
         const tx = cancelSignedOrder(order.rawOrder, gasPrice);
 
-        dispatch(getOrderbookAndUserOrders());
+        tx.then(() => dispatch(getOrderbookAndUserOrders()));
+
         dispatch(
             addNotification({
                 kind: NotificationKind.CancelOrder,
