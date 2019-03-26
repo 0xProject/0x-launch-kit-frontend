@@ -4,9 +4,9 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../components/account';
-import { MainContent } from '../components/common/main_content';
+import { ColumnNarrow } from '../components/common/column_narrow';
+import { ColumnWide } from '../components/common/column_wide';
 import { MetamaskErrorModal } from '../components/common/Metamask_error_modal';
-import { Sidebar } from '../components/common/sidebar';
 import { connectWallet, goToHome } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { ModalDisplay, StoreState, Web3State } from '../util/types';
@@ -61,12 +61,12 @@ class MyWallet extends React.Component<Props, State> {
 
         return (
             <>
-                <Sidebar>
+                <ColumnNarrow>
                     <WalletWethBalanceContainer />
-                </Sidebar>
-                <MainContent>
+                </ColumnNarrow>
+                <ColumnWide>
                     <WalletTokenBalancesContainer />
-                </MainContent>
+                </ColumnWide>
                 {modalContent}
             </>
         );

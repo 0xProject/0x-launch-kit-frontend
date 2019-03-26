@@ -4,21 +4,19 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { connectWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getBaseToken, getCurrencyPair, getEthInUsd, getWeb3State } from '../../store/selectors';
+import { getCurrencyPair, getWeb3State } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { CurrencyPair, OrderSide, StoreState, Token, Web3State } from '../../util/types';
+import { CurrencyPair, OrderSide, OrderType, StoreState, Web3State } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
 import { CardTabSelector } from '../common/card_tab_selector';
 
-import { OrderDetails } from './order_details';
+import { OrderDetailsContainer } from './order_details';
 
 interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
-    baseToken: Token | null;
-    ethInUsd: BigNumber | null;
 }
 
 interface DispatchProps {
@@ -28,11 +26,6 @@ interface DispatchProps {
 }
 
 type Props = StateProps & DispatchProps;
-
-enum OrderType {
-    Limit,
-    Market,
-}
 
 interface State {
     makerAmount: BigNumber;
@@ -220,12 +213,12 @@ class BuySell extends React.Component<Props, State> {
                             </FieldContainer>
                         </>
                     )}
-                    <OrderDetails
+                    <OrderDetailsContainer
                         orderType={orderType}
-                        tokenAmount={this.state.makerAmount}
-                        tokenPrice={this.state.price}
-                        baseToken={this.props.baseToken}
-                        ethInUsd={this.props.ethInUsd}
+                        orderSide={tab}
+                        tokenAmount={makerAmount}
+                        tokenPrice={price}
+                        currencyPair={currencyPair}
                     />
                     <Button
                         theme="secondary"
@@ -293,9 +286,7 @@ class BuySell extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
-        baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
-        ethInUsd: getEthInUsd(state),
     };
 };
 

@@ -74,7 +74,9 @@ export enum StepKind {
 
 export interface StepWrapEth {
     kind: StepKind.WrapEth;
-    amount: BigNumber;
+    currentWethBalance: BigNumber;
+    newWethBalance: BigNumber;
+    context: 'order' | 'standalone';
 }
 
 export interface StepToggleTokenLock {
@@ -190,6 +192,11 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
+
+export enum OrderType {
+    Limit = 'Limit',
+    Market = 'Market',
+}
 
 export enum ModalDisplay {
     InstallMetamask = 'INSTALL_METAMASK',

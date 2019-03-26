@@ -105,7 +105,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
             const formattedBalance = tokenAmountInUnits(balance, token.decimals);
-            const onClick = () => onStartToggleTokenLockSteps(tokenBalance.token, tokenBalance.isUnlocked);
+            const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
 
             return (
                 <TR key={symbol}>
