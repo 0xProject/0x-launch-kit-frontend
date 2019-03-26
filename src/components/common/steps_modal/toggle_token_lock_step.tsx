@@ -6,6 +6,7 @@ import { lockToken, unlockToken } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
 import { isWeth } from '../../../util/known_tokens';
+import { getStepTitle } from '../../../util/steps';
 import { StepToggleTokenLock, StoreState, Token } from '../../../util/types';
 
 import {
@@ -20,7 +21,11 @@ import {
     StepStatusLoading,
     Title,
 } from './steps_common';
+import { StepItem, StepsProgress } from './steps_progress';
 
+interface OwnProps {
+    buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
+}
 interface StateProps {
     step: StepToggleTokenLock;
 }
@@ -31,7 +36,7 @@ interface DispatchProps {
     advanceStep: () => void;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     status: StepStatus;
@@ -116,10 +121,17 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
 
         const title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock token' : 'Unlock token';
 
+        const stepsProgress = this.props.buildStepsProgress({
+            title: getStepTitle(this.props.step),
+            active: true,
+            progress: status === StepStatus.Done ? '100' : '0',
+        });
+
         return (
             <>
                 <Title>{title}</Title>
                 {content}
+                <StepsProgress steps={stepsProgress} />
             </>
         );
     };
