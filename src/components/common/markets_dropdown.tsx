@@ -6,6 +6,7 @@ import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, getOrderbookAndUserOrders } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
+import { filterMarketsByString } from '../../util/markets';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
 
@@ -198,7 +199,7 @@ const TokenLabel = styled.div`
     margin: 0 0 0 15px;
 `;
 
-const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
+const FILTER_TOKENS = ['All', 'ETH', 'DAI'];
 
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
@@ -279,17 +280,15 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _getMarkets = () => {
         const { baseToken, currencyPair, markets } = this.props;
-        const { search } = this.state;
+        const { search, selectedFilter } = this.state;
 
         if (!baseToken || !markets) {
             return null;
         }
 
-        const filteredMarkets = markets.filter(market => {
-            const baseLowerCase = market.currencyPair.base.toLowerCase();
-            const quoteLowerCase = market.currencyPair.quote.toLowerCase();
-            return `${baseLowerCase}/${quoteLowerCase}`.indexOf(search.toLowerCase()) !== -1;
-        });
+        const filteredMarkets =
+            selectedFilter === 0 ? markets : filterMarketsByString(markets, FILTER_TOKENS[selectedFilter]);
+        const searchedMarkets = filterMarketsByString(filteredMarkets, search);
 
         return (
             <Table>
@@ -300,7 +299,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                     </TR>
                 </THead>
                 <TBody>
-                    {filteredMarkets.map((market, index) => {
+                    {searchedMarkets.map((market, index) => {
                         const isActive =
                             market.currencyPair.base === currencyPair.base &&
                             market.currencyPair.quote === currencyPair.quote;
