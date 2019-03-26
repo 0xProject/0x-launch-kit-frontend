@@ -9,6 +9,7 @@ import { getRelayer } from '../../services/relayer';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
+import { getOrderbookAndUserOrders } from '../relayer/actions';
 
 export const setMarketTokens = createAction('SET_MARKET_TOKENS', resolve => {
     return ({ baseToken, quoteToken }: { baseToken: Token; quoteToken: Token }) => resolve({ baseToken, quoteToken });
@@ -37,6 +38,19 @@ export const fetchMarketPriceEtherUpdate = createAction('FETCH_MARKET_PRICE_ETHE
 
 export const changeMarket = (currencyPair: CurrencyPair) => {
     return async (dispatch: any, getState: any) => {
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const knownTokens = getKnownTokens(networkId);
+
+        dispatch(
+            setMarketTokens({
+                baseToken: knownTokens.getTokenBySymbol(currencyPair.base),
+                quoteToken: knownTokens.getTokenBySymbol(currencyPair.quote),
+            }),
+        );
+        dispatch(setCurrencyPair(currencyPair));
+        dispatch(getOrderbookAndUserOrders());
+
         const state = getState() as StoreState;
         const newSearch = queryString.stringify({
             ...queryString.parse(state.router.location.search),
@@ -51,8 +65,6 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
                 search: newSearch,
             }),
         );
-
-        location.reload();
     };
 };
 

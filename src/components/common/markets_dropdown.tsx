@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
-import { changeMarket, getOrderbookAndUserOrders } from '../../store/actions';
+import { changeMarket } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
 import { themeColors, themeDimensions } from '../../util/theme';
@@ -19,7 +19,6 @@ import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR }
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
 interface DispatchProps {
-    getOrderbookAndUserOrders: () => any;
     changeMarket: (currencyPair: CurrencyPair) => any;
 }
 
@@ -332,9 +331,8 @@ class MarketsDropdown extends React.Component<Props, State> {
         );
     };
 
-    private readonly _setSelectedMarket: any = async (currencyPair: CurrencyPair) => {
-        await this.props.changeMarket(currencyPair);
-        this.props.getOrderbookAndUserOrders();
+    private readonly _setSelectedMarket: any = (currencyPair: CurrencyPair) => {
+        this.props.changeMarket(currencyPair);
         this._closeDropdown();
     };
 
@@ -357,7 +355,6 @@ const mapStateToProps = (state: StoreState): PropsToken => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        getOrderbookAndUserOrders: () => dispatch(getOrderbookAndUserOrders()),
         changeMarket: (currencyPair: CurrencyPair) => dispatch(changeMarket(currencyPair)),
     };
 };
