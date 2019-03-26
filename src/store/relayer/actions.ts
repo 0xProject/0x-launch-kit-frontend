@@ -61,7 +61,7 @@ export const cancelOrder = (order: UIOrder) => {
 
         const tx = cancelSignedOrder(order.rawOrder, gasPrice);
 
-        tx.then(() => dispatch(getOrderbookAndUserOrders()));
+        tx.then(() => dispatch(getOrderbookAndUserOrders())); // tslint:disable-line:no-floating-promises
 
         dispatch(
             addNotification({
