@@ -65,7 +65,7 @@ describe('tokenSymbolWithDisplayRules', () => {
         const result = tokenSymbolWithDisplayRules(symbol);
 
         // then
-        const expected = 'wEth';
+        const expected = 'wETH';
         expect(result === expected).toBe(true);
     });
 

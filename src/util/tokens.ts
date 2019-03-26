@@ -18,5 +18,5 @@ export const unitsInTokenAmount = (units: string, decimals: number): BigNumber =
 };
 
 export const tokenSymbolWithDisplayRules = (symbol: string): string => {
-    return isWeth(symbol) ? 'wEth' : symbol.toString().toUpperCase();
+    return isWeth(symbol) ? 'wETH' : symbol.toString().toUpperCase();
 };
