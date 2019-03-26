@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { ColumnNarrow } from '../components/common/Column_narrow';
-import { ColumnWide } from '../components/common/Column_wide';
-import { Sidebar } from '../components/common/sidebar';
+import { ColumnNarrow } from '../components/common/column_narrow';
+import { ColumnWide } from '../components/common/column_wide';
 import { BuySellContainer } from '../components/marketplace/buy_sell';
 import { OrderBookTableContainer } from '../components/marketplace/order_book';
 import { OrderHistoryContainer } from '../components/marketplace/order_history';
@@ -12,10 +11,10 @@ class Marketplace extends React.PureComponent {
     public render = () => {
         return (
             <>
-                <Sidebar>
+                <ColumnNarrow>
                     <WalletBalanceContainer />
                     <BuySellContainer />
-                </Sidebar>
+                </ColumnNarrow>
                 <ColumnNarrow>
                     <OrderBookTableContainer />
                 </ColumnNarrow>
