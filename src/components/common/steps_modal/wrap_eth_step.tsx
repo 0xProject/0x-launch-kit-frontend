@@ -6,6 +6,7 @@ import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
+import { getStepTitle } from '../../../util/steps';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
@@ -21,7 +22,11 @@ import {
     StepStatusLoading,
     Title,
 } from './steps_common';
+import { StepItem, StepsProgress } from './steps_progress';
 
+interface OwnProps {
+    buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
+}
 interface StateProps {
     step: StepWrapEth;
 }
@@ -31,7 +36,7 @@ interface DispatchProps {
     advanceStep: () => void;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     status: StepStatus;
@@ -109,12 +114,19 @@ class WrapEthStep extends React.Component<Props, State> {
                 break;
         }
 
+        const stepsProgress = this.props.buildStepsProgress({
+            title: getStepTitle(this.props.step),
+            active: true,
+            progress: status === StepStatus.Done ? '100' : '0',
+        });
+
         const title = context === 'order' ? 'Order setup' : 'Converting wETH';
 
         return (
             <>
                 <Title>{title}</Title>
                 {content}
+                <StepsProgress steps={stepsProgress} />
             </>
         );
     };
