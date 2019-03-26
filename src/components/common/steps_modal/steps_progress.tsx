@@ -89,8 +89,8 @@ const checkMark = () => {
             <path
                 d="M1.6665 4.23416L3.94864 6.51339L8.44045 1.33331"
                 stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
+                strokeWidth="2"
+                strokeLinecap="round"
             />
         </svg>
     );
