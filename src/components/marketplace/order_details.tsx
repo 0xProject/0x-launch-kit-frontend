@@ -1,73 +1,47 @@
 import { BigNumber } from '0x.js';
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
-import { getZeroXPriceInUSD, getZeroXPriceInWeth } from '../../util/market_prices';
-import { themeColors, themeDimensions } from '../../util/theme';
-import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../util/tokens';
-import { Token, TokenSymbol } from '../../util/types';
-import { CardTabSelector } from '../common/card_tab_selector';
-
-interface Props extends HTMLAttributes<HTMLButtonElement> {}
-
-enum OrderType {
-    Limit,
-    Market,
-}
-
-interface State {
-    limitOrder: {
-        orderDetailType: OrderDetailsType;
-        zeroXFeeInUSD: BigNumber;
-        zeroXFeeInWeth: BigNumber;
-        totalCostInWeth: BigNumber;
-        totalCostInUSD: BigNumber;
-    };
-    marketOrder: {};
-}
-
-interface Props {
-    orderType: OrderType;
-    tokenAmount: BigNumber;
-    tokenPrice: BigNumber;
-    baseToken: Token | null;
-    ethInUsd: BigNumber | null;
-}
+import { getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
+import { getKnownTokens } from '../../util/known_tokens';
+import { buildMarketOrders } from '../../util/orders';
+import { themeColors } from '../../util/theme';
+import { tokenAmountInUnits } from '../../util/tokens';
+import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, UIOrder } from '../../util/types';
 
 const Row = styled.div`
     align-items: center;
-    border-bottom: solid 1px ${themeColors.borderColor};
+    border-top: dashed 1px ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
-    padding: 15px ${themeDimensions.horizontalPadding};
+    padding: 15px 0;
     position: relative;
     z-index: 1;
 
-    &:first-child {
-        padding-top: 5px;
-    }
-
-    &:last-child {
-        border-bottom: none;
-        padding-bottom: 5px;
+    &: last-of-type {
+        margin-bottom: 20px;
     }
 `;
 
 const Value = styled.div`
     color: #000;
     flex-shrink: 0;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 14px;
     line-height: 1.2;
     white-space: nowrap;
+`;
+
+const CostValue = styled(Value)`
+    font-weight: bold;
 `;
 
 const LabelContainer = styled.div`
     align-items: flex-end;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin: 15px 0;
 `;
 
 const Label = styled.label<{ color?: string }>`
@@ -78,209 +52,143 @@ const Label = styled.label<{ color?: string }>`
     margin: 0;
 `;
 
-const InnerTabs = styled(CardTabSelector)`
-    font-size: 14px;
+const MainLabel = styled(Label)`
+    font-size: 12px;
+    text-transform: uppercase;
 `;
 
-enum OrderDetailsType {
-    Eth,
-    Usd,
+const FeeLabel = styled(Label)`
+    font-weight: normal;
+`;
+
+const CostLabel = styled(Label)`
+    font-weight: bold;
+`;
+
+interface OwnProps {
+    orderType: OrderType;
+    tokenAmount: BigNumber;
+    tokenPrice: BigNumber;
+    orderSide: OrderSide;
+    currencyPair: CurrencyPair;
+}
+
+interface StateProps {
+    openSellOrders: UIOrder[];
+    openBuyOrders: UIOrder[];
+}
+
+type Props = StateProps & OwnProps;
+
+interface State {
+    feeInZrx: BigNumber;
+    quoteTokenAmount: BigNumber;
+    canOrderBeFilled?: boolean;
 }
 
 class OrderDetails extends React.Component<Props, State> {
-    // TODO: Refactor with hooks (needs react version update)
-
     public state = {
-        limitOrder: {
-            orderDetailType: OrderDetailsType.Eth,
-            zeroXFeeInUSD: new BigNumber(0),
-            zeroXFeeInWeth: new BigNumber(0),
-            totalCostInWeth: new BigNumber(0),
-            totalCostInUSD: new BigNumber(0),
-        },
-        marketOrder: {
-            orderDetailType: OrderDetailsType.Eth,
-            zeroXFeeInUSD: new BigNumber(0),
-            zeroXFeeInWeth: new BigNumber(0),
-            totalCostInWeth: new BigNumber(0),
-            totalCostInUSD: new BigNumber(0),
-        },
+        feeInZrx: new BigNumber(0),
+        quoteTokenAmount: new BigNumber(0),
+        canOrderBeFilled: true,
     };
 
-    public updateLimitOrderState = async () => {
-        const { tokenAmount, tokenPrice, baseToken, ethInUsd } = this.props;
-        if (baseToken && ethInUsd) {
-            /* Reduces decimals of the token amount */
-            const tokenAmountConverted = tokenAmountInUnitsToBigNumber(tokenAmount, baseToken.decimals);
-            /* This could be refactored with promise all  */
-            const promisesArray = [getZeroXPriceInWeth(), getZeroXPriceInUSD()];
-
-            const results = await Promise.all(promisesArray);
-            const [zeroXPriceInWeth, zeroXPriceInUSD] = results;
-            const ethInUSD = ethInUsd;
-            /* Calculates total cost in wETH */
-            const zeroXFeeInWeth = zeroXPriceInWeth.mul(tokenAmountInUnits(MAKER_FEE, 18));
-            const totalPriceWithoutFeeInWeth = tokenAmountConverted.mul(tokenPrice);
-            const totalCostInWeth = totalPriceWithoutFeeInWeth.add(zeroXFeeInWeth);
-
-            /* Calculates total cost in USD */
-            const zeroXFeeInUSD = zeroXPriceInUSD.mul(tokenAmountInUnits(MAKER_FEE, 18));
-            const totalPriceWithoutFeeInUSD = totalPriceWithoutFeeInWeth.mul(ethInUSD);
-            const totalCostInUSD = totalPriceWithoutFeeInUSD.add(zeroXFeeInUSD);
-
-            this.setState({
-                limitOrder: {
-                    ...this.state.limitOrder,
-                    zeroXFeeInWeth,
-                    zeroXFeeInUSD,
-                    totalCostInWeth,
-                    totalCostInUSD,
-                },
-            });
-        }
-    };
-
-    public updateMarketOrderState = async () => {
-        /* TODO */
-        const { tokenAmount, tokenPrice } = this.props;
-        await this._calculateTotalCostMarketInWeth(tokenAmount, tokenPrice);
-        return null;
-    };
-
-    public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) => {
+    public componentDidUpdate = async (prevProps: Readonly<Props>) => {
         const newProps = this.props;
         if (
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.baseToken !== prevProps.baseToken ||
-            newProps.ethInUsd !== prevProps.ethInUsd
+            newProps.currencyPair !== prevProps.currencyPair ||
+            newProps.orderSide !== prevProps.orderSide
         ) {
-            if (newProps.orderType === OrderType.Limit) {
-                await this.updateLimitOrderState();
-            }
-            if (newProps.orderType === OrderType.Market) {
-                await this.updateMarketOrderState();
-            }
+            await this._updateOrderDetailsState();
         }
     };
 
     public componentDidMount = async () => {
-        const { orderType } = this.props;
-        if (orderType === OrderType.Limit) {
-            await this.updateLimitOrderState();
-        }
-        if (orderType === OrderType.Market) {
-            await this.updateMarketOrderState();
-        }
+        await this._updateOrderDetailsState();
     };
 
     public render = () => {
-        const { orderType } = this.props;
-        let orderDetailType = OrderDetailsType.Eth;
-        let zeroXFeeInUSD = new BigNumber(0);
-        let totalCostInWeth = new BigNumber(0);
-        let totalCostInUSD = new BigNumber(0);
-        if (orderType === OrderType.Limit) {
-            ({ orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD } = this.state.limitOrder);
-        }
-        if (orderType === OrderType.Market) {
-            ({ orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD } = this.state.marketOrder);
-        }
-        return this._renderOrderDetails(orderDetailType, zeroXFeeInUSD, totalCostInWeth, totalCostInUSD);
-    };
-
-    private readonly _calculateTotalCostMarketInWeth = async (
-        tokenAmount: BigNumber,
-        tokenPrice: BigNumber,
-    ): Promise<BigNumber> => {
-        const totalCost = new BigNumber(0);
-        /* TODO **/
-        return totalCost;
-    };
-
-    private readonly _renderOrderDetails = (
-        orderDetailType: OrderDetailsType,
-        zeroXFeeInUSD: BigNumber,
-        totalCostInWeth: BigNumber,
-        totalCostInUSD: BigNumber,
-    ) => {
-        const ethUsdTabs = [
-            {
-                active: orderDetailType === OrderDetailsType.Eth,
-                onClick: this._switchToEth,
-                text: TokenSymbol.Zrx.toUpperCase(),
-            },
-            {
-                active: orderDetailType === OrderDetailsType.Usd,
-                onClick: this._switchToUsd,
-                text: 'USD',
-            },
-        ];
+        const fee = this._getFeeStringForRender();
+        const cost = this._getCostStringForRender();
         return (
             <>
                 <LabelContainer>
-                    <Label>Order Details</Label>
-                    <InnerTabs tabs={ethUsdTabs} />
+                    <MainLabel>Order Details</MainLabel>
                 </LabelContainer>
                 <Row>
-                    <Label color={themeColors.textLight}>Fee</Label>
-                    <Value />
-                    <Value>
-                        {orderDetailType === OrderDetailsType.Usd
-                            ? `$ ${zeroXFeeInUSD.toFixed(2)}`
-                            : `${tokenAmountInUnits(MAKER_FEE, 18, 2)} ZRX`}
-                    </Value>
+                    <FeeLabel color={themeColors.textLight}>Fee</FeeLabel>
+                    <Value>{fee}</Value>
                 </Row>
-                <LabelContainer>
-                    <Label>Total Cost</Label>
-                    <Value>
-                        ({totalCostInWeth.toFixed(2)} wETH) {`$ ${totalCostInUSD.toFixed(2)}`}
-                    </Value>
-                </LabelContainer>
+                <Row>
+                    <CostLabel>Cost</CostLabel>
+                    <CostValue>{cost}</CostValue>
+                </Row>
             </>
         );
     };
 
-    private readonly _switchToUsd = () => {
-        const { orderType } = this.props;
-        if (orderType === OrderType.Market) {
-            this.setState({
-                marketOrder: {
-                    ...this.state.marketOrder,
-                    orderDetailType: OrderDetailsType.Usd,
-                },
-            });
+    private readonly _updateOrderDetailsState = async () => {
+        const { currencyPair, orderType } = this.props;
+        if (!currencyPair) {
+            return;
         }
+
         if (orderType === OrderType.Limit) {
+            const { tokenAmount, tokenPrice } = this.props;
+            const quoteTokenAmount = tokenAmount.mul(tokenPrice);
             this.setState({
-                limitOrder: {
-                    ...this.state.limitOrder,
-                    orderDetailType: OrderDetailsType.Usd,
+                feeInZrx: MAKER_FEE,
+                quoteTokenAmount,
+            });
+        } else {
+            const { tokenAmount, orderSide, openSellOrders, openBuyOrders } = this.props;
+            const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
+                {
+                    amount: tokenAmount,
+                    orders: OrderSide.Sell ? openBuyOrders : openSellOrders,
                 },
+                orderSide,
+            );
+            const feeInZrx = ordersToFill.reduce((sum, order) => sum.add(order.takerFee), new BigNumber(0));
+            const quoteTokenAmount = amountToPayForEachOrder.reduce((sum, amount) => sum.add(amount), new BigNumber(0));
+            this.setState({
+                feeInZrx,
+                quoteTokenAmount,
+                canOrderBeFilled,
             });
         }
     };
 
-    private readonly _switchToEth = () => {
+    private readonly _getFeeStringForRender = () => {
+        const { feeInZrx } = this.state;
+        const zrxDecimals = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx).decimals;
+        return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${TokenSymbol.Zrx.toUpperCase()}`;
+    };
+
+    private readonly _getCostStringForRender = () => {
+        const { canOrderBeFilled } = this.state;
         const { orderType } = this.props;
-        if (orderType === OrderType.Market) {
-            this.setState({
-                marketOrder: {
-                    ...this.state.marketOrder,
-                    orderDetailType: OrderDetailsType.Eth,
-                },
-            });
+        if (orderType === OrderType.Market && !canOrderBeFilled) {
+            return `---`;
         }
-        if (orderType === OrderType.Limit) {
-            this.setState({
-                limitOrder: {
-                    ...this.state.limitOrder,
-                    orderDetailType: OrderDetailsType.Eth,
-                },
-            });
-        }
+
+        const { quote } = this.props.currencyPair;
+        const quoteTokenDecimals = getKnownTokens().getTokenBySymbol(quote).decimals;
+        const { quoteTokenAmount } = this.state;
+        return `${tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals)} ${quote}`;
     };
 }
 
-export { OrderDetails };
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        openSellOrders: getOpenSellOrders(state),
+        openBuyOrders: getOpenBuyOrders(state),
+    };
+};
+
+const OrderDetailsContainer = connect(mapStateToProps)(OrderDetails);
+
+export { CostValue, OrderDetails, OrderDetailsContainer, Value };

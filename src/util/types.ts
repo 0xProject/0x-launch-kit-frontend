@@ -196,3 +196,8 @@ export enum TokenSymbol {
     Dgd = 'dgd',
     Mln = 'mln',
 }
+
+export enum OrderType {
+    Limit = 'Limit',
+    Market = 'Market',
+}
