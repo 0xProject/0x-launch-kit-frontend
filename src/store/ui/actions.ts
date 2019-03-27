@@ -219,10 +219,9 @@ const getUnlockZrxStepIfNeeded = (state: StoreState): StepToggleTokenLock | null
 const getUnlockTokenStepIfNeeded = (token: Token, state: StoreState): StepToggleTokenLock | null => {
     const tokenBalances = selectors.getTokenBalances(state);
 
-    let tokenBalance: TokenBalance;
-    isWeth(token.symbol)
-        ? (tokenBalance = selectors.getWethTokenBalance(state) as TokenBalance)
-        : (tokenBalance = tokenBalances.find(tb => tb.token.symbol === token.symbol) as TokenBalance);
+    const tokenBalance: TokenBalance = isWeth(token.symbol)
+        ? (selectors.getWethTokenBalance(state) as TokenBalance)
+        : (tokenBalances.find(tb => tb.token.symbol === token.symbol) as TokenBalance);
 
     if (tokenBalance.isUnlocked) {
         return null;
