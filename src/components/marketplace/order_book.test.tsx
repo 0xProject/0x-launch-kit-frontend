@@ -7,7 +7,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { openOrder, tokenFactory } from '../../util/test-utils';
-import { OrderSide, Web3State } from '../../util/types';
+import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
 
 import { OrderBookTable } from './order_book';
 
@@ -328,7 +328,8 @@ describe('OrderBookTable', () => {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
             decimals: 0,
             name: '0x',
-            symbol: 'zrx',
+            symbol: TokenSymbol.Zrx,
+            primaryColor: '#ccc',
         };
 
         const userOrder1 = openOrder({
@@ -343,7 +344,8 @@ describe('OrderBookTable', () => {
         const wrapper = mount(
             <OrderBookTable
                 orderBook={orderBook}
-                selectedToken={token}
+                baseToken={token}
+                quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.NotInstalled}
             />,
@@ -397,7 +399,8 @@ describe('OrderBookTable', () => {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
             decimals: 0,
             name: '0x',
-            symbol: 'zrx',
+            symbol: TokenSymbol.Zrx,
+            primaryColor: '#ccc',
         };
 
         const userOrder1 = openOrder({
@@ -412,7 +415,8 @@ describe('OrderBookTable', () => {
         const wrapper = mount(
             <OrderBookTable
                 orderBook={orderBook}
-                selectedToken={token}
+                baseToken={token}
+                quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.Locked}
             />,

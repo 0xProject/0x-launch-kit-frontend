@@ -12,7 +12,7 @@ import { getBaseToken, getCurrencyPair, getEthAccount, getQuoteToken, getWeb3Sta
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits } from '../../util/tokens';
+import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, StoreState, Token, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
@@ -250,7 +250,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Done && quoteToken && baseToken) {
             const quoteBalanceString = tokenAmountInUnits(this.state.quoteBalance, quoteToken.decimals);
             const baseBalanceString = tokenAmountInUnits(this.state.baseBalance, baseToken.decimals);
-            const toolTip = isWeth(quoteToken) ? (
+            const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled
                     description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
                     iconType={IconType.Fill}
@@ -263,12 +263,12 @@ class WalletBalance extends React.Component<Props, State> {
                         <LabelTitle>Amount</LabelTitle>
                     </LabelTitleWrapper>
                     <LabelWrapper>
-                        <Label>{currencyPair.base}</Label>
+                        <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
                         <Value>{baseBalanceString}</Value>
                     </LabelWrapper>
                     <LabelWrapper>
                         <Label>
-                            {currencyPair.quote}
+                            {tokenSymbolToDisplayString(currencyPair.quote)}
                             {toolTip}
                         </Label>
                         <Value>{quoteBalanceString}</Value>

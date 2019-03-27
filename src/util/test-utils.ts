@@ -81,6 +81,7 @@ export const tokenFactory = Factory.Sync.makeFactory<Token>({
     decimals: 0,
     name: Factory.each(i => `Mock Token ${i}`),
     primaryColor: '#ff0000',
+    // @ts-ignore
     symbol: Factory.each(i => `MOCK${i}`),
 });
 
@@ -91,5 +92,6 @@ export const tokenMetaDataFactory = Factory.Sync.makeFactory<TokenMetaData>({
     decimals: 0,
     name: Factory.each(i => `Mock Token ${i}`),
     primaryColor: '#ff0000',
+    // @ts-ignore
     symbol: Factory.each(i => `MOCK${i}`),
 });

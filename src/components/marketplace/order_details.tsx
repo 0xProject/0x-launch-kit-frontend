@@ -3,13 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { MAKER_FEE, ZRX_TOKEN_SYMBOL } from '../../common/constants';
+import { MAKER_FEE } from '../../common/constants';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildMarketOrders } from '../../util/orders';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { CurrencyPair, OrderSide, OrderType, StoreState, UIOrder } from '../../util/types';
+import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, UIOrder } from '../../util/types';
 
 const Row = styled.div`
     align-items: center;
@@ -164,8 +164,8 @@ class OrderDetails extends React.Component<Props, State> {
 
     private readonly _getFeeStringForRender = () => {
         const { feeInZrx } = this.state;
-        const zrxDecimals = getKnownTokens().getTokenBySymbol(ZRX_TOKEN_SYMBOL).decimals;
-        return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${ZRX_TOKEN_SYMBOL.toUpperCase()}`;
+        const zrxDecimals = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx).decimals;
+        return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${TokenSymbol.Zrx.toUpperCase()}`;
     };
 
     private readonly _getCostStringForRender = () => {

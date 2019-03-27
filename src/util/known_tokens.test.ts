@@ -1,26 +1,27 @@
-import { WETH_TOKEN_SYMBOL } from '../common/constants';
 import { TokenMetaData } from '../common/tokens_meta_data';
 
 import { getKnownTokens, KnownTokens } from './known_tokens';
-import { Token } from './types';
+import { Token, TokenSymbol } from './types';
 
 const networkId = 50;
 const dummyTokensMetaData: TokenMetaData[] = [
     {
         decimals: 18,
-        symbol: 'weth',
+        symbol: TokenSymbol.Weth,
         name: 'Wrapped Ether',
         addresses: {
             50: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
         },
+        primaryColor: '#ccc',
     },
     {
         decimals: 18,
-        symbol: 'zrx',
+        symbol: TokenSymbol.Zrx,
         name: '0x',
         addresses: {
             50: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         },
+        primaryColor: '#ccc',
     },
 ];
 const wethToken: Token = {
@@ -28,12 +29,14 @@ const wethToken: Token = {
     symbol: dummyTokensMetaData[0].symbol,
     decimals: dummyTokensMetaData[0].decimals,
     name: dummyTokensMetaData[0].name,
+    primaryColor: '#ccc',
 };
 const zrxToken: Token = {
     address: dummyTokensMetaData[1].addresses[networkId],
     symbol: dummyTokensMetaData[1].symbol,
     decimals: dummyTokensMetaData[1].decimals,
     name: dummyTokensMetaData[1].name,
+    primaryColor: '#ccc',
 };
 
 describe('getKnownTokens', () => {
@@ -50,7 +53,7 @@ describe('KnownTokens', () => {
     });
     it('should throw when TokenMetada[] does not contain weth metadata for the specified networkId', async () => {
         const wrongTokensMetadata = dummyTokensMetaData.filter(
-            tokenMetaData => tokenMetaData.symbol !== WETH_TOKEN_SYMBOL,
+            tokenMetaData => tokenMetaData.symbol !== TokenSymbol.Weth,
         );
         expect(() => new KnownTokens(networkId, wrongTokensMetadata)).toThrow();
     });

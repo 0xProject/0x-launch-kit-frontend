@@ -11,9 +11,6 @@ export const TX_DEFAULTS = {
     gasLimit: 1000000,
 };
 
-export const WETH_TOKEN_SYMBOL = 'weth';
-export const ZRX_TOKEN_SYMBOL = 'zrx';
-
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;

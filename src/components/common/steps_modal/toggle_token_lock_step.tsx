@@ -5,8 +5,8 @@ import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { lockToken, unlockToken } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
-import { isWeth } from '../../../util/known_tokens';
 import { getStepTitle } from '../../../util/steps';
+import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { StepToggleTokenLock, StoreState, Token } from '../../../util/types';
 
 import {
@@ -66,10 +66,7 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
 
     public render = () => {
         const { context, token, isUnlocked } = this.props.step;
-        let tokenSymbol = token.symbol.toUpperCase();
-        if (isWeth(token)) {
-            tokenSymbol = 'wETH';
-        }
+        const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
         const { status } = this.state;
         const retry = () => this._retry();
