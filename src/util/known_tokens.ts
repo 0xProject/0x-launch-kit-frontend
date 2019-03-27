@@ -1,8 +1,8 @@
-import { RELAYER_NETWORK_ID, WETH_TOKEN_SYMBOL, ZRX_TOKEN_SYMBOL } from '../common/constants';
+import { RELAYER_NETWORK_ID } from '../common/constants';
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
-import { Token } from './types';
+import { Token, TokenSymbol } from './types';
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
@@ -10,7 +10,7 @@ export class KnownTokens {
 
     constructor(networkId: number, knownTokensMetadata: TokenMetaData[]) {
         this._tokens = mapTokensMetaDataToTokenByNetworkId(networkId, knownTokensMetadata).filter(
-            token => token.symbol !== WETH_TOKEN_SYMBOL,
+            token => !isWeth(token.symbol),
         );
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(networkId, knownTokensMetadata);
     }
@@ -19,7 +19,7 @@ export class KnownTokens {
         const symbolInLowerCaseScore = symbol.toLowerCase();
         const token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
         if (!token) {
-            if (symbolInLowerCaseScore === WETH_TOKEN_SYMBOL) {
+            if (symbolInLowerCaseScore === TokenSymbol.Weth) {
                 return this.getWethToken();
             }
             throw new Error(`Token with symbol ${symbol} not found in known tokens`);
@@ -65,10 +65,10 @@ export const getColorBySymbol = (symbol: string): string => {
     return token.primaryColor;
 };
 
-export const isZrx = (token: Token): boolean => {
-    return token.symbol.toLowerCase() === ZRX_TOKEN_SYMBOL.toLowerCase();
+export const isZrx = (token: TokenSymbol): boolean => {
+    return token === TokenSymbol.Zrx;
 };
 
-export const isWeth = (token: Token): boolean => {
-    return token.symbol.toLowerCase() === WETH_TOKEN_SYMBOL.toLowerCase();
+export const isWeth = (token: TokenSymbol): boolean => {
+    return token === TokenSymbol.Weth;
 };

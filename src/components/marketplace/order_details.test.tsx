@@ -4,7 +4,7 @@ import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
 import { unitsInTokenAmount } from '../../util/tokens';
-import { OrderSide, OrderType } from '../../util/types';
+import { OrderSide, OrderType, TokenSymbol } from '../../util/types';
 
 import { CostValue, OrderDetails, Value } from './order_details';
 
@@ -13,7 +13,7 @@ describe('OrderDetails', () => {
         return `${new BigNumber(amount).toFixed(2)} ${symbol}`;
     };
     const getExpectedFeeText = (amount: number): string => {
-        return `${new BigNumber(amount).toFixed(2)} ${CONSTANTS.ZRX_TOKEN_SYMBOL.toUpperCase()}`;
+        return `${new BigNumber(amount).toFixed(2)} ${TokenSymbol.Zrx.toUpperCase()}`;
     };
     const getAmountTextFromWrapper = (wrapper: ShallowWrapper): string =>
         wrapper
@@ -27,8 +27,8 @@ describe('OrderDetails', () => {
             .text();
 
     const currencyPair = {
-        base: 'ZRX',
-        quote: 'WETH',
+        base: TokenSymbol.Zrx,
+        quote: TokenSymbol.Weth,
     };
 
     it('Calculates total cost for limit orders', () => {
