@@ -6,7 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../components/account';
 import { ColumnNarrow } from '../components/common/column_narrow';
 import { ColumnWide } from '../components/common/column_wide';
-import { MetamaskErrorModal } from '../components/common/Metamask_error_modal';
+import { MetamaskErrorModal } from '../components/common/metamask_error_modal';
 import { connectWallet, goToHome } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { ModalDisplay, StoreState, Web3State } from '../util/types';

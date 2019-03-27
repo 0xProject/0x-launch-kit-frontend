@@ -153,57 +153,54 @@ const mmIcon = () => {
     );
 };
 
-class MetamaskErrorModal extends React.Component<Props> {
-    public render = () => {
-        const { isOpen, closeModal, noMetamaskType, connectWallet } = this.props;
+const MetamaskErrorModal: React.FC<Props> = props => {
+    const { isOpen, closeModal, noMetamaskType, connectWallet } = props;
+    const metamaskNotInstalledContent = (
+        <>
+            <ModalTitle>Install Metamask</ModalTitle>
+            <IconContainer>{mmIcon()}</IconContainer>
+            <ModalText>Please install the MetaMask wallet extension from the Chrome Store.</ModalText>
+            <ModalText>
+                <ModalTextLink href="https://metamask.io/" target="_blank">
+                    What is MetaMask?
+                </ModalTextLink>
+            </ModalText>
+            <ButtonStyled theme="tertiary">
+                <LinkButton
+                    target="_blank"
+                    href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+                >
+                    Get Chrome Extension
+                </LinkButton>
+            </ButtonStyled>
+        </>
+    );
 
-        const metamaskNotInstalledContent = (
-            <>
-                <ModalTitle>Install Metamask</ModalTitle>
-                <IconContainer>{mmIcon()}</IconContainer>
-                <ModalText>Please install the MetaMask wallet extension from the Chrome Store.</ModalText>
-                <ModalText>
-                    <ModalTextLink href="https://metamask.io/" target="_blank">
-                        What is MetaMask?
-                    </ModalTextLink>
-                </ModalText>
-                <ButtonStyled theme="tertiary">
-                    <LinkButton
-                        target="_blank"
-                        href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
-                    >
-                        Get Chrome Extension
-                    </LinkButton>
-                </ButtonStyled>
-            </>
-        );
+    const metamaskNoPermissionsContent = (
+        <>
+            <ModalTitle>Connect Metamask</ModalTitle>
+            <IconContainer>{mmIcon()}</IconContainer>
+            <ModalText>Please accept the MetaMask wallet permissions in order to access your wallet.</ModalText>
+            <ModalText>
+                <ModalTextLink href="https://metamask.io/" target="_blank">
+                    What is MetaMask?
+                </ModalTextLink>
+            </ModalText>
+            <ButtonStyled theme="tertiary">
+                <LinkButton onClick={connectWallet}>{errorsWallet.mmConnect}</LinkButton>
+            </ButtonStyled>
+        </>
+    );
 
-        const metamaskNoPermissionsContent = (
-            <>
-                <ModalTitle>Connect Metamask</ModalTitle>
-                <IconContainer>{mmIcon()}</IconContainer>
-                <ModalText>Please accept the MetaMask wallet permissions in order to access your wallet.</ModalText>
-                <ModalText>
-                    <ModalTextLink href="https://metamask.io/" target="_blank">
-                        What is MetaMask?
-                    </ModalTextLink>
-                </ModalText>
-                <ButtonStyled theme="tertiary">
-                    <LinkButton onClick={connectWallet}>{errorsWallet.mmConnect}</LinkButton>
-                </ButtonStyled>
-            </>
-        );
-
-        return (
-            <Modal isOpen={isOpen} style={themeModalStyle}>
-                <CloseModalButton onClick={closeModal} />
-                <ModalContent>
-                    {noMetamaskType === ModalDisplay.EnablePermissions
-                        ? metamaskNoPermissionsContent
-                        : metamaskNotInstalledContent}
-                </ModalContent>
-            </Modal>
-        );
-    };
-}
+    return (
+        <Modal isOpen={isOpen} style={themeModalStyle}>
+            <CloseModalButton onClick={closeModal} />
+            <ModalContent>
+                {noMetamaskType === ModalDisplay.EnablePermissions
+                    ? metamaskNoPermissionsContent
+                    : metamaskNotInstalledContent}
+            </ModalContent>
+        </Modal>
+    );
+};
 export { MetamaskErrorModal };
