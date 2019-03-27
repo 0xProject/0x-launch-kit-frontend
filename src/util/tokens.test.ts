@@ -1,6 +1,7 @@
 import { BigNumber } from '0x.js';
 
-import { tokenAmountInUnits, unitsInTokenAmount } from './tokens';
+import { tokenAmountInUnits, tokenSymbolToDisplayString, unitsInTokenAmount } from './tokens';
+import { TokenSymbol } from './types';
 
 describe('tokenAmountInUnits', () => {
     it('should format the token amount', async () => {
@@ -53,5 +54,29 @@ describe('unitsInTokenAmount', () => {
         // then
         const expected = new BigNumber('12300');
         expect(result.eq(expected)).toBe(true);
+    });
+});
+
+describe('tokenSymbolToDisplayString', () => {
+    it('should return weth token correctly formated', async () => {
+        // given
+        const symbol = TokenSymbol.Weth;
+        // when
+        const result = tokenSymbolToDisplayString(symbol);
+
+        // then
+        const expected = 'wETH';
+        expect(result === expected).toBe(true);
+    });
+
+    it('should return generic token (no weth) in uppercase', async () => {
+        // given
+        const symbol = TokenSymbol.Zrx;
+        // when
+        const result = tokenSymbolToDisplayString(symbol);
+
+        // then
+        const expected = 'ZRX';
+        expect(result === expected).toBe(true);
     });
 });

@@ -91,7 +91,7 @@ export const updateTokenBalancesOnToggleTokenLock = (token: Token, isUnlocked: b
     return async (dispatch: any, getState: any) => {
         const state = getState();
 
-        if (isWeth(token)) {
+        if (isWeth(token.symbol)) {
             const wethTokenBalance = getWethTokenBalance(state) as TokenBalance;
             dispatch(
                 setWethTokenBalance({
