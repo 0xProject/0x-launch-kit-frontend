@@ -204,7 +204,7 @@ interface Filter {
     text: string;
     value: null | TokenSymbol;
 }
-const FILTER_TOKENS: Filter[] = [
+const marketFilters: Filter[] = [
     {
         text: 'All',
         value: null,
@@ -221,7 +221,7 @@ const FILTER_TOKENS: Filter[] = [
 
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
-        selectedFilter: FILTER_TOKENS[0],
+        selectedFilter: marketFilters[0],
         search: '',
     };
 
@@ -260,7 +260,7 @@ class MarketsDropdown extends React.Component<Props, State> {
     private readonly _getTokensFilterTabs = () => {
         return (
             <TokenFiltersTabs>
-                {FILTER_TOKENS.map((filter: Filter, index) => {
+                {marketFilters.map((filter: Filter, index) => {
                     return (
                         <TokenFiltersTab
                             active={filter === this.state.selectedFilter}
