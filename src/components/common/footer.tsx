@@ -1,6 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
+import { GIT_COMMIT } from '../../common/constants';
 import { themeDimensions } from '../../util/theme';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -83,5 +84,9 @@ const poweredBySVG = () => {
 export const Footer: React.FC<Props> = props => {
     const { ...restProps } = props;
 
-    return <FooterWrapper {...restProps}>{poweredBySVG()}</FooterWrapper>;
+    return (
+        <FooterWrapper title={GIT_COMMIT} {...restProps}>
+            {poweredBySVG()}
+        </FooterWrapper>
+    );
 };

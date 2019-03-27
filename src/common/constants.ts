@@ -45,3 +45,5 @@ export const UPDATE_ETHER_PRICE_INTERVAL: number =
 
 export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;
+
+export const GIT_COMMIT: string = process.env.REACT_APP_GIT_COMMIT || '';
