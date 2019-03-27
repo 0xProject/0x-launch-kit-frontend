@@ -4,12 +4,13 @@ import { createAction } from 'typesafe-actions';
 import { MAINNET_ID, METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
+import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
 import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
@@ -48,6 +49,10 @@ export const setWethBalance = createAction('SET_WETH_BALANCE', resolve => {
 
 export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolve => {
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
+});
+
+export const setGasInfo = createAction('SET_GAS_INFO', resolve => {
+    return (gasInfo: GasInfo) => resolve(gasInfo);
 });
 
 export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
@@ -162,6 +167,13 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
         });
 
         return tx;
+    };
+};
+
+export const updateGasInfo = () => {
+    return async (dispatch: any) => {
+        const fetchedGasInfo = await getGasEstimationInfoAsync();
+        dispatch(setGasInfo(fetchedGasInfo));
     };
 };
 

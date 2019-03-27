@@ -3,7 +3,7 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
-import { setEthBalance, setTokenBalances, setWethBalance } from './blockchain/actions';
+import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
 import { getMarkets, setMarketTokens } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair } from './selectors';
@@ -43,6 +43,7 @@ export const updateStore = () => {
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
             dispatch(getMarkets());
+            dispatch(updateGasInfo());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
             const currencyPair = getCurrencyPair(state);
@@ -50,6 +51,7 @@ export const updateStore = () => {
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderBook());
+            dispatch(updateGasInfo());
         }
     };
 };
