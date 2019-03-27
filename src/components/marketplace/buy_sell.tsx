@@ -167,8 +167,6 @@ class BuySell extends React.Component<Props, State> {
             },
         ];
 
-        const isBtnDisabled = web3State !== Web3State.Done;
-
         return (
             <BuySellWrapper>
                 <TabsContainer>
@@ -223,7 +221,7 @@ class BuySell extends React.Component<Props, State> {
                     <Button
                         theme="secondary"
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
-                        disabled={isBtnDisabled}
+                        disabled={web3State !== Web3State.Done}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         <TokenTextButtonUppercase>{currencyPair.base}</TokenTextButtonUppercase>
