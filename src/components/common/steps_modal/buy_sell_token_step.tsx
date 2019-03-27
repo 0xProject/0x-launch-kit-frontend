@@ -19,7 +19,11 @@ import {
     StepStatusLoading,
     Title,
 } from './steps_common';
+import { StepItem, StepsProgress } from './steps_progress';
 
+interface OwnProps {
+    buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
+}
 interface StateProps {
     step: StepBuySellMarket;
 }
@@ -30,7 +34,7 @@ interface DispatchProps {
     notifyBuySellMarket: (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => any;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     status: StepStatus;
@@ -96,10 +100,18 @@ class BuySellTokenStep extends React.Component<Props, State> {
                 );
                 break;
         }
+
+        const stepsProgress = this.props.buildStepsProgress({
+            title: getStepTitle(this.props.step),
+            active: true,
+            progress: status === StepStatus.Done ? '100' : '0',
+        });
+
         return (
             <>
                 <Title>Order Setup</Title>
                 {content}
+                <StepsProgress steps={stepsProgress} />
             </>
         );
     };

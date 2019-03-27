@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { getStepTitle } from '../../../util/steps';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 import {
@@ -17,7 +18,11 @@ import {
     StepStatusLoading,
     Title,
 } from './steps_common';
+import { StepItem, StepsProgress } from './steps_progress';
 
+interface OwnProps {
+    buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
+}
 interface StateProps {
     step: StepBuySellLimitOrder;
 }
@@ -27,7 +32,7 @@ interface DispatchProps {
     submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     status: StepStatus;
@@ -80,10 +85,18 @@ class SignOrderStep extends React.Component<Props, State> {
                 );
                 break;
         }
+
+        const stepsProgress = this.props.buildStepsProgress({
+            title: getStepTitle(this.props.step),
+            active: true,
+            progress: status === StepStatus.Done ? '100' : '0',
+        });
+
         return (
             <>
                 <Title>Order Setup</Title>
                 {content}
+                <StepsProgress steps={stepsProgress} />
             </>
         );
     };
