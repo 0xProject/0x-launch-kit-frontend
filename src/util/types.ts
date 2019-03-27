@@ -191,6 +191,7 @@ export type Notification = CancelOrderNotification | MarketNotification | LimitN
 export enum TokenSymbol {
     Weth = 'weth',
     Zrx = 'zrx',
+    Dai = 'dai',
     Mkr = 'mkr',
     Rep = 'rep',
     Dgd = 'dgd',

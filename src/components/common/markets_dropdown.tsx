@@ -6,9 +6,10 @@ import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, getOrderbookAndUserOrders } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
-import { filterMarketsByString } from '../../util/markets';
+import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
+import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../util/types';
 
 import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
@@ -33,7 +34,7 @@ interface PropsToken {
 type Props = PropsDivElement & PropsToken & DispatchProps;
 
 interface State {
-    selectedFilter: number;
+    selectedFilter: Filter;
     search: string;
 }
 
@@ -199,11 +200,28 @@ const TokenLabel = styled.div`
     margin: 0 0 0 15px;
 `;
 
-const FILTER_TOKENS = ['All', 'ETH', 'DAI'];
+interface Filter {
+    text: string;
+    value: null | TokenSymbol;
+}
+const FILTER_TOKENS: Filter[] = [
+    {
+        text: 'All',
+        value: null,
+    },
+    {
+        text: 'ETH',
+        value: TokenSymbol.Weth,
+    },
+    {
+        text: tokenSymbolToDisplayString(TokenSymbol.Dai),
+        value: TokenSymbol.Dai,
+    },
+];
 
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
-        selectedFilter: 0,
+        selectedFilter: FILTER_TOKENS[0],
         search: '',
     };
 
@@ -242,14 +260,14 @@ class MarketsDropdown extends React.Component<Props, State> {
     private readonly _getTokensFilterTabs = () => {
         return (
             <TokenFiltersTabs>
-                {FILTER_TOKENS.map((item, index) => {
+                {FILTER_TOKENS.map((filter: Filter, index) => {
                     return (
                         <TokenFiltersTab
-                            active={index === this.state.selectedFilter}
+                            active={filter === this.state.selectedFilter}
                             key={index}
-                            onClick={this._setTokensFilterTab.bind(this, index)}
+                            onClick={this._setTokensFilterTab.bind(this, filter)}
                         >
-                            {item}
+                            {filter.text}
                         </TokenFiltersTab>
                     );
                 })}
@@ -257,8 +275,8 @@ class MarketsDropdown extends React.Component<Props, State> {
         );
     };
 
-    private readonly _setTokensFilterTab: any = (index: number) => {
-        this.setState({ selectedFilter: index });
+    private readonly _setTokensFilterTab: any = (filter: Filter) => {
+        this.setState({ selectedFilter: filter });
     };
 
     private readonly _getSearchField = () => {
@@ -287,7 +305,7 @@ class MarketsDropdown extends React.Component<Props, State> {
         }
 
         const filteredMarkets =
-            selectedFilter === 0 ? markets : filterMarketsByString(markets, FILTER_TOKENS[selectedFilter]);
+            selectedFilter.value === null ? markets : filterMarketsByTokenSymbol(markets, selectedFilter.value);
         const searchedMarkets = filterMarketsByString(filteredMarkets, search);
 
         return (

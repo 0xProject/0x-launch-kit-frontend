@@ -1,4 +1,10 @@
-import { Market } from './types';
+import { Market, TokenSymbol } from './types';
+
+export const filterMarketsByTokenSymbol = (markets: Market[], tokenSymbol: TokenSymbol): Market[] => {
+    return markets.filter(
+        market => market.currencyPair.base === tokenSymbol || market.currencyPair.quote === tokenSymbol,
+    );
+};
 
 export const filterMarketsByString = (markets: Market[], str: string): Market[] => {
     return markets.filter(market => {
