@@ -147,7 +147,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         const formattedTotalEth = tokenAmountInUnits(totalEth, 18);
 
         let content: React.ReactNode;
-        let displayCard = true;
+        let shouldDisplayCard = true;
 
         if (web3State === Web3State.Done) {
             content = (
@@ -188,10 +188,10 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         } else if (web3State === Web3State.Loading) {
             content = <CardLoading />;
         } else {
-            displayCard = false;
+            shouldDisplayCard = false;
         }
 
-        return displayCard ? (
+        return shouldDisplayCard ? (
             <>
                 <Card title="ETH / wETH Balances">
                     <Content>{content}</Content>
