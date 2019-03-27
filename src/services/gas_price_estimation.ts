@@ -6,6 +6,7 @@ import {
     ETH_GAS_STATION_API_BASE_URL,
     GWEI_IN_WEI,
 } from '../common/constants';
+import { GasInfo } from '../util/types';
 
 interface EthGasStationResult {
     average: number;
@@ -19,11 +20,6 @@ interface EthGasStationResult {
     speed: number;
     fastest: number;
     safeLow: number;
-}
-
-interface GasInfo {
-    gasPriceInWei: BigNumber;
-    estimatedTimeMs: number;
 }
 
 let fetchedAmount: GasInfo | undefined;
