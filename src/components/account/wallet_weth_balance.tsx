@@ -146,7 +146,8 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         const formattedWeth = tokenAmountInUnits(wethBalance, 18);
         const formattedTotalEth = tokenAmountInUnits(totalEth, 18);
 
-        let content: React.ReactNode;
+        let content: React.ReactNode = null;
+
         if (web3State === Web3State.Done) {
             content = (
                 <>
@@ -183,7 +184,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     />
                 </>
             );
-        } else {
+        }
+
+        if (web3State === Web3State.Loading) {
             content = <CardLoading />;
         }
 
