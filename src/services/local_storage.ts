@@ -8,6 +8,7 @@ const addPrefix = (key: string) => `0x-launch-kit-frontend.${key}`;
 const notificationsKey = addPrefix('notifications');
 const hasUnreadNotificationsKey = addPrefix('hasUnreadNotifications');
 const lastBlockCheckedKey = addPrefix('lastBlockChecked');
+const adBlockMessageShownKey = addPrefix('adBlockMessageShown');
 
 export class LocalStorage {
     private readonly _storage: Storage;
@@ -91,5 +92,13 @@ export class LocalStorage {
         const currentLastBlockChecked = JSON.parse(this._storage.getItem(lastBlockCheckedKey) || '{}');
 
         return currentLastBlockChecked[account] || 0;
+    }
+
+    public saveAdBlockMessageShown(adBlockMessageShown: boolean): void {
+        this._storage.setItem(adBlockMessageShownKey, JSON.stringify(adBlockMessageShown));
+    }
+
+    public getAdBlockMessageShown(): boolean {
+        return JSON.parse(this._storage.getItem(adBlockMessageShownKey) || 'false');
     }
 }

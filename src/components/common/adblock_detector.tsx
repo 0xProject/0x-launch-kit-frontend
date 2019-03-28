@@ -2,6 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
+import { LocalStorage } from '../../services/local_storage';
 import { themeModalStyle } from '../../util/theme';
 
 import { CloseModalButton } from './icons/close_modal_button';
@@ -66,13 +67,19 @@ const stopIcon = () => {
     );
 };
 
+const localStorage = new LocalStorage(window.localStorage);
+
 class AdBlockDetector extends React.Component<Props, State> {
     public readonly state: State = {
         isOpen: false,
     };
 
     public componentDidMount = async () => {
-        this.setState({ isOpen: await this.detectAdBlock() });
+        const wasAdBlockMessageShown = localStorage.getAdBlockMessageShown();
+        if (!wasAdBlockMessageShown) {
+            this.setState({ isOpen: await this.detectAdBlock() });
+            localStorage.saveAdBlockMessageShown(true);
+        }
     };
 
     public detectAdBlock = () => {
