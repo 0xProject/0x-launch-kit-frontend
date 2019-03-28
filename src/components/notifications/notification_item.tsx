@@ -2,6 +2,7 @@ import React from 'react';
 import TimeAgo from 'react-timeago';
 import styled, { keyframes } from 'styled-components';
 
+import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { Notification, NotificationKind, OrderSide } from '../../util/types';
@@ -73,6 +74,8 @@ const NotificationIcon = styled.div`
 `;
 
 class NotificationItem extends React.Component<Props, State> {
+    private _txMined: CancelablePromise<any> | null = null;
+
     constructor(props: Props) {
         super(props);
 
@@ -89,7 +92,15 @@ class NotificationItem extends React.Component<Props, State> {
                 pending: true,
             });
 
-            await item.tx.finally(() => this.setState({ pending: false }));
+            this._txMined = makeCancelable(item.tx);
+
+            await this._txMined.promise.finally(() => this.setState({ pending: false }));
+        }
+    };
+
+    public componentWillUnmount = () => {
+        if (this._txMined) {
+            this._txMined.cancel();
         }
     };
 
