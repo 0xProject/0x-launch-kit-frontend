@@ -55,6 +55,10 @@ export const setGasInfo = createAction('SET_GAS_INFO', resolve => {
     return (gasInfo: GasInfo) => resolve(gasInfo);
 });
 
+export const setNetworkId = createAction('SET_NETWORK_ID', resolve => {
+    return (networkId: number) => resolve(networkId);
+});
+
 export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();

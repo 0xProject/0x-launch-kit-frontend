@@ -25,6 +25,7 @@ export const getMarkets = (state: StoreState) => state.market.markets;
 export const getEthInUsd = (state: StoreState) => state.market.ethInUsd;
 export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.gasPriceInWei;
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
+export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 
 export const getOpenOrders = createSelector(
     getOrders,
