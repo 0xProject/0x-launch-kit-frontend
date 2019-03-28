@@ -10,15 +10,23 @@ import {
 } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
+import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, Token, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
 import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
-import { getCurrencyPair, getEthAccount, getTokenBalances, getWethBalance, getWethTokenBalance } from '../selectors';
+import {
+    getCurrencyPair,
+    getEthAccount,
+    getGasPriceInWei,
+    getTokenBalances,
+    getWethBalance,
+    getWethTokenBalance,
+} from '../selectors';
 import { addNotification, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
@@ -49,10 +57,19 @@ export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolv
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
 });
 
+export const setGasInfo = createAction('SET_GAS_INFO', resolve => {
+    return (gasInfo: GasInfo) => resolve(gasInfo);
+});
+
+export const setNetworkId = createAction('SET_NETWORK_ID', resolve => {
+    return (networkId: number) => resolve(networkId);
+});
+
 export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
 
         const contractWrappers = await getContractWrappers();
         const web3Wrapper = await getWeb3WrapperOrThrow();
@@ -63,7 +80,10 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
                 token.address,
                 ethAccount,
                 new BigNumber('0'),
-                TX_DEFAULTS,
+                {
+                    ...TX_DEFAULTS,
+                    gasPrice,
+                },
             );
         } else {
             tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
@@ -111,6 +131,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
         const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
 
@@ -132,7 +153,10 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
                 wethAddress,
                 wethBalance.sub(newWethBalance),
                 ethAccount,
-                TX_DEFAULTS,
+                {
+                    ...TX_DEFAULTS,
+                    gasPrice,
+                },
             );
         } else {
             return;
@@ -153,6 +177,13 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
         });
 
         return tx;
+    };
+};
+
+export const updateGasInfo = () => {
+    return async (dispatch: any) => {
+        const fetchedGasInfo = await getGasEstimationInfoAsync();
+        dispatch(setGasInfo(fetchedGasInfo));
     };
 };
 

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
-import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { getStepTitle } from '../../../util/steps';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
@@ -28,6 +28,7 @@ interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
 }
 interface StateProps {
+    networkId: number | null;
     step: StepWrapEth;
 }
 
@@ -52,9 +53,15 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     public render = () => {
+        const { networkId } = this.props;
+
+        if (networkId === null) {
+            return null;
+        }
+
         const { context, currentWethBalance, newWethBalance } = this.props.step;
         const amount = newWethBalance.sub(currentWethBalance);
-        const wethToken = getKnownTokens().getWethToken();
+        const wethToken = getKnownTokens(networkId).getWethToken();
         const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toString();
         const { status } = this.state;
         const retry = () => this._retry();
@@ -156,6 +163,7 @@ class WrapEthStep extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        networkId: getNetworkId(state),
         step: getStepsModalCurrentStep(state) as StepWrapEth,
     };
 };

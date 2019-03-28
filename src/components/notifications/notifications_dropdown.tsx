@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { setHasUnreadNotifications } from '../../store/actions';
-import { getHasUnreadNotifications, getNotifications } from '../../store/selectors';
+import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
@@ -13,6 +13,7 @@ import { BellIcon } from '../common/icons/bell_icon';
 import { NotificationItem } from './notification_item';
 
 interface StateProps {
+    estimatedTxTimeMs: number;
     notifications: Notification[];
     hasUnreadNotifications: boolean;
 }
@@ -65,9 +66,17 @@ const NoNotifications = styled.div`
 
 class NotificationsDropdown extends React.Component<Props, {}> {
     public render = () => {
-        const { notifications, hasUnreadNotifications, onMarkNotificationsAsRead, ...restProps } = this.props;
+        const {
+            estimatedTxTimeMs,
+            notifications,
+            hasUnreadNotifications,
+            onMarkNotificationsAsRead,
+            ...restProps
+        } = this.props;
 
-        const notificationsList = notifications.map((item, index) => <NotificationItem key={index} item={item} />);
+        const notificationsList = notifications.map((item, index) => (
+            <NotificationItem key={index} item={item} estimatedTxTimeMs={estimatedTxTimeMs} />
+        ));
 
         const header = (
             <NotificationsDropdownHeader>
@@ -104,6 +113,7 @@ class NotificationsDropdown extends React.Component<Props, {}> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         notifications: getNotifications(state),
         hasUnreadNotifications: getHasUnreadNotifications(state),
     };

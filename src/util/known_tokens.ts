@@ -1,6 +1,4 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
-
-import { RELAYER_NETWORK_ID } from '../common/constants';
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
@@ -81,7 +79,7 @@ export class KnownTokens {
 
 let knownTokens: KnownTokens;
 export const getKnownTokens = (
-    networkId: number = RELAYER_NETWORK_ID,
+    networkId: number,
     knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA,
 ): KnownTokens => {
     if (!knownTokens) {

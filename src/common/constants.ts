@@ -46,6 +46,16 @@ export const UPDATE_ETHER_PRICE_INTERVAL: number =
 export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;
 
+export const ETH_GAS_STATION_API_BASE_URL = 'https://ethgasstation.info';
+
+export const GWEI_IN_WEI = new BigNumber(1000000000);
+
+export const ONE_MINUTE_MS = 1000 * 60;
+
+export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.mul(6);
+
+export const DEFAULT_ESTIMATED_TRANSACTION_TIME_MS = ONE_MINUTE_MS * 2;
+
 export const GIT_COMMIT: string = process.env.REACT_APP_GIT_COMMIT || '';
 
 export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_START_BLOCK_LIMIT as string, 10) || 1000;

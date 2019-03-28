@@ -1,6 +1,7 @@
 import { BigNumber } from '0x.js';
 import { getType } from 'typesafe-actions';
 
+import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE } from '../../common/constants';
 import { BlockchainState, Web3State } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -11,6 +12,11 @@ const initialBlockchainState: BlockchainState = {
     tokenBalances: [],
     ethBalance: new BigNumber(0),
     wethTokenBalance: null,
+    networkId: null,
+    gasInfo: {
+        gasPriceInWei: DEFAULT_GAS_PRICE,
+        estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
+    },
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -23,6 +29,8 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, tokenBalances: action.payload };
         case getType(actions.setWethTokenBalance):
             return { ...state, wethTokenBalance: action.payload };
+        case getType(actions.setGasInfo):
+            return { ...state, gasInfo: action.payload };
         case getType(actions.setWethBalance):
             return {
                 ...state,
@@ -40,6 +48,8 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
                 ...state,
                 ...action.payload,
             };
+        case getType(actions.setNetworkId):
+            return { ...state, networkId: action.payload };
     }
     return state;
 }
