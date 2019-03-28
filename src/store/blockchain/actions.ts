@@ -1,7 +1,13 @@
 import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { MAINNET_ID, METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS } from '../../common/constants';
+import {
+    MAINNET_ID,
+    METAMASK_NOT_INSTALLED,
+    METAMASK_USER_DENIED_AUTH,
+    START_BLOCK_LIMIT,
+    TX_DEFAULTS,
+} from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { LocalStorage } from '../../services/local_storage';
@@ -166,7 +172,11 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
 
-        const fromBlock = localStorage.getLastBlockChecked(ethAccount) + 1;
+        const fromBlockInTheStorage = localStorage.getLastBlockChecked(ethAccount) + 1;
+        const fromBlock =
+            fromBlockInTheStorage === 1 && blockNumber > START_BLOCK_LIMIT
+                ? blockNumber - START_BLOCK_LIMIT
+                : fromBlockInTheStorage;
         const toBlock = blockNumber;
 
         const subscription = await subscribeToFillEvents({

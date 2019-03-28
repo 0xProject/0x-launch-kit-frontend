@@ -47,3 +47,5 @@ export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;
 
 export const GIT_COMMIT: string = process.env.REACT_APP_GIT_COMMIT || '';
+
+export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_START_BLOCK_LIMIT as string, 10) || 1000;
