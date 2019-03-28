@@ -6,8 +6,10 @@ import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, goToHome } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
+import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
+import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../util/types';
 
 import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
@@ -32,7 +34,7 @@ interface PropsToken {
 type Props = PropsDivElement & PropsToken & DispatchProps;
 
 interface State {
-    selectedFilter: number;
+    selectedFilter: Filter;
     search: string;
 }
 
@@ -198,11 +200,28 @@ const TokenLabel = styled.div`
     margin: 0 0 0 15px;
 `;
 
-const FILTER_TOKENS = ['All', 'ETH', 'DAI', 'USDC'];
+interface Filter {
+    text: string;
+    value: null | TokenSymbol;
+}
+const marketFilters: Filter[] = [
+    {
+        text: 'All',
+        value: null,
+    },
+    {
+        text: 'ETH',
+        value: TokenSymbol.Weth,
+    },
+    {
+        text: tokenSymbolToDisplayString(TokenSymbol.Dai),
+        value: TokenSymbol.Dai,
+    },
+];
 
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
-        selectedFilter: 0,
+        selectedFilter: marketFilters[0],
         search: '',
     };
 
@@ -241,14 +260,14 @@ class MarketsDropdown extends React.Component<Props, State> {
     private readonly _getTokensFilterTabs = () => {
         return (
             <TokenFiltersTabs>
-                {FILTER_TOKENS.map((item, index) => {
+                {marketFilters.map((filter: Filter, index) => {
                     return (
                         <TokenFiltersTab
-                            active={index === this.state.selectedFilter}
+                            active={filter === this.state.selectedFilter}
                             key={index}
-                            onClick={this._setTokensFilterTab.bind(this, index)}
+                            onClick={this._setTokensFilterTab.bind(this, filter)}
                         >
-                            {item}
+                            {filter.text}
                         </TokenFiltersTab>
                     );
                 })}
@@ -256,8 +275,8 @@ class MarketsDropdown extends React.Component<Props, State> {
         );
     };
 
-    private readonly _setTokensFilterTab: any = (index: number) => {
-        this.setState({ selectedFilter: index });
+    private readonly _setTokensFilterTab: any = (filter: Filter) => {
+        this.setState({ selectedFilter: filter });
     };
 
     private readonly _getSearchField = () => {
@@ -279,17 +298,15 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _getMarkets = () => {
         const { baseToken, currencyPair, markets } = this.props;
-        const { search } = this.state;
+        const { search, selectedFilter } = this.state;
 
         if (!baseToken || !markets) {
             return null;
         }
 
-        const filteredMarkets = markets.filter(market => {
-            const baseLowerCase = market.currencyPair.base.toLowerCase();
-            const quoteLowerCase = market.currencyPair.quote.toLowerCase();
-            return `${baseLowerCase}/${quoteLowerCase}`.indexOf(search.toLowerCase()) !== -1;
-        });
+        const filteredMarkets =
+            selectedFilter.value === null ? markets : filterMarketsByTokenSymbol(markets, selectedFilter.value);
+        const searchedMarkets = filterMarketsByString(filteredMarkets, search);
 
         return (
             <Table>
@@ -300,7 +317,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                     </TR>
                 </THead>
                 <TBody>
-                    {filteredMarkets.map((market, index) => {
+                    {searchedMarkets.map((market, index) => {
                         const isActive =
                             market.currencyPair.base === currencyPair.base &&
                             market.currencyPair.quote === currencyPair.quote;

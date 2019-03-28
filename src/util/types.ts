@@ -195,6 +195,7 @@ export type Notification = CancelOrderNotification | MarketNotification | LimitN
 export enum TokenSymbol {
     Weth = 'weth',
     Zrx = 'zrx',
+    Dai = 'dai',
     Mkr = 'mkr',
     Rep = 'rep',
     Dgd = 'dgd',
@@ -209,4 +210,9 @@ export enum OrderType {
 export interface GasInfo {
     gasPriceInWei: BigNumber;
     estimatedTimeMs: number;
+}
+
+export enum ModalDisplay {
+    InstallMetamask = 'INSTALL_METAMASK',
+    EnablePermissions = 'ACCEPT_PERMISSIONS',
 }
