@@ -16,17 +16,14 @@ export const buildOrderFilledNotification = (
     let exchangedTokenAddress: string;
     if (args.makerAssetData === wethAssetData) {
         side = OrderSide.Buy;
-        // decodeERC20AssetData will throw an error if the asset is not an ERC20
         exchangedTokenAddress = assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress;
-    } else if (args.takerAssetData === wethAssetData) {
-        side = OrderSide.Sell;
-        // decodeERC20AssetData will throw an error if the asset is not an ERC20
-        exchangedTokenAddress = assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress;
+        // } else (args.takerAssetData === wethAssetData) {
     } else {
-        throw new Error('Order does not involve wETH');
+        // TODO do a proper check to infer if the Fill corresponds to a buy or a sell
+        side = OrderSide.Sell;
+        exchangedTokenAddress = assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress;
     }
 
-    // getTokenByAddress will throw an error if the exchanged token address not belong to the known tokens markets
     const exchangedToken = knownTokens.getTokenByAddress(exchangedTokenAddress);
 
     return {

@@ -172,11 +172,11 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
 
-        const fromBlockInTheStorage = localStorage.getLastBlockChecked(ethAccount) + 1;
+        const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
+
         const fromBlock =
-            fromBlockInTheStorage === 1 && blockNumber > START_BLOCK_LIMIT
-                ? blockNumber - START_BLOCK_LIMIT
-                : fromBlockInTheStorage;
+            lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
+
         const toBlock = blockNumber;
 
         const subscription = await subscribeToFillEvents({
@@ -185,19 +185,18 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
             toBlock,
             ethAccount,
             fillEventCallback: async fillEvent => {
-                try {
-                    const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
-                    const notification = buildOrderFilledNotification(fillEvent, knownTokens);
-                    dispatch(
-                        addNotification({
-                            ...notification,
-                            timestamp: new Date(timestamp * 1000),
-                        }),
-                    );
-                } catch (err) {
-                    // tslint:disable-next-line:no-console
-                    console.log(`Error on subscribe to fill events: ${err.message}`);
+                if (!knownTokens.isValidFillEvent(fillEvent)) {
+                    return;
                 }
+
+                const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
+                const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                dispatch(
+                    addNotification({
+                        ...notification,
+                        timestamp: new Date(timestamp * 1000),
+                    }),
+                );
             },
         });
 
