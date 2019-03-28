@@ -77,7 +77,7 @@ class AdBlockDetector extends React.Component<Props, State> {
 
     public detectAdBlock = () => {
         return new Promise<boolean>((resolve, reject) => {
-            /* Creates a bait for ad block **/
+            // Creates a bait for ad block
             const elem = document.createElement('div');
 
             elem.className = 'adclass';

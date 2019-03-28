@@ -11,9 +11,6 @@ export const TX_DEFAULTS = {
     gasLimit: 1000000,
 };
 
-export const WETH_TOKEN_SYMBOL = 'weth';
-export const ZRX_TOKEN_SYMBOL = 'zrx';
-
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
@@ -48,3 +45,5 @@ export const UPDATE_ETHER_PRICE_INTERVAL: number =
 
 export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;
+
+export const GIT_COMMIT: string = process.env.REACT_APP_GIT_COMMIT || '';

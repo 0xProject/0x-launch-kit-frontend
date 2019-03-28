@@ -152,9 +152,11 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = {
-    onGoToHome: goToHome,
-    onGoToWallet: goToWallet,
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        onGoToHome: () => dispatch(goToHome()),
+        onGoToWallet: () => dispatch(goToWallet()),
+    };
 };
 
 const ToolbarContainer = connect(
