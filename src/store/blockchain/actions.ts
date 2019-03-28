@@ -175,14 +175,19 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
             toBlock,
             ethAccount,
             fillEventCallback: async fillEvent => {
-                const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
-                const notification = buildOrderFilledNotification(fillEvent, knownTokens);
-                dispatch(
-                    addNotification({
-                        ...notification,
-                        timestamp: new Date(timestamp * 1000),
-                    }),
-                );
+                try {
+                    const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
+                    const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                    dispatch(
+                        addNotification({
+                            ...notification,
+                            timestamp: new Date(timestamp * 1000),
+                        }),
+                    );
+                } catch (err) {
+                    // tslint:disable-next-line:no-console
+                    console.log(`Error on subscribe to fill events: ${err.message}`);
+                }
             },
         });
 
