@@ -36,6 +36,7 @@ export interface BlockchainState {
     readonly tokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
+    readonly gasInfo: GasInfo;
 }
 
 export interface RelayerState {
@@ -157,17 +158,20 @@ interface BaseNotification {
     timestamp: Date;
 }
 
-interface CancelOrderNotification extends BaseNotification {
+interface TransactionNotification extends BaseNotification {
+    tx: Promise<any>;
+}
+
+interface CancelOrderNotification extends TransactionNotification {
     kind: NotificationKind.CancelOrder;
     amount: BigNumber;
     token: Token;
 }
 
-interface MarketNotification extends BaseNotification {
+interface MarketNotification extends TransactionNotification {
     kind: NotificationKind.Market;
     amount: BigNumber;
     token: Token;
-    tx: Promise<any>;
     side: OrderSide;
 }
 
@@ -201,6 +205,11 @@ export enum TokenSymbol {
 export enum OrderType {
     Limit = 'Limit',
     Market = 'Market',
+}
+
+export interface GasInfo {
+    gasPriceInWei: BigNumber;
+    estimatedTimeMs: number;
 }
 
 export enum ModalDisplay {
