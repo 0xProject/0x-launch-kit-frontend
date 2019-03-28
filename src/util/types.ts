@@ -202,3 +202,8 @@ export enum OrderType {
     Limit = 'Limit',
     Market = 'Market',
 }
+
+export enum ModalDisplay {
+    InstallMetamask = 'INSTALL_METAMASK',
+    EnablePermissions = 'ACCEPT_PERMISSIONS',
+}
