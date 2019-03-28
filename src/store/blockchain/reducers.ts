@@ -12,6 +12,7 @@ const initialBlockchainState: BlockchainState = {
     tokenBalances: [],
     ethBalance: new BigNumber(0),
     wethTokenBalance: null,
+    networkId: null,
     gasInfo: {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
@@ -47,6 +48,8 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
                 ...state,
                 ...action.payload,
             };
+        case getType(actions.setNetworkId):
+            return { ...state, networkId: action.payload };
     }
     return state;
 }
