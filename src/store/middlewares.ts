@@ -14,7 +14,7 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
     const result = next(action);
     switch (action.type) {
         case getType(actions.setHasUnreadNotifications):
-        case getType(actions.addNotification): {
+        case getType(actions.addNotifications): {
             const state = getState();
             const ethAccount = getEthAccount(state);
             const notifications = getNotifications(state);

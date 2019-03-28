@@ -6,15 +6,17 @@ interface SubscribeToFillEventsParams {
     toBlock: number;
     ethAccount: string;
     fillEventCallback: (log: LogWithDecodedArgs<ExchangeFillEventArgs>) => any;
+    pastFillEventsCallback: (log: Array<LogWithDecodedArgs<ExchangeFillEventArgs>>) => any;
 }
 
-export const subscribeToFillEvents = async ({
+export const subscribeToFillEvents = ({
     exchange,
     fromBlock,
     toBlock,
     ethAccount,
     fillEventCallback,
-}: SubscribeToFillEventsParams): Promise<string> => {
+    pastFillEventsCallback,
+}: SubscribeToFillEventsParams): string => {
     const subscription = exchange.subscribe(
         ExchangeEvents.Fill,
         { makerAddress: ethAccount },
@@ -28,18 +30,18 @@ export const subscribeToFillEvents = async ({
         },
     );
 
-    const pastFillEvents = await exchange.getLogsAsync<ExchangeFillEventArgs>(
-        ExchangeEvents.Fill,
-        {
-            fromBlock,
-            toBlock,
-        },
-        {
-            makerAddress: ethAccount,
-        },
-    );
-
-    pastFillEvents.forEach(fillEventCallback);
+    exchange
+        .getLogsAsync<ExchangeFillEventArgs>(
+            ExchangeEvents.Fill,
+            {
+                fromBlock,
+                toBlock,
+            },
+            {
+                makerAddress: ethAccount,
+            },
+        )
+        .then(pastFillEventsCallback);
 
     return subscription;
 };

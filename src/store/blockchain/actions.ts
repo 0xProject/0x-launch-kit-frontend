@@ -27,7 +27,7 @@ import {
     getWethBalance,
     getWethTokenBalance,
 } from '../selectors';
-import { addNotification, setHasUnreadNotifications, setNotifications } from '../ui/actions';
+import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
@@ -210,7 +210,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         const toBlock = blockNumber;
 
-        const subscription = await subscribeToFillEvents({
+        const subscription = subscribeToFillEvents({
             exchange: contractWrappers.exchange,
             fromBlock,
             toBlock,
@@ -223,11 +223,32 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
                 const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
                 const notification = buildOrderFilledNotification(fillEvent, knownTokens);
                 dispatch(
-                    addNotification({
-                        ...notification,
-                        timestamp: new Date(timestamp * 1000),
+                    addNotifications([
+                        {
+                            ...notification,
+                            timestamp: new Date(timestamp * 1000),
+                        },
+                    ]),
+                );
+            },
+            pastFillEventsCallback: async fillEvents => {
+                const validFillEvents = fillEvents.filter(knownTokens.isValidFillEvent);
+
+                const notifications = await Promise.all(
+                    validFillEvents.map(async fillEvent => {
+                        const timestamp = await web3Wrapper.getBlockTimestampAsync(
+                            fillEvent.blockNumber || blockNumber,
+                        );
+                        const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+
+                        return {
+                            ...notification,
+                            timestamp: new Date(timestamp * 1000),
+                        };
                     }),
                 );
+
+                dispatch(addNotifications(notifications));
             },
         });
 
@@ -258,6 +279,7 @@ export const initWallet = () => {
             );
 
             const wethToken = knownTokens.getWethToken();
+
             const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
