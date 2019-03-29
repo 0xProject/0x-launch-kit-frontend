@@ -1,11 +1,12 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
-import { KnownTokens } from './known_tokens';
-import { NotificationKind, OrderFilledNotification, OrderSide } from './types';
+import { getOrderSideFromFilledEvent, KnownTokens } from './known_tokens';
+import { Market, NotificationKind, OrderFilledNotification, OrderSide, Token } from './types';
 
 export const buildOrderFilledNotification = (
     log: LogWithDecodedArgs<ExchangeFillEventArgs>,
     knownTokens: KnownTokens,
+    markets: Market[] | null,
 ): OrderFilledNotification => {
     const { args } = log;
     const wethToken = knownTokens.getWethToken();
@@ -14,18 +15,23 @@ export const buildOrderFilledNotification = (
 
     let side: OrderSide;
     let exchangedTokenAddress: string;
-    if (args.makerAssetData === wethAssetData) {
-        side = OrderSide.Buy;
-        exchangedTokenAddress = assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress;
-        // } else (args.takerAssetData === wethAssetData) {
+    let exchangedToken: Token;
+    if (markets) {
+        side = getOrderSideFromFilledEvent(knownTokens, log, markets);
     } else {
-        // TODO do a proper check to infer if the Fill corresponds to a buy or a sell
-        side = OrderSide.Sell;
-        exchangedTokenAddress = assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress;
+        // Fallback in case there are not markets
+        if (args.makerAssetData === wethAssetData) {
+            side = OrderSide.Buy;
+        } else {
+            side = OrderSide.Sell;
+        }
     }
 
-    const exchangedToken = knownTokens.getTokenByAddress(exchangedTokenAddress);
+    exchangedTokenAddress = OrderSide.Sell
+        ? assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress
+        : assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress;
 
+    exchangedToken = knownTokens.getTokenByAddress(exchangedTokenAddress);
     return {
         id: `${log.transactionHash}-${log.logIndex}`,
         kind: NotificationKind.OrderFilled,

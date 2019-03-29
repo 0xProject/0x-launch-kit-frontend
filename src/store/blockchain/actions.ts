@@ -16,13 +16,14 @@ import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, GasInfo, Market, Token, TokenBalance, Web3State } from '../../util/types';
 import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,
     getEthAccount,
     getGasPriceInWei,
+    getMarkets as getMarketsSelector,
     getTokenBalances,
     getWethBalance,
     getWethTokenBalance,
@@ -189,7 +190,8 @@ export const updateGasInfo = () => {
 
 let fillEventsSubscription: string | null = null;
 export const setConnectedUser = (ethAccount: string, networkId: number) => {
-    return async (dispatch: any) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
         const knownTokens = getKnownTokens(networkId);
         const localStorage = new LocalStorage(window.localStorage);
 
@@ -210,6 +212,8 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         const toBlock = blockNumber;
 
+        const markets: Market[] | null = getMarketsSelector(state);
+
         const subscription = subscribeToFillEvents({
             exchange: contractWrappers.exchange,
             fromBlock,
@@ -221,7 +225,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
                 }
 
                 const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
-                const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                const notification = buildOrderFilledNotification(fillEvent, knownTokens, markets);
                 dispatch(
                     addNotifications([
                         {
@@ -239,7 +243,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
                         const timestamp = await web3Wrapper.getBlockTimestampAsync(
                             fillEvent.blockNumber || blockNumber,
                         );
-                        const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                        const notification = buildOrderFilledNotification(fillEvent, knownTokens, markets);
 
                         return {
                             ...notification,
