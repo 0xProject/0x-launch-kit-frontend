@@ -37,9 +37,6 @@ export const updateStore = () => {
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
-            if (networkId !== getNetworkId(state)) {
-                dispatch(setNetworkId(networkId));
-            }
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));

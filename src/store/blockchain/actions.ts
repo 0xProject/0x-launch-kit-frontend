@@ -287,6 +287,7 @@ export const initWallet = () => {
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
+            dispatch(setNetworkId(networkId));
             dispatch(setConnectedUser(ethAccount, networkId));
             dispatch(
                 initializeBlockchainData({
