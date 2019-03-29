@@ -67,28 +67,4 @@ describe('buildOrderFilledNotification', () => {
         expect(notification.amount).toEqual(new BigNumber(2));
         expect(notification.side).toEqual(OrderSide.Sell);
     });
-
-    it('should throw if neither side of the filling is weth', () => {
-        // given
-        const args: ExchangeFillEventArgs = {
-            feeRecipientAddress: addressFactory.build().address,
-            makerAddress: addressFactory.build().address,
-            takerAddress: addressFactory.build().address,
-            senderAddress: addressFactory.build().address,
-            makerAssetFilledAmount: new BigNumber(2),
-            takerAssetFilledAmount: new BigNumber(1),
-            makerFeePaid: new BigNumber(0),
-            takerFeePaid: new BigNumber(0),
-            orderHash: '',
-            makerAssetData: assetDataUtils.encodeERC20AssetData(tokens[0].addresses[50]),
-            takerAssetData: assetDataUtils.encodeERC20AssetData(tokens[1].addresses[50]),
-        };
-        const log: any = {
-            args,
-            transactionHash: '',
-        };
-
-        // when
-        expect(() => buildOrderFilledNotification(log, knownTokens)).toThrow();
-    });
 });

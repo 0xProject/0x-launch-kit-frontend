@@ -23,8 +23,8 @@ export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATI
     return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
 });
 
-export const addNotification = createAction('ADD_NOTIFICATION', resolve => {
-    return (newNotification: Notification) => resolve(newNotification);
+export const addNotifications = createAction('ADD_NOTIFICATIONS', resolve => {
+    return (newNotifications: Notification[]) => resolve(newNotifications);
 });
 
 export const setNotifications = createAction('SET_NOTIFICATIONS', resolve => {
@@ -283,14 +283,16 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
 export const addMarketBuySellNotification = (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => {
     return async (dispatch: any) => {
         dispatch(
-            addNotification({
-                kind: NotificationKind.Market,
-                amount,
-                token,
-                side,
-                tx,
-                timestamp: new Date(),
-            }),
+            addNotifications([
+                {
+                    kind: NotificationKind.Market,
+                    amount,
+                    token,
+                    side,
+                    tx,
+                    timestamp: new Date(),
+                },
+            ]),
         );
     };
 };
