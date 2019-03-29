@@ -118,28 +118,36 @@ const isERC20AssetData = (assetData: string): boolean => {
 export const getOrderSideFromFilledEvent = (
     knownToken: KnownTokens,
     fillEvent: LogWithDecodedArgs<ExchangeFillEventArgs>,
-    markets: Market[],
+    markets: Market[] | null,
+    wethAssetData: string,
 ): OrderSide => {
-    if (!knownToken.isValidFillEvent(fillEvent)) {
-        throw new Error('The event is not valid');
-    }
     const { args } = fillEvent;
     const makerAssetData = args.makerAssetData;
     const takerAssetData = args.takerAssetData;
     const makerTokenAddress = assetDataUtils.decodeERC20AssetData(makerAssetData).tokenAddress;
     const takerTokenAddress = assetDataUtils.decodeERC20AssetData(takerAssetData).tokenAddress;
-    markets.forEach(market => {
-        const baseSymbol = market.currencyPair.base;
-        const quoteSymbol = market.currencyPair.quote;
-        const baseToken = knownToken.getTokenBySymbol(baseSymbol);
-        const quoteToken = knownToken.getTokenBySymbol(quoteSymbol);
-        if (makerTokenAddress === baseToken.address && takerTokenAddress === quoteToken.address) {
-            // This is a sell order --> fill event is a buy
-            return OrderSide.Buy;
-        } else if (makerTokenAddress === quoteToken.address && takerTokenAddress === baseToken.address) {
-            // This is a buy order --> fill event is a sell
-            return OrderSide.Sell;
-        }
-    });
-    throw new Error('The event is not valid');
+    let orderSide: OrderSide = OrderSide.Sell;
+    if (!knownToken.isValidFillEvent(fillEvent)) {
+        throw new Error('The event is not valid');
+    }
+    // Fallback in case there are not markets
+    if (!markets) {
+        orderSide = makerAssetData === wethAssetData ? OrderSide.Buy : OrderSide.Sell;
+    } else {
+        markets.forEach(market => {
+            const baseSymbol = market.currencyPair.base;
+            const quoteSymbol = market.currencyPair.quote;
+            const baseToken = knownToken.getTokenBySymbol(baseSymbol);
+            const quoteToken = knownToken.getTokenBySymbol(quoteSymbol);
+            if (makerTokenAddress === baseToken.address && takerTokenAddress === quoteToken.address) {
+                // This is a sell order --> fill event is a buy
+                orderSide = OrderSide.Buy;
+            } else if (makerTokenAddress === quoteToken.address && takerTokenAddress === baseToken.address) {
+                // This is a buy order --> fill event is a sell
+                orderSide = OrderSide.Sell;
+            }
+        });
+    }
+
+    return orderSide;
 };

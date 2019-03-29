@@ -13,20 +13,9 @@ export const buildOrderFilledNotification = (
 
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethToken.address);
 
-    let side: OrderSide;
+    const side: OrderSide = getOrderSideFromFilledEvent(knownTokens, log, markets, wethAssetData);
     let exchangedTokenAddress: string;
     let exchangedToken: Token;
-    if (markets) {
-        side = getOrderSideFromFilledEvent(knownTokens, log, markets);
-    } else {
-        // Fallback in case there are not markets
-        if (args.makerAssetData === wethAssetData) {
-            side = OrderSide.Buy;
-        } else {
-            side = OrderSide.Sell;
-        }
-    }
-
     exchangedTokenAddress = OrderSide.Sell
         ? assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress
         : assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress;

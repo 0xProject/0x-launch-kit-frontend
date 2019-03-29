@@ -189,22 +189,20 @@ export const updateGasInfo = () => {
 };
 
 let fillEventsSubscription: string | null = null;
-export const setConnectedUser = (ethAccount: string, networkId: number) => {
+export const setConnectedUserNotifications = () => {
     return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const knownTokens = getKnownTokens(networkId);
+        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
         const localStorage = new LocalStorage(window.localStorage);
-
-        dispatch(setEthAccount(ethAccount));
-
         dispatch(setNotifications(localStorage.getNotifications(ethAccount)));
         dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount)));
 
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const state = getState();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const knownTokens = getKnownTokens(networkId);
         const contractWrappers = await getContractWrappers();
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
-
         const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
 
         const fromBlock =
@@ -244,14 +242,12 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
                             fillEvent.blockNumber || blockNumber,
                         );
                         const notification = buildOrderFilledNotification(fillEvent, knownTokens, markets);
-
                         return {
                             ...notification,
                             timestamp: new Date(timestamp * 1000),
                         };
                     }),
                 );
-
                 dispatch(addNotifications(notifications));
             },
         });
@@ -290,8 +286,7 @@ export const initWallet = () => {
 
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
-
-            dispatch(setConnectedUser(ethAccount, networkId));
+            dispatch(setEthAccount(ethAccount));
             dispatch(
                 initializeBlockchainData({
                     web3State: Web3State.Done,
@@ -307,8 +302,8 @@ export const initWallet = () => {
                 }),
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
-            dispatch(getOrderbookAndUserOrders());
             dispatch(getMarkets());
+            dispatch(getOrderbookAndUserOrders());
             dispatch(updateMarketPriceEther());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
