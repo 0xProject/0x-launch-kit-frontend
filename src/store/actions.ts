@@ -3,10 +3,10 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
-import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
+import { setEthBalance, setNetworkId, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
 import { getMarkets, setMarketTokens } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
-import { getCurrencyPair } from './selectors';
+import { getCurrencyPair, getNetworkId } from './selectors';
 
 export * from './blockchain/actions';
 export * from './market/actions';
@@ -37,6 +37,9 @@ export const updateStore = () => {
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
+            if (networkId !== getNetworkId(state)) {
+                dispatch(setNetworkId(networkId));
+            }
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));
