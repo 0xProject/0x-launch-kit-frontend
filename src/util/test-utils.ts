@@ -95,3 +95,9 @@ export const tokenMetaDataFactory = Factory.Sync.makeFactory<TokenMetaData>({
     // @ts-ignore
     symbol: Factory.each(i => `MOCK${i}`),
 });
+
+export const tokenBalanceFactory = Factory.Sync.makeFactory<TokenBalance>({
+    balance: new BigNumber(2),
+    isUnlocked: true,
+    token: tokenFactory.build(),
+});
