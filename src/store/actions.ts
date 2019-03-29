@@ -3,10 +3,10 @@ import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
-import { setEthBalance, setNetworkId, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
+import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
 import { getMarkets, setMarketTokens } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
-import { getCurrencyPair, getNetworkId } from './selectors';
+import { getCurrencyPair } from './selectors';
 
 export * from './blockchain/actions';
 export * from './market/actions';
