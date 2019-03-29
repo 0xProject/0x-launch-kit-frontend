@@ -1,3 +1,5 @@
+import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
+
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
@@ -35,6 +37,38 @@ export class KnownTokens {
         return token;
     };
 
+    public isKnownAddress = (address: string): boolean => {
+        try {
+            this.getTokenByAddress(address);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    };
+
+    /**
+     * Checks if a Fill event is valid.
+     *
+     * A Fill event is considered valid if the order involves two ERC20 tokens whose addresses we know.
+     *
+     */
+    public isValidFillEvent = (fillEvent: LogWithDecodedArgs<ExchangeFillEventArgs>): boolean => {
+        const { makerAssetData, takerAssetData } = fillEvent.args;
+
+        if (!isERC20AssetData(makerAssetData) || !isERC20AssetData(takerAssetData)) {
+            return false;
+        }
+
+        const makerAssetAddress = assetDataUtils.decodeERC20AssetData(makerAssetData).tokenAddress;
+        const takerAssetAddress = assetDataUtils.decodeERC20AssetData(takerAssetData).tokenAddress;
+
+        if (!this.isKnownAddress(makerAssetAddress) || !this.isKnownAddress(takerAssetAddress)) {
+            return false;
+        }
+
+        return true;
+    };
+
     public getWethToken = (): Token => {
         return this._wethToken as Token;
     };
@@ -70,4 +104,13 @@ export const isZrx = (token: TokenSymbol): boolean => {
 
 export const isWeth = (token: TokenSymbol): boolean => {
     return token === TokenSymbol.Weth;
+};
+
+const isERC20AssetData = (assetData: string): boolean => {
+    try {
+        assetDataUtils.decodeERC20AssetData(assetData);
+        return true;
+    } catch (e) {
+        return false;
+    }
 };

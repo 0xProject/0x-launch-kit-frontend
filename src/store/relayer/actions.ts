@@ -16,7 +16,7 @@ import {
     getOpenSellOrders,
     getQuoteToken,
 } from '../selectors';
-import { addNotification } from '../ui/actions';
+import { addNotifications } from '../ui/actions';
 
 export const initializeRelayerData = createAction('INITIALIZE_RELAYER_DATA', resolve => {
     return (relayerData: RelayerState) => resolve(relayerData);
@@ -64,13 +64,15 @@ export const cancelOrder = (order: UIOrder) => {
         tx.then(() => dispatch(getOrderbookAndUserOrders())); // tslint:disable-line:no-floating-promises
 
         dispatch(
-            addNotification({
-                kind: NotificationKind.CancelOrder,
-                amount: order.size,
-                token: baseToken,
-                timestamp: new Date(),
-                tx,
-            }),
+            addNotifications([
+                {
+                    kind: NotificationKind.CancelOrder,
+                    amount: order.size,
+                    token: baseToken,
+                    timestamp: new Date(),
+                    tx,
+                },
+            ]),
         );
     };
 };
@@ -84,13 +86,15 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
 
         dispatch(getOrderbookAndUserOrders());
         dispatch(
-            addNotification({
-                kind: NotificationKind.Limit,
-                amount,
-                token: baseToken,
-                side,
-                timestamp: new Date(),
-            }),
+            addNotifications([
+                {
+                    kind: NotificationKind.Limit,
+                    amount,
+                    token: baseToken,
+                    side,
+                    timestamp: new Date(),
+                },
+            ]),
         );
 
         return submitResult;
@@ -127,14 +131,16 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             dispatch(getOrderbookAndUserOrders());
 
             dispatch(
-                addNotification({
-                    kind: NotificationKind.Market,
-                    amount,
-                    token: baseToken,
-                    side,
-                    tx,
-                    timestamp: new Date(),
-                }),
+                addNotifications([
+                    {
+                        kind: NotificationKind.Market,
+                        amount,
+                        token: baseToken,
+                        side,
+                        tx,
+                        timestamp: new Date(),
+                    },
+                ]),
             );
 
             return txHash;

@@ -88,10 +88,10 @@ export class LocalStorage {
         this._storage.setItem(lastBlockCheckedKey, JSON.stringify(newBlocks));
     }
 
-    public getLastBlockChecked(account: string): number {
+    public getLastBlockChecked(account: string): number | null {
         const currentLastBlockChecked = JSON.parse(this._storage.getItem(lastBlockCheckedKey) || '{}');
 
-        return currentLastBlockChecked[account] || 0;
+        return currentLastBlockChecked[account] || null;
     }
 
     public saveAdBlockMessageShown(adBlockMessageShown: boolean): void {
