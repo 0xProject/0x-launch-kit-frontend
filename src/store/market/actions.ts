@@ -68,7 +68,7 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
     };
 };
 
-export const getMarkets = () => {
+export const fetchMarkets = () => {
     return async (dispatch: any) => {
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();

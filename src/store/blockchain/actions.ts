@@ -16,14 +16,14 @@ import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, GasInfo, Market, Token, TokenBalance, Web3State } from '../../util/types';
-import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
+import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
+import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,
     getEthAccount,
     getGasPriceInWei,
-    getMarkets as getMarketsSelector,
+    getMarkets,
     getTokenBalances,
     getWethBalance,
     getWethTokenBalance,
@@ -209,7 +209,7 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
 
         const toBlock = blockNumber;
 
-        const markets = getMarketsSelector(state);
+        const markets = getMarkets(state);
 
         const subscription = subscribeToFillEvents({
             exchange: contractWrappers.exchange,
@@ -305,7 +305,7 @@ export const initWallet = () => {
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
-            dispatch(getMarkets());
+            dispatch(fetchMarkets());
             dispatch(updateMarketPriceEther());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
