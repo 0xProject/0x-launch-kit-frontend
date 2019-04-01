@@ -121,7 +121,7 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
         const stepsProgress = this.props.buildStepsProgress({
             title: getStepTitle(this.props.step),
             active: true,
-            progress: status === StepStatus.Done ? '100' : '0',
+            progress: status === StepStatus.Done ? 100 : 0,
         });
 
         return (

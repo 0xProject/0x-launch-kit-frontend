@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
-import { getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
-import { getStepTitle } from '../../../util/steps';
+import { getStepTitle, makeGetProgress } from '../../../util/steps';
 import { tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
+import { StepPendingTime } from './step_pending_time';
 import {
     ModalText,
     ModalTextClickable,
@@ -20,12 +21,13 @@ import {
     StepStatusLoading,
     Title,
 } from './steps_common';
-import { StepItem, StepsProgress } from './steps_progress';
+import { GetProgress, StepItem, StepsProgress } from './steps_progress';
 
 interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
 }
 interface StateProps {
+    estimatedTxTimeMs: number;
     step: StepBuySellMarket;
 }
 
@@ -39,11 +41,13 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     status: StepStatus;
+    txStarted: number | null;
 }
 
 class BuySellTokenStep extends React.Component<Props, State> {
     public state = {
         status: StepStatus.ConfirmOnMetamask,
+        txStarted: null,
     };
 
     public componentDidMount = async () => {
@@ -51,8 +55,8 @@ class BuySellTokenStep extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { step } = this.props;
-        const { status } = this.state;
+        const { estimatedTxTimeMs, step } = this.props;
+        const { status, txStarted } = this.state;
 
         const isBuyOrSell = step.side === OrderSide.Buy;
         const tokenSymbol = tokenSymbolToDisplayString(step.token.symbol);
@@ -102,10 +106,17 @@ class BuySellTokenStep extends React.Component<Props, State> {
                 break;
         }
 
+        let getProgress: GetProgress = () => 0;
+        if (status === StepStatus.Loading && txStarted !== null) {
+            getProgress = makeGetProgress(txStarted, estimatedTxTimeMs);
+        } else if (status === StepStatus.Done) {
+            getProgress = () => 100;
+        }
+
         const stepsProgress = this.props.buildStepsProgress({
             title: getStepTitle(this.props.step),
             active: true,
-            progress: status === StepStatus.Done ? '100' : '0',
+            progress: getProgress,
         });
 
         return (
@@ -113,6 +124,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
                 <Title>Order Setup</Title>
                 {content}
                 <StepsProgress steps={stepsProgress} />
+                <StepPendingTime txStarted={txStarted} stepStatus={status} estimatedTxTimeMs={estimatedTxTimeMs} />
             </>
         );
     };
@@ -122,9 +134,10 @@ class BuySellTokenStep extends React.Component<Props, State> {
         try {
             const web3Wrapper = await getWeb3WrapperOrThrow();
             const fillOrdersTxHash = await this.props.submitMarketOrder(amount, side);
-            this.setState({ status: StepStatus.Loading });
+            this.setState({ status: StepStatus.Loading, txStarted: Date.now() });
 
             await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
+
             this.setState({ status: StepStatus.Done });
             this.props.notifyBuySellMarket(amount, token, side, Promise.resolve());
             this.props.refreshOrders();
@@ -141,6 +154,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepBuySellMarket,
     };
 };

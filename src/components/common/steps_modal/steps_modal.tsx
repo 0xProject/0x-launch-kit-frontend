@@ -36,13 +36,13 @@ class StepsModal extends React.Component<Props> {
         const buildStepsProgress = (currentStepItem: StepItem): StepItem[] => [
             ...doneSteps.map(doneStep => ({
                 title: getStepTitle(doneStep),
-                progress: '100',
+                progress: 100,
                 active: false,
             })),
             currentStepItem,
             ...pendingSteps.map(pendingStep => ({
                 title: getStepTitle(pendingStep),
-                progress: '0',
+                progress: 0,
                 active: false,
             })),
         ];
