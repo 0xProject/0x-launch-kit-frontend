@@ -43,15 +43,11 @@ export class KnownTokens {
     };
 
     public isKnownAddress = (address: string): boolean => {
-        if (isWeth(address as TokenSymbol)) {
+        try {
+            this.getTokenByAddress(address);
             return true;
-        } else {
-            try {
-                this.getTokenByAddress(address);
-                return true;
-            } catch (e) {
-                return false;
-            }
+        } catch (e) {
+            return false;
         }
     };
 
