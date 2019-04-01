@@ -18,6 +18,7 @@ export class LocalStorage {
     }
 
     public saveNotifications(notifications: Notification[], account: string): void {
+        console.log("saving notifications", notifications)
         const currentNotifications = JSON.parse(this._storage.getItem(notificationsKey) || '{}');
         const networkId = 50;
         // Sort array by timestamp property
@@ -32,8 +33,6 @@ export class LocalStorage {
                 [account]: sortedNotifications,
             },
         };
-        console.log("info set ", newNotifications[networkId][account])
-
         // Limit number of notifications
         if (newNotifications[networkId][account].length > NOTIFICATIONS_LIMIT) {
             newNotifications[networkId][account].length = NOTIFICATIONS_LIMIT;
@@ -47,33 +46,30 @@ export class LocalStorage {
         if (!notificationsJSON) {
             return [];
         }
-        const currentNotifications = JSON.parse(
-            notificationsJSON,
-            (key: string, value: string) => {
-                if (key === 'amount') {
-                    return new BigNumber(value);
-                }
-                if (key === 'timestamp') {
-                    return new Date(value);
-                }
-                if (key === 'tx') {
-                    return Promise.resolve();
-                }
-                return value;
-            },
-        );
+        const currentNotifications = JSON.parse(notificationsJSON, (key: string, value: string) => {
+            if (key === 'amount') {
+                return new BigNumber(value);
+            }
+            if (key === 'timestamp') {
+                return new Date(value);
+            }
+            if (key === 'tx') {
+                return Promise.resolve();
+            }
+            return value;
+        });
         const networkId = 50;
-        console.log("return ", currentNotifications[networkId][account])
-
         return currentNotifications[networkId][account] || [];
     }
 
     public saveHasUnreadNotifications(hasUnreadNotifications: boolean, account: string): void {
         const currentStatuses = JSON.parse(this._storage.getItem(hasUnreadNotificationsKey) || '{}');
-
+        const networkId = 50;
         const newStatuses = {
             ...currentStatuses,
-            [account]: hasUnreadNotifications,
+            [networkId]: {
+                [account]: hasUnreadNotifications,
+            },
         };
 
         this._storage.setItem(hasUnreadNotificationsKey, JSON.stringify(newStatuses));
@@ -81,16 +77,21 @@ export class LocalStorage {
 
     public getHasUnreadNotifications(account: string): boolean {
         const currentNotifications = JSON.parse(this._storage.getItem(hasUnreadNotificationsKey) || '{}');
-
-        return currentNotifications[account] || false;
+        const networkId = 50;
+        if (currentNotifications[networkId] && currentNotifications[networkId][account]) {
+            return currentNotifications[networkId][account];
+        }
+        return false;
     }
 
     public saveLastBlockChecked(lastBlockChecked: number, account: string): void {
         const currentBlocks = JSON.parse(this._storage.getItem(lastBlockCheckedKey) || '{}');
-
+        const networkId = 50;
         const newBlocks = {
             ...currentBlocks,
-            [account]: lastBlockChecked,
+            [networkId]: {
+                [account]: lastBlockChecked,
+            },
         };
 
         this._storage.setItem(lastBlockCheckedKey, JSON.stringify(newBlocks));
@@ -98,8 +99,11 @@ export class LocalStorage {
 
     public getLastBlockChecked(account: string): number | null {
         const currentLastBlockChecked = JSON.parse(this._storage.getItem(lastBlockCheckedKey) || '{}');
-
-        return currentLastBlockChecked[account] || null;
+        const networkId = 50;
+        if (currentLastBlockChecked[networkId] && currentLastBlockChecked[networkId][account]) {
+            return currentLastBlockChecked[networkId][account];
+        }
+        return null;
     }
 
     public saveAdBlockMessageShown(adBlockMessageShown: boolean): void {
