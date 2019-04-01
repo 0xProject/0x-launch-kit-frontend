@@ -1,6 +1,6 @@
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 
-import { getKnownTokens, KnownTokens } from './known_tokens';
+import { getKnownTokens, isERC20AssetData, KnownTokens } from './known_tokens';
 import { Token, TokenSymbol } from './types';
 
 const networkId = 50;
@@ -136,8 +136,8 @@ const fillEvent3 = {
         makerFeePaid: '1000000000000000000',
         takerFeePaid: '100000000000000000',
         orderHash: '0x6d2a42e67403effdbf797f25ef87083a6a3d21a0bcabd6b04b00060ad6afc3cd',
-        makerAssetData: '0xf47261b00000000000000000000000005b6b10caa9e8e9552ba72638ea5b47c25afea1f3',
-        takerAssetData: '0xf47261b00000000000000000000000003002d3812f58e35f0ea1ffbf80a75a38c32175fa',
+        makerAssetData: '0xc47261b00000000000000000000000005b7b10caa9e8e9552ba72638ea5b47c25afea1f3',
+        takerAssetData: '0xc47261b00000000000000000000000003012d3812f58e35f0ea1ffbf80a75a38c32175fa',
     },
 };
 
@@ -170,8 +170,8 @@ const fillEvent4 = {
         makerFeePaid: '1000000000000000000',
         takerFeePaid: '100000000000000000',
         orderHash: '0x6d2a42e67403effdbf797f25ef87083a6a3d21a0bcabd6b04b00060ad6afc3cd',
-        makerAssetData: '0xf47261b00000000000000000000000005b6b40caa9e8e9552ba72638ea5b47c25afea1f3',
-        takerAssetData: '0xf47261b00000000000000000000000003003d3812f58e35f0ea1ffbf80a75a38c32175fa',
+        makerAssetData: '0xc47261b00000000000000000000000005b6c40caa9e8e9552ba72638ea5b47c25afea1f3',
+        takerAssetData: '0xc47261b00000000000000000000000003004d3812f58e35f0ea1ffbf80a75a38c32175fa',
     },
 };
 
@@ -247,6 +247,22 @@ describe('KnownTokens', () => {
             const knownTokens = new KnownTokens(42, KNOWN_TOKENS_META_DATA);
             expect(knownTokens.isValidFillEvent(fillEvent3)).toBeFalsy();
             expect(knownTokens.isValidFillEvent(fillEvent4)).toBeFalsy();
+        });
+    });
+
+    describe('isERC20AssetData', () => {
+        it('should return true if is an ERC20', () => {
+            expect(isERC20AssetData(fillEvent1.args.makerAssetData)).toBeTruthy();
+            expect(isERC20AssetData(fillEvent1.args.takerAssetData)).toBeTruthy();
+            expect(isERC20AssetData(fillEvent2.args.makerAssetData)).toBeTruthy();
+            expect(isERC20AssetData(fillEvent2.args.takerAssetData)).toBeTruthy();
+        });
+
+        it('should return false if is not an ERC20', () => {
+            expect(isERC20AssetData(fillEvent3.args.makerAssetData)).toBeFalsy();
+            expect(isERC20AssetData(fillEvent3.args.takerAssetData)).toBeFalsy();
+            expect(isERC20AssetData(fillEvent4.args.makerAssetData)).toBeFalsy();
+            expect(isERC20AssetData(fillEvent4.args.takerAssetData)).toBeFalsy();
         });
     });
 });
