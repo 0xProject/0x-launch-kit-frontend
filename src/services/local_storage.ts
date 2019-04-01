@@ -19,30 +19,36 @@ export class LocalStorage {
 
     public saveNotifications(notifications: Notification[], account: string): void {
         const currentNotifications = JSON.parse(this._storage.getItem(notificationsKey) || '{}');
-
-        const newNotifications = {
-            ...currentNotifications,
-            [account]: notifications,
-        };
-
+        const networkId = 50;
         // Sort array by timestamp property
-        newNotifications[account] = newNotifications[account].sort((a: Notification, b: Notification) => {
+        const sortedNotifications = notifications.sort((a: Notification, b: Notification) => {
             const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
             const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
             return bTimestamp - aTimestamp;
         });
+        const newNotifications = {
+            ...currentNotifications,
+            [networkId]: {
+                [account]: sortedNotifications,
+            },
+        };
+        console.log("info set ", newNotifications[networkId][account])
 
         // Limit number of notifications
-        if (newNotifications[account].length > NOTIFICATIONS_LIMIT) {
-            newNotifications[account].length = NOTIFICATIONS_LIMIT;
+        if (newNotifications[networkId][account].length > NOTIFICATIONS_LIMIT) {
+            newNotifications[networkId][account].length = NOTIFICATIONS_LIMIT;
         }
 
         this._storage.setItem(notificationsKey, JSON.stringify(newNotifications));
     }
 
     public getNotifications(account: string): Notification[] {
+        const notificationsJSON = this._storage.getItem(notificationsKey);
+        if (!notificationsJSON) {
+            return [];
+        }
         const currentNotifications = JSON.parse(
-            this._storage.getItem(notificationsKey) || '{}',
+            notificationsJSON,
             (key: string, value: string) => {
                 if (key === 'amount') {
                     return new BigNumber(value);
@@ -56,8 +62,10 @@ export class LocalStorage {
                 return value;
             },
         );
+        const networkId = 50;
+        console.log("return ", currentNotifications[networkId][account])
 
-        return currentNotifications[account] || [];
+        return currentNotifications[networkId][account] || [];
     }
 
     public saveHasUnreadNotifications(hasUnreadNotifications: boolean, account: string): void {
