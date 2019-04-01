@@ -74,13 +74,10 @@ const IconContainer = styled.div<{ color: string; isInline?: boolean }>`
     align-items: center;
     background-color: ${props => (props.color ? props.color : 'transparent')};
     border-radius: 50%;
-    display: ${props => (props.isInline ? 'inline-block' : 'flex')};
+    display: ${props => (props.isInline ? 'inline-flex' : 'flex')};
     height: 26px;
     justify-content: center;
     width: 26px;
-    ${props => (props.isInline ? 'text-align: center;' : '')}
-    ${props => (props.isInline ? 'margin-right: 10px;' : '')}
-    ${props => (props.isInline ? 'vertical-align: bottom;' : '')}
 `;
 
 const Label = styled.label`
