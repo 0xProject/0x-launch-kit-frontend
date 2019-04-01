@@ -18,48 +18,53 @@ export class LocalStorage {
     }
 
     public saveNotifications(notifications: Notification[], account: string): void {
-        console.log("saving notifications", notifications)
+        console.log('saving notifications', notifications);
         const currentNotifications = JSON.parse(this._storage.getItem(notificationsKey) || '{}');
         const networkId = 50;
+        const newNotifications = {
+            ...currentNotifications,
+            [networkId]: {
+                [account]: notifications,
+            },
+        };
         // Sort array by timestamp property
-        const sortedNotifications = notifications.sort((a: Notification, b: Notification) => {
+        notifications.sort((a: Notification, b: Notification) => {
             const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
             const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
             return bTimestamp - aTimestamp;
         });
-        const newNotifications = {
-            ...currentNotifications,
-            [networkId]: {
-                [account]: sortedNotifications,
-            },
-        };
         // Limit number of notifications
         if (newNotifications[networkId][account].length > NOTIFICATIONS_LIMIT) {
             newNotifications[networkId][account].length = NOTIFICATIONS_LIMIT;
         }
 
         this._storage.setItem(notificationsKey, JSON.stringify(newNotifications));
+        const test = this.getNotifications(account);
+        console.log("finally notifications ", test)
     }
 
     public getNotifications(account: string): Notification[] {
-        const notificationsJSON = this._storage.getItem(notificationsKey);
-        if (!notificationsJSON) {
-            return [];
-        }
-        const currentNotifications = JSON.parse(notificationsJSON, (key: string, value: string) => {
-            if (key === 'amount') {
-                return new BigNumber(value);
-            }
-            if (key === 'timestamp') {
-                return new Date(value);
-            }
-            if (key === 'tx') {
-                return Promise.resolve();
-            }
-            return value;
-        });
+        console.log("get notifications")
         const networkId = 50;
-        return currentNotifications[networkId][account] || [];
+        const currentNotifications = JSON.parse(
+            this._storage.getItem(notificationsKey) || '{}',
+            (key: string, value: string) => {
+                if (key === 'amount') {
+                    return new BigNumber(value);
+                }
+                if (key === 'timestamp') {
+                    return new Date(value);
+                }
+                if (key === 'tx') {
+                    return Promise.resolve();
+                }
+                return value;
+            },
+        );
+        if (currentNotifications[networkId] && currentNotifications[networkId][account]) {
+            return currentNotifications[networkId][account];
+        }
+        return [];
     }
 
     public saveHasUnreadNotifications(hasUnreadNotifications: boolean, account: string): void {
