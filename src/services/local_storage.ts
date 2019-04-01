@@ -27,7 +27,7 @@ export class LocalStorage {
             },
         };
         // Sort array by timestamp property
-        newNotifications[networkId][account].sort((a: Notification, b: Notification) => {
+        newNotifications[networkId][account] = newNotifications[networkId][account].sort((a: Notification, b: Notification) => {
             const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
             const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
             return bTimestamp - aTimestamp;
