@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 
 import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
-import { getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
-import { getStepTitle } from '../../../util/steps';
+import { getStepTitle, makeGetProgress } from '../../../util/steps';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
+import { StepPendingTime } from './step_pending_time';
 import {
     DONE_STATUS_VISIBILITY_TIME,
     ModalText,
@@ -22,12 +23,13 @@ import {
     StepStatusLoading,
     Title,
 } from './steps_common';
-import { StepItem, StepsProgress } from './steps_progress';
+import { GetProgress, StepItem, StepsProgress } from './steps_progress';
 
 interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
 }
 interface StateProps {
+    estimatedTxTimeMs: number;
     networkId: number | null;
     step: StepWrapEth;
 }
@@ -41,11 +43,13 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     status: StepStatus;
+    txStarted: number | null;
 }
 
 class WrapEthStep extends React.Component<Props, State> {
     public state = {
         status: StepStatus.ConfirmOnMetamask,
+        txStarted: null,
     };
 
     public componentDidMount = async () => {
@@ -53,17 +57,17 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { networkId } = this.props;
+        const { estimatedTxTimeMs, networkId, step } = this.props;
 
         if (networkId === null) {
             return null;
         }
 
-        const { context, currentWethBalance, newWethBalance } = this.props.step;
+        const { context, currentWethBalance, newWethBalance } = step;
         const amount = newWethBalance.sub(currentWethBalance);
         const wethToken = getKnownTokens(networkId).getWethToken();
         const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toString();
-        const { status } = this.state;
+        const { status, txStarted } = this.state;
         const retry = () => this._retry();
         let content;
 
@@ -121,19 +125,27 @@ class WrapEthStep extends React.Component<Props, State> {
                 break;
         }
 
+        const title = context === 'order' ? 'Order setup' : 'Converting wETH';
+
+        let getProgress: GetProgress = () => 0;
+        if (status === StepStatus.Loading && txStarted !== null) {
+            getProgress = makeGetProgress(txStarted, estimatedTxTimeMs);
+        } else if (status === StepStatus.Done) {
+            getProgress = () => 100;
+        }
+
         const stepsProgress = this.props.buildStepsProgress({
             title: getStepTitle(this.props.step),
             active: true,
-            progress: status === StepStatus.Done ? 100 : 0,
+            progress: getProgress,
         });
-
-        const title = context === 'order' ? 'Order setup' : 'Converting wETH';
 
         return (
             <>
                 <Title>{title}</Title>
                 {content}
                 <StepsProgress steps={stepsProgress} />
+                <StepPendingTime txStarted={txStarted} stepStatus={status} estimatedTxTimeMs={estimatedTxTimeMs} />
             </>
         );
     };
@@ -144,7 +156,7 @@ class WrapEthStep extends React.Component<Props, State> {
         try {
             const web3Wrapper = await getWeb3WrapperOrThrow();
             const convertTxHash = await this.props.updateWeth(newWethBalance);
-            this.setState({ status: StepStatus.Loading });
+            this.setState({ status: StepStatus.Loading, txStarted: Date.now() });
 
             await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
             this.setState({ status: StepStatus.Done });
@@ -163,6 +175,7 @@ class WrapEthStep extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         networkId: getNetworkId(state),
         step: getStepsModalCurrentStep(state) as StepWrapEth,
     };
