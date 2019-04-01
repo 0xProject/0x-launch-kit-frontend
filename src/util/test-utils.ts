@@ -4,7 +4,7 @@ import * as Factory from 'factory.ts';
 
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { OrderSide, Token, UIOrder } from './types';
+import { OrderSide, Token, TokenBalance, UIOrder } from './types';
 
 export const makeOrder = ({
     makerAssetAmount,
