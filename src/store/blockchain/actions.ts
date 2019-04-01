@@ -209,7 +209,7 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
 
         const toBlock = blockNumber;
 
-        const markets: Market[] | null = getMarketsSelector(state);
+        const markets = getMarketsSelector(state);
 
         const subscription = subscribeToFillEvents({
             exchange: contractWrappers.exchange,
