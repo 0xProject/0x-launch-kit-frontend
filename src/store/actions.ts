@@ -42,7 +42,7 @@ export const updateStore = () => {
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
-            dispatch(fetchMarkets());
+            await fetchMarkets(dispatch);
             dispatch(updateGasInfo());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);

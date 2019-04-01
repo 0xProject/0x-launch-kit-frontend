@@ -305,7 +305,9 @@ export const initWallet = () => {
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
-            dispatch(fetchMarkets());
+            await fetchMarkets(dispatch);
+            // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+            dispatch(setConnectedUserNotifications(ethAccount, networkId));
             dispatch(updateMarketPriceEther());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
