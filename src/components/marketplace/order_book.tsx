@@ -44,8 +44,6 @@ const orderToRow = (
     const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const price = order.price.toString();
     const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
-    const time: string = '';
-    const timeColor = time ? '#000' : themeColors.lightGray;
 
     const mySize = mySizeOrders.reduce((sumSize, mySizeItem) => {
         if (mySizeItem.price.equals(order.price)) {
@@ -68,11 +66,8 @@ const orderToRow = (
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
             {mySizeRow}
-            <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-            </CustomTD>
-            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: timeColor }}>
-                {time.length ? time : '-'}
             </CustomTDLast>
         </TR>
     );
@@ -127,8 +122,9 @@ class OrderBookTable extends React.Component<Props, State> {
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
                             {mySizeHeader}
-                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price ({quoteToken.symbol})</TH>
-                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>Time</THLast>
+                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>
+                                Price ({quoteToken.symbol})
+                            </THLast>
                         </TR>
                     </THead>
                     <tbody>
@@ -140,7 +136,7 @@ class OrderBookTable extends React.Component<Props, State> {
                                 Spread
                             </CustomTDTitle>
                             <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
-                            <CustomTD
+                            <CustomTDLast
                                 styles={{
                                     tabular: true,
                                     textAlign: 'right',
@@ -149,9 +145,6 @@ class OrderBookTable extends React.Component<Props, State> {
                                 }}
                             >
                                 {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-                            </CustomTD>
-                            <CustomTDLast styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                {}
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
