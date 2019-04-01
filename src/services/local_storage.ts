@@ -27,11 +27,13 @@ export class LocalStorage {
             },
         };
         // Sort array by timestamp property
-        newNotifications[networkId][account] = newNotifications[networkId][account].sort((a: Notification, b: Notification) => {
-            const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
-            const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
-            return bTimestamp - aTimestamp;
-        });
+        newNotifications[networkId][account] = newNotifications[networkId][account].sort(
+            (a: Notification, b: Notification) => {
+                const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
+                const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
+                return bTimestamp - aTimestamp;
+            },
+        );
         // Limit number of notifications
         if (newNotifications[networkId][account].length > NOTIFICATIONS_LIMIT) {
             newNotifications[networkId][account].length = NOTIFICATIONS_LIMIT;
