@@ -82,4 +82,21 @@ describe('KnownTokens', () => {
             expect(knownTokens.getTokens()).toEqual([zrxToken]);
         });
     });
+
+    describe('isKnowTokens', () => {
+        it('should return true if a token address exist', () => {
+            const knownTokens = new KnownTokens(networkId, dummyTokensMetaData);
+            expect(knownTokens.isKnownAddress(dummyTokensMetaData[1].addresses[networkId])).toBeTruthy();
+        });
+
+        it('should return false if is weth', () => {
+            const knownTokens = new KnownTokens(networkId, dummyTokensMetaData);
+            expect(knownTokens.isKnownAddress(dummyTokensMetaData[0].addresses[networkId])).toBeFalsy();
+        });
+
+        it(`should return false if a token address doesn't exist `, () => {
+            const knownTokens = new KnownTokens(networkId, dummyTokensMetaData);
+            expect(knownTokens.isKnownAddress(`wrongaddress`)).toBeFalsy();
+        });
+    });
 });
