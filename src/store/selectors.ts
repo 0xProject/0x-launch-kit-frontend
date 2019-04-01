@@ -40,8 +40,10 @@ const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTok
     if (tokenToFind && isWeth(tokenToFind.symbol)) {
         return wethTokenBalance;
     }
-    return tokenBalances.find(
-        (tokenBalance: TokenBalance) => !!tokenToFind && tokenBalance.token.symbol === tokenToFind.symbol,
+    return (
+        tokenBalances.find(
+            (tokenBalance: TokenBalance) => !!tokenToFind && tokenBalance.token.symbol === tokenToFind.symbol,
+        ) || null
     );
 };
 

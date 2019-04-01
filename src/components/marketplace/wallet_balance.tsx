@@ -144,8 +144,8 @@ interface StateProps {
     baseToken: Token | null;
     quoteToken: Token | null;
     ethAccount: string;
-    baseTokenBalance: TokenBalance | null | undefined;
-    quoteTokenBalance: TokenBalance | null | undefined;
+    baseTokenBalance: TokenBalance | null;
+    quoteTokenBalance: TokenBalance | null;
 }
 
 interface DispatchProps {
