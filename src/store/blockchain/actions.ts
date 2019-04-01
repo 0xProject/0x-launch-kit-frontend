@@ -195,15 +195,15 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         dispatch(setEthAccount(ethAccount));
 
-        dispatch(setNotifications(localStorage.getNotifications(ethAccount)));
-        dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount)));
+        dispatch(setNotifications(localStorage.getNotifications(ethAccount, networkId)));
+        dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount, networkId)));
 
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const contractWrappers = await getContractWrappers();
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
 
-        const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
+        const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount, networkId);
 
         const fromBlock =
             lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
@@ -257,7 +257,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
         }
         fillEventsSubscription = subscription;
 
-        localStorage.saveLastBlockChecked(blockNumber, ethAccount);
+        localStorage.saveLastBlockChecked(blockNumber, ethAccount, networkId);
     };
 };
 

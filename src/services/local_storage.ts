@@ -17,13 +17,12 @@ export class LocalStorage {
         this._storage = storage;
     }
 
-    public saveNotifications(notifications: Notification[], account: string): void {
-        console.log('saving notifications', notifications);
+    public saveNotifications(notifications: Notification[], account: string, networkId: number): void {
         const currentNotifications = JSON.parse(this._storage.getItem(notificationsKey) || '{}');
-        const networkId = 50;
         const newNotifications = {
             ...currentNotifications,
             [networkId]: {
+                ...currentNotifications[networkId],
                 [account]: notifications,
             },
         };
@@ -39,13 +38,9 @@ export class LocalStorage {
         }
 
         this._storage.setItem(notificationsKey, JSON.stringify(newNotifications));
-        const test = this.getNotifications(account);
-        console.log("finally notifications ", test)
     }
 
-    public getNotifications(account: string): Notification[] {
-        console.log("get notifications")
-        const networkId = 50;
+    public getNotifications(account: string, networkId: number): Notification[] {
         const currentNotifications = JSON.parse(
             this._storage.getItem(notificationsKey) || '{}',
             (key: string, value: string) => {
@@ -67,12 +62,12 @@ export class LocalStorage {
         return [];
     }
 
-    public saveHasUnreadNotifications(hasUnreadNotifications: boolean, account: string): void {
+    public saveHasUnreadNotifications(hasUnreadNotifications: boolean, account: string, networkId: number): void {
         const currentStatuses = JSON.parse(this._storage.getItem(hasUnreadNotificationsKey) || '{}');
-        const networkId = 50;
         const newStatuses = {
             ...currentStatuses,
             [networkId]: {
+                ...currentStatuses[networkId],
                 [account]: hasUnreadNotifications,
             },
         };
@@ -80,21 +75,20 @@ export class LocalStorage {
         this._storage.setItem(hasUnreadNotificationsKey, JSON.stringify(newStatuses));
     }
 
-    public getHasUnreadNotifications(account: string): boolean {
+    public getHasUnreadNotifications(account: string, networkId: number): boolean {
         const currentNotifications = JSON.parse(this._storage.getItem(hasUnreadNotificationsKey) || '{}');
-        const networkId = 50;
         if (currentNotifications[networkId] && currentNotifications[networkId][account]) {
             return currentNotifications[networkId][account];
         }
         return false;
     }
 
-    public saveLastBlockChecked(lastBlockChecked: number, account: string): void {
+    public saveLastBlockChecked(lastBlockChecked: number, account: string, networkId: number): void {
         const currentBlocks = JSON.parse(this._storage.getItem(lastBlockCheckedKey) || '{}');
-        const networkId = 50;
         const newBlocks = {
             ...currentBlocks,
             [networkId]: {
+                ...currentBlocks[networkId],
                 [account]: lastBlockChecked,
             },
         };
@@ -102,9 +96,8 @@ export class LocalStorage {
         this._storage.setItem(lastBlockCheckedKey, JSON.stringify(newBlocks));
     }
 
-    public getLastBlockChecked(account: string): number | null {
+    public getLastBlockChecked(account: string, networkId: number): number | null {
         const currentLastBlockChecked = JSON.parse(this._storage.getItem(lastBlockCheckedKey) || '{}');
-        const networkId = 50;
         if (currentLastBlockChecked[networkId] && currentLastBlockChecked[networkId][account]) {
             return currentLastBlockChecked[networkId][account];
         }

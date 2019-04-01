@@ -74,7 +74,7 @@ interface OwnProps {
 }
 
 interface StateProps {
-    networkId: number | null;
+    networkId: number;
     openSellOrders: UIOrder[];
     openBuyOrders: UIOrder[];
 }
@@ -165,9 +165,6 @@ class OrderDetails extends React.Component<Props, State> {
 
     private readonly _getFeeStringForRender = () => {
         const { networkId } = this.props;
-        if (networkId === null) {
-            return '';
-        }
         const { feeInZrx } = this.state;
         const zrxDecimals = getKnownTokens(networkId).getTokenBySymbol(TokenSymbol.Zrx).decimals;
         return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${TokenSymbol.Zrx.toUpperCase()}`;
@@ -176,9 +173,6 @@ class OrderDetails extends React.Component<Props, State> {
     private readonly _getCostStringForRender = () => {
         const { canOrderBeFilled } = this.state;
         const { networkId, orderType } = this.props;
-        if (networkId === null) {
-            return '';
-        }
         if (orderType === OrderType.Market && !canOrderBeFilled) {
             return `---`;
         }
