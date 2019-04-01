@@ -30,7 +30,12 @@ export class KnownTokens {
 
     public getTokenByAddress = (address: string): Token => {
         const addressInLowerCase = address.toLowerCase();
-        const token = this._tokens.find(t => t.address.toLowerCase() === addressInLowerCase);
+        let token = this._tokens.find(t => t.address.toLowerCase() === addressInLowerCase);
+        if (!token) {
+            // If it's not on the tokens list, we check if it's an wETH token
+            // TODO - Maybe the this._tokens could be refactored to also have wETH inside
+            token = this._wethToken.address === address ? this._wethToken : undefined;
+        }
         if (!token) {
             throw new Error(`Token with address ${address} not found in known tokens`);
         }
@@ -38,11 +43,15 @@ export class KnownTokens {
     };
 
     public isKnownAddress = (address: string): boolean => {
-        try {
-            this.getTokenByAddress(address);
+        if (isWeth(address as TokenSymbol)) {
             return true;
-        } catch (e) {
-            return false;
+        } else {
+            try {
+                this.getTokenByAddress(address);
+                return true;
+            } catch (e) {
+                return false;
+            }
         }
     };
 

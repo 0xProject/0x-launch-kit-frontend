@@ -38,11 +38,11 @@ export const updateStore = () => {
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
-            dispatch(getMarkets());
             dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
+            dispatch(getMarkets());
             dispatch(updateGasInfo());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);

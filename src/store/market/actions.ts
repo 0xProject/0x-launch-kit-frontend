@@ -9,8 +9,7 @@ import { getRelayer } from '../../services/relayer';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
-import { setConnectedUserNotifications } from '../blockchain/actions';
-import { getOrderbookAndUserOrders } from '../relayer/actions';
+import { getOrderbookAndUserOrders, setConnectedUserNotifications } from '../actions';
 
 export const setMarketTokens = createAction('SET_MARKET_TOKENS', resolve => {
     return ({ baseToken, quoteToken }: { baseToken: Token; quoteToken: Token }) => resolve({ baseToken, quoteToken });
@@ -72,7 +71,7 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
 export const getMarkets = () => {
     return async (dispatch: any) => {
         const web3Wrapper = await getWeb3WrapperOrThrow();
-
+        const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const knownTokens = getKnownTokens(networkId);
         const relayer = getRelayer();
@@ -93,12 +92,12 @@ export const getMarkets = () => {
 
         dispatch(setMarkets(markets));
         // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
-        dispatch(setConnectedUserNotifications());
+        dispatch(setConnectedUserNotifications(ethAccount, networkId));
     };
 };
 
 export const updateMarketPriceEther = () => {
-    return async (dispatch: any, getState: any) => {
+    return async (dispatch: any) => {
         dispatch(fetchMarketPriceEtherStart());
 
         try {

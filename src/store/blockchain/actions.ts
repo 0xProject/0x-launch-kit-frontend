@@ -189,20 +189,19 @@ export const updateGasInfo = () => {
 };
 
 let fillEventsSubscription: string | null = null;
-export const setConnectedUserNotifications = () => {
+export const setConnectedUserNotifications = (ethAccount: string, networkId: number) => {
     return async (dispatch: any, getState: any) => {
-        const web3Wrapper = await getWeb3WrapperOrThrow();
-        const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+        const knownTokens = getKnownTokens(networkId);
         const localStorage = new LocalStorage(window.localStorage);
         dispatch(setNotifications(localStorage.getNotifications(ethAccount)));
         dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount)));
 
         const state = getState();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const knownTokens = getKnownTokens(networkId);
+        const web3Wrapper = await getWeb3WrapperOrThrow();
         const contractWrappers = await getContractWrappers();
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
+
         const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
 
         const fromBlock =
@@ -242,12 +241,14 @@ export const setConnectedUserNotifications = () => {
                             fillEvent.blockNumber || blockNumber,
                         );
                         const notification = buildOrderFilledNotification(fillEvent, knownTokens, markets);
+
                         return {
                             ...notification,
                             timestamp: new Date(timestamp * 1000),
                         };
                     }),
                 );
+
                 dispatch(addNotifications(notifications));
             },
         });
@@ -286,6 +287,7 @@ export const initWallet = () => {
 
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
             dispatch(setEthAccount(ethAccount));
             dispatch(
                 initializeBlockchainData({
@@ -302,8 +304,8 @@ export const initWallet = () => {
                 }),
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
-            dispatch(getMarkets());
             dispatch(getOrderbookAndUserOrders());
+            dispatch(getMarkets());
             dispatch(updateMarketPriceEther());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
@@ -347,13 +349,13 @@ export const initWallet = () => {
 };
 
 export const unlockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+    return async (dispatch: any): Promise<any> => {
         return dispatch(toggleTokenLock(token, false));
     };
 };
 
 export const lockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+    return async (dispatch: any): Promise<any> => {
         return dispatch(toggleTokenLock(token, true));
     };
 };
