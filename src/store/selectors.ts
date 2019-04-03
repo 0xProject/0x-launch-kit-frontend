@@ -1,7 +1,16 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { createSelector } from 'reselect';
 
-import { OrderBook, OrderSide, StoreState, Token, Web3State } from '../util/types';
+import { isWeth } from '../util/known_tokens';
+import {
+    OrderBook,
+    OrderSide,
+    SearchTokenBalanceObject,
+    StoreState,
+    Token,
+    TokenBalance,
+    Web3State,
+} from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
@@ -26,6 +35,33 @@ export const getEthInUsd = (state: StoreState) => state.market.ethInUsd;
 export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.gasPriceInWei;
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
 export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
+
+const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
+    if (tokenToFind && isWeth(tokenToFind.symbol)) {
+        return wethTokenBalance;
+    }
+    return (
+        tokenBalances.find(
+            (tokenBalance: TokenBalance) => tokenBalance.token.symbol === (tokenToFind && tokenToFind.symbol),
+        ) || null
+    );
+};
+
+export const getBaseTokenBalance = createSelector(
+    getTokenBalances,
+    getWethTokenBalance,
+    getBaseToken,
+    (tokenBalances: TokenBalance[], wethTokenBalance: TokenBalance | null, baseToken: Token | null) =>
+        searchToken({ tokenBalances, wethTokenBalance, tokenToFind: baseToken }),
+);
+
+export const getQuoteTokenBalance = createSelector(
+    getTokenBalances,
+    getWethTokenBalance,
+    getQuoteToken,
+    (tokenBalances: TokenBalance[], wethTokenBalance: TokenBalance | null, quoteToken: Token | null) =>
+        searchToken({ tokenBalances, wethTokenBalance, tokenToFind: quoteToken }),
+);
 
 export const getOpenOrders = createSelector(
     getOrders,
