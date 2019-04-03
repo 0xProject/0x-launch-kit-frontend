@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { Web3WrapperService } from '../../../services/web3_wrapper';
 import { lockToken, unlockToken } from '../../../store/blockchain/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
@@ -136,7 +136,8 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
     private readonly _lockToken = async () => {
         const { step, advanceStep } = this.props;
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Service = Web3WrapperService.instance();
+            const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
             const lockTxHash = await this.props.lockToken(step.token);
             this.setState({ status: StepStatus.Loading });
 
@@ -152,7 +153,8 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
     private readonly _unlockToken = async () => {
         const { step, advanceStep } = this.props;
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Service = Web3WrapperService.instance();
+            const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
             const unlockTxHash = await this.props.unlockToken(step.token);
             this.setState({ status: StepStatus.Loading });
 

@@ -13,7 +13,7 @@ import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
-import { checkIfMetamaskIsInstalled, getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
+import { Web3WrapperService } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
@@ -72,7 +72,8 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
         const gasPrice = getGasPriceInWei(state);
 
         const contractWrappers = await getContractWrappers();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Service = Web3WrapperService.instance();
+        const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
 
         let tx: string;
         if (isUnlocked) {
@@ -134,8 +135,8 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
         const gasPrice = getGasPriceInWei(state);
         const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
-
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Service = Web3WrapperService.instance();
+        const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
@@ -197,8 +198,8 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         dispatch(setNotifications(localStorage.getNotifications(ethAccount)));
         dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount)));
-
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Service = Web3WrapperService.instance();
+        const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
         const contractWrappers = await getContractWrappers();
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
@@ -265,13 +266,13 @@ export const initWallet = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const currencyPair = getCurrencyPair(state);
-
         dispatch(setWeb3State(Web3State.Loading));
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Service = Web3WrapperService.instance();
+            web3Service.setWeb3Status(Web3State.Loading);
+            const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();
-
             const knownTokens = getKnownTokens(networkId);
 
             const tokenBalances = await Promise.all(
@@ -342,14 +343,16 @@ export const lockToken = (token: Token) => {
 
 export const connectWallet = () => {
     return async (dispatch: any) => {
-        await reconnectWallet();
+        // const web3Service = Web3WrapperService.instance();
+        // await web3Service.reconnectWallet();
         dispatch(initWallet());
     };
 };
 
 export const initMetamaskState = () => {
     return async (dispatch: any) => {
-        if (!checkIfMetamaskIsInstalled()) {
+        const web3Service = Web3WrapperService.instance();
+        if (!web3Service.checkIfMetamaskIsInstalled()) {
             dispatch(setWeb3State(Web3State.NotInstalled));
         } else {
             dispatch(setWeb3State(Web3State.Locked));
