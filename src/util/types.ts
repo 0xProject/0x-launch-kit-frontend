@@ -169,11 +169,12 @@ interface CancelOrderNotification extends TransactionNotification {
     token: Token;
 }
 
-interface MarketNotification extends TransactionNotification {
+export interface MarketNotification extends TransactionNotification {
     kind: NotificationKind.Market;
     amount: BigNumber;
     token: Token;
     side: OrderSide;
+    txHash: string;
 }
 
 interface LimitNotification extends BaseNotification {

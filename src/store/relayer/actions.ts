@@ -138,6 +138,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
                         token: baseToken,
                         side,
                         tx,
+                        txHash,
                         timestamp: new Date(),
                     },
                 ]),
