@@ -3,17 +3,17 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
-import { unitsInTokenAmount } from '../../util/tokens';
+import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../util/tokens';
 import { OrderSide, OrderType, TokenSymbol } from '../../util/types';
 
 import { CostValue, OrderDetails, Value } from './order_details';
 
 describe('OrderDetails', () => {
     const getExpectedTotalCostText = (amount: number, symbol: string): string => {
-        return `${new BigNumber(amount).toFixed(2)} ${symbol}`;
+        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(symbol as TokenSymbol)}`;
     };
     const getExpectedFeeText = (amount: number): string => {
-        return `${new BigNumber(amount).toFixed(2)} ${TokenSymbol.Zrx.toUpperCase()}`;
+        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(TokenSymbol.Zrx)}`;
     };
     const getAmountTextFromWrapper = (wrapper: ShallowWrapper): string =>
         wrapper

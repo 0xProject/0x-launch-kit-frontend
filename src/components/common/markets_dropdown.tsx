@@ -60,7 +60,7 @@ const MarketsDropdownHeaderText = styled.span`
     color: #000;
     font-size: 18px;
     font-weight: 600;
-    line-height: normal;
+    line-height: 26px;
     margin-right: 10px;
 `;
 
@@ -200,6 +200,11 @@ const TokenLabel = styled.div`
     margin: 0 0 0 15px;
 `;
 
+const DropdownTokenIcon = styled(TokenIcon)`
+    margin-right: 10px;
+    vertical-align: top;
+`;
+
 interface Filter {
     text: string;
     value: null | TokenSymbol;
@@ -228,11 +233,18 @@ class MarketsDropdown extends React.Component<Props, State> {
     private _closeDropdown: any;
 
     public render = () => {
-        const { currencyPair, ...restProps } = this.props;
+        const { currencyPair, baseToken, ...restProps } = this.props;
 
         const header = (
             <MarketsDropdownHeader>
                 <MarketsDropdownHeaderText>
+                    {baseToken ? (
+                        <DropdownTokenIcon
+                            symbol={baseToken.symbol}
+                            primaryColor={baseToken.primaryColor}
+                            isInline={true}
+                        />
+                    ) : null}
                     {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
                 </MarketsDropdownHeaderText>
                 <ChevronDownIcon />

@@ -22,6 +22,12 @@ export interface TokenBalance {
     token: Token;
 }
 
+export interface SearchTokenBalanceObject {
+    tokenBalances: TokenBalance[];
+    tokenToFind: Token | null;
+    wethTokenBalance: TokenBalance | null;
+}
+
 export enum Web3State {
     Done = 'Done',
     Error = 'Error',
