@@ -4,7 +4,7 @@ import * as Factory from 'factory.ts';
 
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { OrderSide, Token, UIOrder } from './types';
+import { OrderSide, Token, TokenBalance, UIOrder } from './types';
 
 export const makeOrder = ({
     makerAssetAmount,
@@ -94,4 +94,10 @@ export const tokenMetaDataFactory = Factory.Sync.makeFactory<TokenMetaData>({
     primaryColor: '#ff0000',
     // @ts-ignore
     symbol: Factory.each(i => `MOCK${i}`),
+});
+
+export const tokenBalanceFactory = Factory.Sync.makeFactory<TokenBalance>({
+    balance: new BigNumber(2),
+    isUnlocked: true,
+    token: tokenFactory.build(),
 });

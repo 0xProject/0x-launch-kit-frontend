@@ -4,7 +4,7 @@ import { getType } from 'typesafe-actions';
 import { LocalStorage } from '../services/local_storage';
 
 import * as actions from './actions';
-import { getEthAccount, getHasUnreadNotifications, getNotifications } from './selectors';
+import { getEthAccount, getHasUnreadNotifications, getNetworkId, getNotifications } from './selectors';
 
 const localStorage = new LocalStorage(window.localStorage);
 
@@ -17,17 +17,24 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
         case getType(actions.addNotifications): {
             const state = getState();
             const ethAccount = getEthAccount(state);
+            const networkId = getNetworkId(state);
             const notifications = getNotifications(state);
             const hasUnreadNotifications = getHasUnreadNotifications(state);
-            localStorage.saveNotifications(notifications, ethAccount);
-            localStorage.saveHasUnreadNotifications(hasUnreadNotifications, ethAccount);
+            if (networkId) {
+                localStorage.saveNotifications(notifications, ethAccount, networkId);
+                localStorage.saveHasUnreadNotifications(hasUnreadNotifications, ethAccount, networkId);
+            }
             break;
         }
         case getType(actions.setNotifications): {
             const state = getState();
             const ethAccount = getEthAccount(state);
+            const networkId = getNetworkId(state);
             const notifications = getNotifications(state);
-            localStorage.saveNotifications(notifications, ethAccount);
+            if (networkId) {
+                localStorage.saveNotifications(notifications, ethAccount, networkId);
+            }
+
             break;
         }
     }
