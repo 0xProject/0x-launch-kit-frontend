@@ -219,7 +219,7 @@ describe('KnownTokens', () => {
         });
     });
 
-    describe('isKnowTokens', () => {
+    describe('isKnownAddress', () => {
         it('should return true if a token address exist', () => {
             const knownTokens = new KnownTokens(networkId, dummyTokensMetaData);
             expect(knownTokens.isKnownAddress(dummyTokensMetaData[1].addresses[networkId])).toBeTruthy();
