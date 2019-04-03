@@ -1,7 +1,13 @@
 import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { MAINNET_ID, METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH, TX_DEFAULTS } from '../../common/constants';
+import {
+    MAINNET_ID,
+    METAMASK_NOT_INSTALLED,
+    METAMASK_USER_DENIED_AUTH,
+    START_BLOCK_LIMIT,
+    TX_DEFAULTS,
+} from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
@@ -21,7 +27,7 @@ import {
     getWethBalance,
     getWethTokenBalance,
 } from '../selectors';
-import { addNotification, setHasUnreadNotifications, setNotifications } from '../ui/actions';
+import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
@@ -197,23 +203,52 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
 
-        const fromBlock = localStorage.getLastBlockChecked(ethAccount) + 1;
+        const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
+
+        const fromBlock =
+            lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
+
         const toBlock = blockNumber;
 
-        const subscription = await subscribeToFillEvents({
+        const subscription = subscribeToFillEvents({
             exchange: contractWrappers.exchange,
             fromBlock,
             toBlock,
             ethAccount,
             fillEventCallback: async fillEvent => {
+                if (!knownTokens.isValidFillEvent(fillEvent)) {
+                    return;
+                }
+
                 const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
                 const notification = buildOrderFilledNotification(fillEvent, knownTokens);
                 dispatch(
-                    addNotification({
-                        ...notification,
-                        timestamp: new Date(timestamp * 1000),
+                    addNotifications([
+                        {
+                            ...notification,
+                            timestamp: new Date(timestamp * 1000),
+                        },
+                    ]),
+                );
+            },
+            pastFillEventsCallback: async fillEvents => {
+                const validFillEvents = fillEvents.filter(knownTokens.isValidFillEvent);
+
+                const notifications = await Promise.all(
+                    validFillEvents.map(async fillEvent => {
+                        const timestamp = await web3Wrapper.getBlockTimestampAsync(
+                            fillEvent.blockNumber || blockNumber,
+                        );
+                        const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+
+                        return {
+                            ...notification,
+                            timestamp: new Date(timestamp * 1000),
+                        };
                     }),
                 );
+
+                dispatch(addNotifications(notifications));
             },
         });
 
@@ -244,6 +279,7 @@ export const initWallet = () => {
             );
 
             const wethToken = knownTokens.getWethToken();
+
             const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
@@ -251,6 +287,7 @@ export const initWallet = () => {
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
+            dispatch(setNetworkId(networkId));
             dispatch(setConnectedUser(ethAccount, networkId));
             dispatch(
                 initializeBlockchainData({

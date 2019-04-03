@@ -55,25 +55,29 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
             return { ...state, hasUnreadNotifications: action.payload };
         case getType(actions.setNotifications):
             return { ...state, notifications: action.payload };
-        case getType(actions.addNotification): {
-            let doesAlreadyExist = false;
-            if (action.payload.kind === NotificationKind.OrderFilled) {
-                const newNotification = action.payload as OrderFilledNotification;
+        case getType(actions.addNotifications): {
+            const newNotifications = action.payload.filter(notification => {
+                let doesAlreadyExist = false;
+                if (notification.kind === NotificationKind.OrderFilled) {
+                    const newNotification = notification as OrderFilledNotification;
 
-                doesAlreadyExist = state.notifications
-                    .filter(notification => notification.kind === NotificationKind.OrderFilled)
-                    .map(notification => notification as OrderFilledNotification)
-                    .some(notification => notification.id === newNotification.id);
-            }
+                    doesAlreadyExist = state.notifications
+                        .filter(n => n.kind === NotificationKind.OrderFilled)
+                        .map(n => n as OrderFilledNotification)
+                        .some(n => n.id === newNotification.id);
+                }
 
-            if (doesAlreadyExist) {
-                return state;
-            } else {
+                return !doesAlreadyExist;
+            });
+
+            if (newNotifications.length) {
                 return {
                     ...state,
-                    notifications: [action.payload, ...state.notifications],
+                    notifications: [...newNotifications, ...state.notifications],
                     hasUnreadNotifications: true,
                 };
+            } else {
+                return state;
             }
         }
     }
