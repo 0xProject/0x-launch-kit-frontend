@@ -32,15 +32,17 @@ export const getOrderSideFromFillEvent = (
     fillEvent: LogWithDecodedArgs<ExchangeFillEventArgs>,
     markets: Market[] | null,
 ): OrderSide => {
+    if (!knownTokens.isValidFillEvent(fillEvent)) {
+        throw new Error('The event is not valid');
+    }
     const { makerAssetData, takerAssetData } = fillEvent.args;
     const wethToken = knownTokens.getWethToken();
     const makerTokenAddress = assetDataUtils.decodeERC20AssetData(makerAssetData).tokenAddress;
     const takerTokenAddress = assetDataUtils.decodeERC20AssetData(takerAssetData).tokenAddress;
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethToken.address);
+
     let orderSide: OrderSide = OrderSide.Sell;
-    if (!knownTokens.isValidFillEvent(fillEvent)) {
-        throw new Error('The event is not valid');
-    }
+
     // Fallback in case there are not markets
     if (!markets) {
         orderSide = makerAssetData === wethAssetData ? OrderSide.Buy : OrderSide.Sell;
@@ -50,6 +52,7 @@ export const getOrderSideFromFillEvent = (
             const quoteSymbol = market.currencyPair.quote;
             const baseToken = knownTokens.getTokenBySymbol(baseSymbol);
             const quoteToken = knownTokens.getTokenBySymbol(quoteSymbol);
+
             if (makerTokenAddress === baseToken.address && takerTokenAddress === quoteToken.address) {
                 // This is a sell order --> fill event is a buy
                 orderSide = OrderSide.Buy;
