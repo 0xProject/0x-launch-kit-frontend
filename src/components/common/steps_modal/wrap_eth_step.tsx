@@ -28,7 +28,7 @@ interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
 }
 interface StateProps {
-    networkId: number;
+    networkId: number | null;
     step: StepWrapEth;
 }
 
@@ -54,6 +54,11 @@ class WrapEthStep extends React.Component<Props, State> {
 
     public render = () => {
         const { networkId } = this.props;
+
+        if (networkId === null) {
+            return null;
+        }
+
         const { context, currentWethBalance, newWethBalance } = this.props.step;
         const amount = newWethBalance.sub(currentWethBalance);
         const wethToken = getKnownTokens(networkId).getWethToken();

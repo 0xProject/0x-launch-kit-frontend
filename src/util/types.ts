@@ -37,7 +37,7 @@ export interface BlockchainState {
     readonly ethBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
     readonly gasInfo: GasInfo;
-    readonly networkId: number;
+    readonly networkId: number | null;
 }
 
 export interface RelayerState {

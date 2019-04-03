@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 import { getType } from 'typesafe-actions';
 
-import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE, RELAYER_NETWORK_ID } from '../../common/constants';
+import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE } from '../../common/constants';
 import { BlockchainState, Web3State } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -12,7 +12,7 @@ const initialBlockchainState: BlockchainState = {
     tokenBalances: [],
     ethBalance: new BigNumber(0),
     wethTokenBalance: null,
-    networkId: RELAYER_NETWORK_ID,
+    networkId: null,
     gasInfo: {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,

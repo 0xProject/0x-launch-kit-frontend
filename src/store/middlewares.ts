@@ -20,8 +20,10 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
             const networkId = getNetworkId(state);
             const notifications = getNotifications(state);
             const hasUnreadNotifications = getHasUnreadNotifications(state);
-            localStorage.saveNotifications(notifications, ethAccount, networkId);
-            localStorage.saveHasUnreadNotifications(hasUnreadNotifications, ethAccount, networkId);
+            if (networkId) {
+                localStorage.saveNotifications(notifications, ethAccount, networkId);
+                localStorage.saveHasUnreadNotifications(hasUnreadNotifications, ethAccount, networkId);
+            }
             break;
         }
         case getType(actions.setNotifications): {
@@ -29,7 +31,10 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
             const ethAccount = getEthAccount(state);
             const networkId = getNetworkId(state);
             const notifications = getNotifications(state);
-            localStorage.saveNotifications(notifications, ethAccount, networkId);
+            if (networkId) {
+                localStorage.saveNotifications(notifications, ethAccount, networkId);
+            }
+
             break;
         }
     }
