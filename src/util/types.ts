@@ -161,6 +161,7 @@ export enum NotificationKind {
 }
 
 interface BaseNotification {
+    id: string;
     kind: NotificationKind;
     timestamp: Date;
 }
@@ -180,7 +181,6 @@ export interface MarketNotification extends TransactionNotification {
     amount: BigNumber;
     token: Token;
     side: OrderSide;
-    txHash: string;
 }
 
 interface LimitNotification extends BaseNotification {
@@ -191,7 +191,6 @@ interface LimitNotification extends BaseNotification {
 }
 
 export interface OrderFilledNotification extends BaseNotification {
-    id: string;
     kind: NotificationKind.OrderFilled;
     amount: BigNumber;
     token: Token;
