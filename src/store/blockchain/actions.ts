@@ -365,14 +365,18 @@ export const initializeAppNoMetamaskOrLocked = () => {
         const knownTokens = getKnownTokens(MAINNET_ID);
         const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
         const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
         dispatch(
             initializeRelayerData({
                 orders: [],
                 userOrders: [],
             }),
         );
+
         dispatch(setMarketTokens({ baseToken, quoteToken }));
+
         dispatch(getOrderBook());
+
         dispatch(updateMarketPriceEther());
     };
 };
