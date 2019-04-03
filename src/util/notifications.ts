@@ -9,7 +9,7 @@ export const buildOrderFilledNotification = (
     markets: Market[] | null,
 ): OrderFilledNotification => {
     const { args } = log;
-    const side: OrderSide = getOrderSideFromFilledEvent(knownTokens, log, markets);
+    const side: OrderSide = getOrderSideFromFillEvent(knownTokens, log, markets);
     let exchangedTokenAddress: string;
     let exchangedToken: Token;
     exchangedTokenAddress = OrderSide.Sell
@@ -27,7 +27,7 @@ export const buildOrderFilledNotification = (
     };
 };
 
-export const getOrderSideFromFilledEvent = (
+export const getOrderSideFromFillEvent = (
     knownTokens: KnownTokens,
     fillEvent: LogWithDecodedArgs<ExchangeFillEventArgs>,
     markets: Market[] | null,
