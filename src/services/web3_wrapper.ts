@@ -1,10 +1,15 @@
 import { Web3Wrapper } from '@0x/web3-wrapper';
 
-import { METAMASK_DEFAULT_ERROR, METAMASK_NOT_INSTALLED, METAMASK_USER_DENIED_AUTH } from '../common/constants';
+import {
+    METAMASK_DEFAULT_ERROR,
+    METAMASK_NOT_INSTALLED,
+    METAMASK_USER_DENIED_AUTH,
+    WEB3_INITIAL_STATE,
+} from '../common/constants';
 import { Web3State } from '../util/types';
 
 let web3Wrapper: Web3Wrapper | null = null;
-let web3Status: Web3State = Web3State.Loading;
+let web3Status: Web3State = WEB3_INITIAL_STATE;
 
 export const reconnectWallet = async (): Promise<Web3Wrapper | null> => {
     web3Status = Web3State.Loading;
