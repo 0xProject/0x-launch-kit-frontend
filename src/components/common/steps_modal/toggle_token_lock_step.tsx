@@ -45,11 +45,13 @@ interface State {
     txStarted: number | null;
 }
 
+const initialState: State = {
+    status: StepStatus.ConfirmOnMetamask,
+    txStarted: null,
+};
+
 class ToggleTokenLockStep extends React.Component<Props, State> {
-    public state = {
-        status: StepStatus.ConfirmOnMetamask,
-        txStarted: null,
-    };
+    public state = initialState;
 
     public componentDidMount = async () => {
         const { isUnlocked } = this.props.step;
@@ -59,7 +61,7 @@ class ToggleTokenLockStep extends React.Component<Props, State> {
     public componentDidUpdate = async (prevProps: Props) => {
         // If there are consecutive StepToggleTokenLock in the flow, this will force the step "restart"
         if (this.props.step.token.address !== prevProps.step.token.address) {
-            this.setState({ status: StepStatus.ConfirmOnMetamask });
+            this.setState(initialState);
             await this._toggleToken(false);
         }
     };
