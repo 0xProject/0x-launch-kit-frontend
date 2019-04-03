@@ -106,7 +106,7 @@ export const isWeth = (token: TokenSymbol): boolean => {
     return token === TokenSymbol.Weth;
 };
 
-const isERC20AssetData = (assetData: string): boolean => {
+export const isERC20AssetData = (assetData: string): boolean => {
     try {
         assetDataUtils.decodeERC20AssetData(assetData);
         return true;
