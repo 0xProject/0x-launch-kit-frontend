@@ -42,7 +42,7 @@ const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTok
     }
     return (
         tokenBalances.find(
-            (tokenBalance: TokenBalance) => !!tokenToFind && tokenBalance.token.symbol === tokenToFind.symbol,
+            (tokenBalance: TokenBalance) => tokenBalance.token.symbol === (tokenToFind && tokenToFind.symbol),
         ) || null
     );
 };
