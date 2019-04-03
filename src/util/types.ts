@@ -176,7 +176,7 @@ interface CancelOrderNotification extends TransactionNotification {
     token: Token;
 }
 
-export interface MarketNotification extends TransactionNotification {
+interface MarketNotification extends TransactionNotification {
     kind: NotificationKind.Market;
     amount: BigNumber;
     token: Token;
@@ -190,7 +190,7 @@ interface LimitNotification extends BaseNotification {
     side: OrderSide;
 }
 
-export interface OrderFilledNotification extends BaseNotification {
+interface OrderFilledNotification extends BaseNotification {
     kind: NotificationKind.OrderFilled;
     amount: BigNumber;
     token: Token;
