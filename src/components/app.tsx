@@ -4,7 +4,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
-import { initWallet, updateMarketPriceEther, updateStore } from '../store/actions';
+import { initMetamaskState, updateMarketPriceEther, updateStore } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { StoreState, Web3State } from '../util/types';
 
@@ -17,7 +17,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onInitWallet: () => any;
+    onInitMetamaskState: () => any;
     onUpdateStore: () => any;
     onUpdateMarketPriceEther: () => any;
 }
@@ -29,7 +29,7 @@ class App extends React.Component<Props> {
     private _updatePriceEtherInterval: number | undefined;
 
     public componentDidMount = () => {
-        this.props.onInitWallet();
+        this.props.onInitMetamaskState();
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<Props>, snapshot?: any) => {
@@ -83,7 +83,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     return {
-        onInitWallet: () => dispatch(initWallet()),
+        onInitMetamaskState: () => dispatch(initMetamaskState()),
         onUpdateStore: () => dispatch(updateStore()),
         onUpdateMarketPriceEther: () => dispatch(updateMarketPriceEther()),
     };

@@ -13,7 +13,7 @@ import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
-import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
+import { checkIfMetamaskIsInstalled, getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
@@ -308,35 +308,15 @@ export const initWallet = () => {
             dispatch(getMarkets());
             dispatch(updateMarketPriceEther());
         } catch (error) {
-            const knownTokens = getKnownTokens(MAINNET_ID);
-            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
-            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
-
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {
                     dispatch(setWeb3State(Web3State.Locked));
-                    dispatch(
-                        initializeRelayerData({
-                            orders: [],
-                            userOrders: [],
-                        }),
-                    );
-                    dispatch(setMarketTokens({ baseToken, quoteToken }));
-                    dispatch(getOrderBook());
-                    dispatch(updateMarketPriceEther());
+                    dispatch(initializeAppNoMetamaskOrLocked());
                     break;
                 }
                 case METAMASK_NOT_INSTALLED: {
                     dispatch(setWeb3State(Web3State.NotInstalled));
-                    dispatch(
-                        initializeRelayerData({
-                            orders: [],
-                            userOrders: [],
-                        }),
-                    );
-                    dispatch(setMarketTokens({ baseToken, quoteToken }));
-                    dispatch(getOrderBook());
-                    dispatch(updateMarketPriceEther());
+                    dispatch(initializeAppNoMetamaskOrLocked());
                     break;
                 }
                 default: {
@@ -364,5 +344,35 @@ export const connectWallet = () => {
     return async (dispatch: any) => {
         await reconnectWallet();
         dispatch(initWallet());
+    };
+};
+
+export const initMetamaskState = () => {
+    return async (dispatch: any) => {
+        if (!checkIfMetamaskIsInstalled()) {
+            dispatch(setWeb3State(Web3State.NotInstalled));
+        } else {
+            dispatch(setWeb3State(Web3State.Locked));
+        }
+        dispatch(initializeAppNoMetamaskOrLocked());
+    };
+};
+
+export const initializeAppNoMetamaskOrLocked = () => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const currencyPair = getCurrencyPair(state);
+        const knownTokens = getKnownTokens(MAINNET_ID);
+        const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+        const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+        dispatch(
+            initializeRelayerData({
+                orders: [],
+                userOrders: [],
+            }),
+        );
+        dispatch(setMarketTokens({ baseToken, quoteToken }));
+        dispatch(getOrderBook());
+        dispatch(updateMarketPriceEther());
     };
 };

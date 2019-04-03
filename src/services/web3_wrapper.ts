@@ -16,6 +16,11 @@ export const reconnectWallet = async (): Promise<Web3Wrapper | null> => {
     return getWeb3Wrapper();
 };
 
+export const checkIfMetamaskIsInstalled = (): boolean => {
+    const { ethereum, web3 } = window;
+    return ethereum || web3;
+};
+
 export const getWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
     const { ethereum, web3, location } = window;
     if (web3Wrapper) {
