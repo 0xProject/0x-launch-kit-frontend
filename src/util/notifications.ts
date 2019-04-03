@@ -47,7 +47,7 @@ export const getOrderSideFromFillEvent = (
     if (!markets) {
         orderSide = makerAssetData === wethAssetData ? OrderSide.Buy : OrderSide.Sell;
     } else {
-        markets.some(market => {
+        for (const market of markets) {
             const baseSymbol = market.currencyPair.base;
             const quoteSymbol = market.currencyPair.quote;
             const baseToken = knownTokens.getTokenBySymbol(baseSymbol);
@@ -56,14 +56,13 @@ export const getOrderSideFromFillEvent = (
             if (makerTokenAddress === baseToken.address && takerTokenAddress === quoteToken.address) {
                 // This is a sell order --> fill event is a buy
                 orderSide = OrderSide.Buy;
-                return true;
+                break;
             } else if (makerTokenAddress === quoteToken.address && takerTokenAddress === baseToken.address) {
                 // This is a buy order --> fill event is a sell
                 orderSide = OrderSide.Sell;
-                return true;
+                break;
             }
-            return false;
-        });
+        }
     }
 
     return orderSide;
