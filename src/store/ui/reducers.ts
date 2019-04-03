@@ -1,6 +1,13 @@
 import { getType } from 'typesafe-actions';
 
-import { NotificationKind, OrderFilledNotification, Step, StepsModalState, UIState } from '../../util/types';
+import {
+    MarketNotification,
+    NotificationKind,
+    OrderFilledNotification,
+    Step,
+    StepsModalState,
+    UIState,
+} from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
@@ -58,6 +65,16 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
         case getType(actions.addNotifications): {
             const newNotifications = action.payload.filter(notification => {
                 let doesAlreadyExist = false;
+
+                if (notification.kind === NotificationKind.Market) {
+                    const newNotification = notification as MarketNotification;
+
+                    doesAlreadyExist = state.notifications
+                        .filter(n => n.kind === NotificationKind.Market)
+                        .map(n => n as MarketNotification)
+                        .some(n => n.txHash.toLowerCase() === newNotification.txHash.toLowerCase());
+                }
+
                 if (notification.kind === NotificationKind.OrderFilled) {
                     const newNotification = notification as OrderFilledNotification;
 
