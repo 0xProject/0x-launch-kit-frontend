@@ -90,7 +90,7 @@ const MarketsFiltersLabel = styled.h2`
 const TokenFiltersTabs = styled.div`
     align-items: center;
     display: flex;
-    margin-right: 20px;
+    margin-right: 10px;
 `;
 
 const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
@@ -112,7 +112,7 @@ const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
 `;
 
 const searchFieldHeight = '32px';
-const searchFieldWidth = '179px';
+const searchFieldWidth = '142px';
 
 const SearchWrapper = styled.div`
     height: ${searchFieldHeight};
