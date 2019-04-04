@@ -28,7 +28,6 @@ import {
     getEthAccount,
     getGasPriceInWei,
     getTokenBalances,
-    getWeb3State,
     getWethBalance,
     getWethTokenBalance,
 } from '../selectors';
@@ -268,11 +267,8 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
 export const initWallet = () => {
     return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const currencyPair = getCurrencyPair(state);
-
-        dispatch(setWeb3State(Web3State.Loading));
         try {
+            dispatch(setWeb3State(Web3State.Loading));
             setWeb3StatusOnWeb3Service(Web3State.Loading);
             const web3Wrapper = await getWeb3WrapperOrThrow();
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
@@ -290,6 +286,8 @@ export const initWallet = () => {
 
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
+            const state = getState();
+            const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
@@ -348,45 +346,7 @@ export const lockToken = (token: Token) => {
 
 export const connectWallet = () => {
     return async (dispatch: any) => {
-        // setWeb3StatusOnWeb3Service(Web3State.Loading);
         dispatch(initWallet());
-    };
-};
-
-/**
- * Initializes metamask with default value, sets the initialWeb3 status based
- * on the metamask client status (user has metamask but he did not connected or metamask non-installed
- */
-export const initMetamaskState = () => {
-    return async (dispatch: any, getState: any) => {
-        if (!checkIfMetamaskIsInstalled()) {
-            dispatch(setWeb3State(Web3State.NotInstalled));
-            setWeb3StatusOnWeb3Service(Web3State.NotInstalled);
-        } else {
-            dispatch(setWeb3State(Web3State.Locked));
-            setWeb3StatusOnWeb3Service(Web3State.Locked);
-        }
-
-        const state = getState();
-        const currencyPair = getCurrencyPair(state);
-
-        const knownTokens = getKnownTokens(MAINNET_ID);
-
-        const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
-        const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
-
-        dispatch(
-            initializeRelayerData({
-                orders: [],
-                userOrders: [],
-            }),
-        );
-
-        dispatch(setMarketTokens({ baseToken, quoteToken }));
-
-        dispatch(getOrderBook());
-
-        dispatch(updateMarketPriceEther());
     };
 };
 
@@ -396,6 +356,13 @@ export const initMetamaskState = () => {
  */
 export const initializeAppNoMetamaskOrLocked = () => {
     return async (dispatch: any, getState: any) => {
+        if (!checkIfMetamaskIsInstalled()) {
+            dispatch(setWeb3State(Web3State.NotInstalled));
+            setWeb3StatusOnWeb3Service(Web3State.NotInstalled);
+        } else {
+            dispatch(setWeb3State(Web3State.Locked));
+            setWeb3StatusOnWeb3Service(Web3State.Locked);
+        }
         const state = getState();
         const currencyPair = getCurrencyPair(state);
         const knownTokens = getKnownTokens(MAINNET_ID);
