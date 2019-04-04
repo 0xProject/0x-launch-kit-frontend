@@ -8,7 +8,7 @@ import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../store/s
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildMarketOrders } from '../../util/orders';
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits } from '../../util/tokens';
+import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, UIOrder } from '../../util/types';
 
 const Row = styled.div`
@@ -170,7 +170,7 @@ class OrderDetails extends React.Component<Props, State> {
         }
         const { feeInZrx } = this.state;
         const zrxDecimals = getKnownTokens(networkId).getTokenBySymbol(TokenSymbol.Zrx).decimals;
-        return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${TokenSymbol.Zrx.toUpperCase()}`;
+        return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${tokenSymbolToDisplayString(TokenSymbol.Zrx)}`;
     };
 
     private readonly _getCostStringForRender = () => {
@@ -186,7 +186,7 @@ class OrderDetails extends React.Component<Props, State> {
         const { quote } = this.props.currencyPair;
         const quoteTokenDecimals = getKnownTokens(networkId).getTokenBySymbol(quote).decimals;
         const { quoteTokenAmount } = this.state;
-        return `${tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals)} ${quote}`;
+        return `${tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals)} ${tokenSymbolToDisplayString(quote)}`;
     };
 }
 

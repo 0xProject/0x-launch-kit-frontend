@@ -6,7 +6,8 @@ import styled from 'styled-components';
 import { connectWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
 import { getCurrencyPair, getWeb3State } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { CurrencyPair, OrderSide, OrderType, StoreState, Web3State } from '../../util/types';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
+import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
@@ -134,13 +135,11 @@ const TokenText = styled.span`
     text-align: right;
 `;
 
-const TokenTextUppercase = styled(TokenText)`
-    text-transform: uppercase;
-`;
-
-const TokenTextButtonUppercase = styled.span`
-    text-transform: uppercase;
-`;
+const BigInputNumberTokenLabel = (props: { tokenSymbol: TokenSymbol }) => (
+    <TokenContainer>
+        <TokenText>{tokenSymbolToDisplayString(props.tokenSymbol)}</TokenText>
+    </TokenContainer>
+);
 
 class BuySell extends React.Component<Props, State> {
     public state = {
@@ -189,9 +188,7 @@ class BuySell extends React.Component<Props, State> {
                             onChange={this.updateMakerAmount}
                             value={makerAmount}
                         />
-                        <TokenContainer>
-                            <TokenTextUppercase>{currencyPair.base}</TokenTextUppercase>
-                        </TokenContainer>
+                        <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
                     </FieldContainer>
                     {orderType === OrderType.Limit && (
                         <>
@@ -205,9 +202,7 @@ class BuySell extends React.Component<Props, State> {
                                     onChange={this.updatePrice}
                                     value={price}
                                 />
-                                <TokenContainer>
-                                    <TokenText>{currencyPair.quote}</TokenText>
-                                </TokenContainer>
+                                <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
                             </FieldContainer>
                         </>
                     )}
@@ -224,7 +219,7 @@ class BuySell extends React.Component<Props, State> {
                         disabled={web3State !== Web3State.Done}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
-                        <TokenTextButtonUppercase>{currencyPair.base}</TokenTextButtonUppercase>
+                        {tokenSymbolToDisplayString(currencyPair.base)}
                     </Button>
                 </Content>
             </BuySellWrapper>

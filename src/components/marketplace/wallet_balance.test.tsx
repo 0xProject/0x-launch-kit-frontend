@@ -7,7 +7,7 @@ import { mount, shallow } from 'enzyme';
 import React from 'react';
 
 import * as tokenServices from '../../services/tokens';
-import { addressFactory, tokenFactory } from '../../util/test-utils';
+import { addressFactory, tokenBalanceFactory, tokenFactory } from '../../util/test-utils';
 import { TokenSymbol, Web3State } from '../../util/types';
 
 import { WalletBalance } from './wallet_balance';
@@ -42,6 +42,9 @@ describe('WalletBalance', () => {
             quote: quoteToken.symbol,
         };
 
+        const baseTokenBalance = tokenBalanceFactory.build();
+        const quoteTokenBalance = tokenBalanceFactory.build();
+
         // when
         const wrapper = mount(
             <WalletBalance
@@ -51,6 +54,8 @@ describe('WalletBalance', () => {
                 quoteToken={quoteToken}
                 currencyPair={currencyPair}
                 ethAccount={ethAccount}
+                baseTokenBalance={baseTokenBalance}
+                quoteTokenBalance={quoteTokenBalance}
             />,
         );
 
@@ -70,6 +75,9 @@ describe('WalletBalance', () => {
             base: baseToken.symbol,
             quote: quoteToken.symbol,
         };
+
+        const baseTokenBalance = tokenBalanceFactory.build();
+        const quoteTokenBalance = tokenBalanceFactory.build();
         // when
         const wrapper = mount(
             <WalletBalance
@@ -79,6 +87,8 @@ describe('WalletBalance', () => {
                 quoteToken={quoteToken}
                 currencyPair={currencyPair}
                 ethAccount={ethAccount}
+                baseTokenBalance={baseTokenBalance}
+                quoteTokenBalance={quoteTokenBalance}
             />,
         );
 
@@ -101,6 +111,10 @@ describe('WalletBalance', () => {
         const resultExpected2 = 'ZRX';
         const amountExpected = '2.0';
         const onConnectWalletFn = jest.fn();
+
+        const baseTokenBalance = tokenBalanceFactory.build();
+        const quoteTokenBalance = tokenBalanceFactory.build();
+
         // when
         const wrapper = shallow(
             <WalletBalance
@@ -110,6 +124,8 @@ describe('WalletBalance', () => {
                 currencyPair={currencyPair}
                 ethAccount={ethAccount}
                 quoteToken={quoteToken}
+                baseTokenBalance={baseTokenBalance}
+                quoteTokenBalance={quoteTokenBalance}
             />,
         );
 
@@ -139,7 +155,6 @@ describe('WalletBalance', () => {
             expect(quoteTokenResult).toContain(resultExpected2);
             expect(quoteValueResult).toContain(amountExpected);
             expect(baseValueResult).toContain(amountExpected);
-            expect(tokenServices.getTokenBalance).toHaveBeenCalledTimes(2);
             done();
         }, 0);
     });

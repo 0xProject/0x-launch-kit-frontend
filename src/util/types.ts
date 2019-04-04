@@ -22,6 +22,12 @@ export interface TokenBalance {
     token: Token;
 }
 
+export interface SearchTokenBalanceObject {
+    tokenBalances: TokenBalance[];
+    tokenToFind: Token | null;
+    wethTokenBalance: TokenBalance | null;
+}
+
 export enum Web3State {
     Done = 'Done',
     Error = 'Error',
@@ -155,6 +161,7 @@ export enum NotificationKind {
 }
 
 interface BaseNotification {
+    id: string;
     kind: NotificationKind;
     timestamp: Date;
 }
@@ -184,7 +191,6 @@ interface LimitNotification extends BaseNotification {
 }
 
 export interface OrderFilledNotification extends BaseNotification {
-    id: string;
     kind: NotificationKind.OrderFilled;
     amount: BigNumber;
     token: Token;
