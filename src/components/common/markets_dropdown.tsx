@@ -141,11 +141,11 @@ const SearchField = styled.input`
 `;
 
 const MagnifierIconWrapper = styled.div`
-    height: 18px;
-    left: 12px;
+    line-height: 30px;
+    height: 100%;
+    left: 11px;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 0;
     width: 14px;
     z-index: 12;
 `;
@@ -170,8 +170,12 @@ const TRStyled = styled(TR)<MarketRowProps>`
     }
 `;
 
+// Has a special left-padding: needs a specific selector to override the theme
 const THFirstStyled = styled(THFirst)`
-    ${verticalCellPadding};
+    ${verticalCellPadding}
+    &, &:last-child {
+        padding-left: 21.6px;
+    }
 `;
 
 const THLastStyled = styled(THLast)`
@@ -197,7 +201,7 @@ const TokenLabel = styled.div`
     font-size: 14px;
     font-weight: 700;
     line-height: 1.2;
-    margin: 0 0 0 15px;
+    margin: 0 0 0 12px;
 `;
 
 const DropdownTokenIcon = styled(TokenIcon)`
@@ -211,7 +215,7 @@ interface Filter {
 }
 const marketFilters: Filter[] = [
     {
-        text: 'All',
+        text: 'ALL',
         value: null,
     },
     {
