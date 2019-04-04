@@ -190,7 +190,7 @@ interface LimitNotification extends BaseNotification {
     side: OrderSide;
 }
 
-interface OrderFilledNotification extends BaseNotification {
+export interface OrderFilledNotification extends BaseNotification {
     kind: NotificationKind.OrderFilled;
     amount: BigNumber;
     token: Token;
