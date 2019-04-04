@@ -269,7 +269,7 @@ export const initWallet = () => {
         dispatch(setWeb3State(Web3State.Loading));
         try {
             const web3Service = Web3WrapperService.instance();
-            web3Service.setWeb3Status(Web3State.Loading);
+            web3Service.setWeb3StatusOnWeb3Service(Web3State.Loading);
             const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();
@@ -312,12 +312,12 @@ export const initWallet = () => {
             switch (error.message) {
                 case METAMASK_USER_DENIED_AUTH: {
                     dispatch(setWeb3State(Web3State.Locked));
-                    dispatch(initializeAppNoMetamaskOrLocked());
+                    initializeAppNoMetamaskOrLocked();
                     break;
                 }
                 case METAMASK_NOT_INSTALLED: {
                     dispatch(setWeb3State(Web3State.NotInstalled));
-                    dispatch(initializeAppNoMetamaskOrLocked());
+                    initializeAppNoMetamaskOrLocked();
                     break;
                 }
                 default: {
@@ -343,24 +343,34 @@ export const lockToken = (token: Token) => {
 
 export const connectWallet = () => {
     return async (dispatch: any) => {
-        // const web3Service = Web3WrapperService.instance();
-        // await web3Service.reconnectWallet();
+        const web3Service = Web3WrapperService.instance();
+        web3Service.setWeb3StatusOnWeb3Service(Web3State.Loading);
         dispatch(initWallet());
     };
 };
 
+/**
+ * Initializes metamask with default value, sets the initialWeb3 status based
+ * on the metamask client status (user has metamask but he did not connected or metamask non-installed
+ */
 export const initMetamaskState = () => {
     return async (dispatch: any) => {
         const web3Service = Web3WrapperService.instance();
         if (!web3Service.checkIfMetamaskIsInstalled()) {
             dispatch(setWeb3State(Web3State.NotInstalled));
+            web3Service.setWeb3StatusOnWeb3Service(Web3State.NotInstalled);
         } else {
             dispatch(setWeb3State(Web3State.Locked));
+            web3Service.setWeb3StatusOnWeb3Service(Web3State.Locked);
         }
-        dispatch(initializeAppNoMetamaskOrLocked());
+        initializeAppNoMetamaskOrLocked();
     };
 };
 
+/**
+ *  Initializes the app with a default state if the user does not have metamask, with permissions rejected
+ *  or if the user did not connected metamask to the dApp. Takes the info from MAINNET
+ */
 export const initializeAppNoMetamaskOrLocked = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();

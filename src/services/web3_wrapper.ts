@@ -20,13 +20,8 @@ export class Web3WrapperService {
         return this._instance;
     }
 
-    public setWeb3Status = (web3Status: Web3State) => {
+    public setWeb3StatusOnWeb3Service = (web3Status: Web3State) => {
         this._web3Status = web3Status;
-    };
-
-    public reconnectWallet = () => {
-        this._web3Status = Web3State.Loading;
-        // return getWeb3Wrapper();
     };
 
     public checkIfMetamaskIsInstalled = (): boolean => {
