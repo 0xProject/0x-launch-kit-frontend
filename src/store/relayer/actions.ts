@@ -61,19 +61,23 @@ export const cancelOrder = (order: UIOrder) => {
 
         const tx = cancelSignedOrder(order.rawOrder, gasPrice);
 
-        tx.then(() => dispatch(getOrderbookAndUserOrders())); // tslint:disable-line:no-floating-promises
+        // tslint:disable-next-line:no-floating-promises no-unsafe-any
+        tx.then(transaction => {
+            dispatch(getOrderbookAndUserOrders());
 
-        dispatch(
-            addNotifications([
-                {
-                    kind: NotificationKind.CancelOrder,
-                    amount: order.size,
-                    token: baseToken,
-                    timestamp: new Date(),
-                    tx,
-                },
-            ]),
-        );
+            dispatch(
+                addNotifications([
+                    {
+                        id: transaction.transactionHash,
+                        kind: NotificationKind.CancelOrder,
+                        amount: order.size,
+                        token: baseToken,
+                        timestamp: new Date(),
+                        tx,
+                    },
+                ]),
+            );
+        });
     };
 };
 
@@ -88,6 +92,7 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
         dispatch(
             addNotifications([
                 {
+                    id: signedOrder.signature,
                     kind: NotificationKind.Limit,
                     amount,
                     token: baseToken,
@@ -133,6 +138,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             dispatch(
                 addNotifications([
                     {
+                        id: txHash,
                         kind: NotificationKind.Market,
                         amount,
                         token: baseToken,
