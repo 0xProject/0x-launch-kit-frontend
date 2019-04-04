@@ -143,9 +143,9 @@ const BigInputNumberTokenLabel = (props: { tokenSymbol: TokenSymbol }) => (
 
 class BuySell extends React.Component<Props, State> {
     public state = {
-        makerAmount: new BigNumber(0),
+        makerAmount: new BigNumber(NaN),
+        price: new BigNumber(NaN),
         orderType: OrderType.Limit,
-        price: new BigNumber(0),
         tab: OrderSide.Buy,
     };
 
@@ -165,6 +165,13 @@ class BuySell extends React.Component<Props, State> {
                 text: 'Limit',
             },
         ];
+
+        const marketAmountIsEmpty = makerAmount.isNaN() || makerAmount.isZero();
+        const priceIsEmpty = price.isNaN() || price.isZero();
+
+        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (marketAmountIsEmpty || priceIsEmpty);
+
+        const orderTypeMarketIsEmpty = orderType === OrderType.Market && marketAmountIsEmpty;
 
         return (
             <BuySellWrapper>
@@ -187,6 +194,7 @@ class BuySell extends React.Component<Props, State> {
                             min={new BigNumber(0)}
                             onChange={this.updateMakerAmount}
                             value={makerAmount}
+                            placeholder={'0.00'}
                         />
                         <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
                     </FieldContainer>
@@ -201,6 +209,7 @@ class BuySell extends React.Component<Props, State> {
                                     min={new BigNumber(0)}
                                     onChange={this.updatePrice}
                                     value={price}
+                                    placeholder={'0.00'}
                                 />
                                 <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
                             </FieldContainer>
@@ -216,7 +225,7 @@ class BuySell extends React.Component<Props, State> {
                     <Button
                         theme="secondary"
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
-                        disabled={web3State !== Web3State.Done}
+                        disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         {tokenSymbolToDisplayString(currencyPair.base)}
