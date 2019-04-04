@@ -69,8 +69,8 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
     };
 };
 
-export const fetchMarkets = (dispatch: Dispatch<any>): Promise<any> => {
-    return new Promise(async (resolve: any) => {
+export const fetchMarkets = () => {
+    return async (dispatch: any) => {
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const knownTokens = getKnownTokens(networkId);
@@ -91,8 +91,8 @@ export const fetchMarkets = (dispatch: Dispatch<any>): Promise<any> => {
         );
 
         dispatch(setMarkets(markets));
-        resolve(markets);
-    });
+        return markets;
+    };
 };
 
 export const updateMarketPriceEther = () => {
