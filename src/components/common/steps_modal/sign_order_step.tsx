@@ -1,29 +1,19 @@
-import { BigNumber } from '0x.js';
-import { SignedOrder } from '@0x/connect';
+import { BigNumber, SignedOrder } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
-import { getStepsModalCurrentStep } from '../../../store/selectors';
-import { getStepTitle } from '../../../util/steps';
+import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
-import {
-    ModalText,
-    ModalTextClickable,
-    StepStatus,
-    StepStatusConfirmOnMetamask,
-    StepStatusDone,
-    StepStatusError,
-    StepStatusLoading,
-    Title,
-} from './steps_common';
-import { StepItem, StepsProgress } from './steps_progress';
+import { BaseStepModal } from './base_step_modal';
+import { StepItem } from './steps_progress';
 
 interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
 }
 interface StateProps {
+    estimatedTxTimeMs: number;
     step: StepBuySellLimitOrder;
 }
 
@@ -34,94 +24,49 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-interface State {
-    status: StepStatus;
-}
-
-class SignOrderStep extends React.Component<Props, State> {
-    public state = {
-        status: StepStatus.ConfirmOnMetamask,
-    };
-
-    public componentDidMount = async () => {
-        await this._getSignedOrder();
-    };
-
+class SignOrderStep extends React.Component<Props> {
     public render = () => {
-        const { status } = this.state;
-        const retry = () => this._retry();
-        let content;
+        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
 
-        switch (status) {
-            case StepStatus.Loading:
-                content = (
-                    <StepStatusLoading>
-                        <ModalText>Submitting order.</ModalText>
-                    </StepStatusLoading>
-                );
-                break;
-            case StepStatus.Done:
-                content = (
-                    <StepStatusDone>
-                        <ModalText>Order successfully placed! (may not be filled immediately)</ModalText>
-                    </StepStatusDone>
-                );
-                break;
-            case StepStatus.Error:
-                content = (
-                    <StepStatusError>
-                        <ModalText>
-                            Error signing/submitting order.{' '}
-                            <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
-                        </ModalText>
-                    </StepStatusError>
-                );
-                break;
-            default:
-                content = (
-                    <StepStatusConfirmOnMetamask>
-                        <ModalText>Confirm signature on Metamask to submit order.</ModalText>
-                    </StepStatusConfirmOnMetamask>
-                );
-                break;
-        }
+        const title = 'Order setup';
 
-        const stepsProgress = this.props.buildStepsProgress({
-            title: getStepTitle(this.props.step),
-            active: true,
-            progress: status === StepStatus.Done ? 100 : 0,
-        });
+        const confirmCaption = 'Confirm signature on Metamask to submit order.';
+        const loadingCaption = 'Submitting order.';
+        const doneCaption = 'Order successfully placed! (may not be filled immediately)';
+        const errorCaption = 'Error signing/submitting order.';
 
         return (
-            <>
-                <Title>Order Setup</Title>
-                {content}
-                <StepsProgress steps={stepsProgress} />
-            </>
+            <BaseStepModal
+                step={step}
+                title={title}
+                confirmCaption={confirmCaption}
+                loadingCaption={loadingCaption}
+                doneCaption={doneCaption}
+                errorCaption={errorCaption}
+                buildStepsProgress={buildStepsProgress}
+                estimatedTxTimeMs={estimatedTxTimeMs}
+                runAction={this._getSignedOrder}
+            />
         );
     };
 
-    private readonly _getSignedOrder = async () => {
+    private readonly _getSignedOrder = async ({ onLoading, onDone, onError }: any) => {
         const { amount, price, side } = this.props.step;
         try {
             const signedOrder = await this.props.createSignedOrder(amount, price, side);
-            this.setState({ status: StepStatus.Loading });
+            onLoading();
 
             await this.props.submitLimitOrder(signedOrder, amount, side);
-            this.setState({ status: StepStatus.Done });
+            onDone();
         } catch (err) {
-            this.setState({ status: StepStatus.Error });
+            onError();
         }
-    };
-
-    private readonly _retry = async () => {
-        this.setState({ status: StepStatus.Error });
-        await this._getSignedOrder();
     };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepBuySellLimitOrder,
     };
 };
