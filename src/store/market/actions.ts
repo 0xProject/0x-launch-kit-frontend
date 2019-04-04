@@ -1,7 +1,6 @@
 import { BigNumber } from '0x.js';
 import { push } from 'connected-react-router';
 import queryString from 'query-string';
-import { Dispatch } from 'redux';
 import { createAction } from 'typesafe-actions';
 
 import { availableMarkets } from '../../common/markets';
