@@ -67,7 +67,7 @@ const MarketsDropdownHeaderText = styled.span`
 const MarketsDropdownBody = styled(CardBase)`
     max-height: 100%;
     max-width: 100%;
-    width: 565px;
+    width: 401px;
 `;
 
 const MarketsFilters = styled.div`
