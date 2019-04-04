@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { themeColors } from '../../../util/theme';
@@ -22,6 +22,10 @@ interface WithChildren {
     children: React.ReactNode;
 }
 
+interface Props extends HTMLAttributes<HTMLDivElement> {
+    alignAbsoluteCenter?: boolean;
+}
+
 const StepStatusConfirmOnMetamask = (props: React.Props<WithChildren>) => (
     <>
         <MetamaskIcon />
@@ -29,16 +33,19 @@ const StepStatusConfirmOnMetamask = (props: React.Props<WithChildren>) => (
     </>
 );
 
-const StepStatusLoading = (props: React.Props<WithChildren>) => (
-    <>
-        <IconContainer>
-            <IconSpin>
-                <NotificationProcessingIcon />
-            </IconSpin>
-        </IconContainer>
-        {props.children}
-    </>
-);
+const StepStatusLoading = (props: Props) => {
+    const { children, alignAbsoluteCenter } = props;
+    return (
+        <>
+            <IconContainer alignAbsoluteCenter={alignAbsoluteCenter}>
+                <IconSpin>
+                    <NotificationProcessingIcon />
+                </IconSpin>
+            </IconContainer>
+            {children}
+        </>
+    );
+};
 
 const StepStatusDone = (props: React.Props<WithChildren>) => (
     <>
@@ -127,13 +134,26 @@ const rotate = keyframes`
   }
 `;
 
-const IconContainer = styled.div`
+const IconContainer = styled.div<Props>`
     align-items: center;
     display: flex;
     height: 62px;
     justify-content: center;
     margin-bottom: ${iconMarginBottom};
 
+    ${props =>
+        props.alignAbsoluteCenter
+            ? `
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            margin-bottom: 0;
+        `
+            : ''}
     svg {
         height: 52px;
         width: 52px;

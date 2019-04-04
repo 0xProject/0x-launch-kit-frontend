@@ -10,8 +10,8 @@ import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrde
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
-import { CardLoading } from '../common/loading';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
+import { StepStatusLoading as Loading } from '../common/steps_modal/steps_common';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
@@ -108,7 +108,7 @@ class OrderBookTable extends React.Component<Props, State> {
         let content: React.ReactNode;
 
         if (!baseToken || !quoteToken) {
-            content = <CardLoading />;
+            content = <Loading alignAbsoluteCenter={true} />;
         } else if (!buyOrders.length && !sellOrders.length) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {

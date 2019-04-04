@@ -12,7 +12,7 @@ import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
-import { CardLoading } from '../common/loading';
+import { StepStatusLoading as Loading } from '../common/steps_modal/steps_common';
 import { CustomTD, Table, TH, THead, TR } from '../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
@@ -117,7 +117,7 @@ class OrderHistory extends React.Component<Props, State> {
             }
             default: {
                 if (!baseToken || !quoteToken) {
-                    content = <CardLoading />;
+                    content = <Loading alignAbsoluteCenter={true} />;
                 } else if (!ordersToShow.length) {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
                 } else {
