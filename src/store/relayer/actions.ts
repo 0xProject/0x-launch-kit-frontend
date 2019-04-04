@@ -5,7 +5,7 @@ import { TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
-import { Web3WrapperService } from '../../services/web3_wrapper';
+import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { buildMarketOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
 import {
@@ -120,8 +120,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             const baseToken = getBaseToken(state) as Token;
 
             const contractWrappers = await getContractWrappers();
-            const web3Service = Web3WrapperService.instance();
-            const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3WrapperOrThrow();
             const txHash = await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, {
                 ...TX_DEFAULTS,
                 gasPrice,

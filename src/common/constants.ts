@@ -62,4 +62,4 @@ export const GIT_COMMIT: string = process.env.REACT_APP_GIT_COMMIT || '';
 
 export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_START_BLOCK_LIMIT as string, 10) || 1000;
 
-export const WEB3_INITIAL_STATE: Web3State = Web3State.NotInstalled;
+export const WEB3_INITIAL_STATE: Web3State = Web3State.Loading;

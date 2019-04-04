@@ -7,7 +7,7 @@ import {
     ZEROX_MARKET_PRICE_API_ENDPOINT,
 } from '../common/constants';
 import { getAllOrdersAsUIOrders } from '../services/orders';
-import { Web3WrapperService } from '../services/web3_wrapper';
+import { getWeb3Wrapper } from '../services/web3_wrapper';
 
 import { getKnownTokens } from './known_tokens';
 import { OrderSide, TokenSymbol } from './types';
@@ -44,8 +44,7 @@ export const getZeroXPriceInWeth = async (): Promise<BigNumber> => {
     if (!zeroXPriceInWeth) {
         /* Default case returns the value from coin market */
         zeroXPriceInWeth = await getZeroXPriceInWethFromMarket();
-        const web3Service = Web3WrapperService.instance();
-        const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
+        const web3Wrapper = await getWeb3Wrapper();
         if (web3Wrapper) {
             const networkId = await web3Wrapper.getNetworkIdAsync();
             const knownTokens = getKnownTokens(networkId);

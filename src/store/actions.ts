@@ -1,6 +1,6 @@
 import { MAINNET_ID } from '../common/constants';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
-import { Web3WrapperService } from '../services/web3_wrapper';
+import { getWeb3WrapperOrThrow } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
 import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
@@ -19,8 +19,7 @@ export const updateStore = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         try {
-            const web3Service = Web3WrapperService.instance();
-            const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3WrapperOrThrow();
 
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const networkId = await web3Wrapper.getNetworkIdAsync();

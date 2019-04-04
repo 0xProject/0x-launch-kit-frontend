@@ -7,7 +7,7 @@ import { ordersToUIOrders } from '../util/ui_orders';
 
 import { getContractWrappers } from './contract_wrappers';
 import { getRelayer } from './relayer';
-import { Web3WrapperService } from './web3_wrapper';
+import { getWeb3WrapperOrThrow } from './web3_wrapper';
 
 export const getAllOrders = (baseToken: Token, quoteToken: Token) => {
     const relayer = getRelayer();
@@ -46,8 +46,7 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
 
 export const cancelSignedOrder = async (order: SignedOrder, gasPrice: BigNumber) => {
     const contractWrappers = await getContractWrappers();
-    const web3Service = Web3WrapperService.instance();
-    const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
+    const web3Wrapper = await getWeb3WrapperOrThrow();
     const tx = await contractWrappers.exchange.cancelOrderAsync(order, { ...TX_DEFAULTS, gasPrice });
     return web3Wrapper.awaitTransactionSuccessAsync(tx);
 };

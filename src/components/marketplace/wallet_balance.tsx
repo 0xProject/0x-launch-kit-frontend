@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
 import { getTokenBalance } from '../../services/tokens';
-import { connectWallet } from '../../store/actions';
+import { connectWallet, initWallet } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getEthAccount, getQuoteToken, getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
@@ -338,7 +338,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     return {
-        onConnectWallet: () => dispatch(connectWallet()),
+        onConnectWallet: () => dispatch(initWallet()),
     };
 };
 

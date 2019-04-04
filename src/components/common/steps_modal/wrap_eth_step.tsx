@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Web3WrapperService } from '../../../services/web3_wrapper';
+import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
 import { getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
@@ -142,8 +142,7 @@ class WrapEthStep extends React.Component<Props, State> {
         const { step, advanceStep } = this.props;
         const { newWethBalance } = step;
         try {
-            const web3Service = Web3WrapperService.instance();
-            const web3Wrapper = await web3Service.getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3WrapperOrThrow();
             const convertTxHash = await this.props.updateWeth(newWethBalance);
             this.setState({ status: StepStatus.Loading });
 
