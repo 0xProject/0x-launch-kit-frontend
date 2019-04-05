@@ -13,11 +13,7 @@ import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
-import {
-    checkIfMetamaskIsInstalled,
-    getWeb3WrapperOrThrow,
-    setWeb3StatusOnWeb3Service,
-} from '../../services/web3_wrapper';
+import { getWeb3WrapperOrThrow, isMetamaskInstalled, setWeb3StatusOnWeb3Service } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
@@ -356,7 +352,7 @@ export const connectWallet = () => {
  */
 export const initializeAppNoMetamaskOrLocked = () => {
     return async (dispatch: any, getState: any) => {
-        if (!checkIfMetamaskIsInstalled()) {
+        if (!isMetamaskInstalled()) {
             dispatch(setWeb3State(Web3State.NotInstalled));
             setWeb3StatusOnWeb3Service(Web3State.NotInstalled);
         } else {

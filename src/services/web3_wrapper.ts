@@ -20,7 +20,7 @@ export const setWeb3StatusOnWeb3Service = (state: Web3State) => {
     web3Status = state;
 };
 
-export const checkIfMetamaskIsInstalled = (): boolean => {
+export const isMetamaskInstalled = (): boolean => {
     const { ethereum, web3 } = window;
     return ethereum || web3;
 };
