@@ -139,7 +139,7 @@ export class BaseStepModal extends React.Component<Props, State> {
     };
 
     private readonly _retry = async () => {
-        this.setState({ status: StepStatus.Error });
+        this.setState({ status: StepStatus.ConfirmOnMetamask });
 
         await this._runAction();
     };
