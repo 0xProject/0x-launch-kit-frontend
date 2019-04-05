@@ -340,12 +340,6 @@ export const lockToken = (token: Token) => {
     };
 };
 
-export const connectWallet = () => {
-    return async (dispatch: any) => {
-        dispatch(initWallet());
-    };
-};
-
 /**
  *  Initializes the app with a default state if the user does not have metamask, with permissions rejected
  *  or if the user did not connected metamask to the dApp. Takes the info from MAINNET
