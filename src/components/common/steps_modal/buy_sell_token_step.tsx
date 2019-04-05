@@ -58,6 +58,7 @@ class BuySellTokenStep extends React.Component<Props> {
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._confirmOnMetamaskBuyOrSell}
+                showPartialProgress={true}
             />
         );
     };

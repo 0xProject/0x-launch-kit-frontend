@@ -55,6 +55,7 @@ class ToggleTokenLockStep extends React.Component<Props> {
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._toggleToken}
+                showPartialProgress={true}
             />
         );
     };

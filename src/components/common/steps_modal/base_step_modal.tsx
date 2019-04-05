@@ -35,6 +35,7 @@ interface Props {
     doneCaption: string;
     errorCaption: string;
     step: Step;
+    showPartialProgress?: boolean;
 }
 
 interface State {
@@ -94,7 +95,7 @@ export class BaseStepModal extends React.Component<Props, State> {
         }
 
         let getProgress: GetProgress = () => 0;
-        if (status === StepStatus.Loading && loadingStarted !== null) {
+        if (status === StepStatus.Loading && this.props.showPartialProgress && loadingStarted !== null) {
             getProgress = makeGetProgress(loadingStarted, estimatedTxTimeMs);
         } else if (status === StepStatus.Done) {
             getProgress = () => 100;

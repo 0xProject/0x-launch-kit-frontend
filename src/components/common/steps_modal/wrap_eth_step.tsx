@@ -78,6 +78,7 @@ class WrapEthStep extends React.Component<Props> {
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._convertWeth}
+                showPartialProgress={true}
             />
         );
     };
