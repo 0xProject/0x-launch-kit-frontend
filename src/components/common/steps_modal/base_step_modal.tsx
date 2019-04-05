@@ -49,12 +49,21 @@ export class BaseStepModal extends React.Component<Props, State> {
         loadingStarted: null,
     };
 
+    private readonly _estimatedTxTimeMs: number;
+
+    constructor(props: Props) {
+        super(props);
+
+        // we set the value of the estimated tx time, so that the progress bar length is not updated in the middle of the step
+        this._estimatedTxTimeMs = props.estimatedTxTimeMs;
+    }
+
     public componentDidMount = async () => {
         await this._runAction();
     };
 
     public render = () => {
-        const { confirmCaption, estimatedTxTimeMs, loadingCaption, doneCaption, errorCaption, title } = this.props;
+        const { confirmCaption, loadingCaption, doneCaption, errorCaption, title } = this.props;
 
         const { loadingStarted, status } = this.state;
         const retry = () => this._retry();
@@ -96,7 +105,7 @@ export class BaseStepModal extends React.Component<Props, State> {
 
         let getProgress: GetProgress = () => 0;
         if (status === StepStatus.Loading && this.props.showPartialProgress && loadingStarted !== null) {
-            getProgress = makeGetProgress(loadingStarted, estimatedTxTimeMs);
+            getProgress = makeGetProgress(loadingStarted, this._estimatedTxTimeMs);
         } else if (status === StepStatus.Done) {
             getProgress = () => 100;
         }
