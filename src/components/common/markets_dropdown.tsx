@@ -161,6 +161,10 @@ const verticalCellPadding = `
     padding-top: 10px;
 `;
 
+const tableHeaderFontWeight = `
+    font-weight: 700;
+`;
+
 const TRStyled = styled(TR)<MarketRowProps>`
     background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
@@ -173,6 +177,8 @@ const TRStyled = styled(TR)<MarketRowProps>`
 // Has a special left-padding: needs a specific selector to override the theme
 const THFirstStyled = styled(THFirst)`
     ${verticalCellPadding}
+    ${tableHeaderFontWeight}
+
     &, &:last-child {
         padding-left: 21.6px;
     }
@@ -180,6 +186,7 @@ const THFirstStyled = styled(THFirst)`
 
 const THLastStyled = styled(THLast)`
     ${verticalCellPadding};
+    ${tableHeaderFontWeight}
 `;
 
 const CustomTDFirstStyled = styled(CustomTDFirst)`
