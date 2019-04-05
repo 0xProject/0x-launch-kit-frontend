@@ -30,6 +30,7 @@ const WalletConnectionStatusDot = styled.div<WrapperProps>`
 
 const WalletConnectionStatusText = styled.span`
     color: #333;
+    font-feature-settings: 'calt' 0;
     font-size: 16px;
     font-weight: 500;
     margin-right: 10px;
