@@ -66,6 +66,7 @@ const Label = styled.span`
 
 const Value = styled.span`
     color: #000;
+    font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;
     font-weight: 600;

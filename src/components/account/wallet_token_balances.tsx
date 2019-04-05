@@ -90,9 +90,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                     <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>ETH Total (ETH + wETH)</CustomTDTokenName>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedTotalEthBalance}</CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                    {formattedTotalEthBalance}
+                </CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
                 <LockCell
                     isUnlocked={wethTokenBalance.isUnlocked}
                     onClick={onTotalEthClick}
