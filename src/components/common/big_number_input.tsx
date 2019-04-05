@@ -25,6 +25,7 @@ const Input = styled.input`
         -webkit-appearance: none;
         margin: 0;
     }
+    -moz-appearance: textfield;
 `;
 
 export class BigNumberInput extends React.Component<Props, State> {
