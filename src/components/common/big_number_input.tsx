@@ -30,6 +30,10 @@ const Input = styled.input`
 `;
 
 export class BigNumberInput extends React.Component<Props, State> {
+    public static defaultProps = {
+        placeholder: '0.00',
+    };
+
     public readonly state = {
         currentValueStr: tokenAmountInUnits(this.props.value, this.props.decimals),
     };
@@ -59,7 +63,7 @@ export class BigNumberInput extends React.Component<Props, State> {
 
     public render = () => {
         const { currentValueStr } = this.state;
-        const { decimals, step, min, max, className, placeholder = '0.00' } = this.props;
+        const { decimals, step, min, max, className, placeholder } = this.props;
 
         const stepStr = step && tokenAmountInUnits(step, decimals);
         const minStr = min && tokenAmountInUnits(min, decimals);
