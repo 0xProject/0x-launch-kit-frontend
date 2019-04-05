@@ -105,6 +105,7 @@ const fieldStyle = `
     border: 1px solid ${themeColors.borderColor};
     border-radius: ${themeDimensions.borderRadius};
     color: #000;
+    font-feature-settings: 'tnum' 1;
     font-size: 16px;
     height: 100%;
     padding-left: 14px;

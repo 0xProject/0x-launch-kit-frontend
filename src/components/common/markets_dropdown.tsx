@@ -350,7 +350,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                                         </TokenLabel>
                                     </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
-                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true }}>
+                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
                                     {this._getPrice(market)}
                                 </CustomTDLastStyled>
                             </TRStyled>

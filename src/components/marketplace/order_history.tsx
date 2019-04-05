@@ -56,9 +56,9 @@ const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
     return (
         <TR key={index}>
             <SideTD side={order.side}>{sideLabel}</SideTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{size}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{filled}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right' }}>{price}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right', tabular: true }}>{size}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right', tabular: true }}>{filled}</CustomTD>
+            <CustomTD styles={{ textAlign: 'right', tabular: true }}>{price}</CustomTD>
             <CustomTD>{status}</CustomTD>
             <CustomTD styles={{ textAlign: 'center' }}>
                 {isOrderFillable ? <CancelOrderButtonContainer order={order} /> : ''}
