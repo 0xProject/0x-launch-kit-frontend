@@ -298,6 +298,7 @@ export const initWallet = () => {
                     ethBalance,
                     wethTokenBalance,
                     tokenBalances,
+                    networkId,
                 }),
             );
             dispatch(
