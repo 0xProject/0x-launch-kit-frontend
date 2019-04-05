@@ -102,12 +102,12 @@ export const StepsProgress: React.FC<Props> = props => {
     return (
         <StepsProgressWrapper {...restProps}>
             <StartingDot />
-            {steps.map((item: StepItem, index) => {
+            {steps.map((item, index) => {
                 const progress = +item.progress;
                 return (
                     <Step key={index}>
                         <StepLineContainer>
-                            <StepTitle active={item.active || progress === 100}>{item.title}</StepTitle>
+                            <StepTitle active={item.active || progress >= 100}>{item.title}</StepTitle>
                             <StepLine>
                                 <StepLineProgress progress={item.progress} />
                             </StepLine>
