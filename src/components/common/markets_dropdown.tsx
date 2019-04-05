@@ -7,7 +7,7 @@ import { changeMarket, goToHome } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeColors, themeDimensions, themeFeatures } from '../../util/theme';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../util/types';
 
@@ -65,6 +65,7 @@ const MarketsDropdownHeaderText = styled.span`
 `;
 
 const MarketsDropdownBody = styled(CardBase)`
+    box-shadow: ${themeFeatures.boxShadow};
     max-height: 100%;
     max-width: 100%;
     width: 401px;
@@ -171,6 +172,12 @@ const TRStyled = styled(TR)<MarketRowProps>`
 
     &:hover {
         background-color: ${themeColors.rowActive};
+    }
+
+    &:last-child > td {
+        border-bottom-left-radius: ${themeDimensions.borderRadius};
+        border-bottom-right-radius: ${themeDimensions.borderRadius};
+        border-bottom: none;
     }
 `;
 

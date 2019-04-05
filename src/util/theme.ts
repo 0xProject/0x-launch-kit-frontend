@@ -52,3 +52,7 @@ export const themeBreakPoints = {
     xxl: '1280px',
     xxxl: '1366px',
 };
+
+export const themeFeatures = {
+    boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
+};
