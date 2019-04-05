@@ -54,14 +54,22 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         const quoteToken = selectors.getQuoteToken(state) as Token;
 
         const buySellLimitFlow: Step[] = [];
+        let unlockQuoteTokenStep;
+        let unlockBaseTokenStep;
 
         // unlock base and quote tokens if necessary
-        const unlockBaseTokenStep = getUnlockTokenStepIfNeeded(baseToken, state);
+        // If it's a buy -> the quote token has to be unlocked
+        if (side === OrderSide.Buy) {
+            unlockQuoteTokenStep = getUnlockTokenStepIfNeeded(quoteToken, state);
+        } else {
+            // If it's a sell -> the base token has to be unlocked
+            unlockBaseTokenStep = getUnlockTokenStepIfNeeded(baseToken, state);
+        }
+
         if (unlockBaseTokenStep) {
             buySellLimitFlow.push(unlockBaseTokenStep);
         }
 
-        const unlockQuoteTokenStep = getUnlockTokenStepIfNeeded(quoteToken, state);
         if (unlockQuoteTokenStep) {
             buySellLimitFlow.push(unlockQuoteTokenStep);
         }
