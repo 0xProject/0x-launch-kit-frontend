@@ -11,11 +11,6 @@ import { Web3State } from '../util/types';
 let web3Wrapper: Web3Wrapper | null = null;
 let web3Status: Web3State = WEB3_INITIAL_STATE;
 
-export const reconnectWallet = async (): Promise<Web3Wrapper | null> => {
-    web3Status = Web3State.Loading;
-    return getWeb3Wrapper();
-};
-
 export const setWeb3StatusOnWeb3Service = (state: Web3State) => {
     web3Status = state;
 };
