@@ -3,6 +3,7 @@ import React from 'react';
 import { getStepTitle, makeGetProgress } from '../../../util/steps';
 import { Step } from '../../../util/types';
 
+import { StepPendingTime } from './step_pending_time';
 import {
     ModalText,
     ModalTextClickable,
@@ -121,6 +122,13 @@ export class BaseStepModal extends React.Component<Props, State> {
                 <Title>{title}</Title>
                 {content}
                 <StepsProgress steps={stepsProgress} />
+                {this.props.showPartialProgress && (
+                    <StepPendingTime
+                        txStarted={loadingStarted}
+                        stepStatus={status}
+                        estimatedTxTimeMs={this._estimatedTxTimeMs}
+                    />
+                )}
             </>
         );
     };
