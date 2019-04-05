@@ -1,6 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { MAKER_FEE, TAKER_FEE } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { isWeth, isZrx } from '../../util/known_tokens';
@@ -74,8 +75,8 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
             buySellLimitFlow.push(unlockQuoteTokenStep);
         }
 
-        // unlock zrx (for fees) if it's not one of the traded tokens
-        if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol)) {
+        // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
+        if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.greaterThan(0)) {
             const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
             if (unlockZrxStep) {
                 buySellLimitFlow.push(unlockZrxStep);
@@ -158,7 +159,8 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
             buySellMarketFlow.push(unlockTokenStep);
         }
 
-        if (!isZrx(tokenToUnlock.symbol)) {
+        // unlock zrx (for fees) if the taker fee is positive
+        if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.greaterThan(0)) {
             const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
             if (unlockZrxStep) {
                 buySellMarketFlow.push(unlockZrxStep);
