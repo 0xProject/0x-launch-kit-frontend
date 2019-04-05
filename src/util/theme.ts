@@ -19,7 +19,7 @@ export const themeDimensions = {
     fieldHeight: '46px',
     horizontalPadding: '20px',
     sidebarWidth: '350px',
-    verticalPadding: '10px',
+    verticalPadding: '20px',
     verticalSeparation: '30px',
 };
 
