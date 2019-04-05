@@ -149,7 +149,7 @@ class OrderDetails extends React.Component<Props, State> {
             const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
                 {
                     amount: tokenAmount,
-                    orders: OrderSide.Sell ? openBuyOrders : openSellOrders,
+                    orders: orderSide === OrderSide.Sell ? openBuyOrders : openSellOrders,
                 },
                 orderSide,
             );
