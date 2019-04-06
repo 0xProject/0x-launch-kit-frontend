@@ -17,7 +17,7 @@ export const themeColors = {
 export const themeDimensions = {
     borderRadius: '4px',
     fieldHeight: '46px',
-    horizontalPadding: '20px',
+    horizontalPadding: '16px',
     sidebarWidth: '350px',
     verticalPadding: '10px',
     verticalSeparation: '30px',
@@ -51,4 +51,8 @@ export const themeBreakPoints = {
     xs: '320px',
     xxl: '1280px',
     xxxl: '1366px',
+};
+
+export const themeFeatures = {
+    boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
 };

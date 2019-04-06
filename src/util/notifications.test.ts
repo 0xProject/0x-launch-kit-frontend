@@ -1,17 +1,44 @@
 import { assetDataUtils, BigNumber, ExchangeFillEventArgs } from '0x.js';
 
-import { KnownTokens } from './known_tokens';
+import { getKnownTokens } from './known_tokens';
 import { buildOrderFilledNotification } from './notifications';
-import { addressFactory, tokenMetaDataFactory } from './test-utils';
+import { addressFactory } from './test-utils';
 import { OrderSide, TokenSymbol } from './types';
 
-const tokens = tokenMetaDataFactory.buildList(5);
-const wethToken = tokenMetaDataFactory.build({
-    symbol: TokenSymbol.Weth,
-});
-const knownTokens = new KnownTokens(50, [...tokens, wethToken]);
-
 describe('buildOrderFilledNotification', () => {
+    const networkId = 50;
+    const knownTokens = getKnownTokens(networkId);
+    const zrxToken = knownTokens.getTokenBySymbol(TokenSymbol.Zrx);
+    const wethToken = knownTokens.getWethToken();
+
+    // ZRX/WETH
+    const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(zrxToken.address);
+    const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(wethToken.address);
+
+    const markets = [
+        {
+            price: null,
+            currencyPair: {
+                base: TokenSymbol.Zrx,
+                quote: TokenSymbol.Weth,
+            },
+        },
+        {
+            price: null,
+            currencyPair: {
+                base: TokenSymbol.Mkr,
+                quote: TokenSymbol.Weth,
+            },
+        },
+        {
+            price: null,
+            currencyPair: {
+                base: TokenSymbol.Zrx,
+                quote: TokenSymbol.Mkr,
+            },
+        },
+    ];
+
     it('should create a notification for a fill of a buy order', () => {
         // given
         const args: ExchangeFillEventArgs = {
@@ -24,8 +51,8 @@ describe('buildOrderFilledNotification', () => {
             makerFeePaid: new BigNumber(0),
             takerFeePaid: new BigNumber(0),
             orderHash: '',
-            makerAssetData: assetDataUtils.encodeERC20AssetData(wethToken.addresses[50]),
-            takerAssetData: assetDataUtils.encodeERC20AssetData(tokens[0].addresses[50]),
+            makerAssetData: baseTokenAssetData,
+            takerAssetData: quoteTokenAssetData,
         };
         const log: any = {
             args,
@@ -33,7 +60,7 @@ describe('buildOrderFilledNotification', () => {
         };
 
         // when
-        const notification = buildOrderFilledNotification(log, knownTokens);
+        const notification = buildOrderFilledNotification(log, knownTokens, markets);
 
         // then
         expect(notification.amount).toEqual(new BigNumber(1));
@@ -52,8 +79,8 @@ describe('buildOrderFilledNotification', () => {
             makerFeePaid: new BigNumber(0),
             takerFeePaid: new BigNumber(0),
             orderHash: '',
-            makerAssetData: assetDataUtils.encodeERC20AssetData(tokens[0].addresses[50]),
-            takerAssetData: assetDataUtils.encodeERC20AssetData(wethToken.addresses[50]),
+            makerAssetData: quoteTokenAssetData,
+            takerAssetData: baseTokenAssetData,
         };
         const log: any = {
             args,
@@ -61,7 +88,7 @@ describe('buildOrderFilledNotification', () => {
         };
 
         // when
-        const notification = buildOrderFilledNotification(log, knownTokens);
+        const notification = buildOrderFilledNotification(log, knownTokens, markets);
 
         // then
         expect(notification.amount).toEqual(new BigNumber(2));

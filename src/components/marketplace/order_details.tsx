@@ -20,7 +20,7 @@ const Row = styled.div`
     position: relative;
     z-index: 1;
 
-    &: last-of-type {
+    &:last-of-type {
         margin-bottom: 20px;
     }
 `;
@@ -28,12 +28,14 @@ const Row = styled.div`
 const Value = styled.div`
     color: #000;
     flex-shrink: 0;
+    font-feature-settings: 'tnum' 1;
     font-size: 14px;
     line-height: 1.2;
     white-space: nowrap;
 `;
 
 const CostValue = styled(Value)`
+    font-feature-settings: 'tnum' 1;
     font-weight: bold;
 `;
 
@@ -149,7 +151,7 @@ class OrderDetails extends React.Component<Props, State> {
             const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
                 {
                     amount: tokenAmount,
-                    orders: OrderSide.Sell ? openBuyOrders : openSellOrders,
+                    orders: orderSide === OrderSide.Sell ? openBuyOrders : openSellOrders,
                 },
                 orderSide,
             );

@@ -1,5 +1,6 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
+import styled from 'styled-components';
 
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 
@@ -17,6 +18,15 @@ interface Props {
 interface State {
     currentValueStr: string;
 }
+
+const Input = styled.input`
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    -moz-appearance: textfield;
+`;
 
 export class BigNumberInput extends React.Component<Props, State> {
     public readonly state = {
@@ -55,7 +65,7 @@ export class BigNumberInput extends React.Component<Props, State> {
         const maxStr = max && tokenAmountInUnits(max, decimals);
 
         return (
-            <input
+            <Input
                 className={className}
                 max={maxStr}
                 min={minStr}

@@ -30,6 +30,8 @@ const NotificationWrapper = styled.div<{ active?: boolean }>`
     padding: 20px ${themeDimensions.horizontalPadding};
 
     &:last-child {
+        border-bottom-left-radius: ${themeDimensions.borderRadius};
+        border-bottom-right-radius: ${themeDimensions.borderRadius};
         border-bottom: none;
     }
 `;

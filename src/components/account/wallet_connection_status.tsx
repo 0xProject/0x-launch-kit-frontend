@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getEthAccount } from '../../store/selectors';
+import { themeFeatures } from '../../util/theme';
 import { StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
@@ -30,12 +31,14 @@ const WalletConnectionStatusDot = styled.div<WrapperProps>`
 
 const WalletConnectionStatusText = styled.span`
     color: #333;
+    font-feature-settings: 'calt' 0;
     font-size: 16px;
     font-weight: 500;
     margin-right: 10px;
 `;
 
 const DropdownItems = styled(CardBase)`
+    box-shadow: ${themeFeatures.boxShadow};
     min-width: 240px;
 `;
 

@@ -23,7 +23,7 @@ interface StateProps {
 interface DispatchProps {
     onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
     refreshOrders: () => any;
-    notifyBuySellMarket: (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => any;
+    notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => any;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -74,7 +74,7 @@ class BuySellTokenStep extends React.Component<Props> {
             await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
 
             onDone();
-            this.props.notifyBuySellMarket(amount, token, side, Promise.resolve());
+            this.props.notifyBuySellMarket(fillOrdersTxHash, amount, token, side, Promise.resolve());
             this.props.refreshOrders();
         } catch (err) {
             onError();
@@ -94,8 +94,8 @@ const BuySellTokenStepContainer = connect(
     (dispatch: any) => {
         return {
             onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => dispatch(submitMarketOrder(amount, side)),
-            notifyBuySellMarket: (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) =>
-                dispatch(addMarketBuySellNotification(amount, token, side, tx)),
+            notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) =>
+                dispatch(addMarketBuySellNotification(id, amount, token, side, tx)),
             refreshOrders: () => dispatch(getOrderbookAndUserOrders()),
         };
     },

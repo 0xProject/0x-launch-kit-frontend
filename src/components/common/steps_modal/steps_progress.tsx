@@ -113,16 +113,20 @@ export const StepsProgress: React.FC<Props> = props => {
 
                 return (
                     <Step key={index}>
-                        <StepLineContainer>
-                            <StepTitle active={item.active}>{item.title}</StepTitle>
-                            <StepLine>
-                                <Interval delay={250}>
-                                    {now => <StepLineProgress progress={getProgress(now.valueOf())} />}
-                                </Interval>
-                            </StepLine>
-                        </StepLineContainer>
                         <Interval delay={250}>
-                            {now => <StepDot progress={getProgress(now.valueOf())}>{checkMark()}</StepDot>}
+                            {now => (
+                                <>
+                                    <StepLineContainer>
+                                        <StepTitle active={item.active || getProgress(now.valueOf()) >= 100}>
+                                            {item.title}
+                                        </StepTitle>
+                                        <StepLine>
+                                            <StepLineProgress progress={getProgress(now.valueOf())} />
+                                        </StepLine>
+                                    </StepLineContainer>
+                                    <StepDot progress={getProgress(now.valueOf())}>{checkMark()}</StepDot>
+                                </>
+                            )}
                         </Interval>
                     </Step>
                 );

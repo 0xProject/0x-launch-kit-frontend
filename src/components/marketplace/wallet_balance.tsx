@@ -6,14 +6,21 @@ import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
-import { getTokenBalance } from '../../services/tokens';
 import { connectWallet } from '../../store/actions';
-import { getBaseToken, getCurrencyPair, getEthAccount, getQuoteToken, getWeb3State } from '../../store/selectors';
+import {
+    getBaseToken,
+    getBaseTokenBalance,
+    getCurrencyPair,
+    getEthAccount,
+    getQuoteToken,
+    getQuoteTokenBalance,
+    getWeb3State,
+} from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
-import { CurrencyPair, StoreState, Token, Web3State } from '../../util/types';
+import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
@@ -59,6 +66,7 @@ const Label = styled.span`
 
 const Value = styled.span`
     color: #000;
+    font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;
     font-weight: 600;
@@ -137,6 +145,8 @@ interface StateProps {
     baseToken: Token | null;
     quoteToken: Token | null;
     ethAccount: string;
+    baseTokenBalance: TokenBalance | null;
+    quoteTokenBalance: TokenBalance | null;
 }
 
 interface DispatchProps {
@@ -197,29 +207,6 @@ const openMetamaskExtensionUrl = () => {
 };
 
 class WalletBalance extends React.Component<Props, State> {
-    public state = {
-        quoteBalance: new BigNumber('0.0'),
-        baseBalance: new BigNumber('0.0'),
-    };
-
-    public componentDidMount = async () => {
-        await this._updateState();
-    };
-
-    public componentDidUpdate = async (prevProps: Readonly<Props>) => {
-        const { onConnectWallet, currencyPair, ethAccount, quoteToken, baseToken, web3State } = this.props;
-        if (
-            prevProps.onConnectWallet !== onConnectWallet ||
-            prevProps.currencyPair !== currencyPair ||
-            prevProps.ethAccount !== ethAccount ||
-            prevProps.quoteToken !== quoteToken ||
-            prevProps.baseToken !== baseToken ||
-            prevProps.web3State !== web3State
-        ) {
-            await this._updateState();
-        }
-    };
-
     public render = () => {
         const { web3State } = this.props;
         const walletContent = this._getWalletContent();
@@ -230,26 +217,20 @@ class WalletBalance extends React.Component<Props, State> {
         );
     };
 
-    private readonly _updateState = async () => {
-        const { baseToken, quoteToken, ethAccount } = this.props;
-        if (quoteToken && baseToken && ethAccount) {
-            const quoteBalanceProm = getTokenBalance(quoteToken, ethAccount);
-            const baseBalanceProm = getTokenBalance(baseToken, ethAccount);
-            const [quoteBalance, baseBalance] = await Promise.all([quoteBalanceProm, baseBalanceProm]);
-            this.setState({
-                quoteBalance,
-                baseBalance,
-            });
-        }
-    };
-
     private readonly _getWalletContent = () => {
         let content: any = null;
-        const { web3State, currencyPair, onConnectWallet, quoteToken, baseToken } = this.props;
+        const {
+            web3State,
+            currencyPair,
+            onConnectWallet,
+            quoteToken,
+            quoteTokenBalance,
+            baseTokenBalance,
+        } = this.props;
 
-        if (web3State === Web3State.Done && quoteToken && baseToken) {
-            const quoteBalanceString = tokenAmountInUnits(this.state.quoteBalance, quoteToken.decimals);
-            const baseBalanceString = tokenAmountInUnits(this.state.baseBalance, baseToken.decimals);
+        if (web3State === Web3State.Done && quoteToken && baseTokenBalance && quoteTokenBalance) {
+            const quoteBalanceString = tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
+            const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, quoteTokenBalance.token.decimals);
             const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled
                     description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
@@ -333,6 +314,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
         baseToken: getBaseToken(state),
         quoteToken: getQuoteToken(state),
         ethAccount: getEthAccount(state),
+        quoteTokenBalance: getQuoteTokenBalance(state),
+        baseTokenBalance: getBaseTokenBalance(state),
     };
 };
 
