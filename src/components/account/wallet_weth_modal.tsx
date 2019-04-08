@@ -103,6 +103,7 @@ interface EthBoxProps {
 
 const EthBoxValue = styled.h2<EthBoxProps>`
     color: ${props => (props.isZero ? '#666' : themeColors.darkBlue)};
+    font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
     line-height: 1.2;
@@ -136,6 +137,7 @@ const SetMinEthButton = styled.a`
 const InputEth = styled<any>(BigNumberInput)`
     border-color: transparent;
     color: ${themeColors.darkBlue};
+    font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
     height: 28px;

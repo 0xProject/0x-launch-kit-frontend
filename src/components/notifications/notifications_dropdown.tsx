@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { setHasUnreadNotifications } from '../../store/actions';
 import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeColors, themeDimensions, themeFeatures } from '../../util/theme';
 import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
@@ -42,6 +42,7 @@ const NewNotificationsBadge = styled.div`
 `;
 
 const NotificationsDropdownBody = styled(CardBase)`
+    box-shadow: ${themeFeatures.boxShadow};
     width: 400px;
 `;
 const NotificationsList = styled.div`

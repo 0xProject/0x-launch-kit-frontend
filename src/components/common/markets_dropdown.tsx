@@ -7,7 +7,7 @@ import { changeMarket, goToHome } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { getColorBySymbol } from '../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeColors, themeDimensions, themeFeatures } from '../../util/theme';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../util/types';
 
@@ -65,9 +65,10 @@ const MarketsDropdownHeaderText = styled.span`
 `;
 
 const MarketsDropdownBody = styled(CardBase)`
+    box-shadow: ${themeFeatures.boxShadow};
     max-height: 100%;
     max-width: 100%;
-    width: 565px;
+    width: 401px;
 `;
 
 const MarketsFilters = styled.div`
@@ -90,7 +91,7 @@ const MarketsFiltersLabel = styled.h2`
 const TokenFiltersTabs = styled.div`
     align-items: center;
     display: flex;
-    margin-right: 20px;
+    margin-right: 10px;
 `;
 
 const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
@@ -112,7 +113,7 @@ const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
 `;
 
 const searchFieldHeight = '32px';
-const searchFieldWidth = '179px';
+const searchFieldWidth = '142px';
 
 const SearchWrapper = styled.div`
     height: ${searchFieldHeight};
@@ -141,11 +142,11 @@ const SearchField = styled.input`
 `;
 
 const MagnifierIconWrapper = styled.div`
-    height: 18px;
-    left: 12px;
+    line-height: 30px;
+    height: 100%;
+    left: 11px;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 0;
     width: 14px;
     z-index: 12;
 `;
@@ -161,6 +162,10 @@ const verticalCellPadding = `
     padding-top: 10px;
 `;
 
+const tableHeaderFontWeight = `
+    font-weight: 700;
+`;
+
 const TRStyled = styled(TR)<MarketRowProps>`
     background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
@@ -168,14 +173,27 @@ const TRStyled = styled(TR)<MarketRowProps>`
     &:hover {
         background-color: ${themeColors.rowActive};
     }
+
+    &:last-child > td {
+        border-bottom-left-radius: ${themeDimensions.borderRadius};
+        border-bottom-right-radius: ${themeDimensions.borderRadius};
+        border-bottom: none;
+    }
 `;
 
+// Has a special left-padding: needs a specific selector to override the theme
 const THFirstStyled = styled(THFirst)`
-    ${verticalCellPadding};
+    ${verticalCellPadding}
+    ${tableHeaderFontWeight}
+
+    &, &:last-child {
+        padding-left: 21.6px;
+    }
 `;
 
 const THLastStyled = styled(THLast)`
     ${verticalCellPadding};
+    ${tableHeaderFontWeight}
 `;
 
 const CustomTDFirstStyled = styled(CustomTDFirst)`
@@ -197,7 +215,7 @@ const TokenLabel = styled.div`
     font-size: 14px;
     font-weight: 700;
     line-height: 1.2;
-    margin: 0 0 0 15px;
+    margin: 0 0 0 12px;
 `;
 
 const DropdownTokenIcon = styled(TokenIcon)`
@@ -211,7 +229,7 @@ interface Filter {
 }
 const marketFilters: Filter[] = [
     {
-        text: 'All',
+        text: 'ALL',
         value: null,
     },
     {
@@ -350,7 +368,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                                         </TokenLabel>
                                     </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
-                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true }}>
+                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
                                     {this._getPrice(market)}
                                 </CustomTDLastStyled>
                             </TRStyled>

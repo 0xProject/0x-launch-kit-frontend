@@ -280,11 +280,18 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
     };
 };
 
-export const addMarketBuySellNotification = (amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => {
+export const addMarketBuySellNotification = (
+    id: string,
+    amount: BigNumber,
+    token: Token,
+    side: OrderSide,
+    tx: Promise<any>,
+) => {
     return async (dispatch: any) => {
         dispatch(
             addNotifications([
                 {
+                    id,
                     kind: NotificationKind.Market,
                     amount,
                     token,

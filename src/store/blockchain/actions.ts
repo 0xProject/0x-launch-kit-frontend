@@ -17,12 +17,13 @@ import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrap
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
-import { getMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
+import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,
     getEthAccount,
     getGasPriceInWei,
+    getMarkets,
     getTokenBalances,
     getWethBalance,
     getWethTokenBalance,
@@ -188,8 +189,8 @@ export const updateGasInfo = () => {
 };
 
 let fillEventsSubscription: string | null = null;
-export const setConnectedUser = (ethAccount: string, networkId: number) => {
-    return async (dispatch: any) => {
+export const setConnectedUserNotifications = (ethAccount: string, networkId: number) => {
+    return async (dispatch: any, getState: any) => {
         const knownTokens = getKnownTokens(networkId);
         const localStorage = new LocalStorage(window.localStorage);
 
@@ -198,6 +199,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
         dispatch(setNotifications(localStorage.getNotifications(ethAccount, networkId)));
         dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount, networkId)));
 
+        const state = getState();
         const web3Wrapper = await getWeb3WrapperOrThrow();
         const contractWrappers = await getContractWrappers();
 
@@ -210,6 +212,8 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
 
         const toBlock = blockNumber;
 
+        const markets = getMarkets(state);
+
         const subscription = subscribeToFillEvents({
             exchange: contractWrappers.exchange,
             fromBlock,
@@ -221,7 +225,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
                 }
 
                 const timestamp = await web3Wrapper.getBlockTimestampAsync(fillEvent.blockNumber || blockNumber);
-                const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                const notification = buildOrderFilledNotification(fillEvent, knownTokens, markets);
                 dispatch(
                     addNotifications([
                         {
@@ -239,7 +243,7 @@ export const setConnectedUser = (ethAccount: string, networkId: number) => {
                         const timestamp = await web3Wrapper.getBlockTimestampAsync(
                             fillEvent.blockNumber || blockNumber,
                         );
-                        const notification = buildOrderFilledNotification(fillEvent, knownTokens);
+                        const notification = buildOrderFilledNotification(fillEvent, knownTokens, markets);
 
                         return {
                             ...notification,
@@ -287,14 +291,14 @@ export const initWallet = () => {
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
-            dispatch(setNetworkId(networkId));
-            dispatch(setConnectedUser(ethAccount, networkId));
+            dispatch(setEthAccount(ethAccount));
             dispatch(
                 initializeBlockchainData({
                     web3State: Web3State.Done,
                     ethBalance,
                     wethTokenBalance,
                     tokenBalances,
+                    networkId,
                 }),
             );
             dispatch(
@@ -305,7 +309,9 @@ export const initWallet = () => {
             );
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
-            dispatch(getMarkets());
+            await dispatch(fetchMarkets());
+            // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+            dispatch(setConnectedUserNotifications(ethAccount, networkId));
             dispatch(updateMarketPriceEther());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
@@ -349,13 +355,13 @@ export const initWallet = () => {
 };
 
 export const unlockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+    return async (dispatch: any): Promise<any> => {
         return dispatch(toggleTokenLock(token, false));
     };
 };
 
 export const lockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+    return async (dispatch: any): Promise<any> => {
         return dispatch(toggleTokenLock(token, true));
     };
 };

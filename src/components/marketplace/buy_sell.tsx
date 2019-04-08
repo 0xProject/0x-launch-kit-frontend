@@ -105,6 +105,7 @@ const fieldStyle = `
     border: 1px solid ${themeColors.borderColor};
     border-radius: ${themeDimensions.borderRadius};
     color: #000;
+    font-feature-settings: 'tnum' 1;
     font-size: 16px;
     height: 100%;
     padding-left: 14px;
@@ -178,7 +179,7 @@ class BuySell extends React.Component<Props, State> {
                 </TabsContainer>
                 <Content>
                     <LabelContainer>
-                        <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
+                        <Label>Amount</Label>
                         <InnerTabs tabs={buySellInnerTabs} />
                     </LabelContainer>
                     <FieldContainer>
@@ -193,7 +194,7 @@ class BuySell extends React.Component<Props, State> {
                     {orderType === OrderType.Limit && (
                         <>
                             <LabelContainer>
-                                <Label>Token price</Label>
+                                <Label>Price per token</Label>
                             </LabelContainer>
                             <FieldContainer>
                                 <BigInputNumberStyled
