@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
@@ -120,7 +120,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
     private readonly _confirmOnMetamasBuyOrSell = async () => {
         const { amount, side, token } = this.props.step;
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3Wrapper();
             const fillOrdersTxHash = await this.props.submitMarketOrder(amount, side);
             this.setState({ status: StepStatus.Loading });
 

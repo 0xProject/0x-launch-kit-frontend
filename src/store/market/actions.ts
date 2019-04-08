@@ -6,7 +6,7 @@ import { createAction } from 'typesafe-actions';
 import { availableMarkets } from '../../common/markets';
 import { getMarketPriceEther } from '../../services/markets';
 import { getRelayer } from '../../services/relayer';
-import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
 import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
 import { getOrderbookAndUserOrders } from '../actions';
@@ -38,7 +38,7 @@ export const fetchMarketPriceEtherUpdate = createAction('FETCH_MARKET_PRICE_ETHE
 
 export const changeMarket = (currencyPair: CurrencyPair) => {
     return async (dispatch: any, getState: any) => {
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Wrapper = await getWeb3Wrapper();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const knownTokens = getKnownTokens(networkId);
 
@@ -70,7 +70,7 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
 
 export const fetchMarkets = () => {
     return async (dispatch: any) => {
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Wrapper = await getWeb3Wrapper();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const knownTokens = getKnownTokens(networkId);
         const relayer = getRelayer();
