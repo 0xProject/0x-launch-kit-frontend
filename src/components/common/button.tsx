@@ -31,6 +31,7 @@ const StyledButton = styled.button`
     cursor: pointer;
     font-weight: 600;
     padding: 15px;
+    user-select: none;
 
     &:focus {
         outline: none;
