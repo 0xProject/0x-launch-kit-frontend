@@ -1,6 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { MAKER_FEE, TAKER_FEE } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
 import { isWeth, isZrx } from '../../util/known_tokens';
@@ -54,20 +55,23 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         const quoteToken = selectors.getQuoteToken(state) as Token;
 
         const buySellLimitFlow: Step[] = [];
+        let unlockBaseOrQuoteTokenStep;
 
         // unlock base and quote tokens if necessary
-        const unlockBaseTokenStep = getUnlockTokenStepIfNeeded(baseToken, state);
-        if (unlockBaseTokenStep) {
-            buySellLimitFlow.push(unlockBaseTokenStep);
+
+        unlockBaseOrQuoteTokenStep =
+            side === OrderSide.Buy
+                ? // If it's a buy -> the quote token has to be unlocked
+                  getUnlockTokenStepIfNeeded(quoteToken, state)
+                : // If it's a sell -> the base token has to be unlocked
+                  getUnlockTokenStepIfNeeded(baseToken, state);
+
+        if (unlockBaseOrQuoteTokenStep) {
+            buySellLimitFlow.push(unlockBaseOrQuoteTokenStep);
         }
 
-        const unlockQuoteTokenStep = getUnlockTokenStepIfNeeded(quoteToken, state);
-        if (unlockQuoteTokenStep) {
-            buySellLimitFlow.push(unlockQuoteTokenStep);
-        }
-
-        // unlock zrx (for fees) if it's not one of the traded tokens
-        if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol)) {
+        // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
+        if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.greaterThan(0)) {
             const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
             if (unlockZrxStep) {
                 buySellLimitFlow.push(unlockZrxStep);
@@ -150,7 +154,8 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
             buySellMarketFlow.push(unlockTokenStep);
         }
 
-        if (!isZrx(tokenToUnlock.symbol)) {
+        // unlock zrx (for fees) if the taker fee is positive
+        if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.greaterThan(0)) {
             const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
             if (unlockZrxStep) {
                 buySellMarketFlow.push(unlockZrxStep);
