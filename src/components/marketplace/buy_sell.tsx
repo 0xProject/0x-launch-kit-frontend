@@ -143,8 +143,8 @@ const BigInputNumberTokenLabel = (props: { tokenSymbol: TokenSymbol }) => (
 
 class BuySell extends React.Component<Props, State> {
     public state = {
-        makerAmount: new BigNumber(NaN),
-        price: new BigNumber(NaN),
+        makerAmount: new BigNumber(0),
+        price: new BigNumber(0),
         orderType: OrderType.Limit,
         tab: OrderSide.Buy,
     };
@@ -166,12 +166,8 @@ class BuySell extends React.Component<Props, State> {
             },
         ];
 
-        const marketAmountIsEmpty = makerAmount.isNaN() || makerAmount.isZero();
-        const priceIsEmpty = price.isNaN() || price.isZero();
-
-        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (marketAmountIsEmpty || priceIsEmpty);
-
-        const orderTypeMarketIsEmpty = orderType === OrderType.Market && marketAmountIsEmpty;
+        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (makerAmount.isZero() || price.isZero());
+        const orderTypeMarketIsEmpty = orderType === OrderType.Market && makerAmount.isZero();
 
         return (
             <BuySellWrapper>
@@ -193,7 +189,7 @@ class BuySell extends React.Component<Props, State> {
                             decimals={18}
                             min={new BigNumber(0)}
                             onChange={this.updateMakerAmount}
-                            value={makerAmount}
+                            value={(!makerAmount.isZero() && makerAmount) || null}
                             placeholder={'0.00'}
                         />
                         <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
@@ -208,7 +204,7 @@ class BuySell extends React.Component<Props, State> {
                                     decimals={0}
                                     min={new BigNumber(0)}
                                     onChange={this.updatePrice}
-                                    value={price}
+                                    value={(!price.isZero() && price) || null}
                                     placeholder={'0.00'}
                                 />
                                 <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
@@ -267,7 +263,7 @@ class BuySell extends React.Component<Props, State> {
 
     private readonly _reset = () => {
         this.setState({
-            makerAmount: new BigNumber('0'),
+            makerAmount: new BigNumber(0),
             price: new BigNumber(0),
         });
     };
