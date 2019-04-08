@@ -43,7 +43,7 @@ const LabelContainer = styled.div`
     align-items: flex-end;
     display: flex;
     justify-content: space-between;
-    margin: 5px 0 12px 0;
+    margin: 5px 0 10px 0;
 `;
 
 const Label = styled.label<{ color?: string }>`
@@ -54,10 +54,7 @@ const Label = styled.label<{ color?: string }>`
     margin: 0;
 `;
 
-const MainLabel = styled(Label)`
-    font-size: 12px;
-    text-transform: uppercase;
-`;
+const MainLabel = styled(Label)``;
 
 const FeeLabel = styled(Label)`
     font-weight: normal;
