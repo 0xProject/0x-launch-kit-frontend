@@ -34,35 +34,34 @@ const ModalText = styled.p`
     font-size: 16px;
     font-weight: normal;
     line-height: 1.5;
-    margin: 0 0 20px;
-    padding: 0;
+    margin: 0 0 15px;
+    padding: 0 20px;
     text-align: center;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
 `;
 
 const IconContainer = styled.div`
     align-items: center;
     display: flex;
-    height: 62px;
+    height: 155px;
     justify-content: center;
-    margin-bottom: 30px;
+    margin: 0 0 15px;
 
     svg {
-        height: 52px;
-        width: 52px;
+        height: 48px;
+        width: 48px;
     }
 `;
 
 const stopIcon = () => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 512 512" version="1.1" viewBox="0 0 512 512">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
-                fill="#cc191e"
-                d="m502.625,121.375l-112-112c-6-6-14.141-9.375-22.625-9.375h-224c-8.484,0-16.625,3.375-22.625,9.375l-112,112c-6,6-9.375,14.141-9.375,22.625v224c0,8.484 3.375,16.625 9.375,22.625l112,112c6,6 14.141,9.375 22.625,9.375h224c8.484,0 16.625-3.375 22.625-9.375l112-112c6-6 9.375-14.141 9.375-22.625v-224c0-8.484-3.375-16.625-9.375-22.625zm-134.625,118.621v112c0,35.348-34.262,64.004-69.609,64.004h-46.555c-30.305,0-58.004-17.121-71.555-44.225l-9.891-19.778-40.824-95.258c-4.027-9.402-0.031-20.313 9.113-24.887 8.91-4.453 22.547-1.406 27.824,7.039l25.497,36.304v-35.199-128c0-8.836 7.164-16 16-16s16,7.164 16,16v120c0,4.418 3.582,8 8,8s8-3.582 8-8v-152c0-8.836 7.164-16 16-16s16,7.164 16,16v152c0,4.418 3.582,8 8,8s8-3.582 8-8v-120c0-8.836 7.164-16 16-16s16,7.164 16,16v128 8c0,4.418 3.582,8 8,8s8-3.582 8-8v-8-80c0-8.836 7.164-16 16-16s16,7.164 16,16v80z"
+                d="M2.14713 14.0331L1.08647 12.9724L2.14713 14.0331L14.0331 2.14714C14.4474 1.73278 15.0094 1.5 15.5954 1.5L32.4046 1.5C32.9906 1.5 33.5526 1.73278 33.9669 2.14713L45.8529 14.0331C46.2672 14.4474 46.5 15.0094 46.5 15.5954L46.5 32.4046C46.5 32.9906 46.2672 33.5526 45.8529 33.9669L33.9669 45.8529C33.5526 46.2672 32.9906 46.5 32.4046 46.5H15.5954C15.0094 46.5 14.4474 46.2672 14.0331 45.8529L12.9724 46.9135L14.0331 45.8529L2.14714 33.9669C1.73278 33.5526 1.5 32.9906 1.5 32.4046L1.5 15.5954C1.5 15.0094 1.73278 14.4474 2.14713 14.0331Z"
+                stroke="#FF6534"
+                stroke-width="3"
             />
+            <path d="M24.5 15L24.5 27.5" stroke="#FF6534" stroke-width="3" stroke-linecap="round" />
+            <circle cx="24.5" cy="33.5" r="1.5" fill="#FF6534" />
         </svg>
     );
 };
@@ -108,10 +107,9 @@ class AdBlockDetector extends React.Component<Props, State> {
             <Modal isOpen={this.state.isOpen} style={themeModalStyle}>
                 <CloseModalButton onClick={this.closeModal} />
                 <ModalContent>
-                    <ModalTitle>Ad Blocker Detected!</ModalTitle>
+                    <ModalTitle>Ad Blocker Detected</ModalTitle>
                     <IconContainer>{stopIcon()}</IconContainer>
-                    <ModalText>We detected you are using an ad blocker.</ModalText>
-                    <ModalText>Keep in mind that this dApp may not work correctly with it enabled.</ModalText>
+                    <ModalText>This dApp may not work correctly with your ad blocker enabled</ModalText>
                 </ModalContent>
             </Modal>
         );
