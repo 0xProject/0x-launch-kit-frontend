@@ -36,33 +36,10 @@ class App extends React.Component<Props> {
         const { web3State } = this.props;
         if (web3State !== prevProps.web3State) {
             if (web3State === Web3State.Done) {
-                // Enables realtime updates of the store using polling
-                if (!this._updateStoreInterval) {
-                    this._updateStoreInterval = window.setInterval(async () => {
-                        this.props.onUpdateStore();
-                        this.setState({
-                            isActiveCheckUpdates: true,
-                        });
-                    }, UI_UPDATE_CHECK_INTERVAL);
-                }
-
-                // Enables realtime updates of the price ether using polling
-                if (!this._updatePriceEtherInterval) {
-                    this._updatePriceEtherInterval = window.setInterval(async () => {
-                        this.props.onUpdateMarketPriceEther();
-                    }, UPDATE_ETHER_PRICE_INTERVAL);
-                }
+                this._activatePollingUpdates();
             } else {
-                // If the user is currently using the dApp with the interval and he change the metamask status, the polling is removed
-                if (this._updateStoreInterval) {
-                    clearInterval(this._updateStoreInterval);
-                    this._updateStoreInterval = undefined;
-                }
-
-                if (this._updatePriceEtherInterval) {
-                    clearInterval(this._updatePriceEtherInterval);
-                    this._updatePriceEtherInterval = undefined;
-                }
+                // If the user is currently using the dApp with the interval and the metamask status changed, the polling is removed
+                this._deactivatePollingUpdates();
             }
         }
     };
@@ -73,6 +50,37 @@ class App extends React.Component<Props> {
     };
 
     public render = () => this.props.children;
+
+    private readonly _activatePollingUpdates = () => {
+        // Enables realtime updates of the store using polling
+        if (UI_UPDATE_CHECK_INTERVAL !== 0 && !this._updateStoreInterval) {
+            this._updateStoreInterval = window.setInterval(async () => {
+                this.props.onUpdateStore();
+                this.setState({
+                    isActiveCheckUpdates: true,
+                });
+            }, UI_UPDATE_CHECK_INTERVAL);
+        }
+
+        // Enables realtime updates of the price ether using polling
+        if (!this._updatePriceEtherInterval && UPDATE_ETHER_PRICE_INTERVAL !== 0) {
+            this._updatePriceEtherInterval = window.setInterval(async () => {
+                this.props.onUpdateMarketPriceEther();
+            }, UPDATE_ETHER_PRICE_INTERVAL);
+        }
+    };
+
+    private readonly _deactivatePollingUpdates = () => {
+        if (this._updateStoreInterval) {
+            clearInterval(this._updateStoreInterval);
+            this._updateStoreInterval = undefined;
+        }
+
+        if (this._updatePriceEtherInterval) {
+            clearInterval(this._updatePriceEtherInterval);
+            this._updatePriceEtherInterval = undefined;
+        }
+    };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
