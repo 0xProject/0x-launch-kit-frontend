@@ -1,6 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
+import { themeColors } from '../../util/theme';
 import { TabItem } from '../../util/types';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -13,7 +14,7 @@ interface ItemProps {
 
 const CardTabSelectorWrapper = styled.div`
     align-items: center;
-    color: #b9b9b9;
+    color: ${themeColors.lightGray};
     display: flex;
     font-size: 14px;
     font-weight: 500;
@@ -22,16 +23,19 @@ const CardTabSelectorWrapper = styled.div`
 `;
 
 const CardTabSelectorItem = styled.span<ItemProps>`
-    color: ${props => (props.active ? '#000' : '#ccc')};
+    color: ${props => (props.active ? '#000' : themeColors.lightGray)};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
+    user-select: none;
+`;
 
-    &:after {
-        color: #ccc;
-        content: '/';
-        padding: 0 10px;
-    }
+const CardTabSelectorItemSeparator = styled.span<ItemProps>`
+    color: #dedede;
+    cursor: default;
+    font-weight: 400;
+    padding: 0 5px;
+    user-select: none;
 
-    &:last-child:after {
+    &:last-child {
         display: none;
     }
 `;
@@ -43,9 +47,12 @@ export const CardTabSelector: React.FC<Props> = props => {
         <CardTabSelectorWrapper {...restProps}>
             {tabs.map((item, index) => {
                 return (
-                    <CardTabSelectorItem key={index} onClick={item.onClick} active={item.active}>
-                        {item.text}
-                    </CardTabSelectorItem>
+                    <>
+                        <CardTabSelectorItem key={index} onClick={item.onClick} active={item.active}>
+                            {item.text}
+                        </CardTabSelectorItem>
+                        <CardTabSelectorItemSeparator>/</CardTabSelectorItemSeparator>
+                    </>
                 );
             })}
         </CardTabSelectorWrapper>
