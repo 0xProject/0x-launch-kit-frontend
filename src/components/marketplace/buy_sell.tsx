@@ -179,7 +179,7 @@ class BuySell extends React.Component<Props, State> {
                 </TabsContainer>
                 <Content>
                     <LabelContainer>
-                        <Label>I want to {tab === OrderSide.Buy ? 'buy' : 'sell'}</Label>
+                        <Label>Amount</Label>
                         <InnerTabs tabs={buySellInnerTabs} />
                     </LabelContainer>
                     <FieldContainer>
@@ -194,7 +194,7 @@ class BuySell extends React.Component<Props, State> {
                     {orderType === OrderType.Limit && (
                         <>
                             <LabelContainer>
-                                <Label>Token price</Label>
+                                <Label>Price per token</Label>
                             </LabelContainer>
                             <FieldContainer>
                                 <BigInputNumberStyled
