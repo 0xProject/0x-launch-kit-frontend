@@ -189,7 +189,7 @@ class BuySell extends React.Component<Props, State> {
                             decimals={18}
                             min={new BigNumber(0)}
                             onChange={this.updateMakerAmount}
-                            value={(!makerAmount.isZero() && makerAmount) || null}
+                            value={makerAmount.isZero() ? null : makerAmount}
                             placeholder={'0.00'}
                         />
                         <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
@@ -204,7 +204,7 @@ class BuySell extends React.Component<Props, State> {
                                     decimals={0}
                                     min={new BigNumber(0)}
                                     onChange={this.updatePrice}
-                                    value={(!price.isZero() && price) || null}
+                                    value={price.isZero() ? null : price}
                                     placeholder={'0.00'}
                                 />
                                 <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
