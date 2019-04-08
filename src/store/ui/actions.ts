@@ -2,7 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { getContractWrappers } from '../../services/contract_wrappers';
-import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { isWeth, isZrx } from '../../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import {
@@ -260,7 +260,7 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
 
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Wrapper = await getWeb3Wrapper();
         const contractWrappers = await getContractWrappers();
 
         const order = buildLimitOrder(

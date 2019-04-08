@@ -2,10 +2,11 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
 import { getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
+import { sleep } from '../../../util/sleep';
 import { getStepTitle } from '../../../util/steps';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
@@ -14,7 +15,6 @@ import {
     DONE_STATUS_VISIBILITY_TIME,
     ModalText,
     ModalTextClickable,
-    sleep,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
@@ -142,7 +142,7 @@ class WrapEthStep extends React.Component<Props, State> {
         const { step, advanceStep } = this.props;
         const { newWethBalance } = step;
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3Wrapper();
             const convertTxHash = await this.props.updateWeth(newWethBalance);
             this.setState({ status: StepStatus.Loading });
 

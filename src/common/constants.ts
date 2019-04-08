@@ -1,7 +1,5 @@
 import { BigNumber } from '0x.js';
 
-import { Web3State } from '../util/types';
-
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
 
 export const MAINNET_ID: number = Number.parseInt(process.env.REACT_APP_MAINNET_ID as string, 10) || 1;
@@ -33,10 +31,6 @@ export const UI_UPDATE_CHECK_INTERVAL: number =
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
 
-export const METAMASK_USER_DENIED_AUTH = 'User denied Auth';
-export const METAMASK_NOT_INSTALLED = 'User does not have metamask installed';
-export const METAMASK_DEFAULT_ERROR = 'An error ocurred with metamask';
-
 export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
 
 export const UPDATE_ETHER_PRICE_INTERVAL: number =
@@ -58,5 +52,3 @@ export const DEFAULT_ESTIMATED_TRANSACTION_TIME_MS = ONE_MINUTE_MS * 2;
 export const GIT_COMMIT: string = process.env.REACT_APP_GIT_COMMIT || '';
 
 export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_START_BLOCK_LIMIT as string, 10) || 1000;
-
-export const WEB3_INITIAL_STATE: Web3State = Web3State.Loading;
