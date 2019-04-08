@@ -55,24 +55,19 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
         const quoteToken = selectors.getQuoteToken(state) as Token;
 
         const buySellLimitFlow: Step[] = [];
-        let unlockQuoteTokenStep;
-        let unlockBaseTokenStep;
+        let unlockBaseOrQuoteTokenStep;
 
         // unlock base and quote tokens if necessary
-        // If it's a buy -> the quote token has to be unlocked
-        if (side === OrderSide.Buy) {
-            unlockQuoteTokenStep = getUnlockTokenStepIfNeeded(quoteToken, state);
-        } else {
-            // If it's a sell -> the base token has to be unlocked
-            unlockBaseTokenStep = getUnlockTokenStepIfNeeded(baseToken, state);
-        }
 
-        if (unlockBaseTokenStep) {
-            buySellLimitFlow.push(unlockBaseTokenStep);
-        }
+        unlockBaseOrQuoteTokenStep =
+            side === OrderSide.Buy
+                ? // If it's a buy -> the quote token has to be unlocked
+                  getUnlockTokenStepIfNeeded(quoteToken, state)
+                : // If it's a sell -> the base token has to be unlocked
+                  getUnlockTokenStepIfNeeded(baseToken, state);
 
-        if (unlockQuoteTokenStep) {
-            buySellLimitFlow.push(unlockQuoteTokenStep);
+        if (unlockBaseOrQuoteTokenStep) {
+            buySellLimitFlow.push(unlockBaseOrQuoteTokenStep);
         }
 
         // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
