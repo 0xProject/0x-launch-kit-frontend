@@ -25,14 +25,21 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
+const THStyled = styled(TH)`
+    &:first-child {
+        padding-right: 0;
+    }
+`;
+
 const TokenTD = styled(CustomTD)`
     padding-bottom: 10px;
+    padding-right: 0;
     padding-top: 10px;
-    width: 50px;
+    width: 40px;
 `;
 
 const TokenIconStyled = styled(TokenIcon)`
-    margin: 0 auto;
+    margin: 0 auto 0 0;
 `;
 
 const CustomTDTokenName = styled(CustomTD)`
@@ -90,9 +97,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                     <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>ETH Total (ETH + wETH)</CustomTDTokenName>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedTotalEthBalance}</CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                    {formattedTotalEthBalance}
+                </CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
                 <LockCell
                     isUnlocked={wethTokenBalance.isUnlocked}
                     onClick={onTotalEthClick}
@@ -135,11 +144,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                 <Table isResponsive={true}>
                     <THead>
                         <TR>
-                            <TH>Token</TH>
-                            <TH>{}</TH>
-                            <TH styles={{ textAlign: 'center' }}>Available Qty.</TH>
-                            <TH styles={{ textAlign: 'center' }}>Price (USD)</TH>
-                            <TH styles={{ textAlign: 'center' }}>% Change</TH>
+                            <THStyled>Token</THStyled>
+                            <THStyled>{}</THStyled>
+                            <THStyled styles={{ textAlign: 'center' }}>Available Qty.</THStyled>
+                            <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
+                            <THStyled styles={{ textAlign: 'center' }}>% Change</THStyled>
                             <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
                         </TR>
                     </THead>

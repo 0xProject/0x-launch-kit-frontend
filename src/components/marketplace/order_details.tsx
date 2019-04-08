@@ -16,11 +16,11 @@ const Row = styled.div`
     border-top: dashed 1px ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
-    padding: 15px 0;
+    padding: 12px 0;
     position: relative;
     z-index: 1;
 
-    &: last-of-type {
+    &:last-of-type {
         margin-bottom: 20px;
     }
 `;
@@ -28,12 +28,14 @@ const Row = styled.div`
 const Value = styled.div`
     color: #000;
     flex-shrink: 0;
+    font-feature-settings: 'tnum' 1;
     font-size: 14px;
     line-height: 1.2;
     white-space: nowrap;
 `;
 
 const CostValue = styled(Value)`
+    font-feature-settings: 'tnum' 1;
     font-weight: bold;
 `;
 
@@ -41,7 +43,7 @@ const LabelContainer = styled.div`
     align-items: flex-end;
     display: flex;
     justify-content: space-between;
-    margin: 15px 0;
+    margin: 5px 0 12px 0;
 `;
 
 const Label = styled.label<{ color?: string }>`
@@ -149,7 +151,7 @@ class OrderDetails extends React.Component<Props, State> {
             const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
                 {
                     amount: tokenAmount,
-                    orders: OrderSide.Sell ? openBuyOrders : openSellOrders,
+                    orders: orderSide === OrderSide.Sell ? openBuyOrders : openSellOrders,
                 },
                 orderSide,
             );

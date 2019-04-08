@@ -43,7 +43,7 @@ const separatorTopbar = `
 const ToolbarWrapper = styled.div`
     align-items: center;
     background: #ffffff;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid ${themeColors.borderColor};
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;

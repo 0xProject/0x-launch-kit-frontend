@@ -24,7 +24,14 @@ const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
         background-color: ${themeColors.rowActive};
     }
 
+    &:first-child {
+        border-top-left-radius: ${themeDimensions.borderRadius};
+        border-top-right-radius: ${themeDimensions.borderRadius};
+    }
+
     &:last-child {
+        border-bottom-left-radius: ${themeDimensions.borderRadius};
+        border-bottom-right-radius: ${themeDimensions.borderRadius};
         border-bottom: none;
     }
 `;
