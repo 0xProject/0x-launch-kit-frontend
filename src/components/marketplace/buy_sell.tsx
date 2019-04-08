@@ -29,9 +29,9 @@ interface DispatchProps {
 type Props = StateProps & DispatchProps;
 
 interface State {
-    makerAmount: BigNumber;
+    makerAmount: BigNumber | null;
     orderType: OrderType;
-    price: BigNumber;
+    price: BigNumber | null;
     tab: OrderSide;
 }
 
@@ -142,9 +142,9 @@ const BigInputNumberTokenLabel = (props: { tokenSymbol: TokenSymbol }) => (
 );
 
 class BuySell extends React.Component<Props, State> {
-    public state = {
-        makerAmount: new BigNumber(0),
-        price: new BigNumber(0),
+    public state: State = {
+        makerAmount: null,
+        price: null,
         orderType: OrderType.Limit,
         tab: OrderSide.Buy,
     };
@@ -166,8 +166,11 @@ class BuySell extends React.Component<Props, State> {
             },
         ];
 
-        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (makerAmount.isZero() || price.isZero());
-        const orderTypeMarketIsEmpty = orderType === OrderType.Market && makerAmount.isZero();
+        const isMakerAmountEmpty = makerAmount === null || makerAmount.isZero();
+        const isPriceEmpty = price === null || price.isZero();
+
+        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty);
+        const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
         return (
             <BuySellWrapper>
@@ -189,7 +192,7 @@ class BuySell extends React.Component<Props, State> {
                             decimals={18}
                             min={new BigNumber(0)}
                             onChange={this.updateMakerAmount}
-                            value={makerAmount.isZero() ? null : makerAmount}
+                            value={makerAmount}
                             placeholder={'0.00'}
                         />
                         <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
@@ -204,7 +207,7 @@ class BuySell extends React.Component<Props, State> {
                                     decimals={0}
                                     min={new BigNumber(0)}
                                     onChange={this.updatePrice}
-                                    value={price.isZero() ? null : price}
+                                    value={price}
                                     placeholder={'0.00'}
                                 />
                                 <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
@@ -214,8 +217,8 @@ class BuySell extends React.Component<Props, State> {
                     <OrderDetailsContainer
                         orderType={orderType}
                         orderSide={tab}
-                        tokenAmount={makerAmount}
-                        tokenPrice={price}
+                        tokenAmount={makerAmount || new BigNumber(0)}
+                        tokenPrice={price || new BigNumber(0)}
                         currencyPair={currencyPair}
                     />
                     <Button
@@ -244,27 +247,33 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public buy = async () => {
+        const makerAmount = this.state.makerAmount || new BigNumber(0);
+        const price = this.state.price || new BigNumber(0);
+
         if (this.state.orderType === OrderType.Limit) {
-            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Buy);
+            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Buy);
         } else {
-            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Buy);
+            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Buy);
         }
         this._reset();
     };
 
     public sell = async () => {
+        const makerAmount = this.state.makerAmount || new BigNumber(0);
+        const price = this.state.price || new BigNumber(0);
+
         if (this.state.orderType === OrderType.Limit) {
-            await this.props.onSubmitLimitOrder(this.state.makerAmount, this.state.price, OrderSide.Sell);
+            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Sell);
         } else {
-            await this.props.onSubmitMarketOrder(this.state.makerAmount, OrderSide.Sell);
+            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell);
         }
         this._reset();
     };
 
     private readonly _reset = () => {
         this.setState({
-            makerAmount: new BigNumber(0),
-            price: new BigNumber(0),
+            makerAmount: null,
+            price: null,
         });
     };
 
