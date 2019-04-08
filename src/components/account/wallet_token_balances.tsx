@@ -10,7 +10,7 @@ import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
-import { CustomTD, CustomTDLast, Table, TH, THead, THLast, TR } from '../common/table';
+import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
     ethBalance: BigNumber;
