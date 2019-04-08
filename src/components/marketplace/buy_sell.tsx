@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { connectWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
+import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
 import { getCurrencyPair, getWeb3State } from '../../store/selectors';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
@@ -289,7 +289,7 @@ const BuySellContainer = connect(
     {
         onSubmitLimitOrder: startBuySellLimitSteps,
         onSubmitMarketOrder: startBuySellMarketSteps,
-        onConnectWallet: connectWallet,
+        onConnectWallet: initWallet,
     },
 )(BuySell);
 
