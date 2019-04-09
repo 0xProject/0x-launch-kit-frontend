@@ -6,12 +6,22 @@ import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } fro
 import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
+import {
+    OrderBook,
+    OrderBookItem,
+    OrderSide,
+    Sizes,
+    StoreState,
+    TabItem,
+    Token,
+    UIOrder,
+    Web3State,
+} from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
-import { StepStatusLoading as Loading } from '../common/steps_modal/steps_common';
+import { Spinner } from '../common/spinner';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
@@ -108,7 +118,7 @@ class OrderBookTable extends React.Component<Props, State> {
         let content: React.ReactNode;
 
         if (!baseToken || !quoteToken) {
-            content = <Loading alignAbsoluteCenter={true} />;
+            content = <Spinner alignAbsoluteCenter={true} size={Sizes.Small} />;
         } else if (!buyOrders.length && !sellOrders.length) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {
