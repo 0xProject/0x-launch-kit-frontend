@@ -97,6 +97,19 @@ describe('BigNumberInput', () => {
         expect(wrapper.find('input').props().value).toEqual('1.23');
         expect(onChange).toHaveBeenCalledTimes(0);
     });
+
+    it('should allow initialize with an empty string', () => {
+        // given
+        const value = null;
+        const onChange = jest.fn();
+        // when
+
+        const wrapper = mount(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
+
+        // then
+        expect(wrapper.find('input').props().value).toEqual('');
+        expect(onChange).toHaveBeenCalledTimes(0);
+    });
 });
 
 function changeValue(wrapper: any, value: string): void {

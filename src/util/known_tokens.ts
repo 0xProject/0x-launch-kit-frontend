@@ -84,12 +84,14 @@ export class KnownTokens {
 }
 
 let knownTokens: KnownTokens;
+let currentNetworkId: number;
 export const getKnownTokens = (
     networkId: number,
     knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA,
 ): KnownTokens => {
-    if (!knownTokens) {
+    if (!knownTokens || currentNetworkId !== networkId) {
         knownTokens = new KnownTokens(networkId, knownTokensMetadata);
+        currentNetworkId = networkId;
     }
     return knownTokens;
 };

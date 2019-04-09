@@ -1,5 +1,4 @@
 import { BigNumber } from '0x.js';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -11,7 +10,7 @@ import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
-import { CustomTD, CustomTDLast, Table, TH, THead, THLast, TR } from '../common/table';
+import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
     ethBalance: BigNumber;
@@ -19,6 +18,7 @@ interface StateProps {
     web3State: Web3State;
     wethTokenBalance: TokenBalance | null;
 }
+
 interface DispatchProps {
     onStartToggleTokenLockSteps: (token: Token, isUnlocked: boolean) => void;
 }
@@ -56,13 +56,38 @@ const TBody = styled.tbody`
     }
 `;
 
-const FontAwesomeIconStyles = styled(FontAwesomeIcon)`
+const LockIcon = styled.span`
     cursor: pointer;
 `;
 
-const CustomTDLock = styled(CustomTDLast)<{ isUnlocked?: boolean }>`
-    color: ${props => (props.isUnlocked ? '#c4c4c4' : '#000')};
-`;
+const lockedIcon = () => {
+    return (
+        <svg data-icon="lock" width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M6.24949 0C3.66224 0 1.54871 2.21216 1.54871 4.92014V6.33135C0.692363 6.33135 0 7.05602 0 7.95232V14.379C0 15.2753 0.692363 16 1.54871 16H10.9503C11.8066 16 12.499 15.2753 12.499 14.379V7.95232C12.499 7.05602 11.8066 6.33135 10.9503 6.33135V4.92014C10.9503 2.21216 8.83674 0 6.24949 0ZM9.31046 6.33135H3.18851V4.92014C3.18851 3.16567 4.55502 1.71633 6.24949 1.71633C7.94395 1.71633 9.31046 3.16567 9.31046 4.92014V6.33135Z"
+                fill="black"
+            />
+        </svg>
+    );
+};
+
+const unlockedIcon = () => {
+    return (
+        <svg
+            data-icon="lock-open"
+            width="13"
+            height="17"
+            viewBox="0 0 13 17"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M1.54871 4.92014C1.54871 2.21216 3.66224 0 6.24949 0C8.83674 0 10.9503 2.21216 10.9503 4.92014H9.31046C9.31046 3.16567 7.94395 1.71633 6.24949 1.71633C4.55502 1.71633 3.18851 3.16567 3.18851 4.92014V7.33135H9.31046H10.9503C11.8066 7.33135 12.499 8.05602 12.499 8.95232V15.379C12.499 16.2753 11.8066 17 10.9503 17H1.54871C0.692363 17 0 16.2753 0 15.379V8.95232C0 8.05602 0.692363 7.33135 1.54871 7.33135V4.92014Z"
+                fill="#C4C4C4"
+            />
+        </svg>
+    );
+};
 
 interface LockCellProps {
     isUnlocked: boolean;
@@ -70,11 +95,11 @@ interface LockCellProps {
     styles?: any;
 }
 
-const LockCell = ({ styles, isUnlocked, onClick }: LockCellProps) => {
+const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
     return (
-        <CustomTDLock isUnlocked={isUnlocked} styles={styles} onClick={onClick}>
-            <FontAwesomeIconStyles icon={isUnlocked ? 'lock-open' : 'lock'} />
-        </CustomTDLock>
+        <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
+            <LockIcon onClick={onClick}>{isUnlocked ? unlockedIcon() : lockedIcon()}</LockIcon>
+        </CustomTD>
     );
 };
 

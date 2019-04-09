@@ -1,19 +1,13 @@
 import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import {
-    MAINNET_ID,
-    METAMASK_NOT_INSTALLED,
-    METAMASK_USER_DENIED_AUTH,
-    START_BLOCK_LIMIT,
-    TX_DEFAULTS,
-} from '../../common/constants';
+import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
-import { getWeb3WrapperOrThrow, reconnectWallet } from '../../services/web3_wrapper';
+import { getWeb3Wrapper, initializeWeb3Wrapper, isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
@@ -73,7 +67,7 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
         const gasPrice = getGasPriceInWei(state);
 
         const contractWrappers = await getContractWrappers();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Wrapper = await getWeb3Wrapper();
 
         let tx: string;
         if (isUnlocked) {
@@ -136,7 +130,7 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
         const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
 
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Wrapper = await getWeb3Wrapper();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const wethAddress = getKnownTokens(networkId).getWethToken().address;
 
@@ -200,7 +194,7 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
         dispatch(setHasUnreadNotifications(localStorage.getHasUnreadNotifications(ethAccount, networkId)));
 
         const state = getState();
-        const web3Wrapper = await getWeb3WrapperOrThrow();
+        const web3Wrapper = await getWeb3Wrapper();
         const contractWrappers = await getContractWrappers();
 
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
@@ -267,108 +261,102 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
 
 export const initWallet = () => {
     return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const currencyPair = getCurrencyPair(state);
-
-        dispatch(setWeb3State(Web3State.Loading));
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
-            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-            const networkId = await web3Wrapper.getNetworkIdAsync();
+            dispatch(setWeb3State(Web3State.Loading));
+            const web3Wrapper = await initializeWeb3Wrapper();
 
-            const knownTokens = getKnownTokens(networkId);
+            if (web3Wrapper) {
+                const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+                const networkId = await web3Wrapper.getNetworkIdAsync();
 
-            const tokenBalances = await Promise.all(
-                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-            );
+                const knownTokens = getKnownTokens(networkId);
 
-            const wethToken = knownTokens.getWethToken();
+                const tokenBalances = await Promise.all(
+                    knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+                );
 
-            const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
+                const wethToken = knownTokens.getWethToken();
 
-            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+                const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
-            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
-            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+                const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-            dispatch(setEthAccount(ethAccount));
-            dispatch(
-                initializeBlockchainData({
-                    web3State: Web3State.Done,
-                    ethBalance,
-                    wethTokenBalance,
-                    tokenBalances,
-                    networkId,
-                }),
-            );
-            dispatch(
-                initializeRelayerData({
-                    orders: [],
-                    userOrders: [],
-                }),
-            );
-            dispatch(setMarketTokens({ baseToken, quoteToken }));
-            dispatch(getOrderbookAndUserOrders());
-            await dispatch(fetchMarkets());
-            // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
-            dispatch(setConnectedUserNotifications(ethAccount, networkId));
-            dispatch(updateMarketPriceEther());
-        } catch (error) {
-            const knownTokens = getKnownTokens(MAINNET_ID);
-            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
-            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+                const state = getState();
+                const currencyPair = getCurrencyPair(state);
+                const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+                const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
-            switch (error.message) {
-                case METAMASK_USER_DENIED_AUTH: {
-                    dispatch(setWeb3State(Web3State.Locked));
-                    dispatch(
-                        initializeRelayerData({
-                            orders: [],
-                            userOrders: [],
-                        }),
-                    );
-                    dispatch(setMarketTokens({ baseToken, quoteToken }));
-                    dispatch(getOrderBook());
-                    dispatch(updateMarketPriceEther());
-                    break;
-                }
-                case METAMASK_NOT_INSTALLED: {
-                    dispatch(setWeb3State(Web3State.NotInstalled));
-                    dispatch(
-                        initializeRelayerData({
-                            orders: [],
-                            userOrders: [],
-                        }),
-                    );
-                    dispatch(setMarketTokens({ baseToken, quoteToken }));
-                    dispatch(getOrderBook());
-                    dispatch(updateMarketPriceEther());
-                    break;
-                }
-                default: {
-                    dispatch(setWeb3State(Web3State.Error));
-                    break;
-                }
+                dispatch(setEthAccount(ethAccount));
+                dispatch(
+                    initializeBlockchainData({
+                        web3State: Web3State.Done,
+                        ethBalance,
+                        wethTokenBalance,
+                        tokenBalances,
+                        networkId,
+                    }),
+                );
+                dispatch(
+                    initializeRelayerData({
+                        orders: [],
+                        userOrders: [],
+                    }),
+                );
+                dispatch(setMarketTokens({ baseToken, quoteToken }));
+                dispatch(getOrderbookAndUserOrders());
+                await dispatch(fetchMarkets());
+                // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+                dispatch(setConnectedUserNotifications(ethAccount, networkId));
+                dispatch(updateMarketPriceEther());
+            } else {
+                initializeAppNoMetamaskOrLocked();
             }
+        } catch (error) {
+            dispatch(setWeb3State(Web3State.Error));
         }
     };
 };
 
 export const unlockToken = (token: Token) => {
-    return async (dispatch: any): Promise<any> => {
+    return async (dispatch: any, getState: any): Promise<any> => {
         return dispatch(toggleTokenLock(token, false));
     };
 };
 
 export const lockToken = (token: Token) => {
-    return async (dispatch: any): Promise<any> => {
+    return async (dispatch: any, getState: any): Promise<any> => {
         return dispatch(toggleTokenLock(token, true));
     };
 };
 
-export const connectWallet = () => {
-    return async (dispatch: any) => {
-        await reconnectWallet();
-        dispatch(initWallet());
+/**
+ *  Initializes the app with a default state if the user does not have metamask, with permissions rejected
+ *  or if the user did not connected metamask to the dApp. Takes the info from MAINNET
+ */
+export const initializeAppNoMetamaskOrLocked = () => {
+    return async (dispatch: any, getState: any) => {
+        if (isMetamaskInstalled()) {
+            dispatch(setWeb3State(Web3State.Locked));
+        } else {
+            dispatch(setWeb3State(Web3State.NotInstalled));
+        }
+        const state = getState();
+        const currencyPair = getCurrencyPair(state);
+        const knownTokens = getKnownTokens(MAINNET_ID);
+        const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+        const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
+        dispatch(
+            initializeRelayerData({
+                orders: [],
+                userOrders: [],
+            }),
+        );
+
+        dispatch(setMarketTokens({ baseToken, quoteToken }));
+
+        dispatch(getOrderBook());
+
+        dispatch(updateMarketPriceEther());
     };
 };

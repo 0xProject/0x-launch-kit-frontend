@@ -54,8 +54,6 @@ const StepStatusError = (props: React.Props<WithChildren>) => (
     </>
 );
 
-const sleep = (timeout: number) => new Promise<void>(resolve => setTimeout(resolve, timeout));
-
 const iconMarginBottom = '30px';
 
 const MetamaskIcon = styled(MetamaskLarge)`
@@ -139,5 +137,4 @@ export {
     StepStatusLoading,
     StepsTimeline,
     Title,
-    sleep,
 };
