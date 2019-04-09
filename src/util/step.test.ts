@@ -208,6 +208,8 @@ describe('Buy sell market steps for zrx/weth', () => {
         // given
         const baseToken = tokenFactory.build({ decimals: 18, symbol: TokenSymbol.Zrx });
         const quoteToken = tokenFactory.build({ decimals: 18, symbol: TokenSymbol.Weth });
+        // Unlocks base zrx token
+        tokenBalances[0].isUnlocked = true;
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
