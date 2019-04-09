@@ -21,6 +21,14 @@ export const getStepTitle = (step: Step): string => {
     }
 };
 
+export const makeGetProgress = (beginning: number, estimatedTxTimeMs: number) => (now: number) => {
+    const elapsedMs = now - beginning;
+
+    const progress = Math.round((elapsedMs / estimatedTxTimeMs) * 100);
+
+    return Math.max(0, Math.min(progress, 100));
+};
+
 export const createBuySellLimitSteps = (
     baseToken: Token,
     quoteToken: Token,

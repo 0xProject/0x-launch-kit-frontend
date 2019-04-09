@@ -8,11 +8,12 @@ interface Props {
     autofocus?: boolean;
     className?: string;
     decimals: number;
+    placeholder?: string;
     max?: BigNumber;
     min?: BigNumber;
     onChange: (newValue: BigNumber) => void;
     step?: BigNumber;
-    value: BigNumber;
+    value: BigNumber | null;
 }
 
 interface State {
@@ -29,8 +30,12 @@ const Input = styled.input`
 `;
 
 export class BigNumberInput extends React.Component<Props, State> {
+    public static defaultProps = {
+        placeholder: '0.00',
+    };
+
     public readonly state = {
-        currentValueStr: tokenAmountInUnits(this.props.value, this.props.decimals),
+        currentValueStr: this.props.value ? tokenAmountInUnits(this.props.value, this.props.decimals) : '',
     };
 
     private _textInput: any;
@@ -39,7 +44,11 @@ export class BigNumberInput extends React.Component<Props, State> {
         const { decimals, value } = props;
         const { currentValueStr } = state;
 
-        if (!unitsInTokenAmount(currentValueStr || '0', decimals).eq(value)) {
+        if (!value) {
+            return {
+                currentValueStr: '',
+            };
+        } else if (value && !unitsInTokenAmount(currentValueStr || '0', decimals).eq(value)) {
             return {
                 currentValueStr: tokenAmountInUnits(value, decimals),
             };
@@ -58,7 +67,7 @@ export class BigNumberInput extends React.Component<Props, State> {
 
     public render = () => {
         const { currentValueStr } = this.state;
-        const { decimals, step, min, max, className } = this.props;
+        const { decimals, step, min, max, className, placeholder } = this.props;
 
         const stepStr = step && tokenAmountInUnits(step, decimals);
         const minStr = min && tokenAmountInUnits(min, decimals);
@@ -74,6 +83,7 @@ export class BigNumberInput extends React.Component<Props, State> {
                 step={stepStr}
                 type={'number'}
                 value={currentValueStr}
+                placeholder={placeholder}
             />
         );
     };

@@ -107,9 +107,9 @@ class OrderBookTable extends React.Component<Props, State> {
 
         let content: React.ReactNode;
 
-        if (!baseToken || !quoteToken) {
+        if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
             content = <CardLoading />;
-        } else if (!buyOrders.length && !sellOrders.length) {
+        } else if ((!buyOrders.length && !sellOrders.length) || !baseToken || !quoteToken) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {
             const mySizeHeader =

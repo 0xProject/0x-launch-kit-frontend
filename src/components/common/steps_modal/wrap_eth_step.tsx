@@ -4,30 +4,21 @@ import { connect } from 'react-redux';
 
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
-import { getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
-import { getStepTitle } from '../../../util/steps';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
-import {
-    DONE_STATUS_VISIBILITY_TIME,
-    ModalText,
-    ModalTextClickable,
-    StepStatus,
-    StepStatusConfirmOnMetamask,
-    StepStatusDone,
-    StepStatusError,
-    StepStatusLoading,
-    Title,
-} from './steps_common';
-import { StepItem, StepsProgress } from './steps_progress';
+import { BaseStepModal } from './base_step_modal';
+import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
+import { StepItem } from './steps_progress';
 
 interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
 }
 interface StateProps {
+    estimatedTxTimeMs: number;
     networkId: number | null;
     step: StepWrapEth;
 }
@@ -39,33 +30,18 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-interface State {
-    status: StepStatus;
-}
-
-class WrapEthStep extends React.Component<Props, State> {
-    public state = {
-        status: StepStatus.ConfirmOnMetamask,
-    };
-
-    public componentDidMount = async () => {
-        await this._convertWeth();
-    };
-
+class WrapEthStep extends React.Component<Props> {
     public render = () => {
-        const { networkId } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, networkId, step } = this.props;
 
         if (networkId === null) {
             return null;
         }
 
-        const { context, currentWethBalance, newWethBalance } = this.props.step;
+        const { context, currentWethBalance, newWethBalance } = step;
         const amount = newWethBalance.sub(currentWethBalance);
         const wethToken = getKnownTokens(networkId).getWethToken();
         const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toString();
-        const { status } = this.state;
-        const retry = () => this._retry();
-        let content;
 
         const ethToWeth = amount.greaterThan(0);
         const convertingFrom = ethToWeth ? 'ETH' : 'wETH';
@@ -85,84 +61,50 @@ class WrapEthStep extends React.Component<Props, State> {
                 .join(' ');
         };
 
-        switch (status) {
-            case StepStatus.Loading:
-                content = (
-                    <StepStatusLoading>
-                        <ModalText>{buildMessage('Converting')}</ModalText>
-                    </StepStatusLoading>
-                );
-                break;
-            case StepStatus.Done:
-                content = (
-                    <StepStatusDone>
-                        <ModalText>{buildMessage('Converted')}</ModalText>
-                    </StepStatusDone>
-                );
-                break;
-            case StepStatus.Error:
-                content = (
-                    <StepStatusError>
-                        <ModalText>
-                            ${buildMessage('Error converting')}
-                            <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
-                        </ModalText>
-                    </StepStatusError>
-                );
-                break;
-            default:
-                content = (
-                    <StepStatusConfirmOnMetamask>
-                        <ModalText>
-                            Confirm on Metamask to convert {ethAmount} {convertingFrom} into {convertingTo}.
-                        </ModalText>
-                    </StepStatusConfirmOnMetamask>
-                );
-                break;
-        }
+        const title = 'Order setup';
 
-        const stepsProgress = this.props.buildStepsProgress({
-            title: getStepTitle(this.props.step),
-            active: true,
-            progress: status === StepStatus.Done ? '100' : '0',
-        });
-
-        const title = context === 'order' ? 'Order setup' : 'Converting wETH';
+        const confirmCaption = `Confirm on Metamask to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
+        const loadingCaption = buildMessage('Converting');
+        const doneCaption = buildMessage('Converted');
+        const errorCaption = buildMessage('Error converting');
 
         return (
-            <>
-                <Title>{title}</Title>
-                {content}
-                <StepsProgress steps={stepsProgress} />
-            </>
+            <BaseStepModal
+                step={step}
+                title={title}
+                confirmCaption={confirmCaption}
+                loadingCaption={loadingCaption}
+                doneCaption={doneCaption}
+                errorCaption={errorCaption}
+                buildStepsProgress={buildStepsProgress}
+                estimatedTxTimeMs={estimatedTxTimeMs}
+                runAction={this._convertWeth}
+                showPartialProgress={true}
+            />
         );
     };
 
-    private readonly _convertWeth = async () => {
+    private readonly _convertWeth = async ({ onLoading, onDone, onError }: any) => {
         const { step, advanceStep } = this.props;
         const { newWethBalance } = step;
         try {
             const web3Wrapper = await getWeb3Wrapper();
             const convertTxHash = await this.props.updateWeth(newWethBalance);
-            this.setState({ status: StepStatus.Loading });
+            onLoading();
 
             await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
-            this.setState({ status: StepStatus.Done });
+            onDone();
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
         } catch (err) {
-            this.setState({ status: StepStatus.Error });
+            onError();
         }
-    };
-
-    private readonly _retry = async () => {
-        this.setState({ status: StepStatus.Error });
-        await this._convertWeth();
     };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
+        estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         networkId: getNetworkId(state),
         step: getStepsModalCurrentStep(state) as StepWrapEth,
     };
