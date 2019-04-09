@@ -106,7 +106,7 @@ export const createBuySellMarketSteps = (
     return buySellMarketFlow;
 };
 
-const getUnlockTokenStepIfNeeded = (
+export const getUnlockTokenStepIfNeeded = (
     token: Token,
     tokenBalances: TokenBalance[],
     wethTokenBalance: TokenBalance,
@@ -126,7 +126,7 @@ const getUnlockTokenStepIfNeeded = (
     }
 };
 
-const getWrapEthStepIfNeeded = (
+export const getWrapEthStepIfNeeded = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
@@ -153,7 +153,7 @@ const getWrapEthStepIfNeeded = (
     }
 };
 
-const getUnlockZrxStepIfNeeded = (tokenBalances: TokenBalance[]): StepToggleTokenLock | null => {
+export const getUnlockZrxStepIfNeeded = (tokenBalances: TokenBalance[]): StepToggleTokenLock | null => {
     const zrxTokenBalance: TokenBalance = tokenBalances.find(tokenBalance =>
         isZrx(tokenBalance.token.symbol),
     ) as TokenBalance;
