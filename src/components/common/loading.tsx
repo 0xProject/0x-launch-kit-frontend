@@ -1,19 +1,22 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+import { Spinner } from './spinner';
+
+interface Props extends HTMLAttributes<HTMLDivElement> {
+    minHeight?: string;
+}
 
 export const Loading: React.FC = props => {
     return (
         <div {...props}>
-            <FontAwesomeIcon icon="spinner" spin={true} />
+            <Spinner />
         </div>
     );
 };
 
-const LoadingWrapper = styled.div`
-    min-height: 200px;
+const LoadingWrapper = styled.div<Props>`
+    ${props => `min-height: ${props.minHeight ? props.minHeight : '200px'}`};
     position: relative;
 `;
 
