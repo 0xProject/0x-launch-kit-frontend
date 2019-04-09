@@ -5,7 +5,7 @@ import { TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
-import { getWeb3WrapperOrThrow } from '../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { buildMarketOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
 import {
@@ -107,7 +107,7 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
 };
 
 export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
+    return async (dispatch: any, getState: any): Promise<string> => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -125,7 +125,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             const baseToken = getBaseToken(state) as Token;
 
             const contractWrappers = await getContractWrappers();
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3Wrapper();
             const txHash = await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, {
                 ...TX_DEFAULTS,
                 gasPrice,
@@ -134,7 +134,6 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
             dispatch(getOrderbookAndUserOrders());
-
             dispatch(
                 addNotifications([
                     {
@@ -151,7 +150,9 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
             return txHash;
         } else {
-            window.alert('There are no enough orders to fill this amount');
+            const errorMessage = 'There are no enough orders to fill this amount';
+            window.alert(errorMessage);
+            throw new Error(errorMessage);
         }
     };
 };

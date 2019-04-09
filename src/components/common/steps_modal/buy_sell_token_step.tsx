@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
@@ -21,7 +21,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
+    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<string>;
     refreshOrders: () => any;
     notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => any;
 }
@@ -67,7 +67,7 @@ class BuySellTokenStep extends React.Component<Props> {
         const { step, onSubmitMarketOrder } = this.props;
         const { amount, side, token } = step;
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3Wrapper();
             const fillOrdersTxHash = await onSubmitMarketOrder(amount, side);
             onLoading();
 

@@ -2,15 +2,16 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
+import { sleep } from '../../../util/sleep';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
-import { DONE_STATUS_VISIBILITY_TIME, sleep } from './steps_common';
+import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
@@ -87,7 +88,7 @@ class WrapEthStep extends React.Component<Props> {
         const { step, advanceStep } = this.props;
         const { newWethBalance } = step;
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3Wrapper();
             const convertTxHash = await this.props.updateWeth(newWethBalance);
             onLoading();
 

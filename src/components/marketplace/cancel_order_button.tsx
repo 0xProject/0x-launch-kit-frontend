@@ -26,7 +26,8 @@ const Button = styled.button`
     border: none;
     display: flex;
     height: 17px;
-    justify-content: center;
+    justify-content: flex-end;
+    margin-left: auto;
     outline: 0;
     padding: 0;
     width: 25px;

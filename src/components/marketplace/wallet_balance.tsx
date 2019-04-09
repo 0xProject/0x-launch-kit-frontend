@@ -6,7 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
-import { connectWallet } from '../../store/actions';
+import { initWallet } from '../../store/actions';
 import {
     getBaseToken,
     getBaseTokenBalance,
@@ -321,7 +321,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     return {
-        onConnectWallet: () => dispatch(connectWallet()),
+        onConnectWallet: () => dispatch(initWallet()),
     };
 };
 

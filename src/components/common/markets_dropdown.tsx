@@ -100,6 +100,7 @@ const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
+    user-select: none;
 
     &:after {
         color: ${themeColors.lightGray};

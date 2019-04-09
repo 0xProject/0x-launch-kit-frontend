@@ -1,15 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getWeb3WrapperOrThrow } from '../../../services/web3_wrapper';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { lockToken, unlockToken } from '../../../store/blockchain/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
+import { sleep } from '../../../util/sleep';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { StepToggleTokenLock, StoreState, Token } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
-import { DONE_STATUS_VISIBILITY_TIME, sleep } from './steps_common';
+import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
@@ -66,7 +67,7 @@ class ToggleTokenLockStep extends React.Component<Props> {
         const toggleToken = step.isUnlocked ? onLockToken : onUnlockToken;
 
         try {
-            const web3Wrapper = await getWeb3WrapperOrThrow();
+            const web3Wrapper = await getWeb3Wrapper();
             const txHash = await toggleToken(step.token);
             onLoading();
 
