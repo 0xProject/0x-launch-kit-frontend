@@ -8,7 +8,7 @@ import { tokenAmountInUnits } from '../../util/tokens';
 import { Notification, NotificationKind, OrderSide } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
-import { NotificationProcessingIcon } from '../common/icons/notification_processing_icon';
+import { ProcessingIcon } from '../common/icons/processing_icon';
 import { Interval } from '../common/interval';
 import { PendingTime } from '../common/pending_time';
 
@@ -175,7 +175,7 @@ class NotificationItem extends React.Component<Props, State> {
         if (this.state.pending) {
             return (
                 <NotificationIconSpin>
-                    <NotificationProcessingIcon />
+                    <ProcessingIcon />
                 </NotificationIconSpin>
             );
         } else if (item.kind === NotificationKind.CancelOrder) {
