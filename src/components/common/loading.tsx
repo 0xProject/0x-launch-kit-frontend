@@ -16,9 +16,13 @@ export const Loading: React.FC = props => {
 };
 
 const LoadingWrapper = styled.div<Props>`
-    ${props => `min-height: ${props.minHeight ? props.minHeight : '200px'}`};
+    ${props => `min-height: ${props.minHeight}`};
     position: relative;
 `;
+
+LoadingWrapper.defaultProps = {
+    minHeight: '200px',
+};
 
 const CenteredLoading = styled(Loading)`
     left: 50%;
