@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import logdown from 'logdown';
 import { createAction } from 'typesafe-actions';
 
 import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
@@ -23,6 +24,11 @@ import {
     getWethTokenBalance,
 } from '../selectors';
 import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
+
+const logger = logdown('Blockchain:Actions', {
+    logger: console,
+    markdown: false,
+});
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
@@ -312,6 +318,7 @@ export const initWallet = () => {
                 initializeAppNoMetamaskOrLocked();
             }
         } catch (error) {
+            logger.error(error);
             dispatch(setWeb3State(Web3State.Error));
         }
     };

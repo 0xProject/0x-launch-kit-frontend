@@ -19,6 +19,11 @@ import { history, store } from './store';
 ReactModal.setAppElement('#root');
 const RedirectToHome = () => <Redirect to="/" />;
 
+if (process.env.NODE_ENV === 'development') {
+    // Log everything to the console
+    window.localStorage.debug = '*';
+}
+
 const Web3WrappedApp = (
     <Provider store={store}>
         <ConnectedRouter history={history}>
