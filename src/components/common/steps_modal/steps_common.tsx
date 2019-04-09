@@ -1,11 +1,11 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
-import { themeColors } from '../../../util/theme';
+import { SpinnerSize, themeColors } from '../../../util/theme';
 import { MetamaskLarge } from '../icons/icon_metamask_large';
 import { NotificationCancelIcon } from '../icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../icons/notification_checkmark_icon';
-import { NotificationProcessingIcon } from '../icons/notification_processing_icon';
+import { Spinner } from '../spinner';
 
 import { StepsProgress } from './steps_progress';
 
@@ -32,9 +32,7 @@ const StepStatusConfirmOnMetamask = (props: React.Props<WithChildren>) => (
 const StepStatusLoading = (props: React.Props<WithChildren>) => (
     <>
         <IconContainer>
-            <IconSpin>
-                <NotificationProcessingIcon />
-            </IconSpin>
+            <Spinner size={SpinnerSize.Medium} />
         </IconContainer>
         {props.children}
     </>
@@ -115,31 +113,16 @@ const ModalStatusTextLight = styled.span`
     color: ${themeColors.textLight};
 `;
 
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
 const IconContainer = styled.div`
     align-items: center;
     display: flex;
     height: 62px;
     justify-content: center;
     margin-bottom: ${iconMarginBottom};
-
     svg {
         height: 52px;
         width: 52px;
     }
-`;
-
-const IconSpin = styled.div`
-    animation: ${rotate} 1.5s linear infinite;
 `;
 
 export {

@@ -1,6 +1,6 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { themeColors, themeDimensions } from '../../util/theme';
@@ -8,9 +8,9 @@ import { tokenAmountInUnits } from '../../util/tokens';
 import { Notification, NotificationKind, OrderSide } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
-import { NotificationProcessingIcon } from '../common/icons/notification_processing_icon';
 import { Interval } from '../common/interval';
 import { PendingTime } from '../common/pending_time';
+import { Spinner } from '../common/spinner';
 
 interface Props {
     item: Notification;
@@ -55,20 +55,6 @@ const NotificationText = styled.p`
     font-weight: 400;
     line-height: 1.2;
     margin: 0;
-`;
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-const NotificationIconSpin = styled.div`
-    animation: ${rotate} 1.5s linear infinite;
 `;
 
 const NotificationIcon = styled.div`
@@ -173,11 +159,7 @@ class NotificationItem extends React.Component<Props, State> {
 
     private readonly _getNotificationIcon = (item: Notification) => {
         if (this.state.pending) {
-            return (
-                <NotificationIconSpin>
-                    <NotificationProcessingIcon />
-                </NotificationIconSpin>
-            );
+            return <Spinner />;
         } else if (item.kind === NotificationKind.CancelOrder) {
             return <NotificationCancelIcon />;
         } else {

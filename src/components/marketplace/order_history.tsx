@@ -117,7 +117,7 @@ class OrderHistory extends React.Component<Props, State> {
             }
             default: {
                 if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
-                    content = <CardLoading />;
+                    content = <CardLoading minHeight="120px" />;
                 } else if (!ordersToShow.length || !baseToken || !quoteToken) {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
                 } else {

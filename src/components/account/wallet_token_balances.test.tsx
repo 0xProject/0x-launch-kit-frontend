@@ -6,7 +6,6 @@ import { BigNumber } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
 
-import '../../icons';
 import { TokenBalance, TokenSymbol, Web3State } from '../../util/types';
 
 import { WalletTokenBalances } from './wallet_token_balances';
