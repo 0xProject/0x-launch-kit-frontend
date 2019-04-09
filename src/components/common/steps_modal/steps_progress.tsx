@@ -7,8 +7,8 @@ export type GetProgress = (now: number) => number;
 
 export interface StepItem {
     active: boolean;
-    title: string;
     progress: number | GetProgress;
+    title: string;
 }
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -19,6 +19,8 @@ const StepsProgressWrapper = styled.div`
     align-items: center;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: auto;
     padding-top: 22px;
     width: 100%;
 `;
