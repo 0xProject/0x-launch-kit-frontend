@@ -1,18 +1,18 @@
 import React, { HTMLAttributes } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { Sizes } from '../../util/types';
+import { SpinnerSizes } from '../../util/theme';
 
 import { ProcessingIcon } from './icons/processing_icon';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     alignAbsoluteCenter?: boolean;
-    size: Sizes;
+    size: SpinnerSizes;
 }
 
 class Spinner extends React.Component<Props, {}> {
     public static defaultProps = {
-        size: Sizes.Medium,
+        size: SpinnerSizes.Medium,
     };
 
     public render = () => {
@@ -63,7 +63,7 @@ const IconContainer = styled.div<Props>`
             : ''}
     svg {
         ${props =>
-            props.size === Sizes.Small
+            props.size === SpinnerSizes.Small
                 ? `
                 height: 26px;
                 width: 26px;

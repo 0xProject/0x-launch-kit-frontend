@@ -56,3 +56,8 @@ export const themeBreakPoints = {
 export const themeFeatures = {
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
 };
+
+export enum SpinnerSizes {
+    Small,
+    Medium,
+}

@@ -5,9 +5,9 @@ import styled from 'styled-components';
 
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
-import { themeColors } from '../../util/theme';
+import { SpinnerSizes, themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderSide, Sizes, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
+import { OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
@@ -117,7 +117,7 @@ class OrderHistory extends React.Component<Props, State> {
             }
             default: {
                 if (!baseToken || !quoteToken) {
-                    content = <Spinner alignAbsoluteCenter={true} size={Sizes.Small} />;
+                    content = <Spinner alignAbsoluteCenter={true} size={SpinnerSizes.Small} />;
                 } else if (!ordersToShow.length) {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
                 } else {

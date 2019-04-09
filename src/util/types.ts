@@ -223,8 +223,3 @@ export enum ModalDisplay {
     InstallMetamask = 'INSTALL_METAMASK',
     EnablePermissions = 'ACCEPT_PERMISSIONS',
 }
-
-export enum Sizes {
-    Small,
-    Medium,
-}
