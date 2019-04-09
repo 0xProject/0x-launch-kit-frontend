@@ -107,7 +107,7 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
 };
 
 export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
+    return async (dispatch: any, getState: any): Promise<string> => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -134,7 +134,6 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
             dispatch(getOrderbookAndUserOrders());
-
             dispatch(
                 addNotifications([
                     {
@@ -151,7 +150,9 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
             return txHash;
         } else {
-            window.alert('There are no enough orders to fill this amount');
+            const errorMessage = 'There are no enough orders to fill this amount';
+            window.alert(errorMessage);
+            throw new Error(errorMessage);
         }
     };
 };

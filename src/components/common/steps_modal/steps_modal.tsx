@@ -36,32 +36,35 @@ class StepsModal extends React.Component<Props> {
         const buildStepsProgress = (currentStepItem: StepItem): StepItem[] => [
             ...doneSteps.map(doneStep => ({
                 title: getStepTitle(doneStep),
-                progress: '100',
+                progress: 100,
                 active: false,
             })),
             currentStepItem,
             ...pendingSteps.map(pendingStep => ({
                 title: getStepTitle(pendingStep),
-                progress: '0',
+                progress: 0,
                 active: false,
             })),
         ];
+
+        // this is used to avoid an issue with two consecutive steps of the same kind
+        const stepIndex = doneSteps.length;
 
         return (
             <Modal isOpen={isOpen} style={themeModalStyle}>
                 <CloseModalButton onClick={reset} />
                 <ModalContent>
                     {currentStep && currentStep.kind === StepKind.ToggleTokenLock && (
-                        <ToggleTokenLockStepContainer buildStepsProgress={buildStepsProgress} />
+                        <ToggleTokenLockStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                     {currentStep && currentStep.kind === StepKind.BuySellLimit && (
-                        <SignOrderStepContainer buildStepsProgress={buildStepsProgress} />
+                        <SignOrderStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                     {currentStep && currentStep.kind === StepKind.BuySellMarket && (
-                        <BuySellTokenStepContainer buildStepsProgress={buildStepsProgress} />
+                        <BuySellTokenStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                     {currentStep && currentStep.kind === StepKind.WrapEth && (
-                        <WrapEthStepContainer buildStepsProgress={buildStepsProgress} />
+                        <WrapEthStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                 </ModalContent>
             </Modal>

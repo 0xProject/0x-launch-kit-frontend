@@ -15,3 +15,11 @@ export const getStepTitle = (step: Step): string => {
             return _exhaustiveCheck;
     }
 };
+
+export const makeGetProgress = (beginning: number, estimatedTxTimeMs: number) => (now: number) => {
+    const elapsedMs = now - beginning;
+
+    const progress = Math.round((elapsedMs / estimatedTxTimeMs) * 100);
+
+    return Math.max(0, Math.min(progress, 100));
+};

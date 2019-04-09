@@ -1,9 +1,13 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
+import { Interval } from '../interval';
+
+export type GetProgress = (now: number) => number;
+
 export interface StepItem {
     active: boolean;
-    progress: string;
+    progress: number | GetProgress;
     title: string;
 }
 
@@ -62,7 +66,7 @@ const StepLine = styled.div`
     position: relative;
 `;
 
-const StepLineProgress = styled.div<{ progress?: string }>`
+const StepLineProgress = styled.div<{ progress?: number }>`
     background: #000;
     height: 3px;
     left: 0;
@@ -71,8 +75,8 @@ const StepLineProgress = styled.div<{ progress?: string }>`
     width: ${props => (props.progress ? `${props.progress}%` : '0')};
 `;
 
-const StepDot = styled.div<{ progress?: string }>`
-    background: ${props => (props.progress === '100' ? '#000' : 'rgba(0, 0, 0, 0.1)')};
+const StepDot = styled.div<{ progress?: number }>`
+    background: ${props => (props.progress && props.progress >= 100 ? '#000' : 'rgba(0, 0, 0, 0.1)')};
     border-radius: 50%;
     flex-shrink: 0;
     height: 16px;
@@ -105,16 +109,27 @@ export const StepsProgress: React.FC<Props> = props => {
         <StepsProgressWrapper {...restProps}>
             <StartingDot />
             {steps.map((item, index) => {
-                const progress = +item.progress;
+                const { progress } = item;
+
+                const getProgress = progress instanceof Function ? progress : (now: number) => progress;
+
                 return (
                     <Step key={index}>
-                        <StepLineContainer>
-                            <StepTitle active={item.active || progress >= 100}>{item.title}</StepTitle>
-                            <StepLine>
-                                <StepLineProgress progress={item.progress} />
-                            </StepLine>
-                        </StepLineContainer>
-                        <StepDot progress={item.progress}>{checkMark()}</StepDot>
+                        <Interval delay={250}>
+                            {now => (
+                                <>
+                                    <StepLineContainer>
+                                        <StepTitle active={item.active || getProgress(now.valueOf()) >= 100}>
+                                            {item.title}
+                                        </StepTitle>
+                                        <StepLine>
+                                            <StepLineProgress progress={getProgress(now.valueOf())} />
+                                        </StepLine>
+                                    </StepLineContainer>
+                                    <StepDot progress={getProgress(now.valueOf())}>{checkMark()}</StepDot>
+                                </>
+                            )}
+                        </Interval>
                     </Step>
                 );
             })}
