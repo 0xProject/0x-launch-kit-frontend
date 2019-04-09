@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { SpinnerSizes, themeColors } from '../../util/theme';
+import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
-import { Card } from '../common/card';
+import { Card, CardSpinnerContainer } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
@@ -108,7 +108,11 @@ class OrderBookTable extends React.Component<Props, State> {
         let content: React.ReactNode;
 
         if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
-            content = <Spinner alignAbsoluteCenter={true} size={SpinnerSizes.Small} />;
+            content = (
+                <CardSpinnerContainer>
+                    <Spinner />
+                </CardSpinnerContainer>
+            );
         } else if ((!buyOrders.length && !sellOrders.length) || !baseToken || !quoteToken) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {

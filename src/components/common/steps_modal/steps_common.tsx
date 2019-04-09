@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { themeColors } from '../../../util/theme';
+import { SpinnerSize, themeColors } from '../../../util/theme';
 import { MetamaskLarge } from '../icons/icon_metamask_large';
 import { NotificationCancelIcon } from '../icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../icons/notification_checkmark_icon';
@@ -31,7 +31,9 @@ const StepStatusConfirmOnMetamask = (props: React.Props<WithChildren>) => (
 
 const StepStatusLoading = (props: React.Props<WithChildren>) => (
     <>
-        <Spinner />
+        <IconContainer>
+            <Spinner size={SpinnerSize.Medium} />
+        </IconContainer>
         {props.children}
     </>
 );

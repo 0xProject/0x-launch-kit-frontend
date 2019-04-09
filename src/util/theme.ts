@@ -57,7 +57,7 @@ export const themeFeatures = {
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
 };
 
-export enum SpinnerSizes {
-    Small,
-    Medium,
+export enum SpinnerSize {
+    Small = '26px',
+    Medium = '52px',
 }
