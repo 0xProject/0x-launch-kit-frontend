@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getStepTitle, makeGetProgress } from '../../../util/steps';
+import { getStepTitle, isLongStep, makeGetProgress } from '../../../util/steps';
 import { Step } from '../../../util/types';
 
 import { StepPendingTime } from './step_pending_time';
@@ -115,6 +115,7 @@ export class BaseStepModal extends React.Component<Props, State> {
             title: getStepTitle(this.props.step),
             active: true,
             progress: getProgress,
+            isLong: isLongStep(this.props.step),
         });
 
         return (

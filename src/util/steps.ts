@@ -16,6 +16,20 @@ export const getStepTitle = (step: Step): string => {
     }
 };
 
+export const isLongStep = (step: Step): boolean => {
+    switch (step.kind) {
+        case StepKind.BuySellLimit:
+            return false;
+        case StepKind.BuySellMarket:
+        case StepKind.ToggleTokenLock:
+        case StepKind.WrapEth:
+            return true;
+        default:
+            const _exhaustiveCheck: never = step;
+            return _exhaustiveCheck;
+    }
+};
+
 export const makeGetProgress = (beginning: number, estimatedTxTimeMs: number) => (now: number) => {
     const elapsedMs = now - beginning;
 
