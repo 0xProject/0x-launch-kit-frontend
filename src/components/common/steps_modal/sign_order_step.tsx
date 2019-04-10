@@ -59,7 +59,7 @@ class SignOrderStep extends React.Component<Props> {
             await this.props.submitLimitOrder(signedOrder, amount, side);
             onDone();
         } catch (err) {
-            onError();
+            onError(err);
         }
     };
 }

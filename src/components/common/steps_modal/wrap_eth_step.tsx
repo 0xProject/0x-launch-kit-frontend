@@ -97,7 +97,7 @@ class WrapEthStep extends React.Component<Props> {
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
         } catch (err) {
-            onError();
+            onError(err);
         }
     };
 }
