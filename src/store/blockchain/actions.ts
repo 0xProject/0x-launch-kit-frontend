@@ -25,10 +25,7 @@ import {
 } from '../selectors';
 import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
-const logger = logdown('Blockchain:Actions', {
-    logger: console,
-    markdown: false,
-});
+const logger = logdown('Blockchain:Actions');
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
