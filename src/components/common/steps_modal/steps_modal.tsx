@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { stepsModalReset } from '../../../store/actions';
 import { getStepsModalCurrentStep, getStepsModalDoneSteps, getStepsModalPendingSteps } from '../../../store/selectors';
-import { getStepTitle } from '../../../util/steps';
+import { getStepTitle, isLongStep } from '../../../util/steps';
 import { themeModalStyle } from '../../../util/theme';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
@@ -38,12 +38,14 @@ class StepsModal extends React.Component<Props> {
                 title: getStepTitle(doneStep),
                 progress: 100,
                 active: false,
+                isLong: isLongStep(doneStep),
             })),
             currentStepItem,
             ...pendingSteps.map(pendingStep => ({
                 title: getStepTitle(pendingStep),
                 progress: 0,
                 active: false,
+                isLong: isLongStep(pendingStep),
             })),
         ];
 

@@ -9,6 +9,7 @@ export interface StepItem {
     active: boolean;
     progress: number | GetProgress;
     title: string;
+    isLong: boolean;
 }
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -34,10 +35,10 @@ const StartingDot = styled.div`
     width: 12px;
 `;
 
-const Step = styled.div`
+const Step = styled.div<{ isLong: boolean }>`
     align-items: center;
     display: flex;
-    flex-grow: 1;
+    flex-grow: ${props => (props.isLong ? 4 : 1)};
 `;
 
 const StepLineContainer = styled.div`
@@ -114,7 +115,7 @@ export const StepsProgress: React.FC<Props> = props => {
                 const getProgress = progress instanceof Function ? progress : (now: number) => progress;
 
                 return (
-                    <Step key={index}>
+                    <Step key={index} isLong={item.isLong}>
                         <Interval delay={250}>
                             {now => (
                                 <>
