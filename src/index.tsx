@@ -19,7 +19,7 @@ import { history, store } from './store';
 ReactModal.setAppElement('#root');
 const RedirectToHome = () => <Redirect to="/" />;
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' && !window.localStorage.debug) {
     // Log everything to the console
     window.localStorage.debug = '*';
 }
