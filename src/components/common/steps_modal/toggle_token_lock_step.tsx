@@ -36,7 +36,9 @@ class ToggleTokenLockStep extends React.Component<Props> {
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
         const title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock token' : 'Unlock token';
-        const confirmCaption = `Confirm on Metamask to ${isUnlocked ? 'lock' : 'unlock'} ${tokenSymbol}.`;
+        const confirmCaption = `Confirm on Metamask to ${
+            isUnlocked ? 'lock' : 'unlock'
+        } ${tokenSymbol} for trading on 0x.`;
         const loadingCaption = isUnlocked
             ? `Locking ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
             : `Unlocking ${tokenSymbol}. It will remain unlocked for future trades`;
@@ -44,6 +46,8 @@ class ToggleTokenLockStep extends React.Component<Props> {
             ? `Locked ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
             : `Unlocked ${tokenSymbol}. It will remain unlocked for future trades`;
         const errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${tokenSymbol} failed.`;
+        const loadingFooterCaption = `Waiting for confirmation...`;
+        const doneFooterCaption = !isUnlocked ? ` ${tokenSymbol} Unlocked!` : ` ${tokenSymbol} Locked!`;
 
         return (
             <BaseStepModal
@@ -53,6 +57,8 @@ class ToggleTokenLockStep extends React.Component<Props> {
                 loadingCaption={loadingCaption}
                 doneCaption={doneCaption}
                 errorCaption={errorCaption}
+                loadingFooterCaption={loadingFooterCaption}
+                doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._toggleToken}

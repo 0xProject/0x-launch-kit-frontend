@@ -67,6 +67,8 @@ class WrapEthStep extends React.Component<Props> {
         const loadingCaption = buildMessage('Converting');
         const doneCaption = buildMessage('Converted');
         const errorCaption = buildMessage('Error converting');
+        const loadingFooterCaption = `Waiting for confirmation....`;
+        const doneFooterCaption = `${convertingFrom} converted!`;
 
         return (
             <BaseStepModal
@@ -76,6 +78,8 @@ class WrapEthStep extends React.Component<Props> {
                 loadingCaption={loadingCaption}
                 doneCaption={doneCaption}
                 errorCaption={errorCaption}
+                loadingFooterCaption={loadingFooterCaption}
+                doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._convertWeth}
@@ -93,9 +97,11 @@ class WrapEthStep extends React.Component<Props> {
             onLoading();
 
             await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
-            onDone();
-            await sleep(DONE_STATUS_VISIBILITY_TIME);
-            advanceStep();
+            this.setState({ convertSuccess: true }, async () => {
+                onDone();
+                await sleep(DONE_STATUS_VISIBILITY_TIME);
+                advanceStep();
+            });
         } catch (err) {
             onError();
         }

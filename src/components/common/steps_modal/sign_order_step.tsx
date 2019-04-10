@@ -29,11 +29,12 @@ class SignOrderStep extends React.Component<Props> {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
 
         const title = 'Order setup';
-
         const confirmCaption = 'Confirm signature on Metamask to submit order.';
         const loadingCaption = 'Submitting order.';
         const doneCaption = 'Order successfully placed! (may not be filled immediately)';
         const errorCaption = 'Error signing/submitting order.';
+        const loadingFooterCaption = `Waiting for signature...`;
+        const doneFooterCaption = `Order success!`;
 
         return (
             <BaseStepModal
@@ -43,6 +44,8 @@ class SignOrderStep extends React.Component<Props> {
                 loadingCaption={loadingCaption}
                 doneCaption={doneCaption}
                 errorCaption={errorCaption}
+                loadingFooterCaption={loadingFooterCaption}
+                doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._getSignedOrder}
