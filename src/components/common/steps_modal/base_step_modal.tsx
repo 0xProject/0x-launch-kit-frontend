@@ -18,7 +18,7 @@ import { GetProgress, StepItem, StepsProgress } from './steps_progress';
 
 export class BaseStepModalUnmountedException extends Error {
     constructor() {
-        super('BaseStepModal umounted');
+        super('BaseStepModal unmounted');
         // see: typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
         Object.setPrototypeOf(this, new.target.prototype);
     }
