@@ -8,7 +8,7 @@ import {
     getUnlockTokenStepIfNeeded,
     getUnlockZrxStepIfNeeded,
     getWrapEthStepIfNeeded,
-} from './steps';
+} from './steps_modals_generation';
 import { tokenFactory } from './test-utils';
 import { unitsInTokenAmount } from './tokens';
 import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, TokenBalance, TokenSymbol } from './types';

@@ -4,7 +4,7 @@ import { createAction } from 'typesafe-actions';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
-import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps';
+import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
 import {
     Notification,
     NotificationKind,
