@@ -1,11 +1,10 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { MAKER_FEE, TAKER_FEE } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
-import { isWeth, isZrx } from '../../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
+import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
 import {
     Notification,
     NotificationKind,
@@ -14,7 +13,6 @@ import {
     StepKind,
     StepToggleTokenLock,
     StepWrapEth,
-    StoreState,
     Token,
     TokenBalance,
 } from '../../util/types';
@@ -48,57 +46,6 @@ export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
 
-export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const baseToken = selectors.getBaseToken(state) as Token;
-        const quoteToken = selectors.getQuoteToken(state) as Token;
-
-        const buySellLimitFlow: Step[] = [];
-        let unlockBaseOrQuoteTokenStep;
-
-        // unlock base and quote tokens if necessary
-
-        unlockBaseOrQuoteTokenStep =
-            side === OrderSide.Buy
-                ? // If it's a buy -> the quote token has to be unlocked
-                  getUnlockTokenStepIfNeeded(quoteToken, state)
-                : // If it's a sell -> the base token has to be unlocked
-                  getUnlockTokenStepIfNeeded(baseToken, state);
-
-        if (unlockBaseOrQuoteTokenStep) {
-            buySellLimitFlow.push(unlockBaseOrQuoteTokenStep);
-        }
-
-        // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
-        if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.greaterThan(0)) {
-            const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
-            if (unlockZrxStep) {
-                buySellLimitFlow.push(unlockZrxStep);
-            }
-        }
-
-        // wrap the necessary ether if it is one of the traded tokens
-        if (isWeth(baseToken.symbol) || isWeth(quoteToken.symbol)) {
-            const wrapEthStep = getWrapEthStepIfNeeded(amount, price, side, state);
-            if (wrapEthStep) {
-                buySellLimitFlow.push(wrapEthStep);
-            }
-        }
-
-        buySellLimitFlow.push({
-            kind: StepKind.BuySellLimit,
-            amount,
-            price,
-            side,
-        });
-
-        dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
-        dispatch(setStepsModalPendingSteps(buySellLimitFlow.slice(1)));
-        dispatch(setStepsModalDoneSteps([]));
-    };
-};
-
 export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any) => {
         const toggleTokenLockStep = isUnlocked ? getLockTokenStep(token) : getUnlockTokenStep(token);
@@ -127,11 +74,37 @@ export const startWrapEtherSteps = (newWethBalance: BigNumber) => {
     };
 };
 
+export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const baseToken = selectors.getBaseToken(state) as Token;
+        const quoteToken = selectors.getQuoteToken(state) as Token;
+        const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
+        const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+
+        const buySellLimitFlow: Step[] = createBuySellLimitSteps(
+            baseToken,
+            quoteToken,
+            tokenBalances,
+            wethTokenBalance,
+            amount,
+            price,
+            side,
+        );
+
+        dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellLimitFlow.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
 export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
+        const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
+        const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
         const [, , canBeFilled] = buildMarketOrders(
@@ -146,98 +119,19 @@ export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
             return;
         }
 
-        const buySellMarketFlow: Step[] = [];
-
-        const tokenToUnlock = side === OrderSide.Buy ? quoteToken : baseToken;
-        const unlockTokenStep = getUnlockTokenStepIfNeeded(tokenToUnlock, state);
-        if (unlockTokenStep) {
-            buySellMarketFlow.push(unlockTokenStep);
-        }
-
-        // unlock zrx (for fees) if the taker fee is positive
-        if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.greaterThan(0)) {
-            const unlockZrxStep = getUnlockZrxStepIfNeeded(state);
-            if (unlockZrxStep) {
-                buySellMarketFlow.push(unlockZrxStep);
-            }
-        }
-
-        // todo: wrap ether if necessary
-
-        buySellMarketFlow.push({
-            kind: StepKind.BuySellMarket,
+        const buySellMarketFlow: Step[] = createBuySellMarketSteps(
+            baseToken,
+            quoteToken,
+            tokenBalances,
+            wethTokenBalance,
             amount,
             side,
-            token: baseToken,
-        });
+        );
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
         dispatch(setStepsModalPendingSteps(buySellMarketFlow.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
-};
-
-const getWrapEthStepIfNeeded = (
-    amount: BigNumber,
-    price: BigNumber,
-    side: OrderSide,
-    state: StoreState,
-): StepWrapEth | null => {
-    // Weth needed only when creating a buy order
-    if (side === OrderSide.Sell) {
-        return null;
-    }
-
-    const wethAmount = amount.mul(price);
-    const wethBalance = selectors.getWethBalance(state);
-    const deltaWeth = wethBalance.sub(wethAmount);
-    // Need to wrap eth only if weth balance is not enough
-    if (deltaWeth.lessThan(0)) {
-        return {
-            kind: StepKind.WrapEth,
-            currentWethBalance: wethBalance,
-            newWethBalance: wethAmount,
-            context: 'order',
-        };
-    } else {
-        return null;
-    }
-};
-
-const getUnlockZrxStepIfNeeded = (state: StoreState): StepToggleTokenLock | null => {
-    const tokenBalances = selectors.getTokenBalances(state);
-    const zrxTokenBalance: TokenBalance = tokenBalances.find(tokenBalance =>
-        isZrx(tokenBalance.token.symbol),
-    ) as TokenBalance;
-    if (zrxTokenBalance.isUnlocked) {
-        return null;
-    } else {
-        return {
-            kind: StepKind.ToggleTokenLock,
-            token: zrxTokenBalance.token,
-            isUnlocked: false,
-            context: 'order',
-        };
-    }
-};
-
-const getUnlockTokenStepIfNeeded = (token: Token, state: StoreState): StepToggleTokenLock | null => {
-    const tokenBalances = selectors.getTokenBalances(state);
-
-    const tokenBalance: TokenBalance = isWeth(token.symbol)
-        ? (selectors.getWethTokenBalance(state) as TokenBalance)
-        : (tokenBalances.find(tb => tb.token.symbol === token.symbol) as TokenBalance);
-
-    if (tokenBalance.isUnlocked) {
-        return null;
-    } else {
-        return {
-            kind: StepKind.ToggleTokenLock,
-            token: tokenBalance.token,
-            isUnlocked: false,
-            context: 'order',
-        };
-    }
 };
 
 const getUnlockTokenStep = (token: Token): StepToggleTokenLock => {
