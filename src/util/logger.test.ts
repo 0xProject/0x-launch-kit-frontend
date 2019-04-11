@@ -1,25 +1,25 @@
 import { LOGGER_ID } from '../common/constants';
 
-import { getLogDown } from './logdown';
+import { getLogger } from './logger';
 
-describe('Logdown', () => {
+describe('Logger', () => {
     it('should check some prefix', async () => {
         // Given
         const logs = [
             {
-                logger: getLogDown('test'),
+                logger: getLogger('test'),
                 expected: `${LOGGER_ID}::test`,
             },
             {
-                logger: getLogDown('test1'),
+                logger: getLogger('test1'),
                 expected: `${LOGGER_ID}::test1`,
             },
             {
-                logger: getLogDown('great'),
+                logger: getLogger('great'),
                 expected: `${LOGGER_ID}::great`,
             },
             {
-                logger: getLogDown('max'),
+                logger: getLogger('max'),
                 expected: `${LOGGER_ID}::max`,
             },
         ];
