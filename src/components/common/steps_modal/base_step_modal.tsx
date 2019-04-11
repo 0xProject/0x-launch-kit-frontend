@@ -16,6 +16,14 @@ import {
 } from './steps_common';
 import { GetProgress, StepItem, StepsProgress } from './steps_progress';
 
+export class BaseStepModalUnmountedException extends Error {
+    constructor() {
+        super('BaseStepModal unmounted');
+        // see: typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
+        Object.setPrototypeOf(this, new.target.prototype);
+    }
+}
+
 type RunAction = ({
     onLoading,
     onDone,
@@ -23,7 +31,7 @@ type RunAction = ({
 }: {
     onLoading: () => any;
     onDone: () => any;
-    onError: () => any;
+    onError: (err: Error | BaseStepModalUnmountedException) => any;
 }) => Promise<any>;
 
 interface Props {
@@ -51,6 +59,7 @@ export class BaseStepModal extends React.Component<Props, State> {
     };
 
     private readonly _estimatedTxTimeMs: number;
+    private _isUnmounted: boolean = false;
 
     constructor(props: Props) {
         super(props);
@@ -61,6 +70,10 @@ export class BaseStepModal extends React.Component<Props, State> {
 
     public componentDidMount = async () => {
         await this._runAction();
+    };
+
+    public componentWillUnmount = () => {
+        this._isUnmounted = true;
     };
 
     public render = () => {
@@ -135,19 +148,27 @@ export class BaseStepModal extends React.Component<Props, State> {
     };
 
     private readonly _runAction = async () => {
-        const onLoading = () =>
+        const onLoading = () => {
+            this._throwIfUnmounted();
             this.setState({
                 status: StepStatus.Loading,
                 loadingStarted: Date.now(),
             });
-        const onDone = () =>
+        };
+        const onDone = () => {
+            this._throwIfUnmounted();
             this.setState({
                 status: StepStatus.Done,
             });
-        const onError = () =>
+        };
+        const onError = (err: Error | BaseStepModalUnmountedException) => {
+            if (err instanceof BaseStepModalUnmountedException) {
+                return;
+            }
             this.setState({
                 status: StepStatus.Error,
             });
+        };
 
         return this.props.runAction({
             onLoading,
@@ -160,5 +181,11 @@ export class BaseStepModal extends React.Component<Props, State> {
         this.setState({ status: StepStatus.ConfirmOnMetamask });
 
         await this._runAction();
+    };
+
+    private readonly _throwIfUnmounted = () => {
+        if (this._isUnmounted) {
+            throw new BaseStepModalUnmountedException();
+        }
     };
 }
