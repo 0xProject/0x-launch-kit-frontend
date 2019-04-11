@@ -1,5 +1,4 @@
 import { BigNumber } from '0x.js';
-import logdown from 'logdown';
 import { createAction } from 'typesafe-actions';
 
 import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
@@ -10,6 +9,7 @@ import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
 import { getWeb3Wrapper, initializeWeb3Wrapper, isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
+import { getLogDown } from '../../util/logdown';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
@@ -25,7 +25,7 @@ import {
 } from '../selectors';
 import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
-const logger = logdown('Blockchain:Actions');
+const logger = getLogDown('Blockchain::Actions');
 
 export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
