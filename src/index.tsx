@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
 import 'sanitize.css';
 
+import { LOGGER_ID } from './common/constants';
 import { AppContainer } from './components/app';
 import { AdBlockDetector } from './components/common/adblock_detector';
 import { GeneralLayout } from './components/general_layout';
@@ -20,8 +21,8 @@ ReactModal.setAppElement('#root');
 const RedirectToHome = () => <Redirect to="/" />;
 
 if (['development', 'production'].includes(process.env.NODE_ENV) && !window.localStorage.debug) {
-    // Log everything to the console
-    window.localStorage.debug = '*';
+    // Log only the app constant id to the console
+    window.localStorage.debug = `${LOGGER_ID}*`;
 }
 
 const Web3WrappedApp = (
