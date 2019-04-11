@@ -26,6 +26,6 @@ To run the app with docker, follow these steps:
 1. Create the docker image: `docker build -t 0x-launch-kit-frontend .`
 2. Run the container, exposing the port 80 to whichever port you want: `docker run -p 8080:80 0x-launch-kit-frontend`
 3. Open `localhost:8080` in your browser.
-
-You can configure the URL of the relayer by setting the `REACT_APP_RELAYER_URL` environment variable at *build time*.
 ```
+
+You can configure the dApp by setting the proper values in a `.env` file **before** building the image. Check `env.example` to see what variables can be set.
