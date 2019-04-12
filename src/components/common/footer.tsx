@@ -86,7 +86,7 @@ export const Footer: React.FC<Props> = props => {
 
     return (
         <FooterWrapper title={GIT_COMMIT} {...restProps}>
-            {poweredBySVG()}
+            <a href="https://0x.org/">{poweredBySVG()}</a>
         </FooterWrapper>
     );
 };
