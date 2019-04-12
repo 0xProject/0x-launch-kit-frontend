@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { CheckMetamaskStateModalContainer } from '../components/common/check_metamask_state_modal_container';
 import { ColumnNarrow } from '../components/common/column_narrow';
 import { ColumnWide } from '../components/common/column_wide';
 import { BuySellContainer } from '../components/marketplace/buy_sell';
@@ -11,16 +12,18 @@ class Marketplace extends React.PureComponent {
     public render = () => {
         return (
             <>
-                <ColumnNarrow>
-                    <WalletBalanceContainer />
-                    <BuySellContainer />
-                </ColumnNarrow>
-                <ColumnNarrow>
-                    <OrderBookTableContainer />
-                </ColumnNarrow>
-                <ColumnWide>
-                    <OrderHistoryContainer />
-                </ColumnWide>
+                <CheckMetamaskStateModalContainer>
+                    <ColumnNarrow>
+                        <WalletBalanceContainer />
+                        <BuySellContainer />
+                    </ColumnNarrow>
+                    <ColumnNarrow>
+                        <OrderBookTableContainer />
+                    </ColumnNarrow>
+                    <ColumnWide>
+                        <OrderHistoryContainer />
+                    </ColumnWide>
+                </CheckMetamaskStateModalContainer>
             </>
         );
     };
