@@ -97,11 +97,9 @@ class WrapEthStep extends React.Component<Props> {
             onLoading();
 
             await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
-            this.setState({ convertSuccess: true }, async () => {
-                onDone();
-                await sleep(DONE_STATUS_VISIBILITY_TIME);
-                advanceStep();
-            });
+            onDone();
+            await sleep(DONE_STATUS_VISIBILITY_TIME);
+            advanceStep();
         } catch (err) {
             onError();
         }
