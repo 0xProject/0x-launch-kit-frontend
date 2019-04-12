@@ -96,7 +96,7 @@ class OrderHistory extends React.Component<Props, State> {
         let content: React.ReactNode;
         switch (web3State) {
             case Web3State.Locked: {
-                content = <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />;
+                content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
                 break;
             }
             case Web3State.NotInstalled: {
@@ -110,9 +110,7 @@ class OrderHistory extends React.Component<Props, State> {
                 break;
             }
             case Web3State.Loading: {
-                content = (
-                    <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
-                );
+                content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
                 break;
             }
             default: {
