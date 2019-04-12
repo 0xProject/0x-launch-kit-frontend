@@ -38,14 +38,16 @@ class BuySellTokenStep extends React.Component<Props> {
         const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
             step.amount,
             step.token.decimals,
-        ).toString()} of ${tokenSymbol}`;
+        ).toString()} ${tokenSymbol}`;
 
         const title = 'Order setup';
 
         const confirmCaption = `Confirm on Metamask to ${isBuyOrSell ? 'buy' : 'sell'} ${amountOfTokenString}.`;
         const loadingCaption = `Processing ${isBuyOrSell ? 'buy' : 'sale'} of ${amountOfTokenString}.`;
-        const doneCaption = `${isBuyOrSell ? 'Buy' : 'Sale'} complete!`;
+        const doneCaption = `${isBuyOrSell ? 'Buy' : 'Sell'} Order Complete!`;
         const errorCaption = `${isBuyOrSell ? 'buying' : 'selling'} ${amountOfTokenString}.`;
+        const loadingFooterCaption = `Waiting for confirmation....`;
+        const doneFooterCaption = '';
 
         return (
             <BaseStepModal
@@ -55,6 +57,8 @@ class BuySellTokenStep extends React.Component<Props> {
                 loadingCaption={loadingCaption}
                 doneCaption={doneCaption}
                 errorCaption={errorCaption}
+                loadingFooterCaption={loadingFooterCaption}
+                doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._confirmOnMetamaskBuyOrSell}

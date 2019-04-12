@@ -5,6 +5,7 @@ import { Step } from '../../../util/types';
 
 import { StepPendingTime } from './step_pending_time';
 import {
+    ModalStatusTextLight,
     ModalText,
     ModalTextClickable,
     StepStatus,
@@ -41,6 +42,8 @@ interface Props {
     title: string;
     confirmCaption: string;
     loadingCaption: string;
+    loadingFooterCaption: string;
+    doneFooterCaption: string;
     doneCaption: string;
     errorCaption: string;
     step: Step;
@@ -77,12 +80,19 @@ export class BaseStepModal extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { confirmCaption, loadingCaption, doneCaption, errorCaption, title } = this.props;
-
+        const {
+            confirmCaption,
+            loadingCaption,
+            doneCaption,
+            errorCaption,
+            loadingFooterCaption,
+            doneFooterCaption,
+            title,
+        } = this.props;
         const { loadingStarted, status } = this.state;
         const retry = () => this._retry();
         let content;
-
+        let footer;
         switch (status) {
             case StepStatus.Loading:
                 content = (
@@ -97,6 +107,7 @@ export class BaseStepModal extends React.Component<Props, State> {
                         <ModalText>{doneCaption}</ModalText>
                     </StepStatusDone>
                 );
+                footer = <ModalStatusTextLight>{doneFooterCaption}</ModalStatusTextLight>;
                 break;
             case StepStatus.Error:
                 content = (
@@ -114,6 +125,7 @@ export class BaseStepModal extends React.Component<Props, State> {
                         <ModalText>{confirmCaption}</ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
+                footer = <ModalStatusTextLight>{loadingFooterCaption}</ModalStatusTextLight>;
                 break;
         }
 
@@ -143,6 +155,7 @@ export class BaseStepModal extends React.Component<Props, State> {
                         estimatedTxTimeMs={this._estimatedTxTimeMs}
                     />
                 )}
+                {footer}
             </>
         );
     };
