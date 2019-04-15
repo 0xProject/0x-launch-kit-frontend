@@ -4,14 +4,12 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { errorsWallet } from '../../util/error_messages';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
-import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { CardLoading } from '../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../common/table';
 
