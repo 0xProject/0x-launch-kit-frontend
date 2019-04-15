@@ -24,7 +24,7 @@ interface DispatchProps {
 }
 
 interface OwnProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -49,6 +49,7 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
     public render = () => {
         const { shouldOpenModal, modalToDisplay } = this.state;
         const { onConnectWallet, onGoToHome, children } = this.props;
+        const childrenContent = children ? children : null;
         return shouldOpenModal && modalToDisplay ? (
             <MetamaskErrorModal
                 isOpen={shouldOpenModal}
@@ -57,7 +58,7 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
                 connectWallet={onConnectWallet}
             />
         ) : (
-            children
+            childrenContent
         );
     };
 

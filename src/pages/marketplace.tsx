@@ -12,18 +12,17 @@ class Marketplace extends React.PureComponent {
     public render = () => {
         return (
             <>
-                <CheckMetamaskStateModalContainer>
-                    <ColumnNarrow>
-                        <WalletBalanceContainer />
-                        <BuySellContainer />
-                    </ColumnNarrow>
-                    <ColumnNarrow>
-                        <OrderBookTableContainer />
-                    </ColumnNarrow>
-                    <ColumnWide>
-                        <OrderHistoryContainer />
-                    </ColumnWide>
-                </CheckMetamaskStateModalContainer>
+                <ColumnNarrow>
+                    <WalletBalanceContainer />
+                    <BuySellContainer />
+                </ColumnNarrow>
+                <ColumnNarrow>
+                    <OrderBookTableContainer />
+                </ColumnNarrow>
+                <ColumnWide>
+                    <OrderHistoryContainer />
+                </ColumnWide>
+                <CheckMetamaskStateModalContainer />
             </>
         );
     };
