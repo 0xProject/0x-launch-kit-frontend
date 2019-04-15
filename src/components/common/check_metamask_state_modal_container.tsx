@@ -49,7 +49,6 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
     public render = () => {
         const { shouldOpenModal, modalToDisplay } = this.state;
         const { onConnectWallet, onGoToHome, children } = this.props;
-        const childrenContent = children ? children : null;
         return shouldOpenModal && modalToDisplay ? (
             <MetamaskErrorModal
                 isOpen={shouldOpenModal}
@@ -58,7 +57,7 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
                 connectWallet={onConnectWallet}
             />
         ) : (
-            childrenContent
+            children || null
         );
     };
 
