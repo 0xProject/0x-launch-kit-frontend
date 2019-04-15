@@ -96,18 +96,9 @@ class OrderHistory extends React.Component<Props, State> {
         let content: React.ReactNode;
         switch (web3State) {
             case Web3State.Locked:
+            case Web3State.NotInstalled:
             case Web3State.Loading: {
                 content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
-                break;
-            }
-            case Web3State.NotInstalled: {
-                content = (
-                    <ErrorCard
-                        fontSize={FontSize.Large}
-                        text={errorsWallet.mmNotInstalled}
-                        icon={ErrorIcons.Metamask}
-                    />
-                );
                 break;
             }
             default: {
