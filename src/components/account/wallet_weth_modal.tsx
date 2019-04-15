@@ -10,6 +10,11 @@ import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
 import { Tooltip } from '../common/tooltip';
 
+enum ETHBoxType {
+    Eth,
+    Weth,
+}
+
 enum Editing {
     Eth,
     None,
@@ -83,7 +88,7 @@ const ETHPrice = styled.div`
     font-size: 14px;
     line-height: 18px;
     text-align: center;
-    color: #999999;
+    color: ${themeColors.textLight};
 `;
 
 const EthBoxes = styled.div`
@@ -94,7 +99,12 @@ const EthBoxes = styled.div`
     padding-top: 19px;
 `;
 
-const EthBox = styled.div`
+interface EthBoxProps {
+    boxType: ETHBoxType;
+    isZero?: boolean;
+}
+
+const EthBox = styled.div<EthBoxProps>`
     align-items: center;
     border-radius: 4px;
 
@@ -104,9 +114,10 @@ const EthBox = styled.div`
     min-height: 105px;
     padding: 10px;
     position: relative;
+    border: 1px solid ${themeColors.lightGray}
 
     &:hover {
-        border: 1px solid ${themeColors.darkBlue};
+        border: 1px solid ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkGray : themeColors.darkBlue)}
     }
 `;
 
@@ -117,18 +128,14 @@ const TooltipStyled = styled.div`
     top: 8px;
 `;
 
-interface EthBoxProps {
-    isZero?: boolean;
-}
-
 const EthBoxValue = styled.h2<EthBoxProps>`
-    color: ${props => (props.isZero ? '#666' : themeColors.darkBlue)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
     line-height: 1.2;
     margin: 0 0 5px;
     text-align: center;
+    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkGray : themeColors.darkBlue)};
 `;
 
 const EthBoxUnit = styled.div`
@@ -156,7 +163,7 @@ const SetMinEthButton = styled.a`
 
 const InputEth = styled<any>(BigNumberInput)`
     border-color: transparent;
-    color: ${themeColors.darkBlue};
+    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkGray : themeColors.darkBlue)}
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -165,6 +172,7 @@ const InputEth = styled<any>(BigNumberInput)`
     margin: 0 0 5px;
     padding: 0;
     text-align: center;
+
 
     &:focus,
     &:active {
@@ -203,7 +211,7 @@ class WethModal extends React.Component<Props, State> {
                 <Title>Available Balance</Title>
                 {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
                 <EthBoxes>
-                    <EthBox>
+                    <EthBox boxType={ETHBoxType.Eth}>
                         {editing === Editing.Eth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
@@ -213,16 +221,21 @@ class WethModal extends React.Component<Props, State> {
                                     min={new BigNumber(0)}
                                     onChange={this._updateEth}
                                     value={selectedEth}
+                                    boxType={ETHBoxType.Eth}
                                 />
                             </form>
                         ) : (
-                            <EthBoxValue isZero={selectedEthStr === minSlidervalue} onClick={this._enableEditEth}>
+                            <EthBoxValue
+                                boxType={ETHBoxType.Eth}
+                                isZero={selectedEthStr === minSlidervalue}
+                                onClick={this._enableEditEth}
+                            >
                                 {selectedEthStr}
                             </EthBoxValue>
                         )}
                         <EthBoxUnit>ETH</EthBoxUnit>
                     </EthBox>
-                    <EthBox>
+                    <EthBox boxType={ETHBoxType.Weth}>
                         {editing === Editing.Weth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
@@ -232,10 +245,15 @@ class WethModal extends React.Component<Props, State> {
                                     min={new BigNumber(0)}
                                     onChange={this._updateWeth}
                                     value={selectedWeth}
+                                    boxType={ETHBoxType.Weth}
                                 />
                             </form>
                         ) : (
-                            <EthBoxValue isZero={selectedWethStr === minSlidervalue} onClick={this._enableEditWeth}>
+                            <EthBoxValue
+                                boxType={ETHBoxType.Weth}
+                                isZero={selectedWethStr === minSlidervalue}
+                                onClick={this._enableEditWeth}
+                            >
                                 {selectedWethStr}
                             </EthBoxValue>
                         )}
