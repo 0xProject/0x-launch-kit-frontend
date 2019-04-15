@@ -146,7 +146,7 @@ class BuySell extends React.Component<Props, State> {
     public state: State = {
         makerAmount: null,
         price: null,
-        orderType: OrderType.Limit,
+        orderType: OrderType.Market,
         tab: OrderSide.Buy,
     };
 
