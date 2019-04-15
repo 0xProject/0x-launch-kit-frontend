@@ -21,6 +21,7 @@ interface Props extends React.ComponentProps<typeof Modal> {
     onSubmit: (b: BigNumber) => any;
     totalEth: BigNumber;
     wethBalance: BigNumber;
+    ethInUsd: BigNumber | null;
 }
 
 interface State {
@@ -71,23 +72,42 @@ const Title = styled.h1`
     text-align: center;
 `;
 
+const ETHPrice = styled.div`
+    position: absolute;
+    width: 243px;
+    height: 19px;
+    left: 54px;
+    top: 60px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+    color: #999999;
+`;
+
 const EthBoxes = styled.div`
     column-gap: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     margin-bottom: 25px;
+    padding-top: 19px;
 `;
 
 const EthBox = styled.div`
     align-items: center;
     border-radius: 4px;
-    border: 1px solid ${themeColors.borderColor};
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     min-height: 105px;
     padding: 10px;
     position: relative;
+
+    &:hover {
+        border: 1px solid ${themeColors.darkBlue};
+    }
 `;
 
 const TooltipStyled = styled.div`
@@ -163,7 +183,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { onSubmit, isSubmitting, totalEth, wethBalance, ...restProps } = this.props;
+        const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
 
         const selectedEth = totalEth.sub(this.state.selectedWeth);
@@ -181,6 +201,7 @@ class WethModal extends React.Component<Props, State> {
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
                 <Title>Available Balance</Title>
+                {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
                 <EthBoxes>
                     <EthBox>
                         {editing === Editing.Eth ? (
