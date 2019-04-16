@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 
 import { isWeth } from '../util/known_tokens';
 import {
+    Market,
     OrderBook,
     OrderSide,
     SearchTokenBalanceObject,
@@ -150,5 +151,21 @@ export const getTokens = createSelector(
             const { token } = tokenBalance;
             return token;
         });
+    },
+);
+
+export const getMarketBaseTokenPrice = createSelector(
+    getMarkets,
+    getBaseToken,
+    (markets: Market[] | null, baseToken: Token | null) => {
+        if (markets) {
+            const market = markets.find((value: Market) => value.currencyPair.base === (baseToken && baseToken.symbol));
+
+            if (market && market.price) {
+                return new BigNumber(market.price);
+            }
+        }
+
+        return new BigNumber(0);
     },
 );
