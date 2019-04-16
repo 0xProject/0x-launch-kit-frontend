@@ -82,10 +82,8 @@ const poweredBySVG = () => {
 };
 
 export const Footer: React.FC<Props> = props => {
-    const { ...restProps } = props;
-
     return (
-        <FooterWrapper title={GIT_COMMIT} {...restProps}>
+        <FooterWrapper title={GIT_COMMIT} {...props}>
             <a href="https://0x.org/" target="_blank">
                 {poweredBySVG()}
             </a>
