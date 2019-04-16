@@ -107,7 +107,7 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
 };
 
 export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any): Promise<string> => {
+    return async (dispatch: any, getState: any): Promise<{ txHash: string; amountInReturn: BigNumber }> => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -148,7 +148,9 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
                 ]),
             );
 
-            return txHash;
+            const amountInReturn = amounts.reduce((prev, curr) => prev.add(curr), new BigNumber(0));
+
+            return { txHash, amountInReturn };
         } else {
             const errorMessage = 'There are no enough orders to fill this amount';
             window.alert(errorMessage);
