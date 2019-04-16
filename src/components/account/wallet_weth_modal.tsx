@@ -138,7 +138,7 @@ const EthBox = styled.div<EthBoxProps>`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    max-width: 124px;
+    max-width: 146px;
     min-height: 105px;
     padding: 10px;
     position: relative;
