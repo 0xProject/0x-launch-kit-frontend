@@ -1,8 +1,7 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import styled from 'styled-components';
-
-import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 
 interface Props {
     autofocus?: boolean;
@@ -20,6 +19,8 @@ interface State {
     currentValueStr: string;
 }
 
+const { toUnitAmount, toBaseUnitAmount } = Web3Wrapper;
+
 const Input = styled.input`
     ::-webkit-inner-spin-button,
     ::-webkit-outer-spin-button {
@@ -35,7 +36,7 @@ export class BigNumberInput extends React.Component<Props, State> {
     };
 
     public readonly state = {
-        currentValueStr: this.props.value ? tokenAmountInUnits(this.props.value, this.props.decimals) : '',
+        currentValueStr: this.props.value ? toUnitAmount(this.props.value, this.props.decimals).toFixed(2) : '',
     };
 
     private _textInput: any;
@@ -48,9 +49,9 @@ export class BigNumberInput extends React.Component<Props, State> {
             return {
                 currentValueStr: '',
             };
-        } else if (value && !unitsInTokenAmount(currentValueStr || '0', decimals).eq(value)) {
+        } else if (value && !toBaseUnitAmount(new BigNumber(currentValueStr || '0'), decimals).eq(value)) {
             return {
-                currentValueStr: tokenAmountInUnits(value, decimals),
+                currentValueStr: toUnitAmount(value, decimals).toFixed(2),
             };
         } else {
             return null;
@@ -69,9 +70,9 @@ export class BigNumberInput extends React.Component<Props, State> {
         const { currentValueStr } = this.state;
         const { decimals, step, min, max, className, placeholder } = this.props;
 
-        const stepStr = step && tokenAmountInUnits(step, decimals);
-        const minStr = min && tokenAmountInUnits(min, decimals);
-        const maxStr = max && tokenAmountInUnits(max, decimals);
+        const stepStr = step && toUnitAmount(step, decimals).toFixed(2);
+        const minStr = min && toUnitAmount(min, decimals).toFixed(2);
+        const maxStr = max && toUnitAmount(max, decimals).toFixed(2);
 
         return (
             <Input
@@ -92,7 +93,7 @@ export class BigNumberInput extends React.Component<Props, State> {
         const { decimals, onChange, min, max } = this.props;
         const newValueStr = e.currentTarget.value;
 
-        const newValue = unitsInTokenAmount(newValueStr || '0', decimals);
+        const newValue = toBaseUnitAmount(new BigNumber(newValueStr || '0'), decimals);
         const invalidValue = (min && newValue.lessThan(min)) || (max && newValue.greaterThan(max));
         if (invalidValue) {
             return;

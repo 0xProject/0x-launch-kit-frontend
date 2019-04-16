@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -8,8 +9,10 @@ import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../store/s
 import { getKnownTokens } from '../../util/known_tokens';
 import { buildMarketOrders } from '../../util/orders';
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, UIOrder } from '../../util/types';
+
+const { toUnitAmount } = Web3Wrapper;
 
 const Row = styled.div`
     align-items: center;
@@ -169,7 +172,7 @@ class OrderDetails extends React.Component<Props, State> {
         }
         const { feeInZrx } = this.state;
         const zrxDecimals = getKnownTokens(networkId).getTokenBySymbol(TokenSymbol.Zrx).decimals;
-        return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${tokenSymbolToDisplayString(TokenSymbol.Zrx)}`;
+        return `${toUnitAmount(feeInZrx, zrxDecimals).toFixed(2)} ${tokenSymbolToDisplayString(TokenSymbol.Zrx)}`;
     };
 
     private readonly _getCostStringForRender = () => {
@@ -185,7 +188,7 @@ class OrderDetails extends React.Component<Props, State> {
         const { quote } = this.props.currencyPair;
         const quoteTokenDecimals = getKnownTokens(networkId).getTokenBySymbol(quote).decimals;
         const { quoteTokenAmount } = this.state;
-        return `${tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals)} ${tokenSymbolToDisplayString(quote)}`;
+        return `${toUnitAmount(quoteTokenAmount, quoteTokenDecimals).toFixed(2)} ${tokenSymbolToDisplayString(quote)}`;
     };
 }
 

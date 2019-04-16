@@ -1,10 +1,10 @@
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
 
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { themeColors, themeDimensions } from '../../util/theme';
-import { tokenAmountInUnits } from '../../util/tokens';
 import { Notification, NotificationKind, OrderSide } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
@@ -20,6 +20,8 @@ interface Props {
 interface State {
     pending: boolean;
 }
+
+const { toUnitAmount } = Web3Wrapper;
 
 const NotificationWrapper = styled.div<{ active?: boolean }>`
     align-items: center;
@@ -131,7 +133,7 @@ class NotificationItem extends React.Component<Props, State> {
             }
         }
 
-        const amount = tokenAmountInUnits(item.amount, item.token.decimals);
+        const amount = toUnitAmount(item.amount, item.token.decimals).toFixed(2);
         return `${operation} ${amount} ${item.token.symbol.toUpperCase()}`;
     };
 

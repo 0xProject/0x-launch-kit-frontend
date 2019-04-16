@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 
 import * as CONSTANTS from '../common/constants';
 
@@ -10,10 +11,12 @@ import {
     getWrapEthStepIfNeeded,
 } from './steps_modals_generation';
 import { tokenFactory } from './test-utils';
-import { unitsInTokenAmount } from './tokens';
 import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, TokenBalance, TokenSymbol } from './types';
 
 const ZERO = new BigNumber(0);
+
+const { toBaseUnitAmount } = Web3Wrapper;
+
 const wethToken = {
     primaryColor: 'white',
     address: '0x100',
@@ -183,7 +186,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
         const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
         // @ts-ignore
-        CONSTANTS.MAKER_FEE = unitsInTokenAmount('1', 18);
+        CONSTANTS.MAKER_FEE = toBaseUnitAmount(new BigNumber('1'), 18);
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -246,7 +249,7 @@ describe('Buy sell market steps for zrx/weth', () => {
         const amount: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
         // @ts-ignore
-        CONSTANTS.TAKER_FEE = unitsInTokenAmount('1', 18);
+        CONSTANTS.TAKER_FEE = toBaseUnitAmount(new BigNumber('1'), 18);
 
         // when
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(

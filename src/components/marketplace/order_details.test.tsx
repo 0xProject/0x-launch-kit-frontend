@@ -1,12 +1,15 @@
 import { BigNumber, OrderStatus } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
-import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../util/tokens';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
 import { OrderSide, OrderType, TokenSymbol } from '../../util/types';
 
 import { CostValue, OrderDetails, Value } from './order_details';
+
+const { toBaseUnitAmount } = Web3Wrapper;
 
 describe('OrderDetails', () => {
     const getExpectedTotalCostText = (amount: number, symbol: string): string => {
@@ -33,10 +36,10 @@ describe('OrderDetails', () => {
 
     it('Calculates total cost for limit orders', () => {
         // given
-        const makerAmount = unitsInTokenAmount('13', 18);
+        const makerAmount = toBaseUnitAmount(new BigNumber('13'), 18);
         const tokenPrice = new BigNumber(3);
         // @ts-ignore
-        CONSTANTS.MAKER_FEE = unitsInTokenAmount('7', 18);
+        CONSTANTS.MAKER_FEE = toBaseUnitAmount(new BigNumber('7'), 18);
 
         // when
         const wrapper = shallow(
@@ -60,10 +63,10 @@ describe('OrderDetails', () => {
 
     it('Calculates fees for market orders', () => {
         // given
-        const makerAmount = unitsInTokenAmount('10', 18);
+        const makerAmount = toBaseUnitAmount(new BigNumber('10'), 18);
         const tokenPrice = new BigNumber(2);
-        const MAKER_FEE = unitsInTokenAmount('3', 18);
-        const TAKER_FEE = unitsInTokenAmount('7', 18);
+        const MAKER_FEE = toBaseUnitAmount(new BigNumber('3'), 18);
+        const TAKER_FEE = toBaseUnitAmount(new BigNumber('7'), 18);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -103,7 +106,7 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: unitsInTokenAmount('5', 18),
+            size: toBaseUnitAmount(new BigNumber('5'), 18),
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
@@ -111,7 +114,7 @@ describe('OrderDetails', () => {
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: unitsInTokenAmount('5', 18),
+            size: toBaseUnitAmount(new BigNumber('5'), 18),
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
@@ -139,10 +142,10 @@ describe('OrderDetails', () => {
     it('Calculates total cost for market orders', () => {
         // given
         // makerAmount = 10
-        const makerAmount = unitsInTokenAmount('10', 18);
+        const makerAmount = toBaseUnitAmount(new BigNumber('10'), 18);
         const tokenPrice = new BigNumber(10);
-        const MAKER_FEE = unitsInTokenAmount('1', 18);
-        const TAKER_FEE = unitsInTokenAmount('1', 18);
+        const MAKER_FEE = toBaseUnitAmount(new BigNumber('1'), 18);
+        const TAKER_FEE = toBaseUnitAmount(new BigNumber('1'), 18);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -182,7 +185,7 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: unitsInTokenAmount('10', 18),
+            size: toBaseUnitAmount(new BigNumber('10'), 18),
             filled: new BigNumber(0),
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
@@ -190,7 +193,7 @@ describe('OrderDetails', () => {
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: unitsInTokenAmount('3', 18),
+            size: toBaseUnitAmount(new BigNumber('3'), 18),
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
@@ -217,9 +220,9 @@ describe('OrderDetails', () => {
 
     it('Do not displays a value if the order amount is not fillable on market', () => {
         // given
-        const makerAmount = unitsInTokenAmount('50', 18);
+        const makerAmount = toBaseUnitAmount(new BigNumber('50'), 18);
         const tokenPrice = new BigNumber(1);
-        const MAKER_FEE = unitsInTokenAmount('1', 18);
+        const MAKER_FEE = toBaseUnitAmount(new BigNumber('1'), 18);
 
         const signedOrder1 = {
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
@@ -259,7 +262,7 @@ describe('OrderDetails', () => {
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
-            size: unitsInTokenAmount('10', 18),
+            size: toBaseUnitAmount(new BigNumber('10'), 18),
             filled: new BigNumber(0),
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
@@ -267,7 +270,7 @@ describe('OrderDetails', () => {
         const sellOrder2 = {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
-            size: unitsInTokenAmount('1', 18),
+            size: toBaseUnitAmount(new BigNumber('1'), 18),
             filled: new BigNumber(0),
             price: new BigNumber(1),
             status: OrderStatus.Fillable,

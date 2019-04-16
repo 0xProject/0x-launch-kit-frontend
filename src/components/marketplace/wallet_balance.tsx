@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -19,12 +20,14 @@ import {
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { IconType, Tooltip } from '../common/tooltip';
+
+const { toUnitAmount } = Web3Wrapper;
 
 const LabelTitleWrapper = styled.div`
     align-items: center;
@@ -229,8 +232,13 @@ class WalletBalance extends React.Component<Props, State> {
         } = this.props;
 
         if (web3State === Web3State.Done && quoteToken && baseTokenBalance && quoteTokenBalance) {
-            const quoteBalanceString = tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
-            const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, quoteTokenBalance.token.decimals);
+            const quoteBalanceString = toUnitAmount(
+                quoteTokenBalance.balance,
+                quoteTokenBalance.token.decimals,
+            ).toFixed(2);
+            const baseBalanceString = toUnitAmount(baseTokenBalance.balance, quoteTokenBalance.token.decimals).toFixed(
+                2,
+            );
             const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled
                     description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."

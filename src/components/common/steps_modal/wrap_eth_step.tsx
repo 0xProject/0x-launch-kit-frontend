@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -7,7 +8,6 @@ import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions
 import { getEstimatedTxTimeMs, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
-import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
@@ -30,6 +30,8 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
+const { toUnitAmount } = Web3Wrapper;
+
 class WrapEthStep extends React.Component<Props> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, networkId, step } = this.props;
@@ -41,7 +43,7 @@ class WrapEthStep extends React.Component<Props> {
         const { context, currentWethBalance, newWethBalance } = step;
         const amount = newWethBalance.sub(currentWethBalance);
         const wethToken = getKnownTokens(networkId).getWethToken();
-        const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toString();
+        const ethAmount = toUnitAmount(amount.abs(), wethToken.decimals).toString();
 
         const ethToWeth = amount.greaterThan(0);
         const convertingFrom = ethToWeth ? 'ETH' : 'wETH';

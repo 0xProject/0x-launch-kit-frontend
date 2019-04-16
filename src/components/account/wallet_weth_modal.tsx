@@ -1,10 +1,10 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
@@ -27,6 +27,8 @@ interface State {
     editing: Editing;
     selectedWeth: BigNumber;
 }
+
+const { toUnitAmount, toBaseUnitAmount } = Web3Wrapper;
 
 const Slider = styled.input`
     -webkit-appearance: none;
@@ -153,7 +155,7 @@ const InputEth = styled<any>(BigNumberInput)`
     }
 `;
 
-const minEth = unitsInTokenAmount('0.5', 18);
+const minEth = toBaseUnitAmount(new BigNumber('0.5'), 18);
 const minSlidervalue = '0.00';
 
 class WethModal extends React.Component<Props, State> {
@@ -168,10 +170,10 @@ class WethModal extends React.Component<Props, State> {
 
         const selectedEth = totalEth.sub(this.state.selectedWeth);
 
-        const initialWethStr = tokenAmountInUnits(this.props.wethBalance, 18);
-        const selectedWethStr = tokenAmountInUnits(this.state.selectedWeth, 18);
-        const selectedEthStr = tokenAmountInUnits(selectedEth, 18);
-        const totalEthStr = tokenAmountInUnits(totalEth, 18);
+        const initialWethStr = toUnitAmount(this.props.wethBalance, 18).toFixed(2);
+        const selectedWethStr = toUnitAmount(this.state.selectedWeth, 18).toFixed(2);
+        const selectedEthStr = toUnitAmount(selectedEth, 18).toFixed(2);
+        const totalEthStr = toUnitAmount(totalEth, 18).toFixed(2);
 
         const isInsufficientEth = selectedEth.lessThan(minEth);
 
@@ -268,7 +270,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     private readonly _updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
-        const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, 18);
+        const newSelectedWeth = toBaseUnitAmount(new BigNumber(e.currentTarget.value), 18);
 
         this.setState({
             selectedWeth: newSelectedWeth,

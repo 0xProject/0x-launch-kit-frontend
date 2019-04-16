@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -6,7 +7,6 @@ import styled from 'styled-components';
 import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getWeb3State, getWethBalance } from '../../store/selectors';
 import { themeColors, themeDimensions, themeModalStyle } from '../../util/theme';
-import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
@@ -31,6 +31,8 @@ interface State {
     selectedWeth: string;
     isSubmitting: boolean;
 }
+
+const { toUnitAmount } = Web3Wrapper;
 
 const Content = styled.div`
     margin: 0 -${themeDimensions.horizontalPadding};
@@ -143,9 +145,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.add(wethBalance);
 
-        const formattedEth = tokenAmountInUnits(ethBalance, 18);
-        const formattedWeth = tokenAmountInUnits(wethBalance, 18);
-        const formattedTotalEth = tokenAmountInUnits(totalEth, 18);
+        const formattedEth = toUnitAmount(ethBalance, 18).toFixed(2);
+        const formattedWeth = toUnitAmount(wethBalance, 18).toFixed(2);
+        const formattedTotalEth = toUnitAmount(totalEth, 18).toFixed(2);
 
         let content: React.ReactNode;
         let shouldDisplayCard = true;

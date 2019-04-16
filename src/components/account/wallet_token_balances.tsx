@@ -1,11 +1,11 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
 import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
-import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
@@ -24,6 +24,8 @@ interface DispatchProps {
 }
 
 type Props = StateProps & DispatchProps;
+
+const { toUnitAmount } = Web3Wrapper;
 
 const THStyled = styled(TH)`
     &:first-child {
@@ -113,7 +115,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
         const wethToken = wethTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
-        const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals);
+        const formattedTotalEthBalance = toUnitAmount(totalEth, wethToken.decimals).toFixed(2);
         const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
 
         const totalEthRow = (
@@ -138,7 +140,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const tokensRows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
-            const formattedBalance = tokenAmountInUnits(balance, token.decimals);
+            const formattedBalance = toUnitAmount(balance, token.decimals).toFixed(2);
             const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
 
             return (

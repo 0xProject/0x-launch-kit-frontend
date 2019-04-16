@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits } from '../../util/tokens';
+import { orderSizeInUnits } from '../../util/tokens';
 import { OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
@@ -39,12 +39,12 @@ const SideTD = styled(CustomTD)<{ side: OrderSide }>`
 
 const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
     const sideLabel = order.side === OrderSide.Sell ? 'Sell' : 'Buy';
-    const size = tokenAmountInUnits(order.size, baseToken.decimals);
+    const size = orderSizeInUnits(order.size, baseToken.decimals);
     let filled = null;
     let status = '--';
     let isOrderFillable = false;
 
-    order.filled ? (filled = tokenAmountInUnits(order.filled, baseToken.decimals)) : (filled = null);
+    order.filled ? (filled = orderSizeInUnits(order.filled, baseToken.decimals)) : (filled = null);
     if (order.status) {
         isOrderFillable = order.status === OrderStatus.Fillable;
         status = isOrderFillable ? 'Open' : 'Filled';

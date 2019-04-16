@@ -2,10 +2,10 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
+import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
-import { tokenAmountInUnits } from '../../util/tokens';
+import { orderSizeInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
@@ -41,7 +41,7 @@ const orderToRow = (
     mySizeOrders: OrderBookItem[] = [],
     web3State?: Web3State,
 ) => {
-    const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+    const size = orderSizeInUnits(order.size, baseToken.decimals);
     const price = order.price.toString();
     const priceColor = order.side === OrderSide.Buy ? themeColors.green : themeColors.orange;
 
@@ -52,7 +52,7 @@ const orderToRow = (
         return sumSize;
     }, new BigNumber(0));
 
-    const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+    const mySizeConverted = orderSizeInUnits(mySize, baseToken.decimals);
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
             <CustomTD styles={{ tabular: true, textAlign: 'right' }}>

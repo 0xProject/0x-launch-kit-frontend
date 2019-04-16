@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -6,7 +7,7 @@ import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
-import { tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
+import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
@@ -28,6 +29,8 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
+const { toUnitAmount } = Web3Wrapper;
+
 class BuySellTokenStep extends React.Component<Props> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
@@ -35,10 +38,7 @@ class BuySellTokenStep extends React.Component<Props> {
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
         const isBuyOrSell = step.side === OrderSide.Buy;
-        const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
-            step.amount,
-            step.token.decimals,
-        ).toString()} ${tokenSymbol}`;
+        const amountOfTokenString = `${toUnitAmount(step.amount, step.token.decimals).toString()} ${tokenSymbol}`;
 
         const title = 'Order setup';
 
