@@ -34,33 +34,64 @@ interface State {
     selectedWeth: BigNumber;
 }
 
+const sliderThumbDimensions = '16px';
+const sliderTrackProps = `
+    background: #999;
+    background: linear-gradient(${themeColors.darkBlue}, ${themeColors.darkBlue}) 0 / var(--sx) 100% no-repeat #999;
+    border-radius: 2.5px;
+    border: none;
+    box-sizing: border-box;
+    height: 5px;
+`;
+const sliderThumbProps = `
+    background: #fff;
+    border-radius: 50%;
+    border: 0.5px solid rgba(0, 0, 0, 0.142);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    height: ${sliderThumbDimensions};
+    width: ${sliderThumbDimensions};
+`;
 const Slider = styled.input`
+    --range: calc(var(--max) - var(--min));
+    --ratio: calc((var(--val) - var(--min)) / var(--range));
+    --sx: calc(0.5 * ${sliderThumbDimensions} + var(--ratio) * (100% - ${sliderThumbDimensions}));
+
     -webkit-appearance: none;
+    background-color: transparent;
     cursor: pointer;
-    margin: 0 0 20px;
+    margin: 0 0 15px;
+    outline: none;
     width: 100%;
 
     &:focus {
         outline: none;
     }
-
     &::-webkit-slider-runnable-track {
-        background: ${themeColors.darkBlue};
-        border-radius: 1.3px;
-        border: none;
-        height: 5px;
+        ${sliderTrackProps}
     }
-
+    &::-moz-range-track {
+        ${sliderTrackProps}
+    }
+    &::-ms-track {
+        ${sliderTrackProps}
+    }
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        background: #fff;
-        border-radius: 1em;
-        border: 0.5px solid rgba(0, 0, 0, 0.142);
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-        cursor: pointer;
-        height: 16px;
+        ${sliderThumbProps}
         margin-top: -6px;
-        width: 16px;
+    }
+    &::-moz-range-thumb {
+        ${sliderThumbProps}
+    }
+    &::-ms-thumb {
+        ${sliderThumbProps}
+        margin-top: 0;
+    }
+    &::-ms-tooltip {
+        display: none;
+    }
+    &::-moz-focus-outer {
+        border: 0;
     }
 `;
 
@@ -68,35 +99,31 @@ const Button = styled(ButtonBase)`
     width: 100%;
 `;
 
-const Title = styled.h1`
+const Title = styled.h1<{ marginBottomSmall: any }>`
     color: #000;
     font-size: 20px;
     font-weight: 600;
     line-height: 1.2;
-    margin: 0 0 25px;
+    margin: ${props => (props.marginBottomSmall ? '0 0 5px' : '0')};
     text-align: center;
 `;
 
-const ETHPrice = styled.div`
-    position: absolute;
-    width: 243px;
-    height: 19px;
-    left: 54px;
-    top: 60px;
+const ETHPrice = styled.h2`
+    color: ${themeColors.textLight};
+    font-size: 14px;
     font-style: normal;
     font-weight: normal;
-    font-size: 14px;
-    line-height: 18px;
+    line-height: 1.2;
+    margin: 0;
     text-align: center;
-    color: ${themeColors.textLight};
 `;
 
 const EthBoxes = styled.div`
     column-gap: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    margin-bottom: 25px;
-    padding-top: 19px;
+    margin-bottom: 15px;
+    padding-top: 30px;
 `;
 
 interface EthBoxProps {
@@ -107,17 +134,22 @@ interface EthBoxProps {
 const EthBox = styled.div<EthBoxProps>`
     align-items: center;
     border-radius: 4px;
-
+    border: 1px solid ${themeColors.borderColor};
     display: flex;
     flex-direction: column;
     justify-content: center;
+    max-width: 124px;
     min-height: 105px;
     padding: 10px;
     position: relative;
-    border: 1px solid ${themeColors.lightGray}
+    transition: border-color 0.15s ease-in;
 
-    &:hover {
-        border: 1px solid ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkGray : themeColors.darkBlue)}
+    &:focus-within {
+        border-color: ${props => (props.boxType === ETHBoxType.Weth ? themeColors.darkBlue : themeColors.darkerGray)};
+
+        h4 {
+            color: ${props => (props.boxType === ETHBoxType.Weth ? themeColors.darkBlue : themeColors.textLight)};
+        }
     }
 `;
 
@@ -129,41 +161,44 @@ const TooltipStyled = styled.div`
 `;
 
 const EthBoxValue = styled.h2<EthBoxProps>`
+    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkerGray : themeColors.darkBlue)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
     line-height: 1.2;
     margin: 0 0 5px;
     text-align: center;
-    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkGray : themeColors.darkBlue)};
 `;
 
-const EthBoxUnit = styled.div`
+const EthBoxUnit = styled.h4`
     color: ${themeColors.textLight};
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
     line-height: 1.2;
+    margin: 0;
     text-align: center;
 `;
 
-const SetMinEthWrapper = styled.div`
-    color: #666;
-    font-size: 14px;
+const SetMinEthWrapper = styled.p<{ hideWarning: boolean }>`
+    color: ${themeColors.darkerGray};
+    font-size: 13px;
+    font-style: italic;
     font-weight: 500;
     line-height: 1.2;
-    margin: 0 0 22px;
+    margin: 0 0 25px;
     text-align: center;
+    visibility: ${props => (props.hideWarning ? 'hidden' : 'visible')};
 `;
 
 const SetMinEthButton = styled.a`
-    border-bottom: 1px dotted black;
-    color: #666;
+    border-bottom: 1px dotted #000;
+    color: ${themeColors.darkerGray};
     text-decoration: none;
 `;
 
 const InputEth = styled<any>(BigNumberInput)`
     border-color: transparent;
-    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkGray : themeColors.darkBlue)}
+    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkerGray : themeColors.darkBlue)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -173,10 +208,8 @@ const InputEth = styled<any>(BigNumberInput)`
     padding: 0;
     text-align: center;
 
-
     &:focus,
     &:active {
-        border-bottom: dotted 1px ${themeColors.darkBlue};
         outline: none;
     }
 `;
@@ -193,22 +226,18 @@ class WethModal extends React.Component<Props, State> {
     public render = () => {
         const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
-
         const selectedEth = totalEth.sub(this.state.selectedWeth);
-
         const initialWethStr = tokenAmountInUnits(this.props.wethBalance, 18);
         const selectedWethStr = tokenAmountInUnits(this.state.selectedWeth, 18);
         const selectedEthStr = tokenAmountInUnits(selectedEth, 18);
         const totalEthStr = tokenAmountInUnits(totalEth, 18);
-
         const isInsufficientEth = selectedEth.lessThan(minEth);
-
         const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
 
         return (
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
-                <Title>Available Balance</Title>
+                <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
                 {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
                 <EthBoxes>
                     <EthBox boxType={ETHBoxType.Eth}>
@@ -216,12 +245,12 @@ class WethModal extends React.Component<Props, State> {
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
                                     autofocus={true}
+                                    boxType={ETHBoxType.Eth}
                                     decimals={18}
                                     max={totalEth}
                                     min={new BigNumber(0)}
                                     onChange={this._updateEth}
                                     value={selectedEth}
-                                    boxType={ETHBoxType.Eth}
                                 />
                             </form>
                         ) : (
@@ -268,19 +297,22 @@ class WethModal extends React.Component<Props, State> {
                     min="0"
                     onChange={this._updateSelectedWeth}
                     step="0.01"
+                    style={{
+                        '--min': '0',
+                        '--max': totalEthStr,
+                        '--val': selectedWethStr,
+                        '--color': 'red',
+                        color: 'var(--color)',
+                    }}
                     type="range"
                     value={selectedWethStr}
                 />
-                {isInsufficientEth ? (
-                    <SetMinEthWrapper>
-                        ETH required for fees.&nbsp;
-                        <SetMinEthButton href="" onClick={this._setMinEth}>
-                            0.5 ETH Recommended
-                        </SetMinEthButton>
-                    </SetMinEthWrapper>
-                ) : (
-                    <SetMinEthWrapper>&nbsp;</SetMinEthWrapper>
-                )}
+                <SetMinEthWrapper hideWarning={isInsufficientEth ? false : true}>
+                    ETH required for fees.&nbsp;
+                    <SetMinEthButton href="" onClick={this._setMinEth}>
+                        0.5 ETH Recommended
+                    </SetMinEthButton>
+                </SetMinEthWrapper>
                 <Button onClick={this.submit} disabled={isDisabled}>
                     Update Balance{isSubmitting && '...'}
                 </Button>
