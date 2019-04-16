@@ -4,7 +4,12 @@ import { connect } from 'react-redux';
 
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
+import {
+    getEstimatedTxTimeMs,
+    getMarketBaseTokenPrice,
+    getQuoteToken,
+    getStepsModalCurrentStep,
+} from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
 import { tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
@@ -18,6 +23,8 @@ interface OwnProps {
 interface StateProps {
     estimatedTxTimeMs: number;
     step: StepBuySellMarket;
+    baseTokenPrice: BigNumber;
+    quoteToken: Token | null;
 }
 
 interface DispatchProps {
@@ -30,15 +37,16 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class BuySellTokenStep extends React.Component<Props> {
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, step, baseTokenPrice, quoteToken } = this.props;
         const { token } = step;
-        const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
+        const amountOfTokenSymbolDisplay = tokenSymbolToDisplayString(token.symbol);
+        const quoteTokenSymbolDisplay =
+            quoteToken && quoteToken.symbol ? tokenSymbolToDisplayString(quoteToken.symbol) : '';
 
         const isBuyOrSell = step.side === OrderSide.Buy;
-        const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
-            step.amount,
-            step.token.decimals,
-        ).toString()} ${tokenSymbol}`;
+        const amountOfTokenBN = tokenAmountInUnitsToBigNumber(step.amount, step.token.decimals);
+        const amountOfTokenString = `${amountOfTokenBN.toString()} ${amountOfTokenSymbolDisplay}`;
+        const profitOfTokenString = `${amountOfTokenBN.mul(baseTokenPrice).toString()} ${quoteTokenSymbolDisplay}`;
 
         const title = 'Order setup';
 
@@ -47,7 +55,7 @@ class BuySellTokenStep extends React.Component<Props> {
         const doneCaption = `${isBuyOrSell ? 'Buy' : 'Sell'} Order Complete!`;
         const errorCaption = `${isBuyOrSell ? 'buying' : 'selling'} ${amountOfTokenString}.`;
         const loadingFooterCaption = `Waiting for confirmation....`;
-        const doneFooterCaption = '';
+        const doneFooterCaption = isBuyOrSell ? `${amountOfTokenString} received` : `${profitOfTokenString} received`;
 
         return (
             <BaseStepModal
@@ -90,6 +98,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepBuySellMarket,
+        baseTokenPrice: getMarketBaseTokenPrice(state),
+        quoteToken: getQuoteToken(state),
     };
 };
 
