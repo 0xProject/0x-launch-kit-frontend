@@ -1,17 +1,24 @@
 import { BigNumber } from '0x.js';
 
-import * as CONSTANTS from '../common/constants';
-
+import * as CONSTANTS from '../../common/constants';
 import {
     createBuySellLimitSteps,
     createBuySellMarketSteps,
     getUnlockTokenStepIfNeeded,
     getUnlockZrxStepIfNeeded,
     getWrapEthStepIfNeeded,
-} from './steps_modals_generation';
-import { tokenFactory } from './test-utils';
-import { unitsInTokenAmount } from './tokens';
-import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, TokenBalance, TokenSymbol } from './types';
+} from '../../util/steps_modals_generation';
+import { tokenFactory } from '../../util/test-utils';
+import { unitsInTokenAmount } from '../../util/tokens';
+import {
+    OrderSide,
+    Step,
+    StepKind,
+    StepToggleTokenLock,
+    StepWrapEth,
+    TokenBalance,
+    TokenSymbol,
+} from '../../util/types';
 
 const ZERO = new BigNumber(0);
 const wethToken = {

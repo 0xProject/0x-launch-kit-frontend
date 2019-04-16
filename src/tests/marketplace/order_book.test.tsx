@@ -6,10 +6,9 @@ import { BigNumber } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
 
+import { OrderBookTable } from '../../components/marketplace/order_book';
 import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
-
-import { OrderBookTable } from './order_book';
 
 describe('OrderBookTable', () => {
     it('Renders my size column with value', () => {

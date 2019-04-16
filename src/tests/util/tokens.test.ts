@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 
-import { tokenAmountInUnits, tokenSymbolToDisplayString, unitsInTokenAmount } from './tokens';
-import { TokenSymbol } from './types';
+import { tokenAmountInUnits, tokenSymbolToDisplayString, unitsInTokenAmount } from '../../util/tokens';
+import { TokenSymbol } from '../../util/types';
 
 describe('tokenAmountInUnits', () => {
     it('should format the token amount', async () => {
