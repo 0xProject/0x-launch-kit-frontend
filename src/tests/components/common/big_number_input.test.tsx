@@ -6,7 +6,7 @@ import { BigNumber } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { BigNumberInput } from './big_number_input';
+import { BigNumberInput } from '../../../components/common/big_number_input';
 
 const noop = () => ({});
 

@@ -3,10 +3,9 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
+import { CostValue, OrderDetails, Value } from '../../components/marketplace/order_details';
 import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../util/tokens';
 import { OrderSide, OrderType, TokenSymbol } from '../../util/types';
-
-import { CostValue, OrderDetails, Value } from './order_details';
 
 describe('OrderDetails', () => {
     const getExpectedTotalCostText = (amount: number, symbol: string): string => {

@@ -1,8 +1,8 @@
 import { assetDataUtils, BigNumber } from '0x.js';
 
-import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from './orders';
-import { addressFactory, uiOrder } from './test-utils';
-import { OrderSide } from './types';
+import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
+import { addressFactory, uiOrder } from '../../util/test-utils';
+import { OrderSide } from '../../util/types';
 
 describe('buildLimitOrder', () => {
     it('should build a buy order', async () => {

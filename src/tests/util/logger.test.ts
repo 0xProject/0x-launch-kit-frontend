@@ -1,6 +1,5 @@
-import { LOGGER_ID } from '../common/constants';
-
-import { getLogger } from './logger';
+import { LOGGER_ID } from '../../common/constants';
+import { getLogger } from '../../util/logger';
 
 describe('Logger', () => {
     it('should check some prefix', async () => {
@@ -28,6 +27,7 @@ describe('Logger', () => {
             const { logger, expected } = log;
 
             // When
+            // @ts-ignore
             const prefix = logger.opts.prefix;
 
             // Then

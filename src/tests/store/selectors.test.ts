@@ -1,9 +1,8 @@
 import { BigNumber } from '0x.js';
 
-import { closedOrder, openOrder } from '../util/test-utils';
-import { OrderSide, Web3State } from '../util/types';
-
-import * as selectors from './selectors';
+import * as selectors from '../../store/selectors';
+import { closedOrder, openOrder } from '../../util/test-utils';
+import { OrderSide, Web3State } from '../../util/types';
 
 describe('selectors', () => {
     it('should get open orders', () => {

@@ -1,9 +1,9 @@
 import { assetDataUtils, BigNumber, ExchangeFillEventArgs } from '0x.js';
 
-import { getKnownTokens } from './known_tokens';
-import { buildOrderFilledNotification } from './notifications';
-import { addressFactory } from './test-utils';
-import { OrderSide, TokenSymbol } from './types';
+import { getKnownTokens } from '../../util/known_tokens';
+import { buildOrderFilledNotification } from '../../util/notifications';
+import { addressFactory } from '../../util/test-utils';
+import { OrderSide, TokenSymbol } from '../../util/types';
 
 describe('buildOrderFilledNotification', () => {
     const networkId = 50;
