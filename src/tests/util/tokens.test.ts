@@ -1,5 +1,5 @@
-import { tokenSymbolToDisplayString } from './tokens';
-import { TokenSymbol } from './types';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
+import { TokenSymbol } from '../../util/types';
 
 describe('tokenSymbolToDisplayString', () => {
     it('should return weth token correctly formated', async () => {

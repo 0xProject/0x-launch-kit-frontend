@@ -1,6 +1,6 @@
 import { BigNumber } from '0x.js';
 
-import { padRightSplitted } from './number_utils';
+import { padRightSplitted } from '../../util/number_utils';
 
 describe('padRightSplitted', () => {
     it('should test some numbers', async () => {

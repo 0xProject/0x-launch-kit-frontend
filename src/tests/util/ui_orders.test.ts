@@ -1,9 +1,9 @@
 import { BigNumber, OrderInfo, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
-import { makeOrder, tokenFactory, uiOrder } from './test-utils';
-import { OrderSide, UIOrder } from './types';
-import { mergeByPrice, ordersToUIOrders } from './ui_orders';
+import { makeOrder, tokenFactory, uiOrder } from '../../util/test-utils';
+import { OrderSide, UIOrder } from '../../util/types';
+import { mergeByPrice, ordersToUIOrders } from '../../util/ui_orders';
 
 describe('ordersToUIOrders', () => {
     it('should convert a sell Order to a UIOrder', async () => {

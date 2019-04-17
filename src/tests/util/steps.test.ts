@@ -1,4 +1,4 @@
-import { makeGetProgress } from './steps';
+import { makeGetProgress } from '../../util/steps';
 
 const ONE_MINUTE = 60 * 1000;
 

@@ -1,7 +1,6 @@
-import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
-
-import { getKnownTokens, isERC20AssetData, KnownTokens } from './known_tokens';
-import { Token, TokenSymbol } from './types';
+import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../../common/tokens_meta_data';
+import { getKnownTokens, isERC20AssetData, KnownTokens } from '../../util/known_tokens';
+import { Token, TokenSymbol } from '../../util/types';
 
 const networkId = 50;
 const dummyTokensMetaData: TokenMetaData[] = [
@@ -225,13 +224,6 @@ describe('KnownTokens', () => {
             expect(knownTokens.isKnownAddress(dummyTokensMetaData[1].addresses[networkId])).toBeTruthy();
         });
 
-        /*
-        it('should return false if is weth', () => {
-            const knownTokens = new KnownTokens(networkId, dummyTokensMetaData);
-            expect(knownTokens.isKnownAddress(dummyTokensMetaData[0].addresses[networkId])).toBeFalsy();
-        });
-
-         */
         it(`should return false if a token address doesn't exist `, () => {
             const knownTokens = new KnownTokens(networkId, dummyTokensMetaData);
             expect(knownTokens.isKnownAddress(`wrongaddress`)).toBeFalsy();
@@ -241,13 +233,17 @@ describe('KnownTokens', () => {
     describe('isValidFillEvent', () => {
         it('should return true if an Event is valid', () => {
             const knownTokens = new KnownTokens(42, KNOWN_TOKENS_META_DATA);
+            // @ts-ignore
             expect(knownTokens.isValidFillEvent(fillEvent1)).toBeTruthy();
+            // @ts-ignore
             expect(knownTokens.isValidFillEvent(fillEvent2)).toBeTruthy();
         });
 
         it('should return false if an Event is invalid', () => {
             const knownTokens = new KnownTokens(42, KNOWN_TOKENS_META_DATA);
+            // @ts-ignore
             expect(knownTokens.isValidFillEvent(fillEvent3)).toBeFalsy();
+            // @ts-ignore
             expect(knownTokens.isValidFillEvent(fillEvent4)).toBeFalsy();
         });
     });
