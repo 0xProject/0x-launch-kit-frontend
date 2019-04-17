@@ -315,11 +315,11 @@ export const initWallet = () => {
                     dispatch(updateMarketPriceEther());
                 } catch (error) {
                     // Relayer error
-                    logger.error(error);
+                    logger.error('The fetch orders from the relayer failed', error);
                 }
             } catch (error) {
                 // Web3Error
-                logger.error(error);
+                logger.error('There was an error fetching the account or networkId from web3', error);
                 dispatch(setWeb3State(Web3State.Error));
             }
         }
