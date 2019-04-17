@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import { shallow } from 'enzyme';
 import React from 'react';
 
-import { ShowNumberWithColors } from './show_number_with_colors';
+import { ShowNumberWithColors } from '../../../components/common/show_number_with_colors';
 
 describe('ShowNumberWithColors', () => {
     it('should be initialized with value 123.0000', () => {

@@ -1,5 +1,5 @@
-import { filterMarketsByString, filterMarketsByTokenSymbol } from './markets';
-import { TokenSymbol } from './types';
+import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
+import { TokenSymbol } from '../../util/types';
 
 const marketExamples = {
     zrxWeth: {

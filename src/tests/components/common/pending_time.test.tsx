@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
-import { PendingTime } from './pending_time';
+import { PendingTime } from '../../../components/common/pending_time';
 
 describe('PendingTime', () => {
     it('should show 00:05 when there are 5 seconds left', () => {
