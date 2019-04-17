@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
 
-import { MAINNET_ID } from '../../common/constants';
+import { ETHERSCAN_KOVAN_URL, ETHERSCAN_MAINNET_URL, MAINNET_ID } from '../../common/constants';
 import { getNetworkId } from '../../store/selectors';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { themeColors, themeDimensions } from '../../util/theme';
@@ -125,7 +125,7 @@ class NotificationItem extends React.Component<Props, State> {
 
     private readonly _goToEtherscan = (item: Notification) => () => {
         const { networkId } = this.props;
-        const url = networkId === MAINNET_ID ? 'https://etherscan.io/tx/' : 'https://kovan.etherscan.io/tx/';
+        const url = networkId === MAINNET_ID ? ETHERSCAN_MAINNET_URL : ETHERSCAN_KOVAN_URL;
 
         const win = window.open(`${url}/${item.id.slice(0, 66)}`, '_blank');
 
