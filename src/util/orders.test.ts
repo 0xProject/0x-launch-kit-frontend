@@ -1,6 +1,6 @@
 import { assetDataUtils, BigNumber } from '0x.js';
 
-import { buildLimitOrder, buildMarketOrders } from './orders';
+import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from './orders';
 import { addressFactory, uiOrder } from './test-utils';
 import { OrderSide } from './types';
 
@@ -194,5 +194,64 @@ describe('buildMarketOrders', () => {
         // then
         expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
         expect(amounts).toEqual([new BigNumber(4), new BigNumber(4)]);
+    });
+});
+describe('sumTakerAssetFillableOrders', () => {
+    const account = addressFactory.build().address;
+    const baseTokenAddress = addressFactory.build().address;
+    const quoteTokenAddress = addressFactory.build().address;
+    const exchangeAddress = addressFactory.build().address;
+    // The check is the same on both scenarios, we will abstract it into a function here
+    const getSumAndCheckExpectation = (
+        orderCreationSide: OrderSide,
+        sumCheckSide: OrderSide,
+        amountsToFill: number[],
+        expectation: string,
+    ) => {
+        // given some orders create with orderCreationSide and the correspondign amounts
+        const amountAndPrices = [
+            { amount: new BigNumber(1), price: new BigNumber(0.25) },
+            { amount: new BigNumber(2), price: new BigNumber(0.5) },
+            { amount: new BigNumber(1), price: new BigNumber(0.3) },
+        ];
+        const orders: Order[] = amountAndPrices.map(amountAndPrice => {
+            return buildLimitOrder(
+                {
+                    account,
+                    baseTokenAddress,
+                    quoteTokenAddress,
+                    amount: amountAndPrice.amount,
+                    price: amountAndPrice.price,
+                    exchangeAddress,
+                },
+                orderCreationSide,
+            );
+        });
+        // when sum is calculated with the given/corresponding amounts to fill
+        const sum = sumTakerAssetFillableOrders(sumCheckSide, orders, amountsToFill.map(n => new BigNumber(n)));
+        // then sum should be equal to the expectation
+        expect(sum.toString()).toBe(expectation);
+    };
+
+    it('should sum the corresponding maker asset amounts of fillable buy orders', async () => {
+        const orderCreationSide = OrderSide.Buy;
+        const sumCheckSide = OrderSide.Sell;
+        // The sum of maker asset is needs to take into consideration the correspondig prices
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '0.25');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '0.75');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '1.25');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 1], '1.05');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 1], '1.55');
+    });
+
+    it('should sum the corresponding maker asset amounts of fillable sell orders', async () => {
+        const orderCreationSide = OrderSide.Sell;
+        const sumCheckSide = OrderSide.Buy;
+        // The sum of maker asset is the sum of the amounts specified by the given array
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '1');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '2');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '3');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 1], '3');
+        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 1], '4');
     });
 });
