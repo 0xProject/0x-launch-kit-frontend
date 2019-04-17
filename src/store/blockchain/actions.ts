@@ -264,11 +264,12 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
 
 export const initWallet = () => {
     return async (dispatch: any, getState: any) => {
-        try {
-            dispatch(setWeb3State(Web3State.Loading));
-            const web3Wrapper = await initializeWeb3Wrapper();
-
-            if (web3Wrapper) {
+        dispatch(setWeb3State(Web3State.Loading));
+        const web3Wrapper = await initializeWeb3Wrapper();
+        if (!web3Wrapper) {
+            initializeAppNoMetamaskOrLocked();
+        } else {
+            try {
                 const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
                 const networkId = await web3Wrapper.getNetworkIdAsync();
 
@@ -307,16 +308,20 @@ export const initWallet = () => {
                 );
                 dispatch(setMarketTokens({ baseToken, quoteToken }));
                 dispatch(getOrderbookAndUserOrders());
-                await dispatch(fetchMarkets());
-                // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
-                dispatch(setConnectedUserNotifications(ethAccount, networkId));
-                dispatch(updateMarketPriceEther());
-            } else {
-                initializeAppNoMetamaskOrLocked();
+                try {
+                    await dispatch(fetchMarkets());
+                    // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+                    dispatch(setConnectedUserNotifications(ethAccount, networkId));
+                    dispatch(updateMarketPriceEther());
+                } catch (error) {
+                    // Relayer error
+                    logger.error(error);
+                }
+            } catch (error) {
+                // Web3Error
+                logger.error(error);
+                dispatch(setWeb3State(Web3State.Error));
             }
-        } catch (error) {
-            logger.error(error);
-            dispatch(setWeb3State(Web3State.Error));
         }
     };
 };
