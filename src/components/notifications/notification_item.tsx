@@ -1,21 +1,30 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
 
+import { MAINNET_ID } from '../../common/constants';
+import { getNetworkId } from '../../store/selectors';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { Notification, NotificationKind, OrderSide } from '../../util/types';
+import { Notification, NotificationKind, OrderSide, StoreState } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
 import { Interval } from '../common/interval';
 import { PendingTime } from '../common/pending_time';
 import { Spinner } from '../common/spinner';
 
-interface Props {
+interface OwnProps {
     item: Notification;
     estimatedTxTimeMs: number;
 }
+
+interface StateProps {
+    networkId: number | null;
+}
+
+type Props = StateProps & OwnProps;
 
 interface State {
     pending: boolean;
@@ -104,7 +113,7 @@ class NotificationItem extends React.Component<Props, State> {
         const text = this._getTextFromItem(item);
 
         return (
-            <NotificationWrapper active={this.state.pending}>
+            <NotificationWrapper active={this.state.pending} onClick={this._goToEtherscan(item)}>
                 <NotificationContent>
                     <NotificationTitle>{title}</NotificationTitle>
                     <NotificationText>{text}</NotificationText>
@@ -112,6 +121,17 @@ class NotificationItem extends React.Component<Props, State> {
                 <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
             </NotificationWrapper>
         );
+    };
+
+    private readonly _goToEtherscan = (item: Notification) => () => {
+        const { networkId } = this.props;
+        const url = networkId === MAINNET_ID ? 'https://etherscan.io/tx/' : 'https://kovan.etherscan.io/tx/';
+
+        const win = window.open(`${url}/${item.id.slice(0, 66)}`, '_blank');
+
+        if (win) {
+            win.focus();
+        }
     };
 
     private readonly _getTitleFromItem = (item: Notification): string => {
@@ -173,4 +193,12 @@ class NotificationItem extends React.Component<Props, State> {
     };
 }
 
-export { NotificationItem };
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        networkId: getNetworkId(state),
+    };
+};
+
+const NotificationItemContainer = connect(mapStateToProps)(NotificationItem);
+
+export { NotificationItem, NotificationItemContainer };
