@@ -43,7 +43,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const { token } = step;
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
-        const isBuyOrSell = step.side === OrderSide.Buy;
+        const isBuy = step.side === OrderSide.Buy;
         const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
             step.amount,
             step.token.decimals,
@@ -51,12 +51,12 @@ class BuySellTokenStep extends React.Component<Props, State> {
 
         const title = 'Order setup';
 
-        const confirmCaption = `Confirm on Metamask to ${isBuyOrSell ? 'buy' : 'sell'} ${amountOfTokenString}.`;
-        const loadingCaption = `Processing ${isBuyOrSell ? 'buy' : 'sale'} of ${amountOfTokenString}.`;
-        const doneCaption = `${isBuyOrSell ? 'Buy' : 'Sell'} Order Complete!`;
-        const errorCaption = `${isBuyOrSell ? 'buying' : 'selling'} ${amountOfTokenString}.`;
+        const confirmCaption = `Confirm on Metamask to ${isBuy ? 'buy' : 'sell'} ${amountOfTokenString}.`;
+        const loadingCaption = `Processing ${isBuy ? 'buy' : 'sale'} of ${amountOfTokenString}.`;
+        const doneCaption = `${isBuy ? 'Buy' : 'Sell'} Order Complete!`;
+        const errorCaption = `${isBuy ? 'buying' : 'selling'} ${amountOfTokenString}.`;
         const loadingFooterCaption = `Waiting for confirmation....`;
-        const doneFooterCaption = `${isBuyOrSell ? amountOfTokenString : this._getAmountOfQuoteTokenString()} received`;
+        const doneFooterCaption = `${isBuy ? amountOfTokenString : this._getAmountOfQuoteTokenString()} received`;
 
         return (
             <BaseStepModal
