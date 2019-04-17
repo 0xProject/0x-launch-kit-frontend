@@ -34,6 +34,11 @@ const NotificationWrapper = styled.div<{ active?: boolean }>`
         border-bottom-right-radius: ${themeDimensions.borderRadius};
         border-bottom: none;
     }
+
+    &:hover {
+        background-color: ${themeColors.notificationActive};
+        cursor: pointer;
+    }
 `;
 
 const NotificationContent = styled.div`
