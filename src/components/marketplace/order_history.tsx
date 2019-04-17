@@ -110,9 +110,9 @@ class OrderHistory extends React.Component<Props, State> {
                             <THead>
                                 <TR>
                                     <TH>Side</TH>
-                                    <TH styles={{ textAlign: 'center' }}>Size ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'center' }}>Filled ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'center' }}>Price ({quoteToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Size ({baseToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Filled ({baseToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Price ({quoteToken.symbol})</TH>
                                     <TH>Status</TH>
                                     <TH>&nbsp;</TH>
                                 </TR>
