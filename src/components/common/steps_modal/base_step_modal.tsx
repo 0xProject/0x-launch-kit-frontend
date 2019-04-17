@@ -2,6 +2,7 @@ import React from 'react';
 
 import { getStepTitle, isLongStep, makeGetProgress } from '../../../util/steps';
 import { Step } from '../../../util/types';
+import { Nbsp } from '../nbsp';
 
 import { StepPendingTime } from './step_pending_time';
 import {
@@ -92,7 +93,7 @@ export class BaseStepModal extends React.Component<Props, State> {
         const { loadingStarted, status } = this.state;
         const retry = () => this._retry();
         let content;
-        let footer;
+        let footer = <Nbsp />;
         switch (status) {
             case StepStatus.Loading:
                 content = (
