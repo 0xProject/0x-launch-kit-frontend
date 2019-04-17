@@ -158,8 +158,8 @@ export const getMarketBaseTokenPrice = createSelector(
     getMarkets,
     getBaseToken,
     (markets: Market[] | null, baseToken: Token | null) => {
-        if (markets) {
-            const market = markets.find((value: Market) => value.currencyPair.base === (baseToken && baseToken.symbol));
+        if (markets && baseToken) {
+            const market = markets.find((value: Market) => value.currencyPair.base === baseToken.symbol);
 
             if (market && market.price) {
                 return new BigNumber(market.price);
