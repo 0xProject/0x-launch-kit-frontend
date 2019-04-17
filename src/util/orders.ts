@@ -86,3 +86,21 @@ export const buildMarketOrders = (
 
     return [ordersToFill, roundedAmounts, canBeFilled];
 };
+
+export const sumTakerAssetFillableOrders = (
+    side: OrderSide,
+    ordersToFill: Order[],
+    amounts: BigNumber[],
+): BigNumber => {
+    if (ordersToFill.length !== amounts.length) {
+        throw new Error('ordersToFill and amount array lengths must be the same.');
+    }
+    if (ordersToFill.length === 0) {
+        return new BigNumber(0);
+    }
+    return ordersToFill.reduce((sum, order, index) => {
+        // Check buildMarketOrders for more details
+        const price = side === OrderSide.Buy ? 1 : order.makerAssetAmount.div(order.takerAssetAmount);
+        return sum.add(amounts[index].mul(price));
+    }, new BigNumber(0));
+};

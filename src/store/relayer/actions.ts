@@ -6,7 +6,7 @@ import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
-import { buildMarketOrders } from '../../util/orders';
+import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
 import {
     getBaseToken,
@@ -148,7 +148,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
                 ]),
             );
 
-            const amountInReturn = amounts.reduce((prev, curr) => prev.add(curr), new BigNumber(0));
+            const amountInReturn = sumTakerAssetFillableOrders(side, ordersToFill, amounts);
 
             return { txHash, amountInReturn };
         } else {
