@@ -30,7 +30,7 @@ interface State {
     pending: boolean;
 }
 
-const NotificationWrapper = styled.div<{ active?: boolean }>`
+const NotificationWrapper = styled.div<{ active?: boolean; item: Notification }>`
     align-items: center;
     background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
     border-bottom: 1px solid ${themeColors.borderColor};
@@ -44,10 +44,13 @@ const NotificationWrapper = styled.div<{ active?: boolean }>`
         border-bottom: none;
     }
 
-    &:hover {
+    ${props =>
+        props.item.kind !== NotificationKind.Limit
+            ? `&:hover {
         background-color: ${themeColors.notificationActive};
         cursor: pointer;
-    }
+    }`
+            : ''}
 `;
 
 const NotificationContent = styled.div`
@@ -113,7 +116,7 @@ class NotificationItem extends React.Component<Props, State> {
         const text = this._getTextFromItem(item);
 
         return (
-            <NotificationWrapper active={this.state.pending} onClick={this._goToEtherscan(item)}>
+            <NotificationWrapper active={this.state.pending} item={item} onClick={this._goToEtherscan(item)}>
                 <NotificationContent>
                     <NotificationTitle>{title}</NotificationTitle>
                     <NotificationText>{text}</NotificationText>
@@ -124,12 +127,14 @@ class NotificationItem extends React.Component<Props, State> {
     };
 
     private readonly _goToEtherscan = (notification: Notification) => () => {
-        const { networkId } = this.props;
+        if (notification.kind !== NotificationKind.Limit) {
+            const { networkId } = this.props;
 
-        const win = window.open(getEtherscanUrlForNotificationTx(networkId, notification), '_blank');
+            const win = window.open(getEtherscanUrlForNotificationTx(networkId, notification), '_blank');
 
-        if (win) {
-            win.focus();
+            if (win) {
+                win.focus();
+            }
         }
     };
 
