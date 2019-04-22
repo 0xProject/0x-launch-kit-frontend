@@ -13,6 +13,7 @@ export const themeColors = {
     orange: '#F6851B',
     rowActive: '#FBFDFF',
     textLight: '#999',
+    notificationActive: '#F8F8F8',
 };
 
 export const themeDimensions = {

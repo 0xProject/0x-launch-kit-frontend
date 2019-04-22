@@ -1,27 +1,40 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
+import { getNetworkId } from '../../store/selectors';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
+import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
 import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { Notification, NotificationKind, OrderSide } from '../../util/types';
+import { Notification, NotificationKind, OrderSide, StoreState } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
 import { Interval } from '../common/interval';
 import { PendingTime } from '../common/pending_time';
 import { Spinner } from '../common/spinner';
 
-interface Props {
+interface OwnProps {
     item: Notification;
     estimatedTxTimeMs: number;
 }
+
+interface StateProps {
+    networkId: number | null;
+}
+
+type Props = StateProps & OwnProps;
 
 interface State {
     pending: boolean;
 }
 
-const NotificationWrapper = styled.div<{ active?: boolean }>`
+interface StyledIsActive {
+    active?: boolean;
+}
+
+const notificationWrapperMixin = css<StyledIsActive>`
     align-items: center;
     background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
     border-bottom: 1px solid ${themeColors.borderColor};
@@ -33,6 +46,20 @@ const NotificationWrapper = styled.div<{ active?: boolean }>`
         border-bottom-left-radius: ${themeDimensions.borderRadius};
         border-bottom-right-radius: ${themeDimensions.borderRadius};
         border-bottom: none;
+    }
+`;
+
+const NotificationWrapperLimit = styled.div<StyledIsActive>`
+    ${notificationWrapperMixin}
+`;
+
+const NotificationWrapperMarketOrCancel = styled.a<StyledIsActive>`
+    ${notificationWrapperMixin}
+    text-decoration: none;
+
+    &:hover {
+        background-color: ${themeColors.notificationActive};
+        cursor: pointer;
     }
 `;
 
@@ -95,17 +122,26 @@ class NotificationItem extends React.Component<Props, State> {
     public render = () => {
         const { item } = this.props;
 
-        const title = this._getTitleFromItem(item);
-        const text = this._getTextFromItem(item);
-
-        return (
-            <NotificationWrapper active={this.state.pending}>
+        const notificationBody = (
+            <>
                 <NotificationContent>
-                    <NotificationTitle>{title}</NotificationTitle>
-                    <NotificationText>{text}</NotificationText>
+                    <NotificationTitle>{this._getTitleFromItem(item)}</NotificationTitle>
+                    <NotificationText>{this._getTextFromItem(item)}</NotificationText>
                 </NotificationContent>
                 <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
-            </NotificationWrapper>
+            </>
+        );
+
+        return item.kind === NotificationKind.Limit ? (
+            <NotificationWrapperLimit active={this.state.pending}>{notificationBody}</NotificationWrapperLimit>
+        ) : (
+            <NotificationWrapperMarketOrCancel
+                active={this.state.pending}
+                href={getEtherscanUrlForNotificationTx(this.props.networkId, item)}
+                target="_blank"
+            >
+                {notificationBody}
+            </NotificationWrapperMarketOrCancel>
         );
     };
 
@@ -168,4 +204,12 @@ class NotificationItem extends React.Component<Props, State> {
     };
 }
 
-export { NotificationItem };
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        networkId: getNetworkId(state),
+    };
+};
+
+const NotificationItemContainer = connect(mapStateToProps)(NotificationItem);
+
+export { NotificationItem, NotificationItemContainer };
