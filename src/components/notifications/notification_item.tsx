@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { getNetworkId } from '../../store/selectors';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
@@ -30,7 +30,11 @@ interface State {
     pending: boolean;
 }
 
-const NotificationWrapperLimit = styled.div<{ active?: boolean }>`
+interface StyledIsActive {
+    active?: boolean;
+}
+
+const notificationWrapperMixin = css<StyledIsActive>`
     align-items: center;
     background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
     border-bottom: 1px solid ${themeColors.borderColor};
@@ -45,19 +49,13 @@ const NotificationWrapperLimit = styled.div<{ active?: boolean }>`
     }
 `;
 
-const NotificationWrapperMarketOrCancel = styled.a<{ active?: boolean }>`
-    align-items: center;
-    background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
-    border-bottom: 1px solid ${themeColors.borderColor};
-    display: flex;
-    justify-content: space-between;
-    padding: 20px ${themeDimensions.horizontalPadding};
+const NotificationWrapperLimit = styled.div<StyledIsActive>`
+    ${notificationWrapperMixin}
+`;
 
-    &:last-child {
-        border-bottom-left-radius: ${themeDimensions.borderRadius};
-        border-bottom-right-radius: ${themeDimensions.borderRadius};
-        border-bottom: none;
-    }
+const NotificationWrapperMarketOrCancel = styled.a<StyledIsActive>`
+    ${notificationWrapperMixin}
+    text-decoration: none;
 
     &:hover {
         background-color: ${themeColors.notificationActive};
@@ -124,44 +122,27 @@ class NotificationItem extends React.Component<Props, State> {
     public render = () => {
         const { item } = this.props;
 
-        const title = this._getTitleFromItem(item);
-        const text = this._getTextFromItem(item);
+        const notificationBody = (
+            <>
+                <NotificationContent>
+                    <NotificationTitle>{this._getTitleFromItem(item)}</NotificationTitle>
+                    <NotificationText>{this._getTextFromItem(item)}</NotificationText>
+                </NotificationContent>
+                <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
+            </>
+        );
 
-        let content: React.ReactNode;
-
-        if (item.kind !== NotificationKind.Limit) {
-            content = (
-                <NotificationWrapperMarketOrCancel active={this.state.pending} onClick={this._goToEtherscan(item)}>
-                    <NotificationContent>
-                        <NotificationTitle>{title}</NotificationTitle>
-                        <NotificationText>{text}</NotificationText>
-                    </NotificationContent>
-                    <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
-                </NotificationWrapperMarketOrCancel>
-            );
-        } else {
-            content = (
-                <NotificationWrapperLimit active={this.state.pending}>
-                    <NotificationContent>
-                        <NotificationTitle>{title}</NotificationTitle>
-                        <NotificationText>{text}</NotificationText>
-                    </NotificationContent>
-                    <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
-                </NotificationWrapperLimit>
-            );
-        }
-
-        return <>{content}</>;
-    };
-
-    private readonly _goToEtherscan = (notification: Notification) => () => {
-        const { networkId } = this.props;
-
-        const win = window.open(getEtherscanUrlForNotificationTx(networkId, notification), '_blank');
-
-        if (win) {
-            win.focus();
-        }
+        return item.kind === NotificationKind.Limit ? (
+            <NotificationWrapperLimit active={this.state.pending}>{notificationBody}</NotificationWrapperLimit>
+        ) : (
+            <NotificationWrapperMarketOrCancel
+                active={this.state.pending}
+                href={getEtherscanUrlForNotificationTx(this.props.networkId, item)}
+                target="_blank"
+            >
+                {notificationBody}
+            </NotificationWrapperMarketOrCancel>
+        );
     };
 
     private readonly _getTitleFromItem = (item: Notification): string => {
