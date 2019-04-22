@@ -10,3 +10,19 @@ export const errorsWallet = {
     mmNotInstalled: 'Metamask not installed',
     mmGetExtension: 'Get Chrome Extension ',
 };
+
+// Receives an string with an error JSON object an return the JSON Object or null if do not exists
+export const extractJSONError = (str: string) => {
+    const firstOpen = str.indexOf('{');
+    const lastClose = str.lastIndexOf('}') + 1;
+    let candidate;
+    if (lastClose <= firstOpen) {
+        return null;
+    }
+    try {
+        candidate = str.substring(firstOpen, lastClose);
+        return JSON.parse(candidate);
+    } catch (e) {
+        return null;
+    }
+};

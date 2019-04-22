@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
+import { extractJSONError } from '../../../util/error_messages';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
@@ -22,9 +23,17 @@ interface DispatchProps {
     submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
 }
 
+interface State {
+    errorMsg: string;
+}
+
 type Props = OwnProps & StateProps & DispatchProps;
 
-class SignOrderStep extends React.Component<Props> {
+class SignOrderStep extends React.Component<Props, State> {
+    public state = {
+        errorMsg: 'Error signing/submitting order.',
+    };
+
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
 
@@ -32,7 +41,7 @@ class SignOrderStep extends React.Component<Props> {
         const confirmCaption = 'Confirm signature on Metamask to submit order.';
         const loadingCaption = 'Submitting order.';
         const doneCaption = 'Order successfully placed! (may not be filled immediately)';
-        const errorCaption = 'Error signing/submitting order.';
+        const errorCaption = this.state.errorMsg;
         const loadingFooterCaption = `Waiting for signature...`;
         const doneFooterCaption = `Order success!`;
 
@@ -62,7 +71,25 @@ class SignOrderStep extends React.Component<Props> {
             await this.props.submitLimitOrder(signedOrder, amount, side);
             onDone();
         } catch (err) {
-            onError(err);
+            /* The error could be a metamask reject sign or an error from the relayer
+               so we check first if the error comes from the relayer
+            */
+            if (err.message.includes('Bad Request')) {
+                // The error object comes from the relayer as a string, we convert it to JSON before displaying it
+                const errorObject = extractJSONError(err.message);
+                if (errorObject) {
+                    // Once it's converted, we extract the error msg to display
+                    const errorMsg = errorObject.validationErrors[0].reason;
+                    this.setState(
+                        {
+                            errorMsg,
+                        },
+                        onError(errorObject),
+                    );
+                }
+            } else {
+                onError(err);
+            }
         }
     };
 }
