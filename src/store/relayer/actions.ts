@@ -6,7 +6,7 @@ import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
-import { buildMarketOrders } from '../../util/orders';
+import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
 import {
     getBaseToken,
@@ -107,7 +107,7 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
 };
 
 export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any): Promise<string> => {
+    return async (dispatch: any, getState: any): Promise<{ txHash: string; amountInReturn: BigNumber }> => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -148,7 +148,9 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
                 ]),
             );
 
-            return txHash;
+            const amountInReturn = sumTakerAssetFillableOrders(side, ordersToFill, amounts);
+
+            return { txHash, amountInReturn };
         } else {
             const errorMessage = 'There are no enough orders to fill this amount';
             window.alert(errorMessage);

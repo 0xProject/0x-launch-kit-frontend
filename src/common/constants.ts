@@ -4,6 +4,9 @@ export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhos
 
 export const MAINNET_ID = 1;
 
+export const ETHERSCAN_MAINNET_URL = 'https://etherscan.io/tx/';
+export const ETHERSCAN_KOVAN_URL = 'https://kovan.etherscan.io/tx/';
+
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
 };
