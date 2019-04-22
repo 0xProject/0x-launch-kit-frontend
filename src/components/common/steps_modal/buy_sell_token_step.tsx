@@ -47,10 +47,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
         const isBuy = step.side === OrderSide.Buy;
-        const amountOfTokenString = `${toUnitAmount(
-            step.amount,
-            step.token.decimals,
-        ).toString()} ${tokenSymbol}`;
+        const amountOfTokenString = `${toUnitAmount(step.amount, step.token.decimals).toString()} ${tokenSymbol}`;
 
         const title = 'Order setup';
 
