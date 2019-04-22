@@ -233,7 +233,7 @@ class WethModal extends React.Component<Props, State> {
 
         const initialWethStr = toUnitAmount(this.props.wethBalance, 18).toFixed(2);
         const selectedWethStr = toUnitAmount(this.state.selectedWeth, 18).toFixed(2);
-        const selectedEthStr = toUnitAmount(selectedEth, 18).toFixed(2);
+        const selectedEthStr = toUnitAmount(selectedEth.abs(), 18).toFixed(2);
         const totalEthStr = toUnitAmount(totalEth, 18).toFixed(2);
 
         const isInsufficientEth = selectedEth.lessThan(minEth);
