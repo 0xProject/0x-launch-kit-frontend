@@ -99,7 +99,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const { quoteToken } = this.props;
         const quoteTokenSymbol = tokenSymbolToDisplayString(quoteToken.symbol);
         const { amountInReturn } = this.state;
-        return `${tokenAmountInUnitsToBigNumber(
+        return `${toUnitAmount(
             amountInReturn || new BigNumber(0),
             quoteToken.decimals,
         ).toString()} ${quoteTokenSymbol}`;
