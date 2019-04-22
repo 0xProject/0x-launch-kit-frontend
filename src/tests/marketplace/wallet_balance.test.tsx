@@ -6,11 +6,10 @@ import { BigNumber } from '0x.js';
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 
+import { WalletBalance } from '../../components/marketplace/wallet_balance';
 import * as tokenServices from '../../services/tokens';
 import { addressFactory, tokenBalanceFactory, tokenFactory } from '../../util/test-utils';
 import { TokenSymbol, Web3State } from '../../util/types';
-
-import { WalletBalance } from './wallet_balance';
 
 describe('WalletBalance', () => {
     let originalGetTokenBalance: any;

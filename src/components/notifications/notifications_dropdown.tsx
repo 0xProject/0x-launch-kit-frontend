@@ -10,7 +10,7 @@ import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { BellIcon } from '../common/icons/bell_icon';
 
-import { NotificationItem } from './notification_item';
+import { NotificationItemContainer } from './notification_item';
 
 interface StateProps {
     estimatedTxTimeMs: number;
@@ -76,7 +76,7 @@ class NotificationsDropdown extends React.Component<Props, {}> {
         } = this.props;
 
         const notificationsList = notifications.map((item, index) => (
-            <NotificationItem key={index} item={item} estimatedTxTimeMs={estimatedTxTimeMs} />
+            <NotificationItemContainer key={index} item={item} estimatedTxTimeMs={estimatedTxTimeMs} />
         ));
 
         const header = (

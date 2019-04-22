@@ -6,9 +6,8 @@ import { BigNumber } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { TokenBalance, TokenSymbol, Web3State } from '../../util/types';
-
-import { WalletTokenBalances } from './wallet_token_balances';
+import { WalletTokenBalances } from '../../../components/account';
+import { TokenBalance, TokenSymbol, Web3State } from '../../../util/types';
 
 const noop = () => ({});
 const ZERO = new BigNumber(0);

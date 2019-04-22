@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
-import { getEthBalance, getWeb3State, getWethBalance } from '../../store/selectors';
+import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
 import { themeColors, themeDimensions, themeModalStyle } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
@@ -19,6 +19,7 @@ interface StateProps {
     ethBalance: BigNumber;
     wethBalance: BigNumber;
     web3State: Web3State;
+    ethInUsd: BigNumber | null;
 }
 interface DispatchProps {
     onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
@@ -139,7 +140,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.add(wethBalance);
 
@@ -183,6 +184,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         style={themeModalStyle}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
+                        ethInUsd={ethInUsd}
                     />
                 </>
             );
@@ -237,6 +239,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethBalance: getEthBalance(state),
         wethBalance: getWethBalance(state),
         web3State: getWeb3State(state),
+        ethInUsd: getEthInUsd(state),
     };
 };
 const mapDispatchToProps = {

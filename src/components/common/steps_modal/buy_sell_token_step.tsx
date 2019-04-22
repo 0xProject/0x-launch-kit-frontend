@@ -4,12 +4,7 @@ import { connect } from 'react-redux';
 
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
-import {
-    getEstimatedTxTimeMs,
-    getMarketBaseTokenPrice,
-    getQuoteToken,
-    getStepsModalCurrentStep,
-} from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
 import { tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
@@ -23,39 +18,45 @@ interface OwnProps {
 interface StateProps {
     estimatedTxTimeMs: number;
     step: StepBuySellMarket;
-    baseTokenPrice: BigNumber;
-    quoteToken: Token | null;
+    quoteToken: Token;
 }
 
 interface DispatchProps {
-    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<string>;
+    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<{ txHash: string; amountInReturn: BigNumber }>;
     refreshOrders: () => any;
     notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => any;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-class BuySellTokenStep extends React.Component<Props> {
-    public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, step, baseTokenPrice, quoteToken } = this.props;
-        const { token } = step;
-        const amountOfTokenSymbolDisplay = tokenSymbolToDisplayString(token.symbol);
-        const quoteTokenSymbolDisplay =
-            quoteToken && quoteToken.symbol ? tokenSymbolToDisplayString(quoteToken.symbol) : '';
+interface State {
+    amountInReturn: BigNumber | null;
+}
 
-        const isBuyOrSell = step.side === OrderSide.Buy;
-        const amountOfTokenBN = tokenAmountInUnitsToBigNumber(step.amount, step.token.decimals);
-        const amountOfTokenString = `${amountOfTokenBN.toString()} ${amountOfTokenSymbolDisplay}`;
-        const profitOfTokenString = `${amountOfTokenBN.mul(baseTokenPrice).toString()} ${quoteTokenSymbolDisplay}`;
+class BuySellTokenStep extends React.Component<Props, State> {
+    public state = {
+        amountInReturn: null,
+    };
+
+    public render = () => {
+        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        const { token } = step;
+        const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
+
+        const isBuy = step.side === OrderSide.Buy;
+        const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
+            step.amount,
+            step.token.decimals,
+        ).toString()} ${tokenSymbol}`;
 
         const title = 'Order setup';
 
-        const confirmCaption = `Confirm on Metamask to ${isBuyOrSell ? 'buy' : 'sell'} ${amountOfTokenString}.`;
-        const loadingCaption = `Processing ${isBuyOrSell ? 'buy' : 'sale'} of ${amountOfTokenString}.`;
-        const doneCaption = `${isBuyOrSell ? 'Buy' : 'Sell'} Order Complete!`;
-        const errorCaption = `${isBuyOrSell ? 'buying' : 'selling'} ${amountOfTokenString}.`;
+        const confirmCaption = `Confirm on Metamask to ${isBuy ? 'buy' : 'sell'} ${amountOfTokenString}.`;
+        const loadingCaption = `Processing ${isBuy ? 'buy' : 'sale'} of ${amountOfTokenString}.`;
+        const doneCaption = `${isBuy ? 'Buy' : 'Sell'} Order Complete!`;
+        const errorCaption = `${isBuy ? 'buying' : 'selling'} ${amountOfTokenString}.`;
         const loadingFooterCaption = `Waiting for confirmation....`;
-        const doneFooterCaption = isBuyOrSell ? `${amountOfTokenString} received` : `${profitOfTokenString} received`;
+        const doneFooterCaption = `${isBuy ? amountOfTokenString : this._getAmountOfQuoteTokenString()} received`;
 
         return (
             <BaseStepModal
@@ -80,17 +81,28 @@ class BuySellTokenStep extends React.Component<Props> {
         const { amount, side, token } = step;
         try {
             const web3Wrapper = await getWeb3Wrapper();
-            const fillOrdersTxHash = await onSubmitMarketOrder(amount, side);
+            const { txHash, amountInReturn } = await onSubmitMarketOrder(amount, side);
+            this.setState({ amountInReturn });
             onLoading();
 
-            await web3Wrapper.awaitTransactionSuccessAsync(fillOrdersTxHash);
+            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
             onDone();
-            this.props.notifyBuySellMarket(fillOrdersTxHash, amount, token, side, Promise.resolve());
+            this.props.notifyBuySellMarket(txHash, amount, token, side, Promise.resolve());
             this.props.refreshOrders();
         } catch (err) {
             onError(err);
         }
+    };
+
+    private readonly _getAmountOfQuoteTokenString = (): string => {
+        const { quoteToken } = this.props;
+        const quoteTokenSymbol = tokenSymbolToDisplayString(quoteToken.symbol);
+        const { amountInReturn } = this.state;
+        return `${tokenAmountInUnitsToBigNumber(
+            amountInReturn || new BigNumber(0),
+            quoteToken.decimals,
+        ).toString()} ${quoteTokenSymbol}`;
     };
 }
 
@@ -98,8 +110,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepBuySellMarket,
-        baseTokenPrice: getMarketBaseTokenPrice(state),
-        quoteToken: getQuoteToken(state),
+        quoteToken: getQuoteToken(state) as Token,
     };
 };
 

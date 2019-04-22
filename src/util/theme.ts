@@ -2,6 +2,7 @@ export const themeColors = {
     borderColor: '#DEDEDE',
     darkBlue: '#002979',
     darkGray: '#474747',
+    darkerGray: '#666',
     errorButtonBackground: '#FF6534',
     errorCardBackground: '#FAF4EF',
     errorCardBorder: '#F39E4B',
@@ -12,6 +13,7 @@ export const themeColors = {
     orange: '#F6851B',
     rowActive: '#FBFDFF',
     textLight: '#999',
+    notificationActive: '#F8F8F8',
 };
 
 export const themeDimensions = {

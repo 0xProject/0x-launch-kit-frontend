@@ -171,9 +171,9 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                         <TR>
                             <THStyled>Token</THStyled>
                             <THStyled>{}</THStyled>
-                            <THStyled styles={{ textAlign: 'center' }}>Available Qty.</THStyled>
-                            <THStyled styles={{ textAlign: 'center' }}>Price (USD)</THStyled>
-                            <THStyled styles={{ textAlign: 'center' }}>% Change</THStyled>
+                            <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
+                            <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
+                            <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
                             <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
                         </TR>
                     </THead>
