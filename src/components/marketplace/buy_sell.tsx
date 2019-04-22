@@ -51,7 +51,7 @@ const TabsContainer = styled.div`
     justify-content: space-between;
 `;
 
-const TabButton = styled.div<{ isSelected: boolean }>`
+const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     align-items: center;
     background-color: ${props => (props.isSelected ? 'transparent' : '#f9f9f9')};
     border-bottom-color: ${props => (props.isSelected ? 'transparent' : themeColors.borderColor)};
@@ -60,7 +60,12 @@ const TabButton = styled.div<{ isSelected: boolean }>`
     border-right-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
     border-right-style: solid;
     border-right-width: 1px;
-    color: ${props => (props.isSelected ? themeColors.green : themeColors.textLight)};
+    color: ${props =>
+        props.isSelected
+            ? props.side === OrderSide.Buy
+                ? themeColors.green
+                : themeColors.orange
+            : themeColors.textLight};
     cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
     display: flex;
     font-weight: 600;
@@ -176,10 +181,18 @@ class BuySell extends React.Component<Props, State> {
         return (
             <BuySellWrapper>
                 <TabsContainer>
-                    <TabButton isSelected={tab === OrderSide.Buy} onClick={this.changeTab(OrderSide.Buy)}>
+                    <TabButton
+                        isSelected={tab === OrderSide.Buy}
+                        onClick={this.changeTab(OrderSide.Buy)}
+                        side={OrderSide.Buy}
+                    >
                         Buy
                     </TabButton>
-                    <TabButton isSelected={tab === OrderSide.Sell} onClick={this.changeTab(OrderSide.Sell)}>
+                    <TabButton
+                        isSelected={tab === OrderSide.Sell}
+                        onClick={this.changeTab(OrderSide.Sell)}
+                        side={OrderSide.Sell}
+                    >
                         Sell
                     </TabButton>
                 </TabsContainer>
