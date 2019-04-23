@@ -1,14 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { getThemeColors } from '../store/selectors';
 import { themeBreakPoints } from '../util/theme';
+import { StoreState, ThemeColors } from '../util/types';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { ToolbarContainer } from './common/toolbar';
 
-const General = styled.div`
-    background: #f5f5f5;
+const General = styled.div<{ themeColors: ThemeColors }>`
+    background: ${props => props.themeColors.background};
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -33,21 +36,38 @@ const ContentScroll = styled.div`
     overflow: auto;
 `;
 
+interface StateProps {
+    themeColorsConfig: ThemeColors;
+}
+
 interface GeneralLayoutProps {
     children: React.ReactChildren;
 }
 
-export const GeneralLayout = (props: React.Props<any> | GeneralLayoutProps) => {
-    const { children } = props;
+type Props = StateProps & GeneralLayoutProps;
 
-    return (
-        <General>
-            <ToolbarContainer />
-            <ContentScroll>
-                <Content>{children}</Content>
-                <Footer />
-            </ContentScroll>
-            <StepsModalContainer />
-        </General>
-    );
+class GeneralLayout extends React.Component<Props> {
+    public render = () => {
+        const { children, themeColorsConfig } = this.props;
+        return (
+            <General themeColors={themeColorsConfig}>
+                <ToolbarContainer />
+                <ContentScroll>
+                    <Content>{children}</Content>
+                    <Footer />
+                </ContentScroll>
+                <StepsModalContainer />
+            </General>
+        );
+    };
+}
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        themeColorsConfig: getThemeColors(state),
+    };
 };
+
+const GeneralLayoutContainer = connect(mapStateToProps)(GeneralLayout);
+
+export { GeneralLayout, GeneralLayoutContainer };

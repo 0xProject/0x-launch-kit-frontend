@@ -5,6 +5,7 @@ import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
+import { darkThemeColors, whiteThemeColors } from '../../util/theme';
 import {
     Notification,
     NotificationKind,
@@ -13,6 +14,8 @@ import {
     StepKind,
     StepToggleTokenLock,
     StepWrapEth,
+    StoreState,
+    ThemeColors,
     Token,
     TokenBalance,
 } from '../../util/types';
@@ -45,6 +48,19 @@ export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STE
 export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
+
+export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
+
+export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
+    return (themeColor: ThemeColors) => resolve(themeColor);
+});
+
+export const useDarkThemeTemplate = (useDarkTheme: boolean) => {
+    return (dispatch: any) => {
+        const themeColors = useDarkTheme ? darkThemeColors : whiteThemeColors;
+        dispatch(setThemeColor(themeColors));
+    };
+};
 
 export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any) => {

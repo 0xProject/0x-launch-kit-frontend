@@ -57,3 +57,5 @@ export const GIT_COMMIT: string = process.env.REACT_APP_GIT_COMMIT || '';
 export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_START_BLOCK_LIMIT as string, 10) || 1000;
 
 export const LOGGER_ID: string = process.env.REACT_APP_LOGGER_ID || '0x-launch-kit-frontend';
+
+export const USE_DARK_THEME: boolean = process.env.REACT_APP_USE_DARK_THEME === 'true' || true;

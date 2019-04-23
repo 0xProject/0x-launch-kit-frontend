@@ -28,6 +28,25 @@ export interface SearchTokenBalanceObject {
     wethTokenBalance: TokenBalance | null;
 }
 
+export interface ThemeColors {
+    background: string;
+    borderColor: string;
+    darkBlue: string;
+    darkGray: string;
+    darkerGray: string;
+    errorButtonBackground: string;
+    errorCardBackground: string;
+    errorCardBorder: string;
+    errorCardText: string;
+    gray: string;
+    green: string;
+    lightGray: string;
+    orange: string;
+    rowActive: string;
+    textLight: string;
+    notificationActive: string;
+}
+
 export enum Web3State {
     Done = 'Done',
     Error = 'Error',
@@ -55,6 +74,7 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
+    readonly themeColors: ThemeColors;
 }
 
 export interface MarketState {
