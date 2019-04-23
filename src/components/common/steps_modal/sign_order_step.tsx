@@ -79,7 +79,8 @@ class SignOrderStep extends React.Component<Props, State> {
                 const errorObject = extractJSONError(err.message);
                 if (errorObject) {
                     // Once it's converted, we extract the error msg to display
-                    const errorMsg = errorObject.validationErrors[0].reason;
+                    const reasonUnformated = errorObject.validationErrors[0].reason;
+                    const errorMsg = reasonUnformated ? reasonUnformated.split('_').join(' ') : this.state.errorMsg;
                     this.setState(
                         {
                             errorMsg,
