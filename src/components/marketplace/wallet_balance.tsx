@@ -228,7 +228,7 @@ class WalletBalance extends React.Component<Props, State> {
             baseTokenBalance,
         } = this.props;
 
-        if (web3State === Web3State.Done && quoteToken && baseTokenBalance && quoteTokenBalance) {
+        if (quoteToken && baseTokenBalance && quoteTokenBalance) {
             const quoteBalanceString = tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
             const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, quoteTokenBalance.token.decimals);
             const toolTip = isWeth(quoteToken.symbol) ? (
