@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
-import { extractJSONError } from '../../../util/error_messages';
+import { getErrorResponseFrom0xConnectErrorMessage } from '../../../util/error_messages';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
@@ -76,7 +76,7 @@ class SignOrderStep extends React.Component<Props, State> {
             */
             if (err.message.includes('Bad Request')) {
                 // The error object comes from the relayer as a string, we convert it to JSON before displaying it
-                const errorObject = extractJSONError(err.message);
+                const errorObject = getErrorResponseFrom0xConnectErrorMessage(err.message);
                 if (errorObject) {
                     // Once it's converted, we extract the error msg to display
                     const reasonUnformated = errorObject.validationErrors[0].reason;

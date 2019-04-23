@@ -12,7 +12,7 @@ export const errorsWallet = {
 };
 
 // Receives an string with an error JSON object an return the JSON Object or null if do not exists
-export const extractJSONError = (str: string) => {
+export const getErrorResponseFrom0xConnectErrorMessage = (str: string) => {
     const firstOpen = str.indexOf('{');
     const lastClose = str.lastIndexOf('}') + 1;
     let candidate;
