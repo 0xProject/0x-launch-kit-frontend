@@ -2,6 +2,7 @@ import { BigNumber, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../../common/constants';
+import { RelayerException } from '../../exceptions/relayer_exception';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
@@ -85,24 +86,27 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
+        try {
+            const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
 
-        const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+            dispatch(getOrderbookAndUserOrders());
+            dispatch(
+                addNotifications([
+                    {
+                        id: signedOrder.signature,
+                        kind: NotificationKind.Limit,
+                        amount,
+                        token: baseToken,
+                        side,
+                        timestamp: new Date(),
+                    },
+                ]),
+            );
 
-        dispatch(getOrderbookAndUserOrders());
-        dispatch(
-            addNotifications([
-                {
-                    id: signedOrder.signature,
-                    kind: NotificationKind.Limit,
-                    amount,
-                    token: baseToken,
-                    side,
-                    timestamp: new Date(),
-                },
-            ]),
-        );
-
-        return submitResult;
+            return submitResult;
+        } catch (error) {
+            throw new RelayerException(error.message);
+        }
     };
 };
 
