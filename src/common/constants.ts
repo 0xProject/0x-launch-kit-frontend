@@ -1,5 +1,9 @@
 import { BigNumber } from '0x.js';
 
+export const ERC20APP_BASE_PATH = '/erc20';
+export const ERC721APP_BASE_PATH = '/erc721';
+export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20APP_BASE_PATH;
+
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
 
 export const MAINNET_ID = 1;
