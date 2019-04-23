@@ -2,12 +2,15 @@ import { assetDataUtils, BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
 import { TX_DEFAULTS } from '../common/constants';
-import { Token } from '../util/types';
+import { getLogger } from '../util/logger';
+import { Token, UIOrder } from '../util/types';
 import { ordersToUIOrders } from '../util/ui_orders';
 
 import { getContractWrappers } from './contract_wrappers';
 import { getRelayer } from './relayer';
 import { getWeb3Wrapper } from './web3_wrapper';
+
+const logger = getLogger('Services::Orders');
 
 export const getAllOrders = (baseToken: Token, quoteToken: Token) => {
     const relayer = getRelayer();
@@ -18,12 +21,19 @@ export const getAllOrders = (baseToken: Token, quoteToken: Token) => {
 
 export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token) => {
     let uiOrders = [];
-    const orders = await getAllOrders(baseToken, quoteToken);
+    let orders: SignedOrder[] = [];
+
+    try {
+        orders = await getAllOrders(baseToken, quoteToken);
+    } catch (error) {
+        logger.error('The fetch orders from the relayer failed', error);
+    }
     try {
         const contractWrappers = await getContractWrappers();
         const ordersInfo = await contractWrappers.exchange.getOrdersInfoAsync(orders);
         uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
     } catch (error) {
+        logger.error('There was an error with the contractWrappers', error);
         // We got an error from web3 getting the contract wrappers, we fetch the default orders without the ordersInfo
         uiOrders = ordersToUIOrders(orders, baseToken);
     }
@@ -38,10 +48,17 @@ export const getUserOrders = (baseToken: Token, quoteToken: Token, ethAccount: s
 };
 
 export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token, ethAccount: string) => {
-    const myOrders = await getUserOrders(baseToken, quoteToken, ethAccount);
-    const contractWrappers = await getContractWrappers();
-    const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
-    return ordersToUIOrders(myOrders, baseToken, myOrdersInfo);
+    let myOrders = [];
+    let uiOrders: UIOrder[] = [];
+    try {
+        myOrders = await getUserOrders(baseToken, quoteToken, ethAccount);
+        const contractWrappers = await getContractWrappers();
+        const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
+        uiOrders = ordersToUIOrders(myOrders, baseToken, myOrdersInfo);
+    } catch (error) {
+        logger.error('The fetch orders from the relayer failed', error);
+    }
+    return uiOrders;
 };
 
 export const cancelSignedOrder = async (order: SignedOrder, gasPrice: BigNumber) => {
