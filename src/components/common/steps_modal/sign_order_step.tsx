@@ -29,12 +29,12 @@ class SignOrderStep extends React.Component<Props> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
 
-        const isBuyOrSell = step.side === OrderSide.Buy;
+        const isBuy = step.side === OrderSide.Buy;
 
         const title = 'Order setup';
         const confirmCaption = 'Confirm signature on Metamask to submit order to the book.';
         const loadingCaption = 'Submitting order.';
-        const doneCaption = `${isBuyOrSell ? 'Buy' : 'Sell'} order for ${tokenSymbolToDisplayString(
+        const doneCaption = `${isBuy ? 'Buy' : 'Sell'} order for ${tokenSymbolToDisplayString(
             step.token.symbol,
         )} placed! (may not be filled immediately)`;
         const errorCaption = 'Error signing/submitting order.';

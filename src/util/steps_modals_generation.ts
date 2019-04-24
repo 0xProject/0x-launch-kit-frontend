@@ -51,7 +51,7 @@ export const createBuySellLimitSteps = (
         amount,
         price,
         side,
-        token: quoteToken,
+        token: baseToken,
     });
 
     return buySellLimitFlow;
