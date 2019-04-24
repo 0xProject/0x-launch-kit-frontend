@@ -11,28 +11,28 @@ import { getKnownTokens } from '../../util/known_tokens';
 import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
 import { getOrderbookAndUserOrders } from '../actions';
 
-export const setMarketTokens = createAction('SET_MARKET_TOKENS', resolve => {
+export const setMarketTokens = createAction('market/MARKET_TOKENS_set', resolve => {
     return ({ baseToken, quoteToken }: { baseToken: Token; quoteToken: Token }) => resolve({ baseToken, quoteToken });
 });
 
-export const setCurrencyPair = createAction('SET_CURRENCY_PAIR', resolve => {
+export const setCurrencyPair = createAction('market/CURRENCY_PAIR_set', resolve => {
     return (currencyPair: CurrencyPair) => resolve(currencyPair);
 });
 
-export const setMarkets = createAction('SET_MARKETS', resolve => {
+export const setMarkets = createAction('market/MARKETS_set', resolve => {
     return (markets: Market[]) => resolve(markets);
 });
 
 // Market Price Ether Actions
-export const fetchMarketPriceEtherError = createAction('FETCH_MARKET_PRICE_ETHER_ERROR', resolve => {
+export const fetchMarketPriceEtherError = createAction('market/PRICE_ETHER_fetch_error', resolve => {
     return (payload: any) => resolve(payload);
 });
 
-export const fetchMarketPriceEtherStart = createAction('FETCH_MARKET_PRICE_ETHER_START', resolve => {
+export const fetchMarketPriceEtherStart = createAction('market/PRICE_ETHER_start_fetch', resolve => {
     return () => resolve();
 });
 
-export const fetchMarketPriceEtherUpdate = createAction('FETCH_MARKET_PRICE_ETHER_UPDATE', resolve => {
+export const fetchMarketPriceEtherUpdate = createAction('market/PRICE_ETHER_update', resolve => {
     return (ethInUsd: BigNumber) => resolve(ethInUsd);
 });
 

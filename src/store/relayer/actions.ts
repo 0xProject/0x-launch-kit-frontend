@@ -18,15 +18,15 @@ import {
 } from '../selectors';
 import { addNotifications } from '../ui/actions';
 
-export const initializeRelayerData = createAction('INITIALIZE_RELAYER_DATA', resolve => {
+export const initializeRelayerData = createAction('relayer/init', resolve => {
     return (relayerData: RelayerState) => resolve(relayerData);
 });
 
-export const setOrders = createAction('SET_ORDERS', resolve => {
+export const setOrders = createAction('relayer/ORDERS_set', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
 
-export const setUserOrders = createAction('SET_USER_ORDERS', resolve => {
+export const setUserOrders = createAction('relayer/USER_ORDERS_set', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
 
