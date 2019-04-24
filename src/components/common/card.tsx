@@ -1,23 +1,32 @@
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../util/theme';
+import { getThemeColors } from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
+import { themeDimensions } from '../../themes/ThemeCommons';
+import { StoreState, StyledComponentThemeProps } from '../../util/types';
 
-import { CardBase } from './card_base';
+import { CardBaseContainer } from './card_base';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface StateProps {
+    themeColorsConfig: BasicTheme;
+}
+interface OwnProps {
     title?: string;
     action?: React.ReactNode;
     children: React.ReactNode;
 }
 
-const CardWrapper = styled(CardBase)`
+type Props = OwnProps & StateProps;
+
+const CardWrapper = styled(CardBaseContainer)`
     margin-bottom: 10px;
 `;
 
-const CardHeader = styled.div`
+const CardHeader = styled.div<StyledComponentThemeProps>`
     align-items: center;
-    border-bottom: 1px solid ${themeColors.borderColor};
+    border-bottom: 1px solid ${props => props.themeColors.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
@@ -41,13 +50,13 @@ const CardBody = styled.div`
     position: relative;
 `;
 
-export const Card: React.FC<Props> = props => {
-    const { title, action, children, ...restProps } = props;
+const Card: React.FC<Props> = props => {
+    const { title, action, children, themeColorsConfig, ...restProps } = props;
 
     return (
         <CardWrapper {...restProps}>
             {title || action ? (
-                <CardHeader>
+                <CardHeader themeColors={themeColorsConfig}>
                     <CardTitle>{title}</CardTitle>
                     {action ? action : null}
                 </CardHeader>
@@ -56,3 +65,13 @@ export const Card: React.FC<Props> = props => {
         </CardWrapper>
     );
 };
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        themeColorsConfig: getThemeColors(state),
+    };
+};
+
+const CardContainer = connect(mapStateToProps)(Card);
+
+export { Card, CardContainer };

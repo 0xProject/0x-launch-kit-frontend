@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { SpinnerSize, themeColors } from '../../../util/theme';
+import { SpinnerSize } from '../../../themes/ThemeCommons';
 import { MetamaskLarge } from '../icons/icon_metamask_large';
 import { NotificationCancelIcon } from '../icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../icons/notification_checkmark_icon';
@@ -93,12 +93,6 @@ const ModalText = styled.p`
     text-align: center;
 `;
 
-const ModalTextClickable = styled.span`
-    color: ${themeColors.textLight};
-    cursor: pointer;
-    text-decoration: underline;
-`;
-
 const ModalStatusText = styled.p`
     color: #666;
     font-size: 14px;
@@ -107,10 +101,6 @@ const ModalStatusText = styled.p`
     margin: 0;
     padding: 20px 20px 0;
     text-align: center;
-`;
-
-const ModalStatusTextLight = styled.span`
-    color: ${themeColors.textLight};
 `;
 
 const IconContainer = styled.div`
@@ -129,9 +119,7 @@ export {
     DONE_STATUS_VISIBILITY_TIME,
     ModalContent,
     ModalStatusText,
-    ModalStatusTextLight,
     ModalText,
-    ModalTextClickable,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,

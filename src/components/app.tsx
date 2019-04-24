@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL, USE_DARK_THEME } from '../common/constants';
+import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
 import {
     initializeAppNoMetamaskOrLocked,
     updateMarketPriceEther,
     updateStore,
-    useDarkThemeTemplate,
+    updateThemeTemplate,
 } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { StoreState, Web3State } from '../util/types';
@@ -25,7 +25,7 @@ interface DispatchProps {
     onInitMetamaskState: () => any;
     onUpdateStore: () => any;
     onUpdateMarketPriceEther: () => any;
-    useDarkThemeTemplate: (useDarkTheme: boolean) => any;
+    updateThemeTemplate: () => any;
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -36,7 +36,7 @@ class App extends React.Component<Props> {
 
     public componentDidMount = () => {
         this.props.onInitMetamaskState();
-        this.props.useDarkThemeTemplate(USE_DARK_THEME);
+        this.props.updateThemeTemplate();
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<Props>, snapshot?: any) => {
@@ -101,7 +101,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
         onInitMetamaskState: () => dispatch(initializeAppNoMetamaskOrLocked()),
         onUpdateStore: () => dispatch(updateStore()),
         onUpdateMarketPriceEther: () => dispatch(updateMarketPriceEther()),
-        useDarkThemeTemplate: (useDarkTheme: boolean) => dispatch(useDarkThemeTemplate(useDarkTheme)),
+        updateThemeTemplate: () => dispatch(updateThemeTemplate()),
     };
 };
 

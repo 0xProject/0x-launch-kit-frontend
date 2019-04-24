@@ -4,15 +4,21 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
-import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
+import {
+    getEthBalance,
+    getThemeColors,
+    getTokenBalances,
+    getWeb3State,
+    getWethTokenBalance,
+} from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
-import { Card } from '../common/card';
-import { TokenIcon } from '../common/icons/token_icon';
+import { StoreState, StyledComponentThemeProps, Token, TokenBalance, Web3State } from '../../util/types';
+import { CardContainer } from '../common/card';
+import { TokenIconContainer } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps {
     ethBalance: BigNumber;
     tokenBalances: TokenBalance[];
     web3State: Web3State;
@@ -38,7 +44,7 @@ const TokenTD = styled(CustomTD)`
     width: 40px;
 `;
 
-const TokenIconStyled = styled(TokenIcon)`
+const TokenIconStyled = styled(TokenIconContainer)`
     margin: 0 auto 0 0;
 `;
 
@@ -89,15 +95,15 @@ const unlockedIcon = () => {
     );
 };
 
-interface LockCellProps {
+interface LockCellProps extends StyledComponentThemeProps {
     isUnlocked: boolean;
     onClick: any;
     styles?: any;
 }
 
-const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
+const LockCell = ({ isUnlocked, onClick, themeColors }: LockCellProps) => {
     return (
-        <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
+        <CustomTD themeColors={themeColors} styles={{ borderBottom: true, textAlign: 'center' }}>
             <LockIcon onClick={onClick}>{isUnlocked ? unlockedIcon() : lockedIcon()}</LockIcon>
         </CustomTD>
     );
@@ -105,7 +111,14 @@ const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
 
 class WalletTokenBalances extends React.PureComponent<Props> {
     public render = () => {
-        const { ethBalance, tokenBalances, onStartToggleTokenLockSteps, web3State, wethTokenBalance } = this.props;
+        const {
+            ethBalance,
+            tokenBalances,
+            onStartToggleTokenLockSteps,
+            web3State,
+            wethTokenBalance,
+            themeColors,
+        } = this.props;
 
         if (!wethTokenBalance) {
             return null;
@@ -118,19 +131,26 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
         const totalEthRow = (
             <TR>
-                <TokenTD>
+                <TokenTD themeColors={themeColors}>
                     <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
                 </TokenTD>
-                <CustomTDTokenName styles={{ borderBottom: true }}>ETH Total (ETH + wETH)</CustomTDTokenName>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                <CustomTDTokenName themeColors={themeColors} styles={{ borderBottom: true }}>
+                    ETH Total (ETH + wETH)
+                </CustomTDTokenName>
+                <CustomTD themeColors={themeColors} styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
                     {formattedTotalEthBalance}
                 </CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <CustomTD themeColors={themeColors} styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                    -
+                </CustomTD>
+                <CustomTD themeColors={themeColors} styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                    -
+                </CustomTD>
                 <LockCell
                     isUnlocked={wethTokenBalance.isUnlocked}
                     onClick={onTotalEthClick}
                     styles={{ borderBottom: true, textAlign: 'center' }}
+                    themeColors={themeColors}
                 />
             </TR>
         );
@@ -143,18 +163,25 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
             return (
                 <TR key={symbol}>
-                    <TokenTD>
+                    <TokenTD themeColors={themeColors}>
                         <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} />
                     </TokenTD>
-                    <CustomTDTokenName styles={{ borderBottom: true }}>
+                    <CustomTDTokenName themeColors={themeColors} styles={{ borderBottom: true }}>
                         <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
                     </CustomTDTokenName>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedBalance}</CustomTD>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                    <CustomTD themeColors={themeColors} styles={{ borderBottom: true, textAlign: 'right' }}>
+                        {formattedBalance}
+                    </CustomTD>
+                    <CustomTD themeColors={themeColors} styles={{ borderBottom: true, textAlign: 'right' }}>
+                        -
+                    </CustomTD>
+                    <CustomTD themeColors={themeColors} styles={{ borderBottom: true, textAlign: 'right' }}>
+                        -
+                    </CustomTD>
                     <LockCell
                         isUnlocked={isUnlocked}
                         onClick={onClick}
+                        themeColors={themeColors}
                         styles={{ borderBottom: true, textAlign: 'center' }}
                     />
                 </TR>
@@ -166,15 +193,23 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             content = <CardLoading />;
         } else {
             content = (
-                <Table isResponsive={true}>
+                <Table themeColors={themeColors} isResponsive={true}>
                     <THead>
                         <TR>
-                            <THStyled>Token</THStyled>
-                            <THStyled>{}</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
-                            <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
+                            <THStyled themeColors={themeColors}>Token</THStyled>
+                            <THStyled themeColors={themeColors}>{}</THStyled>
+                            <THStyled themeColors={themeColors} styles={{ textAlign: 'right' }}>
+                                Available Qty.
+                            </THStyled>
+                            <THStyled themeColors={themeColors} styles={{ textAlign: 'right' }}>
+                                Price (USD)
+                            </THStyled>
+                            <THStyled themeColors={themeColors} styles={{ textAlign: 'right' }}>
+                                % Change
+                            </THStyled>
+                            <THLast themeColors={themeColors} styles={{ textAlign: 'center' }}>
+                                Locked?
+                            </THLast>
                         </TR>
                     </THead>
                     <TBody>
@@ -185,7 +220,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             );
         }
 
-        return <Card title="Token Balances">{content}</Card>;
+        return <CardContainer title="Token Balances">{content}</CardContainer>;
     };
 }
 
@@ -195,6 +230,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         tokenBalances: getTokenBalances(state),
         web3State: getWeb3State(state),
         wethTokenBalance: getWethTokenBalance(state),
+        themeColors: getThemeColors(state),
     };
 };
 const mapDispatchToProps = {

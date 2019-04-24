@@ -3,14 +3,15 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getThemeColors } from '../store/selectors';
-import { themeBreakPoints } from '../util/theme';
-import { StoreState, ThemeColors } from '../util/types';
+import { BasicTheme } from '../themes/BasicTheme';
+import { themeBreakPoints } from '../themes/ThemeCommons';
+import { StoreState } from '../util/types';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { ToolbarContainer } from './common/toolbar';
 
-const General = styled.div<{ themeColors: ThemeColors }>`
+const General = styled.div<{ themeColors: BasicTheme }>`
     background: ${props => props.themeColors.background};
     display: flex;
     flex-direction: column;
@@ -37,30 +38,27 @@ const ContentScroll = styled.div`
 `;
 
 interface StateProps {
-    themeColorsConfig: ThemeColors;
+    themeColorsConfig: BasicTheme;
+}
+interface OwnProps {
+    children: React.ReactNode;
 }
 
-interface GeneralLayoutProps {
-    children: React.ReactChildren;
-}
+type Props = OwnProps & StateProps;
 
-type Props = StateProps & GeneralLayoutProps;
-
-class GeneralLayout extends React.Component<Props> {
-    public render = () => {
-        const { children, themeColorsConfig } = this.props;
-        return (
-            <General themeColors={themeColorsConfig}>
-                <ToolbarContainer />
-                <ContentScroll>
-                    <Content>{children}</Content>
-                    <Footer />
-                </ContentScroll>
-                <StepsModalContainer />
-            </General>
-        );
-    };
-}
+const GeneralLayout = (props: Props) => {
+    const { themeColorsConfig, children } = props;
+    return (
+        <General themeColors={themeColorsConfig}>
+            <ToolbarContainer />
+            <ContentScroll>
+                <Content>{children}</Content>
+                <Footer />
+            </ContentScroll>
+            <StepsModalContainer />
+        </General>
+    );
+};
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {

@@ -2,6 +2,13 @@ import { BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
 
+import { BasicTheme } from '../themes/BasicTheme';
+import { BasicThemeModal } from '../themes/modal/BasicThemeModal';
+
+export interface StyledComponentThemeProps {
+    themeColors: BasicTheme;
+}
+
 export interface TabItem {
     active: boolean;
     onClick: any;
@@ -26,25 +33,6 @@ export interface SearchTokenBalanceObject {
     tokenBalances: TokenBalance[];
     tokenToFind: Token | null;
     wethTokenBalance: TokenBalance | null;
-}
-
-export interface ThemeColors {
-    background: string;
-    borderColor: string;
-    darkBlue: string;
-    darkGray: string;
-    darkerGray: string;
-    errorButtonBackground: string;
-    errorCardBackground: string;
-    errorCardBorder: string;
-    errorCardText: string;
-    gray: string;
-    green: string;
-    lightGray: string;
-    orange: string;
-    rowActive: string;
-    textLight: string;
-    notificationActive: string;
 }
 
 export enum Web3State {
@@ -74,7 +62,8 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
-    readonly themeColors: ThemeColors;
+    readonly themeColors: BasicTheme;
+    readonly themeModalColors: BasicThemeModal;
 }
 
 export interface MarketState {

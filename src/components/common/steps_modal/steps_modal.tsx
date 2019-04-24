@@ -3,9 +3,14 @@ import Modal from 'react-modal';
 import { connect } from 'react-redux';
 
 import { stepsModalReset } from '../../../store/actions';
-import { getStepsModalCurrentStep, getStepsModalDoneSteps, getStepsModalPendingSteps } from '../../../store/selectors';
+import {
+    getStepsModalCurrentStep,
+    getStepsModalDoneSteps,
+    getStepsModalPendingSteps,
+    getThemeModalsColors,
+} from '../../../store/selectors';
+import { BasicThemeModal } from '../../../themes/modal/BasicThemeModal';
 import { getStepTitle, isLongStep } from '../../../util/steps';
-import { themeModalStyle } from '../../../util/theme';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
 
@@ -20,6 +25,7 @@ interface StateProps {
     currentStep: Step | null;
     doneSteps: Step[];
     pendingSteps: Step[];
+    themeModalColorsConfig: BasicThemeModal;
 }
 
 interface DispatchProps {
@@ -30,7 +36,7 @@ type Props = StateProps & DispatchProps;
 
 class StepsModal extends React.Component<Props> {
     public render = () => {
-        const { currentStep, doneSteps, pendingSteps, reset } = this.props;
+        const { currentStep, doneSteps, pendingSteps, reset, themeModalColorsConfig } = this.props;
         const isOpen = currentStep !== null;
 
         const buildStepsProgress = (currentStepItem: StepItem): StepItem[] => [
@@ -53,7 +59,7 @@ class StepsModal extends React.Component<Props> {
         const stepIndex = doneSteps.length;
 
         return (
-            <Modal isOpen={isOpen} style={themeModalStyle}>
+            <Modal isOpen={isOpen} style={themeModalColorsConfig}>
                 <CloseModalButton onClick={reset} />
                 <ModalContent>
                     {currentStep && currentStep.kind === StepKind.ToggleTokenLock && (
@@ -79,6 +85,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         currentStep: getStepsModalCurrentStep(state),
         doneSteps: getStepsModalDoneSteps(state),
         pendingSteps: getStepsModalPendingSteps(state),
+        themeModalColorsConfig: getThemeModalsColors(state),
     };
 };
 

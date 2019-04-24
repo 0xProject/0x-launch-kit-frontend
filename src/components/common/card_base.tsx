@@ -1,20 +1,43 @@
-import React, { HTMLAttributes } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../util/theme';
+import { getThemeColors } from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
+import { themeDimensions } from '../../themes/ThemeCommons';
+import { StoreState, StyledComponentThemeProps } from '../../util/types';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface OwnProps {
     children: React.ReactNode;
 }
+interface StateProps {
+    themeColorsConfig: BasicTheme;
+}
 
-const CardWrapper = styled.div`
+type Props = OwnProps & StateProps;
+
+const CardWrapper = styled.div<StyledComponentThemeProps>`
     background-color: #fff;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${themeColors.borderColor};
+    border: 1px solid ${props => props.themeColors.borderColor};
 `;
 
-export const CardBase: React.FC<Props> = props => {
-    const { children, ...restProps } = props;
+const CardBase: React.FC<Props> = props => {
+    const { children, themeColorsConfig, ...restProps } = props;
 
-    return <CardWrapper {...restProps}>{children}</CardWrapper>;
+    return (
+        <CardWrapper themeColors={themeColorsConfig} {...restProps}>
+            {children}
+        </CardWrapper>
+    );
 };
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        themeColorsConfig: getThemeColors(state),
+    };
+};
+
+const CardBaseContainer = connect(mapStateToProps)(CardBase);
+
+export { CardBase, CardBaseContainer };

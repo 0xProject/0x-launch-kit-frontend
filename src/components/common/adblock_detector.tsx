@@ -1,10 +1,13 @@
 import React, { HTMLAttributes } from 'react';
 import Modal from 'react-modal';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { ReactComponent as RedExclamationSign } from '../../assets/icons/red_exclamation_sign.svg';
 import { LocalStorage } from '../../services/local_storage';
-import { themeModalStyle } from '../../util/theme';
+import { getThemeModalsColors } from '../../store/selectors';
+import { BasicThemeModal } from '../../themes/modal/BasicThemeModal';
+import { StoreState } from '../../util/types';
 
 import { CloseModalButton } from './icons/close_modal_button';
 
@@ -12,7 +15,11 @@ interface State {
     isOpen: boolean;
 }
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+interface StateProps extends HTMLAttributes<HTMLDivElement> {
+    themeModalColorsConfig: BasicThemeModal;
+}
+
+type Props = StateProps;
 
 const ModalContent = styled.div`
     align-items: center;
@@ -90,8 +97,9 @@ class AdBlockDetector extends React.Component<Props, State> {
     };
 
     public render = () => {
+        const { themeModalColorsConfig } = this.props;
         return (
-            <Modal isOpen={this.state.isOpen} style={themeModalStyle}>
+            <Modal isOpen={this.state.isOpen} style={themeModalColorsConfig}>
                 <CloseModalButton onClick={this.closeModal} />
                 <ModalContent>
                     <ModalTitle>Ad Blocker Detected</ModalTitle>
@@ -104,4 +112,13 @@ class AdBlockDetector extends React.Component<Props, State> {
         );
     };
 }
-export { AdBlockDetector };
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        themeModalColorsConfig: getThemeModalsColors(state),
+    };
+};
+
+const AdBlockDetectorContainer = connect(mapStateToProps)(AdBlockDetector);
+
+export { AdBlockDetector, AdBlockDetectorContainer };

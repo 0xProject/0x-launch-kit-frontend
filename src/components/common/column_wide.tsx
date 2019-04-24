@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeBreakPoints } from '../../util/theme';
+import { themeBreakPoints } from '../../themes/ThemeCommons';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;

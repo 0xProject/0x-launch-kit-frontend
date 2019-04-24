@@ -7,7 +7,7 @@ import { goToHome, initWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { ModalDisplay, StoreState, Web3State } from '../../util/types';
 
-import { MetamaskErrorModal } from './metamask_error_modal';
+import { MetamaskErrorModalContainer } from './metamask_error_modal';
 
 interface State {
     shouldOpenModal: boolean;
@@ -50,7 +50,7 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
         const { shouldOpenModal, modalToDisplay } = this.state;
         const { onConnectWallet, onGoToHome, children } = this.props;
         return shouldOpenModal && modalToDisplay ? (
-            <MetamaskErrorModal
+            <MetamaskErrorModalContainer
                 isOpen={shouldOpenModal}
                 closeModal={onGoToHome}
                 noMetamaskType={modalToDisplay}

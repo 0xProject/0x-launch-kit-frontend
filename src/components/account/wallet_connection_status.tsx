@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getEthAccount } from '../../store/selectors';
-import { themeFeatures } from '../../util/theme';
+import { themeFeatures } from '../../themes/ThemeCommons';
 import { StoreState } from '../../util/types';
-import { CardBase } from '../common/card_base';
+import { CardBaseContainer } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
-import { DropdownTextItem } from '../common/dropdown_text_item';
+import { DropdownTextItemContainer } from '../common/dropdown_text_item';
 import { ChevronDownIcon } from '../common/icons/chevron_down_icon';
 
 interface WrapperProps {
@@ -37,7 +37,7 @@ const WalletConnectionStatusText = styled.span`
     margin-right: 10px;
 `;
 
-const DropdownItems = styled(CardBase)`
+const DropdownItems = styled(CardBaseContainer)`
     box-shadow: ${themeFeatures.boxShadow};
     min-width: 240px;
 `;
@@ -80,10 +80,10 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
         const body = (
             <DropdownItems>
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
-                    <DropdownTextItem text="Copy Address to Clipboard" />
+                    <DropdownTextItemContainer text="Copy Address to Clipboard" />
                 </CopyToClipboard>
-                <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
-                <DropdownTextItem onClick={goToURL} text="Manage Account" />
+                <DropdownTextItemContainer onClick={connectToWallet} text="Connect a different Wallet" />
+                <DropdownTextItemContainer onClick={goToURL} text="Manage Account" />
             </DropdownItems>
         );
 

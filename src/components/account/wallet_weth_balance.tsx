@@ -4,11 +4,20 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
-import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
-import { themeColors, themeDimensions, themeModalStyle } from '../../util/theme';
+import {
+    getEthBalance,
+    getEthInUsd,
+    getThemeColors,
+    getThemeModalsColors,
+    getWeb3State,
+    getWethBalance,
+} from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
+import { BasicThemeModal } from '../../themes/modal/BasicThemeModal';
+import { themeDimensions } from '../../themes/ThemeCommons';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Web3State } from '../../util/types';
-import { Card } from '../common/card';
+import { StoreState, StyledComponentThemeProps, Web3State } from '../../util/types';
+import { CardContainer } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { CardLoading } from '../common/loading';
 import { IconType, Tooltip } from '../common/tooltip';
@@ -20,6 +29,8 @@ interface StateProps {
     wethBalance: BigNumber;
     web3State: Web3State;
     ethInUsd: BigNumber | null;
+    themeColorsConfig: BasicTheme;
+    themeModalColorsConfig: BasicThemeModal;
 }
 interface DispatchProps {
     onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
@@ -38,9 +49,9 @@ const Content = styled.div`
     position: relative;
 `;
 
-const Row = styled.div`
+const Row = styled.div<StyledComponentThemeProps>`
     align-items: center;
-    border-bottom: solid 1px ${themeColors.borderColor};
+    border-bottom: solid 1px ${props => props.themeColors.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
@@ -81,11 +92,11 @@ const Value = styled.div`
     white-space: nowrap;
 `;
 
-const Button = styled.button`
+const Button = styled.button<StyledComponentThemeProps>`
     align-items: center;
     background-color: #fff;
     border-radius: 4px;
-    border: 1px solid ${themeColors.borderColor};
+    border: 1px solid ${props => props.themeColors.borderColor};
     cursor: pointer;
     display: flex;
     height: 40px;
@@ -140,7 +151,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd, themeColorsConfig, themeModalColorsConfig } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.add(wethBalance);
 
@@ -155,15 +166,15 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         } else if (ethBalance && wethBalance) {
             content = (
                 <>
-                    <Row>
+                    <Row themeColors={themeColorsConfig}>
                         <Label>ETH</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
-                    <Button onClick={this.openModal}>
+                    <Button onClick={this.openModal} themeColors={themeColorsConfig}>
                         <ButtonLabel>Convert</ButtonLabel>
                         <ArrowUpDownIcon />
                     </Button>
-                    <Row>
+                    <Row themeColors={themeColorsConfig}>
                         <LabelWrapper>
                             <Label>wETH</Label>{' '}
                             <Tooltip
@@ -173,7 +184,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         </LabelWrapper>
                         <Value>{formattedWeth}</Value>
                     </Row>
-                    <Row>
+                    <Row themeColors={themeColorsConfig}>
                         <Label>Total Value</Label>
                         <Value>{formattedTotalEth} ETH</Value>
                     </Row>
@@ -182,10 +193,11 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         isSubmitting={isSubmitting}
                         onRequestClose={this.closeModal}
                         onSubmit={this.handleSubmit}
-                        style={themeModalStyle}
+                        style={themeModalColorsConfig}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
                         ethInUsd={ethInUsd}
+                        themeColorsConfig={themeColorsConfig}
                     />
                 </>
             );
@@ -193,9 +205,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Card title="ETH / wETH Balances">
+                <CardContainer title="ETH / wETH Balances">
                     <Content>{content}</Content>
-                </Card>
+                </CardContainer>
                 <Note>
                     wETH is used for trades on 0x
                     <br />1 wETH = 1 ETH
@@ -237,6 +249,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
         wethBalance: getWethBalance(state),
         web3State: getWeb3State(state),
         ethInUsd: getEthInUsd(state),
+        themeColorsConfig: getThemeColors(state),
+        themeModalColorsConfig: getThemeModalsColors(state),
     };
 };
 const mapDispatchToProps = {

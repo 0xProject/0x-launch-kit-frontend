@@ -9,7 +9,7 @@ import { sleep } from '../../../util/sleep';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { StepToggleTokenLock, StoreState, Token } from '../../../util/types';
 
-import { BaseStepModal } from './base_step_modal';
+import { BaseStepModalContainer } from './base_step_modal';
 import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
 import { StepItem } from './steps_progress';
 
@@ -50,7 +50,7 @@ class ToggleTokenLockStep extends React.Component<Props> {
         const doneFooterCaption = !isUnlocked ? ` ${tokenSymbol} Unlocked!` : ` ${tokenSymbol} Locked!`;
 
         return (
-            <BaseStepModal
+            <BaseStepModalContainer
                 step={step}
                 title={title}
                 confirmCaption={confirmCaption}

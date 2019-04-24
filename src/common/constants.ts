@@ -58,4 +58,6 @@ export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_S
 
 export const LOGGER_ID: string = process.env.REACT_APP_LOGGER_ID || '0x-launch-kit-frontend';
 
-export const USE_DARK_THEME: boolean = process.env.REACT_APP_USE_DARK_THEME === 'true' || true;
+export const TEMPLATE_THEME: string = process.env.REACT_APP_TEMPLATE_THEME || 'WHITE_THEME';
+
+export const MODAL_TEMPLATE_THEME: string = process.env.REACT_APP_TEMPLATE_MODAL_THEME || 'WHITE_THEME';

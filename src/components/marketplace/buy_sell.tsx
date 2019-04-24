@@ -4,20 +4,22 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getCurrencyPair, getWeb3State } from '../../store/selectors';
-import { themeColors, themeDimensions } from '../../util/theme';
+import { getCurrencyPair, getThemeColors, getWeb3State } from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
+import { themeDimensions } from '../../themes/ThemeCommons';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
-import { Button } from '../common/button';
-import { CardBase } from '../common/card_base';
-import { CardTabSelector } from '../common/card_tab_selector';
+import { ButtonContainer } from '../common/button';
+import { CardBaseContainer } from '../common/card_base';
+import { CardTabSelectorContainer } from '../common/card_tab_selector';
 
 import { OrderDetailsContainer } from './order_details';
 
 interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
+    themeColorsConfig: BasicTheme;
 }
 
 interface DispatchProps {
@@ -35,7 +37,7 @@ interface State {
     tab: OrderSide;
 }
 
-const BuySellWrapper = styled(CardBase)`
+const BuySellWrapper = styled(CardBaseContainer)`
     margin-bottom: ${themeDimensions.verticalSeparation};
 `;
 
@@ -51,21 +53,21 @@ const TabsContainer = styled.div`
     justify-content: space-between;
 `;
 
-const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
+const TabButton = styled.div<{ isSelected: boolean; side: OrderSide; themeColors: BasicTheme }>`
     align-items: center;
     background-color: ${props => (props.isSelected ? 'transparent' : '#f9f9f9')};
-    border-bottom-color: ${props => (props.isSelected ? 'transparent' : themeColors.borderColor)};
+    border-bottom-color: ${props => (props.isSelected ? 'transparent' : props.themeColors.borderColor)};
     border-bottom-style: solid;
     border-bottom-width: 1px;
-    border-right-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+    border-right-color: ${props => (props.isSelected ? props.themeColors.borderColor : 'transparent')};
     border-right-style: solid;
     border-right-width: 1px;
     color: ${props =>
         props.isSelected
             ? props.side === OrderSide.Buy
-                ? themeColors.green
-                : themeColors.orange
-            : themeColors.textLight};
+                ? props.themeColors.green
+                : props.themeColors.orange
+            : props.themeColors.textLight};
     cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
     display: flex;
     font-weight: 600;
@@ -74,7 +76,7 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     width: 50%;
 
     &:last-child {
-        border-left-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+        border-left-color: ${props => (props.isSelected ? props.themeColors.borderColor : 'transparent')};
         border-left-style: solid;
         border-left-width: 1px;
         border-right: none;
@@ -96,7 +98,7 @@ const Label = styled.label<{ color?: string }>`
     margin: 0;
 `;
 
-const InnerTabs = styled(CardTabSelector)`
+const InnerTabs = styled(CardTabSelectorContainer)`
     font-size: 14px;
 `;
 
@@ -106,8 +108,8 @@ const FieldContainer = styled.div`
     position: relative;
 `;
 
-const fieldStyle = `
-    border: 1px solid ${themeColors.borderColor};
+const fieldStyle = styled.div<{ themeColors: BasicTheme }>`
+    border: 1px solid ${props => props.themeColors.borderColor};
     border-radius: ${themeDimensions.borderRadius};
     color: #000;
     font-feature-settings: 'tnum' 1;
@@ -156,7 +158,7 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { currencyPair, web3State } = this.props;
+        const { currencyPair, web3State, themeColorsConfig } = this.props;
         const { makerAmount, price, tab, orderType } = this.state;
 
         const buySellInnerTabs = [
@@ -185,6 +187,7 @@ class BuySell extends React.Component<Props, State> {
                         isSelected={tab === OrderSide.Buy}
                         onClick={this.changeTab(OrderSide.Buy)}
                         side={OrderSide.Buy}
+                        themeColors={themeColorsConfig}
                     >
                         Buy
                     </TabButton>
@@ -192,6 +195,7 @@ class BuySell extends React.Component<Props, State> {
                         isSelected={tab === OrderSide.Sell}
                         onClick={this.changeTab(OrderSide.Sell)}
                         side={OrderSide.Sell}
+                        themeColors={themeColorsConfig}
                     >
                         Sell
                     </TabButton>
@@ -235,14 +239,14 @@ class BuySell extends React.Component<Props, State> {
                         tokenPrice={price || new BigNumber(0)}
                         currencyPair={currencyPair}
                     />
-                    <Button
+                    <ButtonContainer
                         theme="secondary"
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         {tokenSymbolToDisplayString(currencyPair.base)}
-                    </Button>
+                    </ButtonContainer>
                 </Content>
             </BuySellWrapper>
         );
@@ -308,6 +312,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
         currencyPair: getCurrencyPair(state),
+        themeColorsConfig: getThemeColors(state),
     };
 };
 

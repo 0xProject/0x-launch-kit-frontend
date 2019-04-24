@@ -6,7 +6,7 @@ import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
-import { BaseStepModal } from './base_step_modal';
+import { BaseStepModalContainer } from './base_step_modal';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
@@ -37,7 +37,7 @@ class SignOrderStep extends React.Component<Props> {
         const doneFooterCaption = `Order success!`;
 
         return (
-            <BaseStepModal
+            <BaseStepModalContainer
                 step={step}
                 title={title}
                 confirmCaption={confirmCaption}

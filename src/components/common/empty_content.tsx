@@ -1,9 +1,11 @@
 import React, { HTMLAttributes } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { themeColors } from '../../util/theme';
+import { getThemeColors } from '../../store/selectors';
+import { StoreState, StyledComponentThemeProps } from '../../util/types';
 
-interface EmptyWrapperProps {
+interface EmptyWrapperProps extends StyledComponentThemeProps {
     alignAbsoluteCenter?: boolean;
 }
 
@@ -13,7 +15,7 @@ interface Props extends HTMLAttributes<HTMLDivElement>, EmptyWrapperProps {
 
 const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
     align-items: center;
-    color: ${themeColors.lightGray};
+    color: ${props => props.themeColors.lightGray}
     display: flex;
     font-size: 16px;
     font-weight: 500;
@@ -33,8 +35,22 @@ const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
             : ''}
 `;
 
-export const EmptyContent: React.FC<Props> = props => {
-    const { text, ...restProps } = props;
+const EmptyContent: React.FC<Props> = props => {
+    const { text, themeColors, ...restProps } = props;
 
-    return <EmptyContentWrapper {...restProps}>{text}</EmptyContentWrapper>;
+    return (
+        <EmptyContentWrapper themeColors={themeColors} {...restProps}>
+            {text}
+        </EmptyContentWrapper>
+    );
 };
+
+const mapStateToProps = (state: StoreState): StyledComponentThemeProps => {
+    return {
+        themeColors: getThemeColors(state),
+    };
+};
+
+const EmptyContentContainer = connect(mapStateToProps)(EmptyContent);
+
+export { EmptyContent, EmptyContentContainer };

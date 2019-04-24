@@ -28,6 +28,7 @@ export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsMo
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
 export const getThemeColors = (state: StoreState) => state.ui.themeColors;
+export const getThemeModalsColors = (state: StoreState) => state.ui.themeModalColors;
 export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
 export const getBaseToken = (state: StoreState) => state.market.baseToken;
 export const getQuoteToken = (state: StoreState) => state.market.quoteToken;

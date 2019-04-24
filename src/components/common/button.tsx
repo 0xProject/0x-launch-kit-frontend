@@ -1,13 +1,10 @@
 import React, { HTMLAttributes } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { themeColors } from '../../util/theme';
-
-interface Props extends HTMLAttributes<HTMLButtonElement> {
-    children: React.ReactNode;
-    disabled?: boolean;
-    theme?: string;
-}
+import { getThemeColors } from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
+import { StoreState, StyledComponentThemeProps } from '../../util/types';
 
 interface ButtonColors {
     [primary: string]: string;
@@ -16,15 +13,32 @@ interface ButtonColors {
     error: string;
 }
 
-const buttonColors: ButtonColors = {
-    error: themeColors.errorButtonBackground,
-    primary: themeColors.darkBlue,
-    secondary: themeColors.darkGray,
-    tertiary: themeColors.orange,
+interface StateProps {
+    themeColorsConfig: BasicTheme;
+}
+
+interface OwnProps extends HTMLAttributes<HTMLButtonElement> {
+    children: React.ReactNode;
+    disabled?: boolean;
+    theme?: string;
+}
+
+type Props = OwnProps & StateProps;
+
+const getButtonColors = (themeColors: BasicTheme): ButtonColors => {
+    return {
+        error: themeColors.errorButtonBackground,
+        primary: themeColors.darkBlue,
+        secondary: themeColors.darkGray,
+        tertiary: themeColors.orange,
+    };
 };
 
-const StyledButton = styled.button`
-    background-color: ${props => (props.theme.length ? buttonColors[props.theme] : buttonColors.primary)};
+const StyledButton = styled.button<StyledComponentThemeProps>`
+    background-color: ${props =>
+        props.theme.length
+            ? getButtonColors(props.themeColors)[props.theme]
+            : getButtonColors(props.themeColors).primary};
     border-radius: 4px;
     border: 0;
     color: #fff;
@@ -43,8 +57,22 @@ const StyledButton = styled.button`
     }
 `;
 
-export const Button: React.FC<Props> = props => {
-    const { children, ...restProps } = props;
+const Button: React.FC<Props> = props => {
+    const { children, themeColorsConfig, ...restProps } = props;
 
-    return <StyledButton {...restProps}>{children}</StyledButton>;
+    return (
+        <StyledButton themeColors={themeColorsConfig} {...restProps}>
+            {children}
+        </StyledButton>
+    );
 };
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        themeColorsConfig: getThemeColors(state),
+    };
+};
+
+const ButtonContainer = connect(mapStateToProps)(Button);
+
+export { Button, ButtonContainer };

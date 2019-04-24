@@ -3,13 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { themeColors } from '../../util/theme';
+import { getBaseToken, getQuoteToken, getThemeColors, getUserOrders, getWeb3State } from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
-import { Card } from '../common/card';
-import { CardTabSelector } from '../common/card_tab_selector';
-import { EmptyContent } from '../common/empty_content';
+import { OrderSide, StoreState, StyledComponentThemeProps, TabItem, Token, UIOrder, Web3State } from '../../util/types';
+import { CardContainer } from '../common/card';
+import { CardTabSelectorContainer } from '../common/card_tab_selector';
+import { EmptyContentContainer } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../common/table';
 
@@ -19,6 +19,7 @@ interface StateProps {
     baseToken: Token | null;
     orders: UIOrder[];
     quoteToken: Token | null;
+    themeColorsConfig: BasicTheme;
     web3State?: Web3State;
 }
 
@@ -33,11 +34,15 @@ interface State {
 
 type Props = StateProps;
 
-const SideTD = styled(CustomTD)<{ side: OrderSide }>`
-    color: ${props => (props.side === OrderSide.Buy ? themeColors.green : themeColors.orange)};
+interface SideTDProps extends StyledComponentThemeProps {
+    side: OrderSide;
+}
+
+const SideTD = styled(CustomTD)<SideTDProps>`
+    color: ${props => (props.side === OrderSide.Buy ? props.themeColors.green : props.themeColors.orange)};
 `;
 
-const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
+const orderToRow = (order: UIOrder, index: number, baseToken: Token, themeColors: BasicTheme) => {
     const sideLabel = order.side === OrderSide.Sell ? 'Sell' : 'Buy';
     const size = tokenAmountInUnits(order.size, baseToken.decimals);
     let filled = null;
@@ -53,12 +58,20 @@ const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
 
     return (
         <TR key={index}>
-            <SideTD side={order.side}>{sideLabel}</SideTD>
-            <CustomTD styles={{ textAlign: 'right', tabular: true }}>{size}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right', tabular: true }}>{filled}</CustomTD>
-            <CustomTD styles={{ textAlign: 'right', tabular: true }}>{price}</CustomTD>
-            <CustomTD>{status}</CustomTD>
-            <CustomTD styles={{ textAlign: 'center' }}>
+            <SideTD themeColors={themeColors} side={order.side}>
+                {sideLabel}
+            </SideTD>
+            <CustomTD themeColors={themeColors} styles={{ textAlign: 'right', tabular: true }}>
+                {size}
+            </CustomTD>
+            <CustomTD themeColors={themeColors} styles={{ textAlign: 'right', tabular: true }}>
+                {filled}
+            </CustomTD>
+            <CustomTD themeColors={themeColors} styles={{ textAlign: 'right', tabular: true }}>
+                {price}
+            </CustomTD>
+            <CustomTD themeColors={themeColors}>{status}</CustomTD>
+            <CustomTD themeColors={themeColors} styles={{ textAlign: 'center' }}>
                 {isOrderFillable ? <CancelOrderButtonContainer order={order} /> : ''}
             </CustomTD>
         </TR>
@@ -71,7 +84,7 @@ class OrderHistory extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orders, baseToken, quoteToken, web3State } = this.props;
+        const { orders, baseToken, quoteToken, themeColorsConfig, web3State } = this.props;
         const openOrders = orders.filter(order => order.status === OrderStatus.Fillable);
         const filledOrders = orders.filter(order => order.status === OrderStatus.FullyFilled);
         const ordersToShow = this.state.tab === Tab.Open ? openOrders : filledOrders;
@@ -96,28 +109,38 @@ class OrderHistory extends React.Component<Props, State> {
             case Web3State.Locked:
             case Web3State.NotInstalled:
             case Web3State.Loading: {
-                content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+                content = <EmptyContentContainer alignAbsoluteCenter={true} text="There are no orders to show" />;
                 break;
             }
             default: {
                 if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
                     content = <CardLoading minHeight="120px" />;
                 } else if (!ordersToShow.length || !baseToken || !quoteToken) {
-                    content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+                    content = <EmptyContentContainer alignAbsoluteCenter={true} text="There are no orders to show" />;
                 } else {
                     content = (
-                        <Table isResponsive={true}>
+                        <Table themeColors={themeColorsConfig} isResponsive={true}>
                             <THead>
                                 <TR>
-                                    <TH>Side</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Size ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Filled ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Price ({quoteToken.symbol})</TH>
-                                    <TH>Status</TH>
-                                    <TH>&nbsp;</TH>
+                                    <TH themeColors={themeColorsConfig}>Side</TH>
+                                    <TH themeColors={themeColorsConfig} styles={{ textAlign: 'right' }}>
+                                        Size ({baseToken.symbol})
+                                    </TH>
+                                    <TH themeColors={themeColorsConfig} styles={{ textAlign: 'right' }}>
+                                        Filled ({baseToken.symbol})
+                                    </TH>
+                                    <TH themeColors={themeColorsConfig} styles={{ textAlign: 'right' }}>
+                                        Price ({quoteToken.symbol})
+                                    </TH>
+                                    <TH themeColors={themeColorsConfig}>Status</TH>
+                                    <TH themeColors={themeColorsConfig}>&nbsp;</TH>
                                 </TR>
                             </THead>
-                            <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, baseToken))}</tbody>
+                            <tbody>
+                                {ordersToShow.map((order, index) =>
+                                    orderToRow(order, index, baseToken, themeColorsConfig),
+                                )}
+                            </tbody>
                         </Table>
                     );
                 }
@@ -126,9 +149,9 @@ class OrderHistory extends React.Component<Props, State> {
         }
 
         return (
-            <Card title="Orders" action={<CardTabSelector tabs={cardTabs} />}>
+            <CardContainer title="Orders" action={<CardTabSelectorContainer tabs={cardTabs} />}>
                 {content}
-            </Card>
+            </CardContainer>
         );
     };
 }
@@ -139,6 +162,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         orders: getUserOrders(state),
         quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
+        themeColorsConfig: getThemeColors(state),
     };
 };
 

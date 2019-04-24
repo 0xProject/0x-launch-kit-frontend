@@ -4,19 +4,19 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
-import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
+import { getNetworkId, getOpenBuyOrders, getOpenSellOrders, getThemeColors } from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
 import { getKnownTokens } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
-import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, UIOrder } from '../../util/types';
 
 const logger = getLogger('OrderDetails');
 
-const Row = styled.div`
+const Row = styled.div<{ themeColors: BasicTheme }>`
     align-items: center;
-    border-top: dashed 1px ${themeColors.borderColor};
+    border-top: dashed 1px ${props => props.themeColors.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 12px 0;
@@ -79,6 +79,7 @@ interface StateProps {
     networkId: number | null;
     openSellOrders: UIOrder[];
     openBuyOrders: UIOrder[];
+    themeColorsConfig: BasicTheme;
 }
 
 type Props = StateProps & OwnProps;
@@ -116,16 +117,17 @@ class OrderDetails extends React.Component<Props, State> {
     public render = () => {
         const fee = this._getFeeStringForRender();
         const cost = this._getCostStringForRender();
+        const { themeColorsConfig } = this.props;
         return (
             <>
                 <LabelContainer>
                     <MainLabel>Order Details</MainLabel>
                 </LabelContainer>
-                <Row>
-                    <FeeLabel color={themeColors.textLight}>Fee</FeeLabel>
+                <Row themeColors={themeColorsConfig}>
+                    <FeeLabel color={themeColorsConfig.textLight}>Fee</FeeLabel>
                     <Value>{fee}</Value>
                 </Row>
-                <Row>
+                <Row themeColors={themeColorsConfig}>
                     <CostLabel>Cost</CostLabel>
                     <CostValue>{cost}</CostValue>
                 </Row>
@@ -199,6 +201,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         networkId: getNetworkId(state),
         openSellOrders: getOpenSellOrders(state),
         openBuyOrders: getOpenBuyOrders(state),
+        themeColorsConfig: getThemeColors(state),
     };
 };
 

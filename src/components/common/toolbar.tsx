@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { goToHome, goToWallet } from '../../store/actions';
-import { getWeb3State } from '../../store/selectors';
+import { getThemeColors, getWeb3State } from '../../store/selectors';
+import { BasicTheme } from '../../themes/BasicTheme';
+import { themeBreakPoints, themeDimensions } from '../../themes/ThemeCommons';
 import { errorsWallet } from '../../util/error_messages';
-import { themeBreakPoints, themeColors, themeDimensions } from '../../util/theme';
 import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
@@ -16,6 +17,7 @@ import { MarketsDropdownContainer } from './markets_dropdown';
 
 interface StateProps {
     web3State?: Web3State;
+    themeColorsConfig: BasicTheme;
 }
 
 interface DispatchProps {
@@ -25,10 +27,10 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-const separatorTopbar = `
+const separatorTopbar = styled.div<{ themeColors: BasicTheme }>`
     &:after {
-        background-color: ${themeColors.borderColor};
-        content: "";
+        background-color: ${props => props.themeColors.borderColor};
+        content: '';
         height: 26px;
         margin-left: 17px;
         margin-right: 17px;
@@ -40,10 +42,10 @@ const separatorTopbar = `
     }
 `;
 
-const ToolbarWrapper = styled.div`
+const ToolbarWrapper = styled.div<{ themeColors: BasicTheme }>`
     align-items: center;
     background: #ffffff;
-    border-bottom: 1px solid ${themeColors.borderColor};
+    border-bottom: 1px solid ${props => props.themeColors.borderColor};
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
@@ -107,6 +109,7 @@ const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
     const isMmLoading = props.web3State === Web3State.Loading;
+    const { themeColorsConfig } = props;
 
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -119,19 +122,34 @@ const Toolbar = (props: Props) => {
     };
 
     return (
-        <ToolbarWrapper>
+        <ToolbarWrapper themeColors={themeColorsConfig}>
             <ToolbarStart>
                 <LogoHeader onClick={handleLogoClick} />
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
             </ToolbarStart>
             {isMmLocked ? (
-                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
+                <ErrorCard
+                    fontSize={FontSize.Large}
+                    text={errorsWallet.mmLocked}
+                    icon={ErrorIcons.Lock}
+                    themeColors={themeColorsConfig}
+                />
             ) : null}
             {isMmNotInstalled ? (
-                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
+                <ErrorCard
+                    fontSize={FontSize.Large}
+                    text={errorsWallet.mmNotInstalled}
+                    icon={ErrorIcons.Metamask}
+                    themeColors={themeColorsConfig}
+                />
             ) : null}
             {isMmLoading ? (
-                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
+                <ErrorCard
+                    fontSize={FontSize.Large}
+                    text={errorsWallet.mmLoading}
+                    icon={ErrorIcons.Metamask}
+                    themeColors={themeColorsConfig}
+                />
             ) : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? (
                 <ToolbarEnd>
@@ -149,6 +167,7 @@ const Toolbar = (props: Props) => {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
+        themeColorsConfig: getThemeColors(state),
     };
 };
 
