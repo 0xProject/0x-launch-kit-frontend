@@ -93,7 +93,7 @@ export class BigNumberInput extends React.Component<Props, State> {
         const { decimals, onChange, min, max } = this.props;
         const newValueStr = e.currentTarget.value;
 
-        const pattern = new RegExp(`^\\d*(\\.\\d{0,${decimals}})?$`);
+        const pattern = new RegExp(`^\\d*(\\.\\d{0,18})?$`);
 
         if (pattern.test(newValueStr)) {
             const newValue = toBaseUnitAmount(new BigNumber(newValueStr || '0'), decimals);
