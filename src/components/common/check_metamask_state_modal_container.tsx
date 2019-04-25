@@ -24,7 +24,7 @@ interface DispatchProps {
 }
 
 interface OwnProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -57,7 +57,7 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
                 connectWallet={onConnectWallet}
             />
         ) : (
-            children
+            children || null
         );
     };
 
