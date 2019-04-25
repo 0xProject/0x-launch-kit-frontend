@@ -6,6 +6,7 @@ import styled from 'styled-components';
 interface Props {
     autofocus?: boolean;
     className?: string;
+    // Send -1 in decimals to avoid throw an exception using toBaseUnitAmount, getPriceValue function manage problem
     decimals: number;
     placeholder?: string;
     max?: BigNumber;
@@ -42,20 +43,33 @@ export class BigNumberInput extends React.Component<Props, State> {
     private _textInput: any;
 
     public static getDerivedStateFromProps = (props: Props, state: State) => {
-        const { decimals, value } = props;
+        const { value } = props;
         const { currentValueStr } = state;
+
+        const newValue = BigNumberInput.getPriceValue(props, currentValueStr);
 
         if (!value) {
             return {
                 currentValueStr: '',
             };
-        } else if (value && !toBaseUnitAmount(new BigNumber(currentValueStr || '0'), decimals).eq(value)) {
+        } else if (value && !newValue.eq(value)) {
             return {
-                currentValueStr: toUnitAmount(value, decimals).toFixed(2),
+                currentValueStr: newValue,
             };
         } else {
             return null;
         }
+    };
+
+    public static getPriceValue = (props: Props, currentValue: string): BigNumber => {
+        const { decimals } = props;
+
+        const currentValueBG = new BigNumber(currentValue || '0');
+
+        if (decimals > 0) {
+            return toBaseUnitAmount(currentValueBG, decimals);
+        }
+        return currentValueBG;
     };
 
     public componentDidMount = () => {
@@ -90,13 +104,14 @@ export class BigNumberInput extends React.Component<Props, State> {
     };
 
     private readonly _updateValue: React.ReactEventHandler<HTMLInputElement> = e => {
-        const { decimals, onChange, min, max } = this.props;
+        const { onChange, min, max } = this.props;
         const newValueStr = e.currentTarget.value;
 
         const pattern = new RegExp(`^\\d*(\\.\\d{0,18})?$`);
 
         if (pattern.test(newValueStr)) {
-            const newValue = toBaseUnitAmount(new BigNumber(newValueStr || '0'), decimals);
+            const newValue = BigNumberInput.getPriceValue(this.props, newValueStr);
+
             const invalidValue = (min && newValue.lessThan(min)) || (max && newValue.greaterThan(max));
             if (invalidValue) {
                 return;
