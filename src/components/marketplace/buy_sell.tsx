@@ -218,7 +218,6 @@ class BuySell extends React.Component<Props, State> {
                             </LabelContainer>
                             <FieldContainer>
                                 <BigInputNumberStyled
-                                    decimals={-1}
                                     min={new BigNumber(0)}
                                     onChange={this.updatePrice}
                                     value={price}
