@@ -26,12 +26,19 @@ const getButtonColors = (themeColors: BasicTheme): ButtonColors => {
     };
 };
 
-const StyledButton = styled.button<StyledComponentThemeProps>`
-    background-color: ${props =>
-        props.theme.length
-            ? getButtonColors(props.themeColors)[props.theme]
-            : getButtonColors(props.themeColors).primary};
-    border-radius: 4px;
+interface ButtonColors {
+    error: string;
+    primary: string;
+    secondary: string;
+    tertiary: string;
+}
+
+interface StyledButtonProps {
+    buttonColors: ButtonColors;
+}
+
+const StyledButton = styled.button<StyledButtonProps>`
+    background-color: ${props => (props.theme ? props.buttonColors[props.theme] : props.buttonColors.primary)};
     border: 0;
     color: #fff;
     cursor: pointer;
@@ -51,9 +58,10 @@ const StyledButton = styled.button<StyledComponentThemeProps>`
 
 export const Button: React.FC<Props> = props => {
     const { children, themeColors, ...restProps } = props;
+    const buttonColors = getButtonColors(themeColors);
 
     return (
-        <StyledButton themeColors={themeColors} {...restProps}>
+        <StyledButton buttonColors={buttonColors} {...restProps}>
             {children}
         </StyledButton>
     );

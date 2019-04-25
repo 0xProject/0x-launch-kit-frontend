@@ -20,7 +20,6 @@ import {
     StepKind,
     StepToggleTokenLock,
     StepWrapEth,
-    StoreState,
     Token,
     TokenBalance,
 } from '../../util/types';
@@ -53,8 +52,6 @@ export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STE
 export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
 
 export const stepsModalReset = createAction('STEPSMODAL_RESET');
-
-export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
 
 export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
     return (themeColor: BasicTheme) => resolve(themeColor);

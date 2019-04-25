@@ -39,6 +39,17 @@ interface State {
 type Props = OwnProps & StateProps;
 
 const sliderThumbDimensions = '16px';
+// TODO - Replace this with the object bellow
+const sliderTrackProps = `
+    background: #999;
+    background: linear-gradient(#002979, #002979) 0 /
+        var(--sx) 100% no-repeat #999;
+    border-radius: 2.5px;
+    border: none;
+    box-sizing: border-box;
+    height: 5px;
+`;
+/*
 const sliderTrackProps = styled.div<StyledComponentThemeProps>`
     background: #999;
     background: linear-gradient(${props => props.themeColors.darkBlue};, ${props => props.themeColors.darkBlue};) 0 /
@@ -48,6 +59,8 @@ const sliderTrackProps = styled.div<StyledComponentThemeProps>`
     box-sizing: border-box;
     height: 5px;
 `;
+
+ */
 const sliderThumbProps = `
     background: #fff;
     border-radius: 50%;
@@ -209,8 +222,7 @@ const SetMinEthButton = styled.a<StyledComponentThemeProps>`
 
 const InputEth = styled<any>(BigNumberInput)<EthBoxProps>`
     border-color: transparent;
-    color: ${props =>
-        props.ethBoxProps.boxType === ETHBoxType.Eth ? props.themeColors.darkerGray : props.themeColors.darkBlue};
+    color: ${props => (props.boxType === ETHBoxType.Eth ? props.themeColors.darkerGray : props.themeColors.darkBlue)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -245,7 +257,6 @@ class WethModal extends React.Component<Props, State> {
         const totalEthStr = tokenAmountInUnits(totalEth, 18);
         const isInsufficientEth = selectedEth.lessThan(minEth);
         const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
-
         return (
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
@@ -263,6 +274,7 @@ class WethModal extends React.Component<Props, State> {
                                     min={new BigNumber(0)}
                                     onChange={this._updateEth}
                                     value={selectedEth}
+                                    themeColors={themeColors}
                                 />
                             </form>
                         ) : (
@@ -288,6 +300,7 @@ class WethModal extends React.Component<Props, State> {
                                     onChange={this._updateWeth}
                                     value={selectedWeth}
                                     boxType={ETHBoxType.Weth}
+                                    themeColors={themeColors}
                                 />
                             </form>
                         ) : (
@@ -327,8 +340,7 @@ class WethModal extends React.Component<Props, State> {
                         0.5 ETH Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>
-                // @ts-ignore
-                <ButtonStyled onClick={this.submit} disabled={isDisabled}>
+                <ButtonStyled onClick={this.submit} disabled={isDisabled} themeColors={themeColors}>
                     Update Balance{isSubmitting && '...'}
                 </ButtonStyled>
             </Modal>
