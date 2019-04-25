@@ -77,7 +77,7 @@ class SignOrderStep extends React.Component<Props, State> {
                 {
                     errorMsg: error.message,
                 },
-                onError(error),
+                () => onError(error),
             );
         }
     };
