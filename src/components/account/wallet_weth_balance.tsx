@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { DECIMALS_EIGHTEEN, DECIMALS_TWO } from '../../common/constants';
 import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
 import { themeColors, themeDimensions, themeModalStyle } from '../../util/theme';
@@ -146,9 +147,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.add(wethBalance);
 
-        const formattedEth = toUnitAmount(ethBalance, 18).toFixed(2);
-        const formattedWeth = toUnitAmount(wethBalance, 18).toFixed(2);
-        const formattedTotalEth = toUnitAmount(totalEth, 18).toFixed(2);
+        const formattedEth = toUnitAmount(ethBalance, DECIMALS_EIGHTEEN).toFixed(DECIMALS_TWO);
+        const formattedWeth = toUnitAmount(wethBalance, DECIMALS_EIGHTEEN).toFixed(DECIMALS_TWO);
+        const formattedTotalEth = toUnitAmount(totalEth, DECIMALS_EIGHTEEN).toFixed(DECIMALS_TWO);
 
         let content: React.ReactNode;
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { MAKER_FEE } from '../../common/constants';
+import { DECIMALS_TWO, MAKER_FEE } from '../../common/constants';
 import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
 import { getKnownTokens } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
@@ -176,7 +176,9 @@ class OrderDetails extends React.Component<Props, State> {
         }
         const { feeInZrx } = this.state;
         const zrxDecimals = getKnownTokens(networkId).getTokenBySymbol(TokenSymbol.Zrx).decimals;
-        return `${toUnitAmount(feeInZrx, zrxDecimals).toFixed(2)} ${tokenSymbolToDisplayString(TokenSymbol.Zrx)}`;
+        return `${toUnitAmount(feeInZrx, zrxDecimals).toFixed(DECIMALS_TWO)} ${tokenSymbolToDisplayString(
+            TokenSymbol.Zrx,
+        )}`;
     };
 
     private readonly _getCostStringForRender = () => {
@@ -192,7 +194,9 @@ class OrderDetails extends React.Component<Props, State> {
         const { quote } = this.props.currencyPair;
         const quoteTokenDecimals = getKnownTokens(networkId).getTokenBySymbol(quote).decimals;
         const { quoteTokenAmount } = this.state;
-        return `${toUnitAmount(quoteTokenAmount, quoteTokenDecimals).toFixed(2)} ${tokenSymbolToDisplayString(quote)}`;
+        return `${toUnitAmount(quoteTokenAmount, quoteTokenDecimals).toFixed(
+            DECIMALS_TWO,
+        )} ${tokenSymbolToDisplayString(quote)}`;
     };
 }
 

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
+import { DECIMALS_TWO } from '../../common/constants';
 import { getNetworkId } from '../../store/selectors';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
@@ -169,7 +170,7 @@ class NotificationItem extends React.Component<Props, State> {
             }
         }
 
-        const amount = toUnitAmount(item.amount, item.token.decimals).toFixed(2);
+        const amount = toUnitAmount(item.amount, item.token.decimals).toFixed(DECIMALS_TWO);
         return `${operation} ${amount} ${item.token.symbol.toUpperCase()}`;
     };
 

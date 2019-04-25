@@ -3,11 +3,13 @@ import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import styled from 'styled-components';
 
+import { DECIMALS_TWO } from '../../common/constants';
+
 interface Props {
     autofocus?: boolean;
     className?: string;
-    // Send -1 in decimals to avoid throw an exception using toBaseUnitAmount, getPriceValue function manage problem
-    decimals: number;
+    // Make optional decimals to avoid throw an exception using toBaseUnitAmount, getPriceValue function manage problem
+    decimals?: number;
     placeholder?: string;
     max?: BigNumber;
     min?: BigNumber;
@@ -37,7 +39,10 @@ export class BigNumberInput extends React.Component<Props, State> {
     };
 
     public readonly state = {
-        currentValueStr: this.props.value ? toUnitAmount(this.props.value, this.props.decimals).toFixed(2) : '',
+        currentValueStr:
+            this.props.value && this.props.decimals
+                ? toUnitAmount(this.props.value, this.props.decimals).toFixed(DECIMALS_TWO)
+                : '',
     };
 
     private _textInput: any;
@@ -64,12 +69,12 @@ export class BigNumberInput extends React.Component<Props, State> {
     public static getPriceValue = (props: Props, currentValue: string): BigNumber => {
         const { decimals } = props;
 
-        const currentValueBG = new BigNumber(currentValue || '0');
+        const currentValueToBigNumber = new BigNumber(currentValue || '0');
 
-        if (decimals > 0) {
-            return toBaseUnitAmount(currentValueBG, decimals);
+        if (decimals && decimals > 0) {
+            return toBaseUnitAmount(currentValueToBigNumber, decimals);
         }
-        return currentValueBG;
+        return currentValueToBigNumber;
     };
 
     public componentDidMount = () => {
@@ -84,9 +89,9 @@ export class BigNumberInput extends React.Component<Props, State> {
         const { currentValueStr } = this.state;
         const { decimals, step, min, max, className, placeholder } = this.props;
 
-        const stepStr = step && toUnitAmount(step, decimals).toFixed(2);
-        const minStr = min && toUnitAmount(min, decimals).toFixed(2);
-        const maxStr = max && toUnitAmount(max, decimals).toFixed(2);
+        const stepStr = step && decimals && toUnitAmount(step, decimals).toFixed(DECIMALS_TWO);
+        const minStr = min && decimals && toUnitAmount(min, decimals).toFixed(DECIMALS_TWO);
+        const maxStr = max && decimals && toUnitAmount(max, decimals).toFixed(DECIMALS_TWO);
 
         return (
             <Input

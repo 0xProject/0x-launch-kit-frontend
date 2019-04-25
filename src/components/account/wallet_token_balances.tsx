@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { DECIMALS_TWO } from '../../common/constants';
 import { startToggleTokenLockSteps } from '../../store/actions';
 import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
@@ -115,7 +116,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
         const wethToken = wethTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
-        const formattedTotalEthBalance = toUnitAmount(totalEth, wethToken.decimals).toFixed(2);
+        const formattedTotalEthBalance = toUnitAmount(totalEth, wethToken.decimals).toFixed(DECIMALS_TWO);
         const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
 
         const totalEthRow = (
@@ -140,7 +141,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const tokensRows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
-            const formattedBalance = toUnitAmount(balance, token.decimals).toFixed(2);
+            const formattedBalance = toUnitAmount(balance, token.decimals).toFixed(DECIMALS_TWO);
             const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
 
             return (

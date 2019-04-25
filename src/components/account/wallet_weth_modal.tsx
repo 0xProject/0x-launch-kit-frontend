@@ -4,6 +4,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
+import { DECIMALS_EIGHTEEN, DECIMALS_TWO } from '../../common/constants';
 import { themeColors } from '../../util/theme';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
@@ -217,7 +218,7 @@ const InputEth = styled<any>(BigNumberInput)`
     }
 `;
 
-const minEth = toBaseUnitAmount(new BigNumber('0.5'), 18);
+const minEth = toBaseUnitAmount(new BigNumber('0.5'), DECIMALS_EIGHTEEN);
 const minSlidervalue = '0.00';
 
 class WethModal extends React.Component<Props, State> {
@@ -231,10 +232,10 @@ class WethModal extends React.Component<Props, State> {
         const { editing, selectedWeth } = this.state;
         const selectedEth = totalEth.sub(this.state.selectedWeth);
 
-        const initialWethStr = toUnitAmount(this.props.wethBalance, 18).toFixed(2);
-        const selectedWethStr = toUnitAmount(this.state.selectedWeth, 18).toFixed(2);
-        const selectedEthStr = toUnitAmount(selectedEth.abs(), 18).toFixed(2);
-        const totalEthStr = toUnitAmount(totalEth, 18).toFixed(2);
+        const initialWethStr = toUnitAmount(this.props.wethBalance, DECIMALS_EIGHTEEN).toFixed(DECIMALS_TWO);
+        const selectedWethStr = toUnitAmount(this.state.selectedWeth, DECIMALS_EIGHTEEN).toFixed(DECIMALS_TWO);
+        const selectedEthStr = toUnitAmount(selectedEth.abs(), DECIMALS_EIGHTEEN).toFixed(DECIMALS_TWO);
+        const totalEthStr = toUnitAmount(totalEth, DECIMALS_EIGHTEEN).toFixed(DECIMALS_TWO);
 
         const isInsufficientEth = selectedEth.lessThan(minEth);
         const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
@@ -344,7 +345,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     private readonly _updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
-        const newSelectedWeth = toBaseUnitAmount(new BigNumber(e.currentTarget.value), 18);
+        const newSelectedWeth = toBaseUnitAmount(new BigNumber(e.currentTarget.value), DECIMALS_EIGHTEEN);
 
         this.setState({
             selectedWeth: newSelectedWeth,

@@ -6,7 +6,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
-import { METAMASK_EXTENSION_URL } from '../../common/constants';
+import { DECIMALS_TWO, METAMASK_EXTENSION_URL } from '../../common/constants';
 import { initWallet } from '../../store/actions';
 import {
     getBaseToken,
@@ -235,9 +235,9 @@ class WalletBalance extends React.Component<Props, State> {
             const quoteBalanceString = toUnitAmount(
                 quoteTokenBalance.balance,
                 quoteTokenBalance.token.decimals,
-            ).toFixed(2);
+            ).toFixed(DECIMALS_TWO);
             const baseBalanceString = toUnitAmount(baseTokenBalance.balance, quoteTokenBalance.token.decimals).toFixed(
-                2,
+                DECIMALS_TWO,
             );
             const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled
