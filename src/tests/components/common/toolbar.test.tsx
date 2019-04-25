@@ -7,9 +7,7 @@ import { WhiteTheme } from '../../../themes/WhiteTheme';
 describe('Toolbar', () => {
     it('Toolbar to match snapshot', () => {
         // given
-        const toolbar = (
-            <Toolbar onGoToHome={jest.fn()} onGoToWallet={jest.fn()} themeColorsConfig={new WhiteTheme()} />
-        );
+        const toolbar = <Toolbar onGoToHome={jest.fn()} onGoToWallet={jest.fn()} themeColors={new WhiteTheme()} />;
 
         // when
         const wrapper = shallow(toolbar);

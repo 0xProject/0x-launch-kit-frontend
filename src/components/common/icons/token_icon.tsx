@@ -30,7 +30,7 @@ import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
-import { BasicTheme } from '../../../themes/BasicTheme';
+import { StyledComponentThemeProps } from '../../../util/types';
 
 const TokenIcons = {
     AeTokenIcon,
@@ -82,16 +82,11 @@ const Label = styled.label`
     margin: 0;
 `;
 
-interface StateProps {
-    themeColors: BasicTheme;
-}
-interface OwnProps {
+interface Props extends StyledComponentThemeProps {
     symbol: string;
     primaryColor?: string;
     isInline?: boolean;
 }
-
-type Props = OwnProps & StateProps;
 
 export const TokenIcon = (props: Props) => {
     const { symbol, primaryColor, themeColors, ...restProps } = props;

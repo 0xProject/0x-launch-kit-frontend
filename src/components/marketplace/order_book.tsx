@@ -36,7 +36,6 @@ interface StateProps extends StyledComponentThemeProps {
     baseToken: Token | null;
     quoteToken: Token | null;
     userOrders: UIOrder[];
-    themeColors: BasicTheme;
     web3State?: Web3State;
 }
 

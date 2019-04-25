@@ -12,11 +12,9 @@ import {
     getWeb3State,
     getWethBalance,
 } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
-import { BasicThemeModal } from '../../themes/modal/BasicThemeModal';
 import { themeDimensions } from '../../themes/ThemeCommons';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, StyledComponentThemeProps, Web3State } from '../../util/types';
+import { StoreState, StyledComponentThemeModalProps, StyledComponentThemeProps, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { CardLoading } from '../common/loading';
@@ -24,13 +22,11 @@ import { IconType, Tooltip } from '../common/tooltip';
 
 import { WethModal } from './wallet_weth_modal';
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps, StyledComponentThemeModalProps {
     ethBalance: BigNumber;
     wethBalance: BigNumber;
     web3State: Web3State;
     ethInUsd: BigNumber | null;
-    themeColorsConfig: BasicTheme;
-    themeModalColorsConfig: BasicThemeModal;
 }
 interface DispatchProps {
     onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
@@ -151,7 +147,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd, themeColorsConfig, themeModalColorsConfig } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd, themeColors, themeModalColors } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.add(wethBalance);
 
@@ -166,15 +162,15 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         } else if (ethBalance && wethBalance) {
             content = (
                 <>
-                    <Row themeColors={themeColorsConfig}>
+                    <Row themeColors={themeColors}>
                         <Label>ETH</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
-                    <Button onClick={this.openModal} themeColors={themeColorsConfig}>
+                    <Button onClick={this.openModal} themeColors={themeColors}>
                         <ButtonLabel>Convert</ButtonLabel>
                         <ArrowUpDownIcon />
                     </Button>
-                    <Row themeColors={themeColorsConfig}>
+                    <Row themeColors={themeColors}>
                         <LabelWrapper>
                             <Label>wETH</Label>{' '}
                             <Tooltip
@@ -184,7 +180,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         </LabelWrapper>
                         <Value>{formattedWeth}</Value>
                     </Row>
-                    <Row themeColors={themeColorsConfig}>
+                    <Row themeColors={themeColors}>
                         <Label>Total Value</Label>
                         <Value>{formattedTotalEth} ETH</Value>
                     </Row>
@@ -193,11 +189,11 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         isSubmitting={isSubmitting}
                         onRequestClose={this.closeModal}
                         onSubmit={this.handleSubmit}
-                        style={themeModalColorsConfig}
+                        style={themeModalColors}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
                         ethInUsd={ethInUsd}
-                        themeColorsConfig={themeColorsConfig}
+                        themeColors={themeColors}
                     />
                 </>
             );
@@ -205,7 +201,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Card title="ETH / wETH Balances" themeColors={themeColorsConfig}>
+                <Card title="ETH / wETH Balances" themeColors={themeColors}>
                     <Content>{content}</Content>
                 </Card>
                 <Note>
@@ -249,8 +245,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
         wethBalance: getWethBalance(state),
         web3State: getWeb3State(state),
         ethInUsd: getEthInUsd(state),
-        themeColorsConfig: getThemeColors(state),
-        themeModalColorsConfig: getThemeModalsColors(state),
+        themeColors: getThemeColors(state),
+        themeModalColors: getThemeModalsColors(state),
     };
 };
 const mapDispatchToProps = {

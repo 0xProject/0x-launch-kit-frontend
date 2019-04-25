@@ -5,9 +5,8 @@ import styled from 'styled-components';
 
 import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install_metamask.svg';
 import { getThemeColors, getThemeModalsColors } from '../../store/selectors';
-import { BasicThemeModal } from '../../themes/modal/BasicThemeModal';
 import { errorsWallet } from '../../util/error_messages';
-import { ModalDisplay, StoreState, StyledComponentThemeProps } from '../../util/types';
+import { ModalDisplay, StoreState, StyledComponentThemeModalProps, StyledComponentThemeProps } from '../../util/types';
 
 import { Button } from './button';
 import { CloseModalButton } from './icons/close_modal_button';
@@ -19,9 +18,7 @@ interface OwnProps extends HTMLAttributes<HTMLDivElement> {
     connectWallet: () => any;
 }
 
-interface StateProps extends StyledComponentThemeProps {
-    themeModalColorsConfig: BasicThemeModal;
-}
+interface StateProps extends StyledComponentThemeProps, StyledComponentThemeModalProps {}
 
 type Props = OwnProps & StateProps;
 
@@ -85,7 +82,7 @@ const LinkButton = styled.a`
 `;
 
 const MetamaskErrorModal: React.FC<Props> = props => {
-    const { isOpen, closeModal, noMetamaskType, connectWallet, themeModalColorsConfig, themeColors } = props;
+    const { isOpen, closeModal, noMetamaskType, connectWallet, themeModalColors, themeColors } = props;
     const metamaskNotInstalledContent = (
         <>
             <ModalTitle>Install Metamask</ModalTitle>
@@ -128,7 +125,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
     );
 
     return (
-        <Modal isOpen={isOpen} style={themeModalColorsConfig}>
+        <Modal isOpen={isOpen} style={themeModalColors}>
             <CloseModalButton onClick={closeModal} />
             <ModalContent>
                 {noMetamaskType === ModalDisplay.EnablePermissions
@@ -141,7 +138,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        themeModalColorsConfig: getThemeModalsColors(state),
+        themeModalColors: getThemeModalsColors(state),
         themeColors: getThemeColors(state),
     };
 };

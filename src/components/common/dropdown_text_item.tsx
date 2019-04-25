@@ -3,13 +3,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getThemeColors } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
 import { themeDimensions } from '../../themes/ThemeCommons';
 import { StoreState, StyledComponentThemeProps } from '../../util/types';
 
-interface StateProps {
-    themeColorsConfig: BasicTheme;
-}
+interface StateProps extends StyledComponentThemeProps {}
 interface OwnProps {
     active?: boolean;
     onClick?: any;
@@ -50,10 +47,10 @@ const DropdownTextItemWrapper = styled.div<StyledIsActive>`
 `;
 
 const DropdownTextItem: React.FC<Props> = props => {
-    const { text, onClick, themeColorsConfig, ...restProps } = props;
+    const { text, onClick, themeColors, ...restProps } = props;
 
     return (
-        <DropdownTextItemWrapper onClick={onClick} themeColors={themeColorsConfig} {...restProps}>
+        <DropdownTextItemWrapper onClick={onClick} themeColors={themeColors} {...restProps}>
             {text}
         </DropdownTextItemWrapper>
     );
@@ -61,7 +58,7 @@ const DropdownTextItem: React.FC<Props> = props => {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 

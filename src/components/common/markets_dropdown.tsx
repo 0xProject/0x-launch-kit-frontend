@@ -72,7 +72,7 @@ const MarketsDropdownBody = styled(CardBase)`
     width: 401px;
 `;
 
-const MarketsFilters = styled.div<{ themeColors: BasicTheme }>`
+const MarketsFilters = styled.div<StyledComponentThemeProps>`
     align-items: center;
     border-bottom: 1px solid ${props => props.themeColors.borderColor};
     display: flex;
@@ -123,7 +123,7 @@ const SearchWrapper = styled.div`
     width: ${searchFieldWidth};
 `;
 
-const SearchField = styled.input<{ themeColors: BasicTheme }>`
+const SearchField = styled.input<StyledComponentThemeProps>`
     background: #eaeaea;
     border-radius: ${themeDimensions.borderRadius};
     border: 1px solid ${props => props.themeColors.borderColor};
@@ -290,7 +290,7 @@ class MarketsDropdown extends React.Component<Props, State> {
         this._closeDropdown = node.closeDropdown;
     };
 
-    private readonly _getTokensFilterTabs = (themeColorsConfig: BasicTheme) => {
+    private readonly _getTokensFilterTabs = (themeColors: BasicTheme) => {
         return (
             <TokenFiltersTabs>
                 {marketFilters.map((filter: Filter, index) => {
@@ -299,7 +299,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                             active={filter === this.state.selectedFilter}
                             key={index}
                             onClick={this._setTokensFilterTab.bind(this, filter)}
-                            themeColors={themeColorsConfig}
+                            themeColors={themeColors}
                         >
                             {filter.text}
                         </TokenFiltersTab>

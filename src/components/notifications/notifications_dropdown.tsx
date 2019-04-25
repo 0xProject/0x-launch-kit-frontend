@@ -9,7 +9,6 @@ import {
     getNotifications,
     getThemeColors,
 } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
 import { themeDimensions, themeFeatures } from '../../themes/ThemeCommons';
 import { Notification, StoreState, StyledComponentThemeProps } from '../../util/types';
 import { CardBase } from '../common/card_base';
@@ -56,7 +55,7 @@ const NotificationsList = styled.div`
     overflow: auto;
 `;
 
-const NotificationDropdownTitle = styled.h1<{ themeColors: BasicTheme }>`
+const NotificationDropdownTitle = styled.h1<StyledComponentThemeProps>`
     border-bottom: 1px solid ${props => props.themeColors.borderColor};
     color: #000;
     font-size: 16px;

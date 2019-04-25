@@ -49,7 +49,7 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[]}
-                themeColorsConfig={new WhiteTheme()}
+                themeColors={new WhiteTheme()}
             />,
         );
 
@@ -129,7 +129,7 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
-                themeColorsConfig={new WhiteTheme()}
+                themeColors={new WhiteTheme()}
             />,
         );
 
@@ -209,7 +209,7 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
-                themeColorsConfig={new WhiteTheme()}
+                themeColors={new WhiteTheme()}
             />,
         );
 
@@ -287,7 +287,7 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
-                themeColorsConfig={new WhiteTheme()}
+                themeColors={new WhiteTheme()}
             />,
         );
 

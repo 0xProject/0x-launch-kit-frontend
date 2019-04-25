@@ -3,7 +3,6 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-import { BasicTheme } from '../../themes/BasicTheme';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { StyledComponentThemeProps } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -22,9 +21,7 @@ enum Editing {
     Weth,
 }
 
-interface StateProps {
-    themeColorsConfig: BasicTheme;
-}
+interface StateProps extends StyledComponentThemeProps {}
 
 interface OwnProps extends React.ComponentProps<typeof Modal> {
     isSubmitting: boolean;
@@ -239,7 +236,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, themeColorsConfig, ...restProps } = this.props;
+        const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, themeColors, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
         const selectedEth = totalEth.sub(this.state.selectedWeth);
         const initialWethStr = tokenAmountInUnits(this.props.wethBalance, 18);
@@ -253,9 +250,9 @@ class WethModal extends React.Component<Props, State> {
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
                 <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
-                {ethInUsd ? <ETHPrice themeColors={themeColorsConfig}>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
+                {ethInUsd ? <ETHPrice themeColors={themeColors}>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
                 <EthBoxes>
-                    <EthBox boxType={ETHBoxType.Eth} themeColors={themeColorsConfig}>
+                    <EthBox boxType={ETHBoxType.Eth} themeColors={themeColors}>
                         {editing === Editing.Eth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
@@ -273,14 +270,14 @@ class WethModal extends React.Component<Props, State> {
                                 boxType={ETHBoxType.Eth}
                                 isZero={selectedEthStr === minSlidervalue}
                                 onClick={this._enableEditEth}
-                                themeColors={themeColorsConfig}
+                                themeColors={themeColors}
                             >
                                 {selectedEthStr}
                             </EthBoxValue>
                         )}
-                        <EthBoxUnit themeColors={themeColorsConfig}>ETH</EthBoxUnit>
+                        <EthBoxUnit themeColors={themeColors}>ETH</EthBoxUnit>
                     </EthBox>
-                    <EthBox boxType={ETHBoxType.Weth} themeColors={themeColorsConfig}>
+                    <EthBox boxType={ETHBoxType.Weth} themeColors={themeColors}>
                         {editing === Editing.Weth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
@@ -298,12 +295,12 @@ class WethModal extends React.Component<Props, State> {
                                 boxType={ETHBoxType.Weth}
                                 isZero={selectedWethStr === minSlidervalue}
                                 onClick={this._enableEditWeth}
-                                themeColors={themeColorsConfig}
+                                themeColors={themeColors}
                             >
                                 {selectedWethStr}
                             </EthBoxValue>
                         )}
-                        <EthBoxUnit themeColors={themeColorsConfig}>wETH</EthBoxUnit>
+                        <EthBoxUnit themeColors={themeColors}>wETH</EthBoxUnit>
                         <TooltipStyled>
                             <Tooltip description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
                         </TooltipStyled>
@@ -324,9 +321,9 @@ class WethModal extends React.Component<Props, State> {
                     type="range"
                     value={selectedWethStr}
                 />
-                <SetMinEthWrapper hideWarning={!isInsufficientEth} themeColors={themeColorsConfig}>
+                <SetMinEthWrapper hideWarning={!isInsufficientEth} themeColors={themeColors}>
                     ETH required for fees.&nbsp;
-                    <SetMinEthButton href="" onClick={this._setMinEth} themeColors={themeColorsConfig}>
+                    <SetMinEthButton href="" onClick={this._setMinEth} themeColors={themeColors}>
                         0.5 ETH Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>

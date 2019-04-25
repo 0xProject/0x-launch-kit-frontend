@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
 import { getCurrencyPair, getThemeColors, getWeb3State } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
 import { themeDimensions } from '../../themes/ThemeCommons';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
 import {
@@ -60,7 +59,12 @@ const TabsContainer = styled.div`
     justify-content: space-between;
 `;
 
-const TabButton = styled.div<{ isSelected: boolean; side: OrderSide; themeColors: BasicTheme }>`
+interface TabButtonProps extends StyledComponentThemeProps {
+    isSelected: boolean;
+    side: OrderSide;
+}
+
+const TabButton = styled.div<TabButtonProps>`
     align-items: center;
     background-color: ${props => (props.isSelected ? 'transparent' : '#f9f9f9')};
     border-bottom-color: ${props => (props.isSelected ? 'transparent' : props.themeColors.borderColor)};
@@ -115,8 +119,9 @@ const FieldContainer = styled.div`
     position: relative;
 `;
 
-const fieldStyle = styled.div<{ themeColors: BasicTheme }>`
-    border: 1px solid ${props => props.themeColors.borderColor};
+// TODO change this with the bellow commented field
+const fieldStyle = `
+    border: 1px solid '#DEDEDE';
     border-radius: ${themeDimensions.borderRadius};
     color: #000;
     font-feature-settings: 'tnum' 1;
@@ -128,6 +133,21 @@ const fieldStyle = styled.div<{ themeColors: BasicTheme }>`
     width: 100%;
     z-index: 1;
 `;
+/*
+const fieldStyle = styled.div<StyledComponentThemeProps>`
+    border: 1px solid '#DEDEDE';
+    border-radius: ${themeDimensions.borderRadius};
+    color: #000;
+    font-feature-settings: 'tnum' 1;
+    font-size: 16px;
+    height: 100%;
+    padding-left: 14px;
+    padding-right: 60px;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+`;
+ */
 
 const BigInputNumberStyled = styled<any>(BigNumberInput)`
     ${fieldStyle}
@@ -219,6 +239,7 @@ class BuySell extends React.Component<Props, State> {
                             onChange={this.updateMakerAmount}
                             value={makerAmount}
                             placeholder={'0.00'}
+                            themeColors={themeColors}
                         />
                         <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
                     </FieldContainer>
@@ -234,6 +255,7 @@ class BuySell extends React.Component<Props, State> {
                                     onChange={this.updatePrice}
                                     value={price}
                                     placeholder={'0.00'}
+                                    themeColors={themeColors}
                                 />
                                 <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
                             </FieldContainer>

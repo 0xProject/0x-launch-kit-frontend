@@ -185,11 +185,11 @@ const getWalletName = () => {
     return 'MetaMask';
 };
 
-const getWallet = (web3State: Web3State, themeColorsConfig: BasicTheme) => {
+const getWallet = (web3State: Web3State, themeColors: BasicTheme) => {
     return (
         <WalletStatusContainer>
-            <WalletStatusBadge web3State={web3State} themeColors={themeColorsConfig} />
-            <WalletStatusTitle themeColors={themeColorsConfig}>{getWalletName()}</WalletStatusTitle>
+            <WalletStatusBadge web3State={web3State} themeColors={themeColors} />
+            <WalletStatusTitle themeColors={themeColors}>{getWalletName()}</WalletStatusTitle>
         </WalletStatusContainer>
     );
 };

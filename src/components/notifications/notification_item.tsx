@@ -4,7 +4,6 @@ import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
 import { getNetworkId, getThemeColors } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
 import { themeDimensions } from '../../themes/ThemeCommons';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
@@ -21,9 +20,8 @@ interface OwnProps {
     estimatedTxTimeMs: number;
 }
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps {
     networkId: number | null;
-    themeColorsConfig: BasicTheme;
 }
 
 type Props = StateProps & OwnProps;
@@ -55,7 +53,10 @@ const NotificationWrapperLimit = styled.div<StyledIsActive>`
     ${notificationWrapperMixin}
 `;
 
-const NotificationWrapperMarketOrCancel = styled.a<{ active: boolean; themeColors: BasicTheme }>`
+interface NotificationWrapperMarketOrCancelProps extends StyledComponentThemeProps {
+    active: boolean;
+}
+const NotificationWrapperMarketOrCancel = styled.a<NotificationWrapperMarketOrCancelProps>`
     ${notificationWrapperMixin}
     text-decoration: none;
 
@@ -78,7 +79,7 @@ const NotificationTitle = styled.h2`
     margin: 0 0 8px;
 `;
 
-const NotificationText = styled.p<{ themeColors: BasicTheme }>`
+const NotificationText = styled.p<StyledComponentThemeProps>`
     color: ${props => props.themeColors.textLight};
     font-size: 16px;
     font-weight: 400;
@@ -122,20 +123,20 @@ class NotificationItem extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { item, themeColorsConfig } = this.props;
+        const { item, themeColors } = this.props;
 
         const notificationBody = (
             <>
                 <NotificationContent>
                     <NotificationTitle>{this._getTitleFromItem(item)}</NotificationTitle>
-                    <NotificationText themeColors={themeColorsConfig}>{this._getTextFromItem(item)}</NotificationText>
+                    <NotificationText themeColors={themeColors}>{this._getTextFromItem(item)}</NotificationText>
                 </NotificationContent>
                 <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
             </>
         );
 
         return item.kind === NotificationKind.Limit ? (
-            <NotificationWrapperLimit active={this.state.pending} themeColors={themeColorsConfig}>
+            <NotificationWrapperLimit active={this.state.pending} themeColors={themeColors}>
                 {notificationBody}
             </NotificationWrapperLimit>
         ) : (
@@ -143,7 +144,7 @@ class NotificationItem extends React.Component<Props, State> {
                 active={this.state.pending}
                 href={getEtherscanUrlForNotificationTx(this.props.networkId, item)}
                 target="_blank"
-                themeColors={themeColorsConfig}
+                themeColors={themeColors}
             >
                 {notificationBody}
             </NotificationWrapperMarketOrCancel>
@@ -212,7 +213,7 @@ class NotificationItem extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         networkId: getNetworkId(state),
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 

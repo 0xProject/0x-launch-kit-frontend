@@ -4,10 +4,9 @@ import styled from 'styled-components';
 
 import { goToHome, goToWallet } from '../../store/actions';
 import { getThemeColors, getWeb3State } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
 import { themeBreakPoints, themeDimensions } from '../../themes/ThemeCommons';
 import { errorsWallet } from '../../util/error_messages';
-import { StoreState, Web3State } from '../../util/types';
+import { StoreState, StyledComponentThemeProps, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
@@ -15,9 +14,8 @@ import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps {
     web3State?: Web3State;
-    themeColorsConfig: BasicTheme;
 }
 
 interface DispatchProps {
@@ -27,7 +25,24 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-const separatorTopbar = styled.div<{ themeColors: BasicTheme }>`
+// TODO -- Replace with code bellow
+const separatorTopbar = `
+    &:after {
+        background-color: '#DEDEDE';
+        content: "";
+        height: 26px;
+        margin-left: 17px;
+        margin-right: 17px;
+        width: 1px;
+    }
+
+    &:last-child:after {
+        display: none;
+    }
+`;
+
+/*
+const separatorTopbar = styled.div<StyledComponentThemeProps>`
     &:after {
         background-color: ${props => props.themeColors.borderColor};
         content: '';
@@ -42,7 +57,8 @@ const separatorTopbar = styled.div<{ themeColors: BasicTheme }>`
     }
 `;
 
-const ToolbarWrapper = styled.div<{ themeColors: BasicTheme }>`
+ */
+const ToolbarWrapper = styled.div<StyledComponentThemeProps>`
     align-items: center;
     background: #ffffff;
     border-bottom: 1px solid ${props => props.themeColors.borderColor};
@@ -109,7 +125,7 @@ const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
     const isMmLoading = props.web3State === Web3State.Loading;
-    const { themeColorsConfig } = props;
+    const { themeColors } = props;
 
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -122,7 +138,7 @@ const Toolbar = (props: Props) => {
     };
 
     return (
-        <ToolbarWrapper themeColors={themeColorsConfig}>
+        <ToolbarWrapper themeColors={themeColors}>
             <ToolbarStart>
                 <LogoHeader onClick={handleLogoClick} />
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
@@ -132,7 +148,7 @@ const Toolbar = (props: Props) => {
                     fontSize={FontSize.Large}
                     text={errorsWallet.mmLocked}
                     icon={ErrorIcons.Lock}
-                    themeColors={themeColorsConfig}
+                    themeColors={themeColors}
                 />
             ) : null}
             {isMmNotInstalled ? (
@@ -140,7 +156,7 @@ const Toolbar = (props: Props) => {
                     fontSize={FontSize.Large}
                     text={errorsWallet.mmNotInstalled}
                     icon={ErrorIcons.Metamask}
-                    themeColors={themeColorsConfig}
+                    themeColors={themeColors}
                 />
             ) : null}
             {isMmLoading ? (
@@ -148,7 +164,7 @@ const Toolbar = (props: Props) => {
                     fontSize={FontSize.Large}
                     text={errorsWallet.mmLoading}
                     icon={ErrorIcons.Metamask}
-                    themeColors={themeColorsConfig}
+                    themeColors={themeColors}
                 />
             ) : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? (
@@ -156,7 +172,7 @@ const Toolbar = (props: Props) => {
                     <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
                         My Wallet
                     </MyWalletLink>
-                    <WalletDropdown themeColors={themeColorsConfig} />
+                    <WalletDropdown themeColors={themeColors} />
                     <NotificationsDropdownContainer />
                 </ToolbarEnd>
             ) : null}
@@ -167,7 +183,7 @@ const Toolbar = (props: Props) => {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getThemeColors } from '../../../store/selectors';
-import { BasicTheme } from '../../../themes/BasicTheme';
 import { getStepTitle, isLongStep, makeGetProgress } from '../../../util/steps';
 import { Step, StoreState, StyledComponentThemeProps } from '../../../util/types';
 
@@ -67,9 +66,7 @@ interface OwnProps {
     showPartialProgress?: boolean;
 }
 
-interface StateProps {
-    themeColorsConfig: BasicTheme;
-}
+interface StateProps extends StyledComponentThemeProps {}
 
 type Props = StateProps & OwnProps;
 
@@ -108,7 +105,7 @@ class BaseStepModal extends React.Component<Props, State> {
             title,
         } = this.props;
         const { loadingStarted, status } = this.state;
-        const { themeColorsConfig } = this.props;
+        const { themeColors } = this.props;
         const retry = () => this._retry();
         let content;
         let footer = this.props.showPartialProgress ? null : <span>&nbsp;</span>;
@@ -126,16 +123,14 @@ class BaseStepModal extends React.Component<Props, State> {
                         <ModalText>{doneCaption}</ModalText>
                     </StepStatusDone>
                 );
-                footer = (
-                    <ModalStatusTextLight themeColors={themeColorsConfig}>{doneFooterCaption}</ModalStatusTextLight>
-                );
+                footer = <ModalStatusTextLight themeColors={themeColors}>{doneFooterCaption}</ModalStatusTextLight>;
                 break;
             case StepStatus.Error:
                 content = (
                     <StepStatusError>
                         <ModalText>
                             {errorCaption}{' '}
-                            <ModalTextClickable onClick={retry} themeColors={themeColorsConfig}>
+                            <ModalTextClickable onClick={retry} themeColors={themeColors}>
                                 Click here to try again
                             </ModalTextClickable>
                         </ModalText>
@@ -148,9 +143,7 @@ class BaseStepModal extends React.Component<Props, State> {
                         <ModalText>{confirmCaption}</ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
-                footer = (
-                    <ModalStatusTextLight themeColors={themeColorsConfig}>{loadingFooterCaption}</ModalStatusTextLight>
-                );
+                footer = <ModalStatusTextLight themeColors={themeColors}>{loadingFooterCaption}</ModalStatusTextLight>;
                 break;
         }
 
@@ -230,7 +223,7 @@ class BaseStepModal extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 

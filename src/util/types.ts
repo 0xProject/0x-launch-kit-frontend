@@ -9,6 +9,10 @@ export interface StyledComponentThemeProps {
     themeColors: BasicTheme;
 }
 
+export interface StyledComponentThemeModalProps {
+    themeModalColors: BasicThemeModal;
+}
+
 export interface TabItem {
     active: boolean;
     onClick: any;

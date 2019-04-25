@@ -3,15 +3,14 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getThemeColors } from '../store/selectors';
-import { BasicTheme } from '../themes/BasicTheme';
 import { themeBreakPoints } from '../themes/ThemeCommons';
-import { StoreState } from '../util/types';
+import { StoreState, StyledComponentThemeProps } from '../util/types';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { ToolbarContainer } from './common/toolbar';
 
-const General = styled.div<{ themeColors: BasicTheme }>`
+const General = styled.div<StyledComponentThemeProps>`
     background: ${props => props.themeColors.background};
     display: flex;
     flex-direction: column;
@@ -37,9 +36,7 @@ const ContentScroll = styled.div`
     overflow: auto;
 `;
 
-interface StateProps {
-    themeColorsConfig: BasicTheme;
-}
+interface StateProps extends StyledComponentThemeProps {}
 interface OwnProps {
     children: React.ReactNode;
 }
@@ -47,9 +44,9 @@ interface OwnProps {
 type Props = OwnProps & StateProps;
 
 const GeneralLayout = (props: Props) => {
-    const { themeColorsConfig, children } = props;
+    const { themeColors, children } = props;
     return (
-        <General themeColors={themeColorsConfig}>
+        <General themeColors={themeColors}>
             <ToolbarContainer />
             <ContentScroll>
                 <Content>{children}</Content>
@@ -62,7 +59,7 @@ const GeneralLayout = (props: Props) => {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 
