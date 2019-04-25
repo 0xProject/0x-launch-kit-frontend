@@ -45,13 +45,17 @@ describe('BigNumberInput', () => {
         const wrapper = mount(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
 
         // then
-        expect(wrapper.find('input').props().value).toEqual('1.23');
+        const inputBefore = wrapper.find('input');
+
+        expect(inputBefore.props().value.toString()).toEqual('1.23');
 
         // when
-        wrapper.setProps({ value: new BigNumber('245') });
+        changeValue(wrapper, '2.45');
 
         // then
-        expect(wrapper.find('input').props().value).toEqual('2.45');
+        const inputAfter = wrapper.find('input');
+
+        expect(inputAfter.props().value.toString()).toEqual('245');
     });
 
     it('should allow entering an empty string', () => {
