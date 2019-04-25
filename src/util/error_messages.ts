@@ -11,7 +11,7 @@ export const errorsWallet = {
     mmGetExtension: 'Get Chrome Extension ',
 };
 
-// Receives an string with an error JSON object an return the JSON Object or null if do not exists
+// Receives an string with an error JSON object an returns the JSON Object or null if does not exist
 export const getErrorResponseFrom0xConnectErrorMessage = (str: string) => {
     const firstOpen = str.indexOf('{');
     const lastClose = str.lastIndexOf('}') + 1;
