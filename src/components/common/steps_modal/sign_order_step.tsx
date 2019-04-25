@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
-import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
+import { OrderSide, StepBuySellLimitOrder, StoreState, Token } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -19,7 +19,7 @@ interface StateProps {
 
 interface DispatchProps {
     createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<SignedOrder>;
-    submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
+    submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide, baseToken: Token) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -54,12 +54,12 @@ class SignOrderStep extends React.Component<Props> {
     };
 
     private readonly _getSignedOrder = async ({ onLoading, onDone, onError }: any) => {
-        const { amount, price, side } = this.props.step;
+        const { amount, price, side, baseToken } = this.props.step;
         try {
             const signedOrder = await this.props.createSignedOrder(amount, price, side);
             onLoading();
 
-            await this.props.submitLimitOrder(signedOrder, amount, side);
+            await this.props.submitLimitOrder(signedOrder, amount, side, baseToken);
             onDone();
         } catch (err) {
             onError(err);
@@ -78,8 +78,8 @@ const SignOrderStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) =>
-                dispatch(submitLimitOrder(signedOrder, amount, side)),
+            submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide, baseToken: Token) =>
+                dispatch(submitLimitOrder.request({ signedOrder, amount, baseToken, side })),
             createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
                 dispatch(createSignedOrder(amount, price, side)),
         };

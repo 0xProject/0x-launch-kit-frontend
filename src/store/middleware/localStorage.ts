@@ -1,10 +1,9 @@
 import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
 import { getType } from 'typesafe-actions';
 
-import { LocalStorage } from '../services/local_storage';
-
-import * as actions from './actions';
-import { getEthAccount, getHasUnreadNotifications, getNetworkId, getNotifications } from './selectors';
+import { LocalStorage } from '../../services/local_storage';
+import * as actions from '../actions';
+import { getEthAccount, getHasUnreadNotifications, getNetworkId, getNotifications } from '../selectors';
 
 const localStorage = new LocalStorage(window.localStorage);
 

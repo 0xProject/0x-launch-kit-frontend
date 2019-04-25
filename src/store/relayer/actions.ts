@@ -1,10 +1,9 @@
 import { BigNumber, SignedOrder } from '0x.js';
-import { createAction } from 'typesafe-actions';
+import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
-import { getRelayer } from '../../services/relayer';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
@@ -29,6 +28,12 @@ export const setOrders = createAction('relayer/ORDERS_set', resolve => {
 export const setUserOrders = createAction('relayer/USER_ORDERS_set', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
+
+export const submitLimitOrder = createAsyncAction(
+    'relayer/LIMIT_ORDER_submit_request',
+    'relayer/LIMIT_ORDER_submit_success',
+    'relayer/LIMIT_ORDER_submit_failure',
+)<{ signedOrder: SignedOrder; amount: BigNumber; side: OrderSide; baseToken: Token }, any, Error>();
 
 export const getAllOrders = () => {
     return async (dispatch: any, getState: any) => {
@@ -78,31 +83,6 @@ export const cancelOrder = (order: UIOrder) => {
                 ]),
             );
         });
-    };
-};
-
-export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
-        const state = getState();
-        const baseToken = getBaseToken(state) as Token;
-
-        const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
-
-        dispatch(getOrderbookAndUserOrders());
-        dispatch(
-            addNotifications([
-                {
-                    id: signedOrder.signature,
-                    kind: NotificationKind.Limit,
-                    amount,
-                    token: baseToken,
-                    side,
-                    timestamp: new Date(),
-                },
-            ]),
-        );
-
-        return submitResult;
     };
 };
 
