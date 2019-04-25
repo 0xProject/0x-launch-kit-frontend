@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { ReactComponent as AeTokenIcon } from '../../../assets/icons/ae.svg';
@@ -31,9 +30,7 @@ import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
-import { getThemeColors } from '../../../store/selectors';
 import { BasicTheme } from '../../../themes/BasicTheme';
-import { StoreState } from '../../../util/types';
 
 const TokenIcons = {
     AeTokenIcon,
@@ -96,7 +93,7 @@ interface OwnProps {
 
 type Props = OwnProps & StateProps;
 
-const TokenIcon = (props: Props) => {
+export const TokenIcon = (props: Props) => {
     const { symbol, primaryColor, themeColors, ...restProps } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
@@ -106,16 +103,6 @@ const TokenIcon = (props: Props) => {
         </IconContainer>
     );
 };
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        themeColors: getThemeColors(state),
-    };
-};
-
-const TokenIconContainer = connect(mapStateToProps)(TokenIcon);
-
-export { TokenIcon, TokenIconContainer };
 
 const getTokenIconNameBySymbol = (symbol: string): string => {
     return `${symbol.charAt(0).toUpperCase()}${symbol.slice(1).toLowerCase()}TokenIcon`;

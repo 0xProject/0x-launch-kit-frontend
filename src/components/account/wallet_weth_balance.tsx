@@ -17,7 +17,7 @@ import { BasicThemeModal } from '../../themes/modal/BasicThemeModal';
 import { themeDimensions } from '../../themes/ThemeCommons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, StyledComponentThemeProps, Web3State } from '../../util/types';
-import { CardContainer } from '../common/card';
+import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { CardLoading } from '../common/loading';
 import { IconType, Tooltip } from '../common/tooltip';
@@ -205,9 +205,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <CardContainer title="ETH / wETH Balances">
+                <Card title="ETH / wETH Balances" themeColors={themeColorsConfig}>
                     <Content>{content}</Content>
-                </CardContainer>
+                </Card>
                 <Note>
                     wETH is used for trades on 0x
                     <br />1 wETH = 1 ETH

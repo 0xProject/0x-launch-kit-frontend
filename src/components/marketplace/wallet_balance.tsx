@@ -22,8 +22,8 @@ import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, StoreState, StyledComponentThemeProps, Token, TokenBalance, Web3State } from '../../util/types';
-import { ButtonContainer } from '../common/button';
-import { CardContainer } from '../common/card';
+import { Button } from '../common/button';
+import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { IconType, Tooltip } from '../common/tooltip';
 
@@ -140,11 +140,11 @@ const WalletErrorFiller = styled.div<{ top?: string; bottom?: string; left?: str
     z-index: 1;
 `;
 
-const ButtonStyled = styled(ButtonContainer)`
+const ButtonStyled = styled(Button)`
     width: 100%;
 `;
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
     baseToken: Token | null;
@@ -152,7 +152,6 @@ interface StateProps {
     ethAccount: string;
     baseTokenBalance: TokenBalance | null;
     quoteTokenBalance: TokenBalance | null;
-    themeColorsConfig: BasicTheme;
 }
 
 interface DispatchProps {
@@ -214,12 +213,16 @@ const openMetamaskExtensionUrl = () => {
 
 class WalletBalance extends React.Component<Props, State> {
     public render = () => {
-        const { web3State, themeColorsConfig } = this.props;
+        const { web3State, themeColors } = this.props;
         const walletContent = this._getWalletContent();
         return (
-            <CardContainer title={getWalletTitle(web3State)} action={getWallet(web3State, themeColorsConfig)}>
+            <Card
+                title={getWalletTitle(web3State)}
+                action={getWallet(web3State, themeColors)}
+                themeColors={themeColors}
+            >
                 {walletContent}
-            </CardContainer>
+            </Card>
         );
     };
 
@@ -232,7 +235,7 @@ class WalletBalance extends React.Component<Props, State> {
             quoteToken,
             quoteTokenBalance,
             baseTokenBalance,
-            themeColorsConfig,
+            themeColors,
         } = this.props;
 
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
@@ -247,8 +250,8 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <LabelTitleWrapper>
-                        <LabelTitle themeColors={themeColorsConfig}>Token</LabelTitle>
-                        <LabelTitle themeColors={themeColorsConfig}>Amount</LabelTitle>
+                        <LabelTitle themeColors={themeColors}>Token</LabelTitle>
+                        <LabelTitle themeColors={themeColors}>Amount</LabelTitle>
                     </LabelTitleWrapper>
                     <LabelWrapper>
                         <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
@@ -274,7 +277,7 @@ class WalletBalance extends React.Component<Props, State> {
                         text={errorsWallet.mmConnect}
                         textAlign="center"
                         onClick={onConnectWallet}
-                        themeColors={themeColorsConfig}
+                        themeColors={themeColors}
                     />
                     <WalletErrorFiller top="0" left="0">
                         {fillerBig()}
@@ -296,7 +299,7 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl} themeColors={themeColors}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>
                 </>
@@ -306,7 +309,9 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled theme={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
+                    <ButtonStyled theme={'tertiary'} themeColors={themeColors}>
+                        {errorsWallet.mmLoading}
+                    </ButtonStyled>
                 </>
             );
         }
@@ -324,7 +329,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethAccount: getEthAccount(state),
         quoteTokenBalance: getQuoteTokenBalance(state),
         baseTokenBalance: getBaseTokenBalance(state),
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 

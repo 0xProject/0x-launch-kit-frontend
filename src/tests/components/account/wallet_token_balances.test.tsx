@@ -7,10 +7,11 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
+import { WhiteTheme } from '../../../themes/WhiteTheme';
 import { TokenBalance, TokenSymbol, Web3State } from '../../../util/types';
-
 const noop = () => ({});
 const ZERO = new BigNumber(0);
+const themeColors = new WhiteTheme();
 const wethTokenBalance = {
     balance: ZERO,
     token: {
@@ -69,9 +70,9 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={noop}
                 web3State={Web3State.Done}
+                themeColors={themeColors}
             />,
         );
-
         // then
         expect(wrapper.find('tbody tr')).toHaveLength(4);
     });
@@ -121,6 +122,7 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={noop}
                 web3State={Web3State.Done}
+                themeColors={themeColors}
             />,
         );
 
@@ -182,6 +184,7 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={onToggleTokenLock}
                 web3State={Web3State.Done}
+                themeColors={themeColors}
             />,
         );
         wrapper
@@ -240,6 +243,7 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={onToggleTokenLock}
                 web3State={Web3State.Done}
+                themeColors={themeColors}
             />,
         );
         const rows = wrapper.find('tbody tr');

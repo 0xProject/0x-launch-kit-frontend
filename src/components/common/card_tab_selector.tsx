@@ -1,19 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getThemeColors } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
-import { StoreState, StyledComponentThemeProps, TabItem } from '../../util/types';
+import { StyledComponentThemeProps, TabItem } from '../../util/types';
 
-interface StateProps {
-    themeColorsConfig: BasicTheme;
-}
-interface OwnProps {
+interface Props extends StyledComponentThemeProps {
     tabs: TabItem[];
 }
-
-type Props = OwnProps & StateProps;
 
 interface ItemProps extends StyledComponentThemeProps {
     active?: boolean;
@@ -47,35 +39,21 @@ const CardTabSelectorItemSeparator = styled.span<ItemProps>`
     }
 `;
 
-const CardTabSelector: React.FC<Props> = props => {
-    const { tabs, themeColorsConfig, ...restProps } = props;
+export const CardTabSelector: React.FC<Props> = props => {
+    const { tabs, themeColors, ...restProps } = props;
 
     return (
-        <CardTabSelectorWrapper themeColors={themeColorsConfig} {...restProps}>
+        <CardTabSelectorWrapper themeColors={themeColors} {...restProps}>
             {tabs.map((item, index) => {
                 return (
                     <React.Fragment key={index}>
-                        <CardTabSelectorItem
-                            themeColors={themeColorsConfig}
-                            onClick={item.onClick}
-                            active={item.active}
-                        >
+                        <CardTabSelectorItem themeColors={themeColors} onClick={item.onClick} active={item.active}>
                             {item.text}
                         </CardTabSelectorItem>
-                        <CardTabSelectorItemSeparator themeColors={themeColorsConfig}>/</CardTabSelectorItemSeparator>
+                        <CardTabSelectorItemSeparator themeColors={themeColors}>/</CardTabSelectorItemSeparator>
                     </React.Fragment>
                 );
             })}
         </CardTabSelectorWrapper>
     );
 };
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        themeColorsConfig: getThemeColors(state),
-    };
-};
-
-const CardTabSelectorContainer = connect(mapStateToProps)(CardTabSelector);
-
-export { CardTabSelector, CardTabSelectorContainer };

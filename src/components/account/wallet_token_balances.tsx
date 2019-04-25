@@ -13,8 +13,8 @@ import {
 } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, StyledComponentThemeProps, Token, TokenBalance, Web3State } from '../../util/types';
-import { CardContainer } from '../common/card';
-import { TokenIconContainer } from '../common/icons/token_icon';
+import { Card } from '../common/card';
+import { TokenIcon } from '../common/icons/token_icon';
 import { CardLoading } from '../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
 
@@ -44,7 +44,7 @@ const TokenTD = styled(CustomTD)`
     width: 40px;
 `;
 
-const TokenIconStyled = styled(TokenIconContainer)`
+const TokenIconStyled = styled(TokenIcon)`
     margin: 0 auto 0 0;
 `;
 
@@ -132,7 +132,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const totalEthRow = (
             <TR>
                 <TokenTD themeColors={themeColors}>
-                    <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
+                    <TokenIconStyled
+                        symbol={wethToken.symbol}
+                        primaryColor={wethToken.primaryColor}
+                        themeColors={themeColors}
+                    />
                 </TokenTD>
                 <CustomTDTokenName themeColors={themeColors} styles={{ borderBottom: true }}>
                     ETH Total (ETH + wETH)
@@ -164,7 +168,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             return (
                 <TR key={symbol}>
                     <TokenTD themeColors={themeColors}>
-                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} />
+                        <TokenIconStyled
+                            symbol={token.symbol}
+                            primaryColor={token.primaryColor}
+                            themeColors={themeColors}
+                        />
                     </TokenTD>
                     <CustomTDTokenName themeColors={themeColors} styles={{ borderBottom: true }}>
                         <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
@@ -220,7 +228,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             );
         }
 
-        return <CardContainer title="Token Balances">{content}</CardContainer>;
+        return (
+            <Card title="Token Balances" themeColors={themeColors}>
+                {content}
+            </Card>
+        );
     };
 }
 

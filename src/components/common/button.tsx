@@ -1,10 +1,8 @@
 import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getThemeColors } from '../../store/selectors';
 import { BasicTheme } from '../../themes/BasicTheme';
-import { StoreState, StyledComponentThemeProps } from '../../util/types';
+import { StyledComponentThemeProps } from '../../util/types';
 
 interface ButtonColors {
     [primary: string]: string;
@@ -13,17 +11,11 @@ interface ButtonColors {
     error: string;
 }
 
-interface StateProps {
-    themeColorsConfig: BasicTheme;
-}
-
-interface OwnProps extends HTMLAttributes<HTMLButtonElement> {
+interface Props extends HTMLAttributes<HTMLButtonElement>, StyledComponentThemeProps {
     children: React.ReactNode;
     disabled?: boolean;
     theme?: string;
 }
-
-type Props = OwnProps & StateProps;
 
 const getButtonColors = (themeColors: BasicTheme): ButtonColors => {
     return {
@@ -57,22 +49,12 @@ const StyledButton = styled.button<StyledComponentThemeProps>`
     }
 `;
 
-const Button: React.FC<Props> = props => {
-    const { children, themeColorsConfig, ...restProps } = props;
+export const Button: React.FC<Props> = props => {
+    const { children, themeColors, ...restProps } = props;
 
     return (
-        <StyledButton themeColors={themeColorsConfig} {...restProps}>
+        <StyledButton themeColors={themeColors} {...restProps}>
             {children}
         </StyledButton>
     );
 };
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        themeColorsConfig: getThemeColors(state),
-    };
-};
-
-const ButtonContainer = connect(mapStateToProps)(Button);
-
-export { Button, ButtonContainer };

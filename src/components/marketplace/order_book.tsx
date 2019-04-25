@@ -13,20 +13,30 @@ import {
 } from '../../store/selectors';
 import { BasicTheme } from '../../themes/BasicTheme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
-import { CardContainer } from '../common/card';
-import { CardTabSelectorContainer } from '../common/card_tab_selector';
+import {
+    OrderBook,
+    OrderBookItem,
+    OrderSide,
+    StoreState,
+    StyledComponentThemeProps,
+    TabItem,
+    Token,
+    UIOrder,
+    Web3State,
+} from '../../util/types';
+import { Card } from '../common/card';
+import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContentContainer } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps {
     orderBook: OrderBook;
     baseToken: Token | null;
     quoteToken: Token | null;
     userOrders: UIOrder[];
-    themeColorsConfig: BasicTheme;
+    themeColors: BasicTheme;
     web3State?: Web3State;
 }
 
@@ -88,7 +98,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, baseToken, quoteToken, themeColorsConfig, web3State } = this.props;
+        const { orderBook, baseToken, quoteToken, themeColors, web3State } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -123,19 +133,19 @@ class OrderBookTable extends React.Component<Props, State> {
         } else {
             const mySizeHeader =
                 web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-                    <TH themeColors={themeColorsConfig} styles={{ textAlign: 'right', borderBottom: true }}>
+                    <TH themeColors={themeColors} styles={{ textAlign: 'right', borderBottom: true }}>
                         My Size
                     </TH>
                 ) : null;
             content = (
-                <Table themeColors={themeColorsConfig} fitInCard={true}>
+                <Table themeColors={themeColors} fitInCard={true}>
                     <THead>
                         <TR>
-                            <TH themeColors={themeColorsConfig} styles={{ textAlign: 'right', borderBottom: true }}>
+                            <TH themeColors={themeColors} styles={{ textAlign: 'right', borderBottom: true }}>
                                 Trade size
                             </TH>
                             {mySizeHeader}
-                            <THLast themeColors={themeColorsConfig} styles={{ textAlign: 'right', borderBottom: true }}>
+                            <THLast themeColors={themeColors} styles={{ textAlign: 'right', borderBottom: true }}>
                                 Price ({quoteToken.symbol})
                             </THLast>
                         </TR>
@@ -148,25 +158,25 @@ class OrderBookTable extends React.Component<Props, State> {
                                 sellOrders.length,
                                 baseToken,
                                 mySizeSellArray,
-                                themeColorsConfig,
+                                themeColors,
                                 web3State,
                             ),
                         )}
                         <TR>
                             <CustomTDTitle
-                                themeColors={themeColorsConfig}
+                                themeColors={themeColors}
                                 styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}
                             >
                                 Spread
                             </CustomTDTitle>
                             <CustomTD
-                                themeColors={themeColorsConfig}
+                                themeColors={themeColors}
                                 styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}
                             >
                                 {}
                             </CustomTD>
                             <CustomTDLast
-                                themeColors={themeColorsConfig}
+                                themeColors={themeColors}
                                 styles={{
                                     tabular: true,
                                     textAlign: 'right',
@@ -184,7 +194,7 @@ class OrderBookTable extends React.Component<Props, State> {
                                 buyOrders.length,
                                 baseToken,
                                 mySizeBuyArray,
-                                themeColorsConfig,
+                                themeColors,
                                 web3State,
                             ),
                         )}
@@ -194,9 +204,13 @@ class OrderBookTable extends React.Component<Props, State> {
         }
 
         return (
-            <CardContainer title="Orderbook" action={<CardTabSelectorContainer tabs={cardTabs} />}>
+            <Card
+                title="Orderbook"
+                action={<CardTabSelector tabs={cardTabs} themeColors={themeColors} />}
+                themeColors={themeColors}
+            >
                 {content}
-            </CardContainer>
+            </Card>
         );
     };
 }
@@ -208,7 +222,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         userOrders: getUserOrders(state),
         quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 

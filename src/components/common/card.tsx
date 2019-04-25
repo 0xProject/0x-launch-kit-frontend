@@ -1,26 +1,18 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getThemeColors } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
 import { themeDimensions } from '../../themes/ThemeCommons';
-import { StoreState, StyledComponentThemeProps } from '../../util/types';
+import { StyledComponentThemeProps } from '../../util/types';
 
-import { CardBaseContainer } from './card_base';
+import { CardBase } from './card_base';
 
-interface StateProps {
-    themeColorsConfig: BasicTheme;
-}
-interface OwnProps {
+interface Props extends StyledComponentThemeProps {
     title?: string;
     action?: React.ReactNode;
     children: React.ReactNode;
 }
 
-type Props = OwnProps & StateProps;
-
-const CardWrapper = styled(CardBaseContainer)`
+const CardWrapper = styled(CardBase)`
     margin-bottom: 10px;
 `;
 
@@ -50,13 +42,13 @@ const CardBody = styled.div`
     position: relative;
 `;
 
-const Card: React.FC<Props> = props => {
-    const { title, action, children, themeColorsConfig, ...restProps } = props;
+export const Card: React.FC<Props> = props => {
+    const { title, action, children, themeColors, ...restProps } = props;
 
     return (
-        <CardWrapper {...restProps}>
+        <CardWrapper themeColors={themeColors} {...restProps}>
             {title || action ? (
-                <CardHeader themeColors={themeColorsConfig}>
+                <CardHeader themeColors={themeColors}>
                     <CardTitle>{title}</CardTitle>
                     {action ? action : null}
                 </CardHeader>
@@ -65,13 +57,3 @@ const Card: React.FC<Props> = props => {
         </CardWrapper>
     );
 };
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        themeColorsConfig: getThemeColors(state),
-    };
-};
-
-const CardContainer = connect(mapStateToProps)(Card);
-
-export { Card, CardContainer };

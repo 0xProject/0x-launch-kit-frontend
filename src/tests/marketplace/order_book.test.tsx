@@ -7,10 +7,12 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { OrderBookTable } from '../../components/marketplace/order_book';
+import { WhiteTheme } from '../../themes/WhiteTheme';
 import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
 
 describe('OrderBookTable', () => {
+    const themeColors = new WhiteTheme();
     it('Renders my size column with value', () => {
         const orderBook = {
             sellOrders: [
@@ -65,6 +67,7 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                themeColors={themeColors}
             />,
         );
 
@@ -135,6 +138,7 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                themeColors={themeColors}
             />,
         );
 
@@ -222,6 +226,7 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                themeColors={themeColors}
             />,
         );
 
@@ -347,6 +352,7 @@ describe('OrderBookTable', () => {
                 quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.NotInstalled}
+                themeColors={themeColors}
             />,
         );
 
@@ -418,6 +424,7 @@ describe('OrderBookTable', () => {
                 quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.Locked}
+                themeColors={themeColors}
             />,
         );
 

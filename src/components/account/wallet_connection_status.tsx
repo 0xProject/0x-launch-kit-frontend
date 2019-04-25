@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 import { getEthAccount } from '../../store/selectors';
 import { themeFeatures } from '../../themes/ThemeCommons';
-import { StoreState } from '../../util/types';
-import { CardBaseContainer } from '../common/card_base';
+import { StoreState, StyledComponentThemeProps } from '../../util/types';
+import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { DropdownTextItemContainer } from '../common/dropdown_text_item';
 import { ChevronDownIcon } from '../common/icons/chevron_down_icon';
@@ -37,12 +37,12 @@ const WalletConnectionStatusText = styled.span`
     margin-right: 10px;
 `;
 
-const DropdownItems = styled(CardBaseContainer)`
+const DropdownItems = styled(CardBase)`
     box-shadow: ${themeFeatures.boxShadow};
     min-width: 240px;
 `;
 
-interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
+interface OwnProps extends HTMLAttributes<HTMLSpanElement>, StyledComponentThemeProps {}
 
 interface StateProps {
     ethAccount: string;
@@ -64,7 +64,7 @@ const goToURL = () => {
 
 class WalletConnectionStatus extends React.PureComponent<Props> {
     public render = () => {
-        const { ethAccount, ...restProps } = this.props;
+        const { ethAccount, themeColors, ...restProps } = this.props;
         const status: string = ethAccount ? 'active' : '';
 
         const header = (
@@ -78,7 +78,7 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
         );
 
         const body = (
-            <DropdownItems>
+            <DropdownItems themeColors={themeColors}>
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <DropdownTextItemContainer text="Copy Address to Clipboard" />
                 </CopyToClipboard>

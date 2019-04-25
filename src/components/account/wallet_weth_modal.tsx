@@ -7,7 +7,7 @@ import { BasicTheme } from '../../themes/BasicTheme';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { StyledComponentThemeProps } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
-import { ButtonContainer } from '../common/button';
+import { Button } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
 import { Tooltip } from '../common/tooltip';
 
@@ -103,7 +103,7 @@ const Slider = styled.input`
     }
 `;
 
-const ButtonStyled = styled(ButtonContainer)`
+const ButtonStyled = styled(Button)`
     width: 100%;
 `;
 

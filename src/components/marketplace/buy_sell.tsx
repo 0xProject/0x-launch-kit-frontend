@@ -8,18 +8,25 @@ import { getCurrencyPair, getThemeColors, getWeb3State } from '../../store/selec
 import { BasicTheme } from '../../themes/BasicTheme';
 import { themeDimensions } from '../../themes/ThemeCommons';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
-import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../util/types';
+import {
+    CurrencyPair,
+    OrderSide,
+    OrderType,
+    StoreState,
+    StyledComponentThemeProps,
+    TokenSymbol,
+    Web3State,
+} from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
-import { ButtonContainer } from '../common/button';
-import { CardBaseContainer } from '../common/card_base';
-import { CardTabSelectorContainer } from '../common/card_tab_selector';
+import { Button } from '../common/button';
+import { CardBase } from '../common/card_base';
+import { CardTabSelector } from '../common/card_tab_selector';
 
 import { OrderDetailsContainer } from './order_details';
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
-    themeColorsConfig: BasicTheme;
 }
 
 interface DispatchProps {
@@ -37,7 +44,7 @@ interface State {
     tab: OrderSide;
 }
 
-const BuySellWrapper = styled(CardBaseContainer)`
+const BuySellWrapper = styled(CardBase)`
     margin-bottom: ${themeDimensions.verticalSeparation};
 `;
 
@@ -98,7 +105,7 @@ const Label = styled.label<{ color?: string }>`
     margin: 0;
 `;
 
-const InnerTabs = styled(CardTabSelectorContainer)`
+const InnerTabs = styled(CardTabSelector)`
     font-size: 14px;
 `;
 
@@ -158,7 +165,7 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { currencyPair, web3State, themeColorsConfig } = this.props;
+        const { currencyPair, web3State, themeColors } = this.props;
         const { makerAmount, price, tab, orderType } = this.state;
 
         const buySellInnerTabs = [
@@ -181,13 +188,13 @@ class BuySell extends React.Component<Props, State> {
         const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
         return (
-            <BuySellWrapper>
+            <BuySellWrapper themeColors={themeColors}>
                 <TabsContainer>
                     <TabButton
                         isSelected={tab === OrderSide.Buy}
                         onClick={this.changeTab(OrderSide.Buy)}
                         side={OrderSide.Buy}
-                        themeColors={themeColorsConfig}
+                        themeColors={themeColors}
                     >
                         Buy
                     </TabButton>
@@ -195,7 +202,7 @@ class BuySell extends React.Component<Props, State> {
                         isSelected={tab === OrderSide.Sell}
                         onClick={this.changeTab(OrderSide.Sell)}
                         side={OrderSide.Sell}
-                        themeColors={themeColorsConfig}
+                        themeColors={themeColors}
                     >
                         Sell
                     </TabButton>
@@ -203,7 +210,7 @@ class BuySell extends React.Component<Props, State> {
                 <Content>
                     <LabelContainer>
                         <Label>Amount</Label>
-                        <InnerTabs tabs={buySellInnerTabs} />
+                        <InnerTabs tabs={buySellInnerTabs} themeColors={themeColors} />
                     </LabelContainer>
                     <FieldContainer>
                         <BigInputNumberStyled
@@ -239,14 +246,15 @@ class BuySell extends React.Component<Props, State> {
                         tokenPrice={price || new BigNumber(0)}
                         currencyPair={currencyPair}
                     />
-                    <ButtonContainer
+                    <Button
                         theme="secondary"
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
+                        themeColors={themeColors}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         {tokenSymbolToDisplayString(currencyPair.base)}
-                    </ButtonContainer>
+                    </Button>
                 </Content>
             </BuySellWrapper>
         );
@@ -312,7 +320,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
         currencyPair: getCurrencyPair(state),
-        themeColorsConfig: getThemeColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 

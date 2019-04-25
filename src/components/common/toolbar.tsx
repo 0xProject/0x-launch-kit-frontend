@@ -156,7 +156,7 @@ const Toolbar = (props: Props) => {
                     <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
                         My Wallet
                     </MyWalletLink>
-                    <WalletDropdown />
+                    <WalletDropdown themeColors={themeColorsConfig} />
                     <NotificationsDropdownContainer />
                 </ToolbarEnd>
             ) : null}

@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install_metamask.svg';
-import { getThemeModalsColors } from '../../store/selectors';
+import { getThemeColors, getThemeModalsColors } from '../../store/selectors';
 import { BasicThemeModal } from '../../themes/modal/BasicThemeModal';
 import { errorsWallet } from '../../util/error_messages';
-import { ModalDisplay, StoreState } from '../../util/types';
+import { ModalDisplay, StoreState, StyledComponentThemeProps } from '../../util/types';
 
-import { ButtonContainer } from './button';
+import { Button } from './button';
 import { CloseModalButton } from './icons/close_modal_button';
 
 interface OwnProps extends HTMLAttributes<HTMLDivElement> {
@@ -19,7 +19,7 @@ interface OwnProps extends HTMLAttributes<HTMLDivElement> {
     connectWallet: () => any;
 }
 
-interface StateProps {
+interface StateProps extends StyledComponentThemeProps {
     themeModalColorsConfig: BasicThemeModal;
 }
 
@@ -75,7 +75,7 @@ const IconContainer = styled.div`
     }
 `;
 
-const ButtonStyled = styled(ButtonContainer)`
+const ButtonStyled = styled(Button)`
     width: 100%;
 `;
 
@@ -85,7 +85,7 @@ const LinkButton = styled.a`
 `;
 
 const MetamaskErrorModal: React.FC<Props> = props => {
-    const { isOpen, closeModal, noMetamaskType, connectWallet, themeModalColorsConfig } = props;
+    const { isOpen, closeModal, noMetamaskType, connectWallet, themeModalColorsConfig, themeColors } = props;
     const metamaskNotInstalledContent = (
         <>
             <ModalTitle>Install Metamask</ModalTitle>
@@ -98,7 +98,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled theme="tertiary">
+            <ButtonStyled theme="tertiary" themeColors={themeColors}>
                 <LinkButton
                     target="_blank"
                     href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
@@ -121,7 +121,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled theme="tertiary">
+            <ButtonStyled theme="tertiary" themeColors={themeColors}>
                 <LinkButton onClick={connectWallet}>{errorsWallet.mmConnect}</LinkButton>
             </ButtonStyled>
         </>
@@ -142,6 +142,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         themeModalColorsConfig: getThemeModalsColors(state),
+        themeColors: getThemeColors(state),
     };
 };
 
