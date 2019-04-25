@@ -92,7 +92,7 @@ export class BaseStepModal extends React.Component<Props, State> {
         const { loadingStarted, status } = this.state;
         const retry = () => this._retry();
         let content;
-        let footer;
+        let footer = this.props.showPartialProgress ? null : <span>&nbsp;</span>;
         switch (status) {
             case StepStatus.Loading:
                 content = (

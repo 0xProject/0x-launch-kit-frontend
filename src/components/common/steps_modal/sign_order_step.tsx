@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
+import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
@@ -32,17 +33,20 @@ class SignOrderStep extends React.Component<Props, State> {
     public state = {
         errorMsg: 'Error signing/submitting order.',
     };
-
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
 
+        const isBuy = step.side === OrderSide.Buy;
+
         const title = 'Order setup';
-        const confirmCaption = 'Confirm signature on Metamask to submit order.';
+        const confirmCaption = 'Confirm signature on Metamask to submit order to the book.';
         const loadingCaption = 'Submitting order.';
-        const doneCaption = 'Order successfully placed! (may not be filled immediately)';
+        const doneCaption = `${isBuy ? 'Buy' : 'Sell'} order for ${tokenSymbolToDisplayString(
+            step.token.symbol,
+        )} placed! (may not be filled immediately)`;
         const errorCaption = this.state.errorMsg;
         const loadingFooterCaption = `Waiting for signature...`;
-        const doneFooterCaption = `Order success!`;
+        const doneFooterCaption = `Order placed!`;
 
         return (
             <BaseStepModal
