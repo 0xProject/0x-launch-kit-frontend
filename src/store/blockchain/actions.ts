@@ -1,5 +1,4 @@
 import { BigNumber } from '0x.js';
-import { Web3Wrapper } from '@0x/web3-wrapper';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';

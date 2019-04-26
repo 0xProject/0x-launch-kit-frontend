@@ -5,7 +5,7 @@ import { sleep } from '../util/sleep';
 let web3Wrapper: Web3Wrapper | null = null;
 
 export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
-    const { ethereum, web3, location } = window;
+    const { ethereum, web3 } = window;
 
     if (web3Wrapper) {
         return web3Wrapper;

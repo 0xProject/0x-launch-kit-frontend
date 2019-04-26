@@ -1,13 +1,10 @@
-import { HttpClient } from '@0x/connect';
 import { Provider, Web3Wrapper } from '@0x/web3-wrapper';
 import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { ActionType, getType } from 'typesafe-actions';
+import { getType } from 'typesafe-actions';
 
-import { Relayer } from '../../services/relayer';
-import { NotificationKind, StoreState } from '../../util/types';
+import { StoreState } from '../../util/types';
 import * as actions from '../actions';
-import { RootAction } from '../reducers';
 
 interface Web3MiddlewareOptions {
     window: {

@@ -1,13 +1,11 @@
 // tslint:disable:no-object-literal-type-assertion
 
-import { BigNumber, SignedOrder } from '0x.js';
 import configureMockStore from 'redux-mock-store';
 import { getType } from 'typesafe-actions';
 
 import * as actions from '../../store/actions';
 import { createWeb3Middleware } from '../../store/middleware/web3';
 import { addressFactory } from '../../util/test-utils';
-import { OrderSide, Token } from '../../util/types';
 
 const connectedUser = addressFactory.build().address;
 const mockWeb3Wrapper = {
@@ -45,7 +43,6 @@ describe('web3 middleware', () => {
 
     it('should enable web3', async () => {
         // given
-        const connectedAccount = addressFactory.build().address;
         const options = {
             window: {
                 ethereum: {

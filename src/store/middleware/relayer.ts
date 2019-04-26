@@ -3,7 +3,6 @@ import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getType } from 'typesafe-actions';
 
-import { Relayer } from '../../services/relayer';
 import { NotificationKind, StoreState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -12,7 +11,6 @@ export const relayerMiddleware: (client: HttpClient) => Middleware = (client: Ht
     dispatch,
     getState,
 }: MiddlewareAPI<ThunkDispatch<StoreState, {}, AnyAction>, StoreState>) => (next: Dispatch) => {
-    const relayer = new Relayer(client);
     return async (action: RootAction) => {
         const result = next(action);
 
