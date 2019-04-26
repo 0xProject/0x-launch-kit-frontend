@@ -19,33 +19,33 @@ import {
 } from '../../util/types';
 import * as selectors from '../selectors';
 
-export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
+export const setHasUnreadNotifications = createAction('ui/UNREAD_NOTIFICATIONS_set', resolve => {
     return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
 });
 
-export const addNotifications = createAction('ADD_NOTIFICATIONS', resolve => {
+export const addNotifications = createAction('ui/NOTIFICATIONS_add', resolve => {
     return (newNotifications: Notification[]) => resolve(newNotifications);
 });
 
-export const setNotifications = createAction('SET_NOTIFICATIONS', resolve => {
+export const setNotifications = createAction('ui/NOTIFICATIONS_set', resolve => {
     return (notifications: Notification[]) => resolve(notifications);
 });
 
-export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
+export const setStepsModalPendingSteps = createAction('ui/steps_modal/PENDING_STEPS_set', resolve => {
     return (pendingSteps: Step[]) => resolve(pendingSteps);
 });
 
-export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', resolve => {
+export const setStepsModalDoneSteps = createAction('ui/steps_modal/DONE_STEPS_set', resolve => {
     return (doneSteps: Step[]) => resolve(doneSteps);
 });
 
-export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
+export const setStepsModalCurrentStep = createAction('ui/steps_modal/CURRENT_STEP_set', resolve => {
     return (currentStep: Step | null) => resolve(currentStep);
 });
 
-export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
+export const stepsModalAdvanceStep = createAction('ui/steps_modal/advance_step');
 
-export const stepsModalReset = createAction('STEPSMODAL_RESET');
+export const stepsModalReset = createAction('ui/steps_modal/reset');
 
 export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any) => {
