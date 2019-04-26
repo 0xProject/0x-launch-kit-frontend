@@ -1,3 +1,5 @@
+import { createAction } from 'typesafe-actions';
+
 import { MAINNET_ID } from '../common/constants';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper } from '../services/web3_wrapper';
@@ -14,6 +16,8 @@ export * from './relayer/actions';
 export * from './router/actions';
 export * from './ui/actions';
 export * from './market/actions';
+
+export const init = createAction('init');
 
 export const updateStore = () => {
     return async (dispatch: any, getState: any) => {

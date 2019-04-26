@@ -1,5 +1,6 @@
 import { BigNumber } from '0x.js';
-import { createAction } from 'typesafe-actions';
+import { Web3Wrapper } from '@0x/web3-wrapper';
+import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
@@ -7,7 +8,7 @@ import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
-import { getWeb3Wrapper, initializeWeb3Wrapper, isMetamaskInstalled } from '../../services/web3_wrapper';
+import { getWeb3Wrapper, initializeWeb3Wrapper } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
@@ -35,10 +36,6 @@ export const setEthAccount = createAction('blockchain/ETH_ACCOUNT_set', resolve 
     return (ethAccount: string) => resolve(ethAccount);
 });
 
-export const setWeb3State = createAction('blockchain/WEB3_STATE_set', resolve => {
-    return (web3State: Web3State) => resolve(web3State);
-});
-
 export const setTokenBalances = createAction('blockchain/TOKEN_BALANCES_set', resolve => {
     return (tokenBalances: TokenBalance[]) => resolve(tokenBalances);
 });
@@ -62,6 +59,14 @@ export const setGasInfo = createAction('blockchain/GAS_INFO_set', resolve => {
 export const setNetworkId = createAction('blockchain/NETWORK_ID_set', resolve => {
     return (networkId: number) => resolve(networkId);
 });
+
+export const connectWeb3 = createAsyncAction(
+    'blockchain/WEB3_connect_request',
+    'blockchain/WEB3_connect_success',
+    'blockchain/WEB3_connect_failure',
+)<any, any, Error>();
+
+export const web3NotInstalled = createAction('blockchain/WEB3_not_installed');
 
 export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any, getState: any) => {
@@ -264,7 +269,7 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
 
 export const initWallet = () => {
     return async (dispatch: any, getState: any) => {
-        dispatch(setWeb3State(Web3State.Loading));
+        dispatch(connectWeb3.request());
         const web3Wrapper = await initializeWeb3Wrapper();
         if (!web3Wrapper) {
             initializeAppNoMetamaskOrLocked();
@@ -290,7 +295,6 @@ export const initWallet = () => {
                 const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
                 const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
-                dispatch(setEthAccount(ethAccount));
                 dispatch(
                     initializeBlockchainData({
                         web3State: Web3State.Done,
@@ -320,7 +324,6 @@ export const initWallet = () => {
             } catch (error) {
                 // Web3Error
                 logger.error('There was an error fetching the account or networkId from web3', error);
-                dispatch(setWeb3State(Web3State.Error));
             }
         }
     };
@@ -344,11 +347,6 @@ export const lockToken = (token: Token) => {
  */
 export const initializeAppNoMetamaskOrLocked = () => {
     return async (dispatch: any, getState: any) => {
-        if (isMetamaskInstalled()) {
-            dispatch(setWeb3State(Web3State.Locked));
-        } else {
-            dispatch(setWeb3State(Web3State.NotInstalled));
-        }
         const state = getState();
         const currencyPair = getCurrencyPair(state);
         const knownTokens = getKnownTokens(MAINNET_ID);

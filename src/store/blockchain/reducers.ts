@@ -8,7 +8,7 @@ import { RootAction } from '../reducers';
 
 const initialBlockchainState: BlockchainState = {
     ethAccount: '',
-    web3State: Web3State.Loading,
+    web3State: Web3State.Locked,
     tokenBalances: [],
     ethBalance: new BigNumber(0),
     wethTokenBalance: null,
@@ -23,8 +23,6 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
     switch (action.type) {
         case getType(actions.setEthAccount):
             return { ...state, ethAccount: action.payload };
-        case getType(actions.setWeb3State):
-            return { ...state, web3State: action.payload };
         case getType(actions.setTokenBalances):
             return { ...state, tokenBalances: action.payload };
         case getType(actions.setWethTokenBalance):
@@ -50,6 +48,14 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             };
         case getType(actions.setNetworkId):
             return { ...state, networkId: action.payload };
+        case getType(actions.connectWeb3.request):
+            return { ...state, web3State: Web3State.Loading };
+        case getType(actions.connectWeb3.success):
+            return { ...state, web3State: Web3State.Done };
+        case getType(actions.connectWeb3.failure):
+            return { ...state, web3State: Web3State.Error };
+        case getType(actions.web3NotInstalled):
+            return { ...state, web3State: Web3State.NotInstalled };
     }
     return state;
 }

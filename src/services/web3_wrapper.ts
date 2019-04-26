@@ -4,11 +4,6 @@ import { sleep } from '../util/sleep';
 
 let web3Wrapper: Web3Wrapper | null = null;
 
-export const isMetamaskInstalled = (): boolean => {
-    const { ethereum, web3 } = window;
-    return ethereum || web3;
-};
-
 export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
     const { ethereum, web3, location } = window;
 
@@ -21,15 +16,6 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
             web3Wrapper = new Web3Wrapper(ethereum);
             // Request account access if needed
             await ethereum.enable();
-
-            // Subscriptions register
-            ethereum.on('accountsChanged', async (accounts: []) => {
-                // Reload to avoid MetaMask bug: "MetaMask - RPC Error: Internal JSON-RPC"
-                location.reload();
-            });
-            ethereum.on('networkChanged', async (network: number) => {
-                location.reload();
-            });
 
             return web3Wrapper;
         } catch (error) {
