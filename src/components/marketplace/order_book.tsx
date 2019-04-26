@@ -6,9 +6,8 @@ import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } fro
 import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
+import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
-import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
@@ -23,15 +22,6 @@ interface StateProps {
 }
 
 type Props = StateProps;
-
-enum Tab {
-    Current,
-    History,
-}
-
-interface State {
-    tab: Tab;
-}
 
 const orderToRow = (
     order: OrderBookItem,
@@ -73,29 +63,10 @@ const orderToRow = (
     );
 };
 
-class OrderBookTable extends React.Component<Props, State> {
-    public state = {
-        tab: Tab.Current,
-    };
-
+class OrderBookTable extends React.Component<Props> {
     public render = () => {
         const { orderBook, baseToken, quoteToken, web3State } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
-        const setTabCurrent = () => this.setState({ tab: Tab.Current });
-        const setTabHistory = () => this.setState({ tab: Tab.History });
-
-        const cardTabs: TabItem[] = [
-            {
-                active: this.state.tab === Tab.Current,
-                onClick: setTabCurrent,
-                text: 'Current',
-            },
-            {
-                active: this.state.tab === Tab.History,
-                onClick: setTabHistory,
-                text: 'History',
-            },
-        ];
 
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
@@ -155,11 +126,7 @@ class OrderBookTable extends React.Component<Props, State> {
             );
         }
 
-        return (
-            <Card title="Orderbook" action={<CardTabSelector tabs={cardTabs} />}>
-                {content}
-            </Card>
-        );
+        return <Card title="Orderbook">{content}</Card>;
     };
 }
 

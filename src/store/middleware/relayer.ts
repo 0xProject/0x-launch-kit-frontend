@@ -3,6 +3,7 @@ import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getType } from 'typesafe-actions';
 
+import { RelayerException } from '../../exceptions/relayer_exception';
 import { NotificationKind, StoreState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -35,7 +36,7 @@ export const relayerMiddleware: (client: HttpClient) => Middleware = (client: Ht
                     );
                 } catch (e) {
                     dispatch(actions.submitLimitOrder.failure(e));
-                    throw e;
+                    throw new RelayerException(e.message);
                 }
                 return result;
             }

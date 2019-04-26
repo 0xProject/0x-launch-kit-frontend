@@ -99,7 +99,7 @@ export interface StepBuySellLimitOrder {
     amount: BigNumber;
     price: BigNumber;
     side: OrderSide;
-    baseToken: Token;
+    token: Token;
 }
 
 export interface StepBuySellMarket {

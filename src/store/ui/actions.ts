@@ -1,6 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
@@ -158,24 +159,27 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
         const ethAccount = selectors.getEthAccount(state);
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
+            const contractWrappers = await getContractWrappers();
 
-        const web3Wrapper = await getWeb3Wrapper();
-        const contractWrappers = await getContractWrappers();
+            const order = buildLimitOrder(
+                {
+                    account: ethAccount,
+                    amount,
+                    price,
+                    baseTokenAddress: baseToken.address,
+                    quoteTokenAddress: quoteToken.address,
+                    exchangeAddress: contractWrappers.exchange.address,
+                },
+                side,
+            );
 
-        const order = buildLimitOrder(
-            {
-                account: ethAccount,
-                amount,
-                price,
-                baseTokenAddress: baseToken.address,
-                quoteTokenAddress: quoteToken.address,
-                exchangeAddress: contractWrappers.exchange.address,
-            },
-            side,
-        );
-
-        const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-        return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+            return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+        } catch (error) {
+            throw new SignedOrderException(error.message);
+        }
     };
 };
 
