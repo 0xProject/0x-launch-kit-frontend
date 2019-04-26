@@ -24,15 +24,15 @@ export const setMarkets = createAction('market/MARKETS_set', resolve => {
 });
 
 // Market Price Ether Actions
-export const fetchMarketPriceEtherError = createAction('market/PRICE_ETHER_fetch_error', resolve => {
+export const fetchMarketPriceEtherError = createAction('market/PRICE_ETHER_fetch_failure', resolve => {
     return (payload: any) => resolve(payload);
 });
 
-export const fetchMarketPriceEtherStart = createAction('market/PRICE_ETHER_start_fetch', resolve => {
+export const fetchMarketPriceEtherStart = createAction('market/PRICE_ETHER_fetch_request', resolve => {
     return () => resolve();
 });
 
-export const fetchMarketPriceEtherUpdate = createAction('market/PRICE_ETHER_update', resolve => {
+export const fetchMarketPriceEtherUpdate = createAction('market/PRICE_ETHER_fetch_success', resolve => {
     return (ethInUsd: BigNumber) => resolve(ethInUsd);
 });
 
