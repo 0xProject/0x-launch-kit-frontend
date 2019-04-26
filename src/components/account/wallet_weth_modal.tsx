@@ -3,10 +3,10 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
+import { themeColors } from '../../themes/ThemeCommons';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
-import { StyledComponentThemeProps } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
-import { Button } from '../common/button';
+import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
 import { Tooltip } from '../common/tooltip';
 
@@ -21,9 +21,7 @@ enum Editing {
     Weth,
 }
 
-interface StateProps extends StyledComponentThemeProps {}
-
-interface OwnProps extends React.ComponentProps<typeof Modal> {
+interface Props extends React.ComponentProps<typeof Modal> {
     isSubmitting: boolean;
     onSubmit: (b: BigNumber) => any;
     totalEth: BigNumber;
@@ -36,31 +34,15 @@ interface State {
     selectedWeth: BigNumber;
 }
 
-type Props = OwnProps & StateProps;
-
 const sliderThumbDimensions = '16px';
-// TODO - Replace this with the object bellow
 const sliderTrackProps = `
     background: #999;
-    background: linear-gradient(#002979, #002979) 0 /
-        var(--sx) 100% no-repeat #999;
+    background: linear-gradient(${themeColors.darkBlue}, ${themeColors.darkBlue}) 0 / var(--sx) 100% no-repeat #999;
     border-radius: 2.5px;
     border: none;
     box-sizing: border-box;
     height: 5px;
 `;
-/*
-const sliderTrackProps = styled.div<StyledComponentThemeProps>`
-    background: #999;
-    background: linear-gradient(${props => props.themeColors.darkBlue};, ${props => props.themeColors.darkBlue};) 0 /
-        var(--sx) 100% no-repeat #999;
-    border-radius: 2.5px;
-    border: none;
-    box-sizing: border-box;
-    height: 5px;
-`;
-
- */
 const sliderThumbProps = `
     background: #fff;
     border-radius: 50%;
@@ -113,7 +95,7 @@ const Slider = styled.input`
     }
 `;
 
-const ButtonStyled = styled(Button)`
+const Button = styled(ButtonBase)`
     width: 100%;
 `;
 
@@ -126,8 +108,8 @@ const Title = styled.h1<{ marginBottomSmall: any }>`
     text-align: center;
 `;
 
-const ETHPrice = styled.h2<StyledComponentThemeProps>`
-    color: ${props => props.themeColors.textLight};
+const ETHPrice = styled.h2`
+    color: ${themeColors.textLight};
     font-size: 14px;
     font-style: normal;
     font-weight: normal;
@@ -144,7 +126,7 @@ const EthBoxes = styled.div`
     padding-top: 30px;
 `;
 
-interface EthBoxProps extends StyledComponentThemeProps {
+interface EthBoxProps {
     boxType: ETHBoxType;
     isZero?: boolean;
 }
@@ -152,7 +134,7 @@ interface EthBoxProps extends StyledComponentThemeProps {
 const EthBox = styled.div<EthBoxProps>`
     align-items: center;
     border-radius: 4px;
-    border: 1px solid ${props => props.themeColors.borderColor};
+    border: 1px solid ${themeColors.borderColor};
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -163,12 +145,10 @@ const EthBox = styled.div<EthBoxProps>`
     transition: border-color 0.15s ease-in;
 
     &:focus-within {
-        border-color: ${props =>
-            props.boxType === ETHBoxType.Weth ? props.themeColors.darkBlue : props.themeColors.darkerGray};
+        border-color: ${props => (props.boxType === ETHBoxType.Weth ? themeColors.darkBlue : themeColors.darkerGray)};
 
         h4 {
-            color: ${props =>
-                props.boxType === ETHBoxType.Weth ? props.themeColors.darkBlue : props.themeColors.textLight};
+            color: ${props => (props.boxType === ETHBoxType.Weth ? themeColors.darkBlue : themeColors.textLight)};
         }
     }
 `;
@@ -181,7 +161,7 @@ const TooltipStyled = styled.div`
 `;
 
 const EthBoxValue = styled.h2<EthBoxProps>`
-    color: ${props => (props.boxType === ETHBoxType.Eth ? props.themeColors.darkerGray : props.themeColors.darkBlue)};
+    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkerGray : themeColors.darkBlue)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -190,8 +170,8 @@ const EthBoxValue = styled.h2<EthBoxProps>`
     text-align: center;
 `;
 
-const EthBoxUnit = styled.h4<StyledComponentThemeProps>`
-    color: ${props => props.themeColors.textLight};
+const EthBoxUnit = styled.h4`
+    color: ${themeColors.textLight};
     font-size: 14px;
     font-weight: 400;
     line-height: 1.2;
@@ -199,12 +179,8 @@ const EthBoxUnit = styled.h4<StyledComponentThemeProps>`
     text-align: center;
 `;
 
-interface MinEthWrapperProps extends StyledComponentThemeProps {
-    hideWarning: boolean;
-}
-
-const SetMinEthWrapper = styled.p<MinEthWrapperProps>`
-    color: ${props => props.themeColors.darkerGray};
+const SetMinEthWrapper = styled.p<{ hideWarning: boolean }>`
+    color: ${themeColors.darkerGray};
     font-size: 13px;
     font-style: italic;
     font-weight: 500;
@@ -214,15 +190,15 @@ const SetMinEthWrapper = styled.p<MinEthWrapperProps>`
     visibility: ${props => (props.hideWarning ? 'hidden' : 'visible')};
 `;
 
-const SetMinEthButton = styled.a<StyledComponentThemeProps>`
+const SetMinEthButton = styled.a`
     border-bottom: 1px dotted #000;
-    color: ${props => props.themeColors.darkerGray};
+    color: ${themeColors.darkerGray};
     text-decoration: none;
 `;
 
-const InputEth = styled<any>(BigNumberInput)<EthBoxProps>`
+const InputEth = styled<any>(BigNumberInput)`
     border-color: transparent;
-    color: ${props => (props.boxType === ETHBoxType.Eth ? props.themeColors.darkerGray : props.themeColors.darkBlue)};
+    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkerGray : themeColors.darkBlue)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -248,7 +224,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, themeColors, ...restProps } = this.props;
+        const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
         const selectedEth = totalEth.sub(this.state.selectedWeth);
         const initialWethStr = tokenAmountInUnits(this.props.wethBalance, 18);
@@ -257,13 +233,14 @@ class WethModal extends React.Component<Props, State> {
         const totalEthStr = tokenAmountInUnits(totalEth, 18);
         const isInsufficientEth = selectedEth.lessThan(minEth);
         const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
+
         return (
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
                 <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
-                {ethInUsd ? <ETHPrice themeColors={themeColors}>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
+                {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
                 <EthBoxes>
-                    <EthBox boxType={ETHBoxType.Eth} themeColors={themeColors}>
+                    <EthBox boxType={ETHBoxType.Eth}>
                         {editing === Editing.Eth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
@@ -274,7 +251,6 @@ class WethModal extends React.Component<Props, State> {
                                     min={new BigNumber(0)}
                                     onChange={this._updateEth}
                                     value={selectedEth}
-                                    themeColors={themeColors}
                                 />
                             </form>
                         ) : (
@@ -282,14 +258,13 @@ class WethModal extends React.Component<Props, State> {
                                 boxType={ETHBoxType.Eth}
                                 isZero={selectedEthStr === minSlidervalue}
                                 onClick={this._enableEditEth}
-                                themeColors={themeColors}
                             >
                                 {selectedEthStr}
                             </EthBoxValue>
                         )}
-                        <EthBoxUnit themeColors={themeColors}>ETH</EthBoxUnit>
+                        <EthBoxUnit>ETH</EthBoxUnit>
                     </EthBox>
-                    <EthBox boxType={ETHBoxType.Weth} themeColors={themeColors}>
+                    <EthBox boxType={ETHBoxType.Weth}>
                         {editing === Editing.Weth ? (
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
@@ -300,7 +275,6 @@ class WethModal extends React.Component<Props, State> {
                                     onChange={this._updateWeth}
                                     value={selectedWeth}
                                     boxType={ETHBoxType.Weth}
-                                    themeColors={themeColors}
                                 />
                             </form>
                         ) : (
@@ -308,12 +282,11 @@ class WethModal extends React.Component<Props, State> {
                                 boxType={ETHBoxType.Weth}
                                 isZero={selectedWethStr === minSlidervalue}
                                 onClick={this._enableEditWeth}
-                                themeColors={themeColors}
                             >
                                 {selectedWethStr}
                             </EthBoxValue>
                         )}
-                        <EthBoxUnit themeColors={themeColors}>wETH</EthBoxUnit>
+                        <EthBoxUnit>wETH</EthBoxUnit>
                         <TooltipStyled>
                             <Tooltip description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
                         </TooltipStyled>
@@ -334,15 +307,15 @@ class WethModal extends React.Component<Props, State> {
                     type="range"
                     value={selectedWethStr}
                 />
-                <SetMinEthWrapper hideWarning={!isInsufficientEth} themeColors={themeColors}>
+                <SetMinEthWrapper hideWarning={isInsufficientEth ? false : true}>
                     ETH required for fees.&nbsp;
-                    <SetMinEthButton href="" onClick={this._setMinEth} themeColors={themeColors}>
+                    <SetMinEthButton href="" onClick={this._setMinEth}>
                         0.5 ETH Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>
-                <ButtonStyled onClick={this.submit} disabled={isDisabled} themeColors={themeColors}>
+                <Button onClick={this.submit} disabled={isDisabled}>
                     Update Balance{isSubmitting && '...'}
-                </ButtonStyled>
+                </Button>
             </Modal>
         );
     };

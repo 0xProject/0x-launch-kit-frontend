@@ -8,7 +8,7 @@ import 'sanitize.css';
 
 import { LOGGER_ID } from './common/constants';
 import { AppContainer } from './components/app';
-import { AdBlockDetectorContainer } from './components/common/adblock_detector';
+import { AdBlockDetector } from './components/common/adblock_detector';
 import { GeneralLayoutContainer } from './components/general_layout';
 import './index.css';
 import { Marketplace } from './pages/marketplace';
@@ -28,8 +28,8 @@ const Web3WrappedApp = (
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <AppContainer>
-                <AdBlockDetectorContainer />
                 <GeneralLayoutContainer>
+                    <AdBlockDetector />
                     <Switch>
                         <Route exact={true} path="/" component={Marketplace} />
                         <Route exact={true} path="/my-wallet" component={MyWallet} />

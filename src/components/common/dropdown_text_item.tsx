@@ -1,27 +1,17 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { getThemeColors } from '../../store/selectors';
-import { themeDimensions } from '../../themes/ThemeCommons';
-import { StoreState, StyledComponentThemeProps } from '../../util/types';
+import { themeColors, themeDimensions } from '../../themes/ThemeCommons';
 
-interface StateProps extends StyledComponentThemeProps {}
-interface OwnProps {
+interface Props extends HTMLAttributes<HTMLDivElement> {
     active?: boolean;
     onClick?: any;
     text: string;
 }
 
-interface StyledIsActive extends StyledComponentThemeProps {
-    active?: boolean;
-}
-
-type Props = OwnProps & StateProps;
-
-const DropdownTextItemWrapper = styled.div<StyledIsActive>`
-    background-color: ${props => (props.active ? props.themeColors.rowActive : '#fff')};
-    border-bottom: 1px solid ${props => props.themeColors.borderColor};
+const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
+    background-color: ${props => (props.active ? themeColors.rowActive : '#fff')};
+    border-bottom: 1px solid ${themeColors.borderColor};
     color: #000;
     cursor: pointer;
     font-size: 14px;
@@ -31,7 +21,7 @@ const DropdownTextItemWrapper = styled.div<StyledIsActive>`
     padding: 12px ${themeDimensions.horizontalPadding};
 
     &:hover {
-        background-color: ${props => props.themeColors.rowActive};
+        background-color: ${themeColors.rowActive};
     }
 
     &:first-child {
@@ -46,22 +36,12 @@ const DropdownTextItemWrapper = styled.div<StyledIsActive>`
     }
 `;
 
-const DropdownTextItem: React.FC<Props> = props => {
-    const { text, onClick, themeColors, ...restProps } = props;
+export const DropdownTextItem: React.FC<Props> = props => {
+    const { text, onClick, ...restProps } = props;
 
     return (
-        <DropdownTextItemWrapper onClick={onClick} themeColors={themeColors} {...restProps}>
+        <DropdownTextItemWrapper onClick={onClick} {...restProps}>
             {text}
         </DropdownTextItemWrapper>
     );
 };
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        themeColors: getThemeColors(state),
-    };
-};
-
-const DropdownTextItemContainer = connect(mapStateToProps)(DropdownTextItem);
-
-export { DropdownTextItem, DropdownTextItemContainer };

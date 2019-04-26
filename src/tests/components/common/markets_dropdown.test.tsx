@@ -2,7 +2,6 @@ import { shallow } from 'enzyme';
 import React from 'react';
 
 import { MarketsDropdown } from '../../../components/common/markets_dropdown';
-import { WhiteTheme } from '../../../themes/WhiteTheme';
 import { tokenFactory } from '../../../util/test-utils';
 import { TokenSymbol } from '../../../util/types';
 
@@ -21,7 +20,6 @@ describe('Markets Dropdown', () => {
                 currencyPair={currencyPair}
                 goToHome={noop}
                 markets={null}
-                themeColors={new WhiteTheme()}
             />,
         );
     });

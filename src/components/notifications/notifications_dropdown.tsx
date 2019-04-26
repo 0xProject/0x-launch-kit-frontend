@@ -3,21 +3,16 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { setHasUnreadNotifications } from '../../store/actions';
-import {
-    getEstimatedTxTimeMs,
-    getHasUnreadNotifications,
-    getNotifications,
-    getThemeColors,
-} from '../../store/selectors';
-import { themeDimensions, themeFeatures } from '../../themes/ThemeCommons';
-import { Notification, StoreState, StyledComponentThemeProps } from '../../util/types';
+import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
+import { themeColors, themeDimensions, themeFeatures } from '../../themes/ThemeCommons';
+import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { BellIcon } from '../common/icons/bell_icon';
 
 import { NotificationItemContainer } from './notification_item';
 
-interface StateProps extends StyledComponentThemeProps {
+interface StateProps {
     estimatedTxTimeMs: number;
     notifications: Notification[];
     hasUnreadNotifications: boolean;
@@ -55,8 +50,8 @@ const NotificationsList = styled.div`
     overflow: auto;
 `;
 
-const NotificationDropdownTitle = styled.h1<StyledComponentThemeProps>`
-    border-bottom: 1px solid ${props => props.themeColors.borderColor};
+const NotificationDropdownTitle = styled.h1`
+    border-bottom: 1px solid ${themeColors.borderColor};
     color: #000;
     font-size: 16px;
     font-weight: 600;
@@ -77,7 +72,6 @@ class NotificationsDropdown extends React.Component<Props, {}> {
             notifications,
             hasUnreadNotifications,
             onMarkNotificationsAsRead,
-            themeColors,
             ...restProps
         } = this.props;
 
@@ -93,8 +87,8 @@ class NotificationsDropdown extends React.Component<Props, {}> {
         );
 
         const body = (
-            <NotificationsDropdownBody themeColors={themeColors}>
-                <NotificationDropdownTitle themeColors={themeColors}>Notifications</NotificationDropdownTitle>
+            <NotificationsDropdownBody>
+                <NotificationDropdownTitle>Notifications</NotificationDropdownTitle>
                 <NotificationsList>
                     {notifications.length === 0 ? (
                         <NoNotifications>No notifications</NoNotifications>
@@ -123,7 +117,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         notifications: getNotifications(state),
         hasUnreadNotifications: getHasUnreadNotifications(state),
-        themeColors: getThemeColors(state),
     };
 };
 const mapDispatchToProps = {

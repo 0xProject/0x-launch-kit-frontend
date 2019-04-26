@@ -9,7 +9,7 @@ import { addMarketBuySellNotification } from '../../../store/ui/actions';
 import { tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
-import { BaseStepModalContainer } from './base_step_modal';
+import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
@@ -59,7 +59,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const doneFooterCaption = `${isBuy ? amountOfTokenString : this._getAmountOfQuoteTokenString()} received`;
 
         return (
-            <BaseStepModalContainer
+            <BaseStepModal
                 step={step}
                 title={title}
                 confirmCaption={confirmCaption}

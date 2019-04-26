@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { getThemeColors } from '../store/selectors';
 import { themeBreakPoints } from '../themes/ThemeCommons';
@@ -11,7 +11,7 @@ import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { ToolbarContainer } from './common/toolbar';
 
 const General = styled.div<StyledComponentThemeProps>`
-    background: ${props => props.themeColors.background};
+    background: ${props => props.themeColors.componentsTheme.background};
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -46,14 +46,16 @@ type Props = OwnProps & StateProps;
 const GeneralLayout = (props: Props) => {
     const { themeColors, children } = props;
     return (
-        <General themeColors={themeColors}>
-            <ToolbarContainer />
-            <ContentScroll>
-                <Content>{children}</Content>
-                <Footer />
-            </ContentScroll>
-            <StepsModalContainer />
-        </General>
+        <ThemeProvider theme={themeColors}>
+            <General themeColors={themeColors}>
+                <ToolbarContainer />
+                <ContentScroll>
+                    <Content>{children}</Content>
+                    <Footer />
+                </ContentScroll>
+                <StepsModalContainer />
+            </General>
+        </ThemeProvider>
     );
 };
 

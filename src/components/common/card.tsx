@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../themes/ThemeCommons';
-import { StyledComponentThemeProps } from '../../util/types';
+import { themeColors, themeDimensions } from '../../themes/ThemeCommons';
 
 import { CardBase } from './card_base';
 
-interface Props extends StyledComponentThemeProps {
+interface Props extends HTMLAttributes<HTMLDivElement> {
     title?: string;
     action?: React.ReactNode;
     children: React.ReactNode;
@@ -16,9 +15,9 @@ const CardWrapper = styled(CardBase)`
     margin-bottom: 10px;
 `;
 
-const CardHeader = styled.div<StyledComponentThemeProps>`
+const CardHeader = styled.div`
     align-items: center;
-    border-bottom: 1px solid ${props => props.themeColors.borderColor};
+    border-bottom: 1px solid ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
@@ -43,12 +42,12 @@ const CardBody = styled.div`
 `;
 
 export const Card: React.FC<Props> = props => {
-    const { title, action, children, themeColors, ...restProps } = props;
+    const { title, action, children, ...restProps } = props;
 
     return (
-        <CardWrapper themeColors={themeColors} {...restProps}>
+        <CardWrapper {...restProps}>
             {title || action ? (
-                <CardHeader themeColors={themeColors}>
+                <CardHeader>
                     <CardTitle>{title}</CardTitle>
                     {action ? action : null}
                 </CardHeader>

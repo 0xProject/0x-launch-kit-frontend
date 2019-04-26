@@ -1,14 +1,13 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import styled from 'styled-components';
 
-import { getThemeColors } from '../../../store/selectors';
 import { getStepTitle, isLongStep, makeGetProgress } from '../../../util/steps';
-import { Step, StoreState, StyledComponentThemeProps } from '../../../util/types';
+import { Step } from '../../../util/types';
 
 import { StepPendingTime } from './step_pending_time';
 import {
+    ModalStatusTextLight,
     ModalText,
+    ModalTextClickable,
     StepStatus,
     StepStatusConfirmOnMetamask,
     StepStatusDone,
@@ -17,16 +16,6 @@ import {
     Title,
 } from './steps_common';
 import { GetProgress, StepItem, StepsProgress } from './steps_progress';
-
-const ModalStatusTextLight = styled.span<StyledComponentThemeProps>`
-    color: ${props => props.themeColors.textLight};
-`;
-
-const ModalTextClickable = styled.span<StyledComponentThemeProps>`
-    color: ${props => props.themeColors.textLight};
-    cursor: pointer;
-    text-decoration: underline;
-`;
 
 export class BaseStepModalUnmountedException extends Error {
     constructor() {
@@ -46,12 +35,7 @@ type RunAction = ({
     onError: (err: Error | BaseStepModalUnmountedException) => any;
 }) => Promise<any>;
 
-interface State {
-    status: StepStatus;
-    loadingStarted: number | null;
-}
-
-interface OwnProps {
+interface Props {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
     estimatedTxTimeMs: number;
     runAction: RunAction;
@@ -66,11 +50,12 @@ interface OwnProps {
     showPartialProgress?: boolean;
 }
 
-interface StateProps extends StyledComponentThemeProps {}
+interface State {
+    status: StepStatus;
+    loadingStarted: number | null;
+}
 
-type Props = StateProps & OwnProps;
-
-class BaseStepModal extends React.Component<Props, State> {
+export class BaseStepModal extends React.Component<Props, State> {
     public state: State = {
         status: StepStatus.ConfirmOnMetamask,
         loadingStarted: null,
@@ -105,7 +90,6 @@ class BaseStepModal extends React.Component<Props, State> {
             title,
         } = this.props;
         const { loadingStarted, status } = this.state;
-        const { themeColors } = this.props;
         const retry = () => this._retry();
         let content;
         let footer = this.props.showPartialProgress ? null : <span>&nbsp;</span>;
@@ -123,16 +107,14 @@ class BaseStepModal extends React.Component<Props, State> {
                         <ModalText>{doneCaption}</ModalText>
                     </StepStatusDone>
                 );
-                footer = <ModalStatusTextLight themeColors={themeColors}>{doneFooterCaption}</ModalStatusTextLight>;
+                footer = <ModalStatusTextLight>{doneFooterCaption}</ModalStatusTextLight>;
                 break;
             case StepStatus.Error:
                 content = (
                     <StepStatusError>
                         <ModalText>
                             {errorCaption}{' '}
-                            <ModalTextClickable onClick={retry} themeColors={themeColors}>
-                                Click here to try again
-                            </ModalTextClickable>
+                            <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
                         </ModalText>
                     </StepStatusError>
                 );
@@ -143,7 +125,7 @@ class BaseStepModal extends React.Component<Props, State> {
                         <ModalText>{confirmCaption}</ModalText>
                     </StepStatusConfirmOnMetamask>
                 );
-                footer = <ModalStatusTextLight themeColors={themeColors}>{loadingFooterCaption}</ModalStatusTextLight>;
+                footer = <ModalStatusTextLight>{loadingFooterCaption}</ModalStatusTextLight>;
                 break;
         }
 
@@ -220,13 +202,3 @@ class BaseStepModal extends React.Component<Props, State> {
         }
     };
 }
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        themeColors: getThemeColors(state),
-    };
-};
-
-const BaseStepModalContainer = connect(mapStateToProps)(BaseStepModal);
-
-export { BaseStepModal, BaseStepModalContainer };

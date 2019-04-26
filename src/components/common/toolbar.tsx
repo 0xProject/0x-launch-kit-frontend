@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { goToHome, goToWallet } from '../../store/actions';
-import { getThemeColors, getWeb3State } from '../../store/selectors';
-import { themeBreakPoints, themeDimensions } from '../../themes/ThemeCommons';
+import { getWeb3State } from '../../store/selectors';
+import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/ThemeCommons';
 import { errorsWallet } from '../../util/error_messages';
-import { StoreState, StyledComponentThemeProps, Web3State } from '../../util/types';
+import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
@@ -14,7 +14,7 @@ import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
 
-interface StateProps extends StyledComponentThemeProps {
+interface StateProps {
     web3State?: Web3State;
 }
 
@@ -25,10 +25,9 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-// TODO -- Replace with code bellow
 const separatorTopbar = `
     &:after {
-        background-color: '#DEDEDE';
+        background-color: ${themeColors.borderColor};
         content: "";
         height: 26px;
         margin-left: 17px;
@@ -41,27 +40,10 @@ const separatorTopbar = `
     }
 `;
 
-/*
-const separatorTopbar = styled.div<StyledComponentThemeProps>`
-    &:after {
-        background-color: ${props => props.themeColors.borderColor};
-        content: '';
-        height: 26px;
-        margin-left: 17px;
-        margin-right: 17px;
-        width: 1px;
-    }
-
-    &:last-child:after {
-        display: none;
-    }
-`;
-
- */
-const ToolbarWrapper = styled.div<StyledComponentThemeProps>`
+const ToolbarWrapper = styled.div`
     align-items: center;
     background: #ffffff;
-    border-bottom: 1px solid ${props => props.themeColors.borderColor};
+    border-bottom: 1px solid ${themeColors.borderColor};
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
@@ -125,7 +107,6 @@ const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
     const isMmLoading = props.web3State === Web3State.Loading;
-    const { themeColors } = props;
 
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -138,41 +119,26 @@ const Toolbar = (props: Props) => {
     };
 
     return (
-        <ToolbarWrapper themeColors={themeColors}>
+        <ToolbarWrapper>
             <ToolbarStart>
                 <LogoHeader onClick={handleLogoClick} />
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
             </ToolbarStart>
             {isMmLocked ? (
-                <ErrorCard
-                    fontSize={FontSize.Large}
-                    text={errorsWallet.mmLocked}
-                    icon={ErrorIcons.Lock}
-                    themeColors={themeColors}
-                />
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
             ) : null}
             {isMmNotInstalled ? (
-                <ErrorCard
-                    fontSize={FontSize.Large}
-                    text={errorsWallet.mmNotInstalled}
-                    icon={ErrorIcons.Metamask}
-                    themeColors={themeColors}
-                />
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
             ) : null}
             {isMmLoading ? (
-                <ErrorCard
-                    fontSize={FontSize.Large}
-                    text={errorsWallet.mmLoading}
-                    icon={ErrorIcons.Metamask}
-                    themeColors={themeColors}
-                />
+                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
             ) : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? (
                 <ToolbarEnd>
                     <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
                         My Wallet
                     </MyWalletLink>
-                    <WalletDropdown themeColors={themeColors} />
+                    <WalletDropdown />
                     <NotificationsDropdownContainer />
                 </ToolbarEnd>
             ) : null}
@@ -183,7 +149,6 @@ const Toolbar = (props: Props) => {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
-        themeColors: getThemeColors(state),
     };
 };
 

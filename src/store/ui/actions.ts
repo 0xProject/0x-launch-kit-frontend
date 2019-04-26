@@ -1,17 +1,13 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { MODAL_TEMPLATE_THEME, TEMPLATE_THEME } from '../../common/constants';
+import { TEMPLATE_THEME } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { BasicTheme } from '../../themes/BasicTheme';
-import { BasicThemeModal } from '../../themes/modal/BasicThemeModal';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
-import {
-    getModalTemplateInstanceByTemplateName,
-    getThemeTemplateInstanceByTemplateName,
-} from '../../util/template_meta_data';
+import { getThemeByName } from '../../util/template_meta_data';
 import {
     Notification,
     NotificationKind,
@@ -57,16 +53,10 @@ export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
     return (themeColor: BasicTheme) => resolve(themeColor);
 });
 
-export const setModalThemeColor = createAction('SET_MODAL_THEME_COLOR', resolve => {
-    return (modalThemeColor: BasicThemeModal) => resolve(modalThemeColor);
-});
-
 export const updateThemeTemplate = () => {
     return (dispatch: any) => {
-        const templateInstance = getThemeTemplateInstanceByTemplateName(TEMPLATE_THEME);
-        const modalTemplateInstance = getModalTemplateInstanceByTemplateName(MODAL_TEMPLATE_THEME);
+        const templateInstance = getThemeByName(TEMPLATE_THEME);
         dispatch(setThemeColor(templateInstance));
-        dispatch(setModalThemeColor(modalTemplateInstance));
     };
 };
 

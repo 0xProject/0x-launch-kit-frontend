@@ -4,13 +4,12 @@ import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, goToHome } from '../../store/actions';
-import { getBaseToken, getCurrencyPair, getMarkets, getThemeColors } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
-import { themeDimensions, themeFeatures } from '../../themes/ThemeCommons';
+import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
+import { themeColors, themeDimensions, themeFeatures } from '../../themes/ThemeCommons';
 import { getColorBySymbol } from '../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
-import { CurrencyPair, Market, StoreState, StyledComponentThemeProps, Token, TokenSymbol } from '../../util/types';
+import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../util/types';
 
 import { CardBase } from './card_base';
 import { Dropdown } from './dropdown';
@@ -26,25 +25,25 @@ interface DispatchProps {
     goToHome: () => any;
 }
 
-interface StateProps extends StyledComponentThemeProps {
+interface PropsToken {
     baseToken: Token | null;
     currencyPair: CurrencyPair;
     markets: Market[] | null;
 }
 
-type Props = PropsDivElement & DispatchProps & StateProps;
+type Props = PropsDivElement & PropsToken & DispatchProps;
 
 interface State {
     selectedFilter: Filter;
     search: string;
 }
 
-interface TokenFiltersTabProps extends StyledComponentThemeProps {
+interface TokenFiltersTabProps {
     active: boolean;
     onClick: number;
 }
 
-interface MarketRowProps extends StyledComponentThemeProps {
+interface MarketRowProps {
     active: boolean;
 }
 
@@ -72,9 +71,9 @@ const MarketsDropdownBody = styled(CardBase)`
     width: 401px;
 `;
 
-const MarketsFilters = styled.div<StyledComponentThemeProps>`
+const MarketsFilters = styled.div`
     align-items: center;
-    border-bottom: 1px solid ${props => props.themeColors.borderColor};
+    border-bottom: 1px solid ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
     min-height: ${rowHeight};
@@ -96,7 +95,7 @@ const TokenFiltersTabs = styled.div`
 `;
 
 const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
-    color: ${props => (props.active ? '#000' : props.themeColors.lightGray)};
+    color: ${props => (props.active ? '#000' : themeColors.lightGray)};
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
@@ -104,7 +103,7 @@ const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
     user-select: none;
 
     &:after {
-        color: ${props => props.themeColors.lightGray};
+        color: ${themeColors.lightGray};
         content: '/';
         margin: 0 6px;
     }
@@ -123,10 +122,10 @@ const SearchWrapper = styled.div`
     width: ${searchFieldWidth};
 `;
 
-const SearchField = styled.input<StyledComponentThemeProps>`
+const SearchField = styled.input`
     background: #eaeaea;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.themeColors.borderColor};
+    border: 1px solid ${themeColors.borderColor};
     color: #333;
     font-size: 13px;
     height: ${searchFieldHeight};
@@ -169,11 +168,11 @@ const tableHeaderFontWeight = `
 `;
 
 const TRStyled = styled(TR)<MarketRowProps>`
-    background-color: ${props => (props.active ? props.themeColors.rowActive : 'transparent')};
+    background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
 
     &:hover {
-        background-color: ${props => props.themeColors.rowActive};
+        background-color: ${themeColors.rowActive};
     }
 
     &:last-child > td {
@@ -253,7 +252,7 @@ class MarketsDropdown extends React.Component<Props, State> {
     private _closeDropdown: any;
 
     public render = () => {
-        const { currencyPair, baseToken, themeColors, ...restProps } = this.props;
+        const { currencyPair, baseToken, ...restProps } = this.props;
 
         const header = (
             <MarketsDropdownHeader>
@@ -263,7 +262,6 @@ class MarketsDropdown extends React.Component<Props, State> {
                             symbol={baseToken.symbol}
                             primaryColor={baseToken.primaryColor}
                             isInline={true}
-                            themeColors={themeColors}
                         />
                     ) : null}
                     {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
@@ -273,10 +271,10 @@ class MarketsDropdown extends React.Component<Props, State> {
         );
 
         const body = (
-            <MarketsDropdownBody themeColors={themeColors}>
-                <MarketsFilters themeColors={themeColors}>
+            <MarketsDropdownBody>
+                <MarketsFilters>
                     <MarketsFiltersLabel>Markets</MarketsFiltersLabel>
-                    {this._getTokensFilterTabs(themeColors)}
+                    {this._getTokensFilterTabs()}
                     {this._getSearchField()}
                 </MarketsFilters>
                 <TableWrapper>{this._getMarkets()}</TableWrapper>
@@ -290,7 +288,7 @@ class MarketsDropdown extends React.Component<Props, State> {
         this._closeDropdown = node.closeDropdown;
     };
 
-    private readonly _getTokensFilterTabs = (themeColors: BasicTheme) => {
+    private readonly _getTokensFilterTabs = () => {
         return (
             <TokenFiltersTabs>
                 {marketFilters.map((filter: Filter, index) => {
@@ -299,7 +297,6 @@ class MarketsDropdown extends React.Component<Props, State> {
                             active={filter === this.state.selectedFilter}
                             key={index}
                             onClick={this._setTokensFilterTab.bind(this, filter)}
-                            themeColors={themeColors}
                         >
                             {filter.text}
                         </TokenFiltersTab>
@@ -314,11 +311,10 @@ class MarketsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _getSearchField = () => {
-        const { themeColors } = this.props;
         return (
             <SearchWrapper>
                 <MagnifierIconWrapper>{MagnifierIcon()}</MagnifierIconWrapper>
-                <SearchField onChange={this._handleChange} value={this.state.search} themeColors={themeColors} />
+                <SearchField onChange={this._handleChange} value={this.state.search} />
             </SearchWrapper>
         );
     };
@@ -332,7 +328,7 @@ class MarketsDropdown extends React.Component<Props, State> {
     };
 
     private readonly _getMarkets = () => {
-        const { baseToken, currencyPair, markets, themeColors } = this.props;
+        const { baseToken, currencyPair, markets } = this.props;
         const { search, selectedFilter } = this.state;
 
         if (!baseToken || !markets) {
@@ -344,15 +340,11 @@ class MarketsDropdown extends React.Component<Props, State> {
         const searchedMarkets = filterMarketsByString(filteredMarkets, search);
 
         return (
-            <Table themeColors={themeColors}>
+            <Table>
                 <THead>
                     <TR>
-                        <THFirstStyled themeColors={themeColors} styles={{ textAlign: 'left' }}>
-                            Market
-                        </THFirstStyled>
-                        <THLastStyled themeColors={themeColors} styles={{ textAlign: 'center' }}>
-                            Price
-                        </THLastStyled>
+                        <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
+                        <THLastStyled styles={{ textAlign: 'center' }}>Price</THLastStyled>
                     </TR>
                 </THead>
                 <TBody>
@@ -368,31 +360,16 @@ class MarketsDropdown extends React.Component<Props, State> {
                         const quoteSymbol = market.currencyPair.quote.toUpperCase();
 
                         return (
-                            <TRStyled
-                                active={isActive}
-                                key={index}
-                                onClick={setSelectedMarket}
-                                themeColors={themeColors}
-                            >
-                                <CustomTDFirstStyled
-                                    themeColors={themeColors}
-                                    styles={{ textAlign: 'left', borderBottom: true }}
-                                >
+                            <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
+                                <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
                                     <TokenIconAndLabel>
-                                        <TokenIcon
-                                            symbol={market.currencyPair.base}
-                                            primaryColor={primaryColor}
-                                            themeColors={themeColors}
-                                        />
+                                        <TokenIcon symbol={market.currencyPair.base} primaryColor={primaryColor} />
                                         <TokenLabel>
                                             {baseSymbol} / {quoteSymbol}
                                         </TokenLabel>
                                     </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
-                                <CustomTDLastStyled
-                                    themeColors={themeColors}
-                                    styles={{ textAlign: 'center', borderBottom: true, tabular: true }}
-                                >
+                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
                                     {this._getPrice(market)}
                                 </CustomTDLastStyled>
                             </TRStyled>
@@ -418,12 +395,11 @@ class MarketsDropdown extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state: StoreState): StateProps => {
+const mapStateToProps = (state: StoreState): PropsToken => {
     return {
         baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
         markets: getMarkets(state),
-        themeColors: getThemeColors(state),
     };
 };
 

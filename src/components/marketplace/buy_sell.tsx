@@ -4,18 +4,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getCurrencyPair, getThemeColors, getWeb3State } from '../../store/selectors';
-import { themeDimensions } from '../../themes/ThemeCommons';
+import { getCurrencyPair, getWeb3State } from '../../store/selectors';
+import { themeColors, themeDimensions } from '../../themes/ThemeCommons';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
-import {
-    CurrencyPair,
-    OrderSide,
-    OrderType,
-    StoreState,
-    StyledComponentThemeProps,
-    TokenSymbol,
-    Web3State,
-} from '../../util/types';
+import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button } from '../common/button';
 import { CardBase } from '../common/card_base';
@@ -23,7 +15,7 @@ import { CardTabSelector } from '../common/card_tab_selector';
 
 import { OrderDetailsContainer } from './order_details';
 
-interface StateProps extends StyledComponentThemeProps {
+interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
 }
@@ -59,26 +51,21 @@ const TabsContainer = styled.div`
     justify-content: space-between;
 `;
 
-interface TabButtonProps extends StyledComponentThemeProps {
-    isSelected: boolean;
-    side: OrderSide;
-}
-
-const TabButton = styled.div<TabButtonProps>`
+const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     align-items: center;
     background-color: ${props => (props.isSelected ? 'transparent' : '#f9f9f9')};
-    border-bottom-color: ${props => (props.isSelected ? 'transparent' : props.themeColors.borderColor)};
+    border-bottom-color: ${props => (props.isSelected ? 'transparent' : themeColors.borderColor)};
     border-bottom-style: solid;
     border-bottom-width: 1px;
-    border-right-color: ${props => (props.isSelected ? props.themeColors.borderColor : 'transparent')};
+    border-right-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
     border-right-style: solid;
     border-right-width: 1px;
     color: ${props =>
         props.isSelected
             ? props.side === OrderSide.Buy
-                ? props.themeColors.green
-                : props.themeColors.orange
-            : props.themeColors.textLight};
+                ? themeColors.green
+                : themeColors.orange
+            : themeColors.textLight};
     cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
     display: flex;
     font-weight: 600;
@@ -87,7 +74,7 @@ const TabButton = styled.div<TabButtonProps>`
     width: 50%;
 
     &:last-child {
-        border-left-color: ${props => (props.isSelected ? props.themeColors.borderColor : 'transparent')};
+        border-left-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
         border-left-style: solid;
         border-left-width: 1px;
         border-right: none;
@@ -119,9 +106,8 @@ const FieldContainer = styled.div`
     position: relative;
 `;
 
-// TODO change this with the bellow commented field
 const fieldStyle = `
-    border: 1px solid '#DEDEDE';
+    border: 1px solid ${themeColors.borderColor};
     border-radius: ${themeDimensions.borderRadius};
     color: #000;
     font-feature-settings: 'tnum' 1;
@@ -133,21 +119,6 @@ const fieldStyle = `
     width: 100%;
     z-index: 1;
 `;
-/*
-const fieldStyle = styled.div<StyledComponentThemeProps>`
-    border: 1px solid '#DEDEDE';
-    border-radius: ${themeDimensions.borderRadius};
-    color: #000;
-    font-feature-settings: 'tnum' 1;
-    font-size: 16px;
-    height: 100%;
-    padding-left: 14px;
-    padding-right: 60px;
-    position: absolute;
-    width: 100%;
-    z-index: 1;
-`;
- */
 
 const BigInputNumberStyled = styled<any>(BigNumberInput)`
     ${fieldStyle}
@@ -185,7 +156,7 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { currencyPair, web3State, themeColors } = this.props;
+        const { currencyPair, web3State } = this.props;
         const { makerAmount, price, tab, orderType } = this.state;
 
         const buySellInnerTabs = [
@@ -208,13 +179,12 @@ class BuySell extends React.Component<Props, State> {
         const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
         return (
-            <BuySellWrapper themeColors={themeColors}>
+            <BuySellWrapper>
                 <TabsContainer>
                     <TabButton
                         isSelected={tab === OrderSide.Buy}
                         onClick={this.changeTab(OrderSide.Buy)}
                         side={OrderSide.Buy}
-                        themeColors={themeColors}
                     >
                         Buy
                     </TabButton>
@@ -222,7 +192,6 @@ class BuySell extends React.Component<Props, State> {
                         isSelected={tab === OrderSide.Sell}
                         onClick={this.changeTab(OrderSide.Sell)}
                         side={OrderSide.Sell}
-                        themeColors={themeColors}
                     >
                         Sell
                     </TabButton>
@@ -230,7 +199,7 @@ class BuySell extends React.Component<Props, State> {
                 <Content>
                     <LabelContainer>
                         <Label>Amount</Label>
-                        <InnerTabs tabs={buySellInnerTabs} themeColors={themeColors} />
+                        <InnerTabs tabs={buySellInnerTabs} />
                     </LabelContainer>
                     <FieldContainer>
                         <BigInputNumberStyled
@@ -239,7 +208,6 @@ class BuySell extends React.Component<Props, State> {
                             onChange={this.updateMakerAmount}
                             value={makerAmount}
                             placeholder={'0.00'}
-                            themeColors={themeColors}
                         />
                         <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
                     </FieldContainer>
@@ -255,7 +223,6 @@ class BuySell extends React.Component<Props, State> {
                                     onChange={this.updatePrice}
                                     value={price}
                                     placeholder={'0.00'}
-                                    themeColors={themeColors}
                                 />
                                 <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
                             </FieldContainer>
@@ -272,7 +239,6 @@ class BuySell extends React.Component<Props, State> {
                         theme="secondary"
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
-                        themeColors={themeColors}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         {tokenSymbolToDisplayString(currencyPair.base)}
@@ -342,7 +308,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
         currencyPair: getCurrencyPair(state),
-        themeColors: getThemeColors(state),
     };
 };
 

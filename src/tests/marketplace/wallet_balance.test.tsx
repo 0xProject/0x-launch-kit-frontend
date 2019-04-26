@@ -8,7 +8,6 @@ import React from 'react';
 
 import { WalletBalance } from '../../components/marketplace/wallet_balance';
 import * as tokenServices from '../../services/tokens';
-import { WhiteTheme } from '../../themes/WhiteTheme';
 import { addressFactory, tokenBalanceFactory, tokenFactory } from '../../util/test-utils';
 import { TokenSymbol, Web3State } from '../../util/types';
 
@@ -30,7 +29,6 @@ describe('WalletBalance', () => {
         // @ts-ignore
         tokenServices.getTokenBalance = originalGetTokenBalance;
     });
-    const themeColors = new WhiteTheme();
     it('should display a message if the user did not accepted metamask permissions', async () => {
         // given
         const resultExpected1 = 'Click to Connect MetaMask';
@@ -57,7 +55,6 @@ describe('WalletBalance', () => {
                 ethAccount={ethAccount}
                 baseTokenBalance={baseTokenBalance}
                 quoteTokenBalance={quoteTokenBalance}
-                themeColors={themeColors}
             />,
         );
 
@@ -91,7 +88,6 @@ describe('WalletBalance', () => {
                 ethAccount={ethAccount}
                 baseTokenBalance={baseTokenBalance}
                 quoteTokenBalance={quoteTokenBalance}
-                themeColors={themeColors}
             />,
         );
 
@@ -129,7 +125,6 @@ describe('WalletBalance', () => {
                 quoteToken={quoteToken}
                 baseTokenBalance={baseTokenBalance}
                 quoteTokenBalance={quoteTokenBalance}
-                themeColors={themeColors}
             />,
         );
 

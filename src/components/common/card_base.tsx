@@ -1,25 +1,20 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../themes/ThemeCommons';
-import { StyledComponentThemeProps } from '../../util/types';
+import { themeColors, themeDimensions } from '../../themes/ThemeCommons';
 
-interface Props extends StyledComponentThemeProps {
+interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
 }
 
-const CardWrapper = styled.div<StyledComponentThemeProps>`
+const CardWrapper = styled.div`
     background-color: #fff;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.themeColors.borderColor};
+    border: 1px solid ${themeColors.borderColor};
 `;
 
 export const CardBase: React.FC<Props> = props => {
-    const { children, themeColors, ...restProps } = props;
+    const { children, ...restProps } = props;
 
-    return (
-        <CardWrapper themeColors={themeColors} {...restProps}>
-            {children}
-        </CardWrapper>
-    );
+    return <CardWrapper {...restProps}>{children}</CardWrapper>;
 };

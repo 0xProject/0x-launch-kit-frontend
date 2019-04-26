@@ -1,8 +1,13 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { BasicTheme } from '../../themes/BasicTheme';
-import { StyledComponentThemeProps } from '../../util/types';
+import { themeColors } from '../../themes/ThemeCommons';
+
+interface Props extends HTMLAttributes<HTMLButtonElement> {
+    children: React.ReactNode;
+    disabled?: boolean;
+    theme?: string;
+}
 
 interface ButtonColors {
     [primary: string]: string;
@@ -11,34 +16,16 @@ interface ButtonColors {
     error: string;
 }
 
-interface Props extends HTMLAttributes<HTMLButtonElement>, StyledComponentThemeProps {
-    children: React.ReactNode;
-    disabled?: boolean;
-    theme?: string;
-}
-
-const getButtonColors = (themeColors: BasicTheme): ButtonColors => {
-    return {
-        error: themeColors.errorButtonBackground,
-        primary: themeColors.darkBlue,
-        secondary: themeColors.darkGray,
-        tertiary: themeColors.orange,
-    };
+const buttonColors: ButtonColors = {
+    error: themeColors.errorButtonBackground,
+    primary: themeColors.darkBlue,
+    secondary: themeColors.darkGray,
+    tertiary: themeColors.orange,
 };
 
-interface ButtonColors {
-    error: string;
-    primary: string;
-    secondary: string;
-    tertiary: string;
-}
-
-interface StyledButtonProps {
-    buttonColors: ButtonColors;
-}
-
-const StyledButton = styled.button<StyledButtonProps>`
-    background-color: ${props => (props.theme ? props.buttonColors[props.theme] : props.buttonColors.primary)};
+const StyledButton = styled.button`
+    background-color: ${props => (props.theme.length ? buttonColors[props.theme] : buttonColors.primary)};
+    border-radius: 4px;
     border: 0;
     color: #fff;
     cursor: pointer;
@@ -57,12 +44,7 @@ const StyledButton = styled.button<StyledButtonProps>`
 `;
 
 export const Button: React.FC<Props> = props => {
-    const { children, themeColors, ...restProps } = props;
-    const buttonColors = getButtonColors(themeColors);
+    const { children, ...restProps } = props;
 
-    return (
-        <StyledButton buttonColors={buttonColors} {...restProps}>
-            {children}
-        </StyledButton>
-    );
+    return <StyledButton {...restProps}>{children}</StyledButton>;
 };

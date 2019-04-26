@@ -3,35 +3,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
-import {
-    getBaseToken,
-    getOrderBook,
-    getQuoteToken,
-    getThemeColors,
-    getUserOrders,
-    getWeb3State,
-} from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
+import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
+import { themeColors } from '../../themes/ThemeCommons';
 import { tokenAmountInUnits } from '../../util/tokens';
-import {
-    OrderBook,
-    OrderBookItem,
-    OrderSide,
-    StoreState,
-    StyledComponentThemeProps,
-    TabItem,
-    Token,
-    UIOrder,
-    Web3State,
-} from '../../util/types';
+import { OrderBook, OrderBookItem, OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { CardTabSelector } from '../common/card_tab_selector';
-import { EmptyContentContainer } from '../common/empty_content';
+import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
 
-interface StateProps extends StyledComponentThemeProps {
+interface StateProps {
     orderBook: OrderBook;
     baseToken: Token | null;
     quoteToken: Token | null;
@@ -56,7 +39,6 @@ const orderToRow = (
     count: number,
     baseToken: Token,
     mySizeOrders: OrderBookItem[] = [],
-    themeColors: BasicTheme,
     web3State?: Web3State,
 ) => {
     const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
@@ -73,18 +55,18 @@ const orderToRow = (
     const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTD themeColors={themeColors} styles={{ tabular: true, textAlign: 'right' }}>
+            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
                 {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
             </CustomTD>
         ) : null;
 
     return (
         <TR key={index}>
-            <CustomTD themeColors={themeColors} styles={{ tabular: true, textAlign: 'right' }}>
+            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
             {mySizeRow}
-            <CustomTDLast themeColors={themeColors} styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
             </CustomTDLast>
         </TR>
@@ -97,7 +79,7 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderBook, baseToken, quoteToken, themeColors, web3State } = this.props;
+        const { orderBook, baseToken, quoteToken, web3State } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const setTabCurrent = () => this.setState({ tab: Tab.Current });
         const setTabHistory = () => this.setState({ tab: Tab.History });
@@ -128,54 +110,33 @@ class OrderBookTable extends React.Component<Props, State> {
         if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
             content = <CardLoading minHeight="120px" />;
         } else if ((!buyOrders.length && !sellOrders.length) || !baseToken || !quoteToken) {
-            content = <EmptyContentContainer alignAbsoluteCenter={true} text="There are no orders to show" />;
+            content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {
             const mySizeHeader =
                 web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-                    <TH themeColors={themeColors} styles={{ textAlign: 'right', borderBottom: true }}>
-                        My Size
-                    </TH>
+                    <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
                 ) : null;
             content = (
-                <Table themeColors={themeColors} fitInCard={true}>
+                <Table fitInCard={true}>
                     <THead>
                         <TR>
-                            <TH themeColors={themeColors} styles={{ textAlign: 'right', borderBottom: true }}>
-                                Trade size
-                            </TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
                             {mySizeHeader}
-                            <THLast themeColors={themeColors} styles={{ textAlign: 'right', borderBottom: true }}>
+                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>
                                 Price ({quoteToken.symbol})
                             </THLast>
                         </TR>
                     </THead>
                     <tbody>
                         {sellOrders.map((order, index) =>
-                            orderToRow(
-                                order,
-                                index,
-                                sellOrders.length,
-                                baseToken,
-                                mySizeSellArray,
-                                themeColors,
-                                web3State,
-                            ),
+                            orderToRow(order, index, sellOrders.length, baseToken, mySizeSellArray, web3State),
                         )}
                         <TR>
-                            <CustomTDTitle
-                                themeColors={themeColors}
-                                styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}
-                            >
+                            <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 Spread
                             </CustomTDTitle>
-                            <CustomTD
-                                themeColors={themeColors}
-                                styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}
-                            >
-                                {}
-                            </CustomTD>
+                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
                             <CustomTDLast
-                                themeColors={themeColors}
                                 styles={{
                                     tabular: true,
                                     textAlign: 'right',
@@ -187,15 +148,7 @@ class OrderBookTable extends React.Component<Props, State> {
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
-                            orderToRow(
-                                order,
-                                index,
-                                buyOrders.length,
-                                baseToken,
-                                mySizeBuyArray,
-                                themeColors,
-                                web3State,
-                            ),
+                            orderToRow(order, index, buyOrders.length, baseToken, mySizeBuyArray, web3State),
                         )}
                     </tbody>
                 </Table>
@@ -203,11 +156,7 @@ class OrderBookTable extends React.Component<Props, State> {
         }
 
         return (
-            <Card
-                title="Orderbook"
-                action={<CardTabSelector tabs={cardTabs} themeColors={themeColors} />}
-                themeColors={themeColors}
-            >
+            <Card title="Orderbook" action={<CardTabSelector tabs={cardTabs} />}>
                 {content}
             </Card>
         );
@@ -221,7 +170,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
         userOrders: getUserOrders(state),
         quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
-        themeColors: getThemeColors(state),
     };
 };
 

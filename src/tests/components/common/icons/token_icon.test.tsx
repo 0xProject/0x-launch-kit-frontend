@@ -2,16 +2,14 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 
 import { TokenIcon } from '../../../../components/common/icons/token_icon';
-import { WhiteTheme } from '../../../../themes/WhiteTheme';
 
 describe('TokenIcon', () => {
-    const themeColor = new WhiteTheme();
     it('TokenIcon ZRX to match snapshot', () => {
         // given
         const symbol = 'zrx';
         const primaryColor = '#232332';
 
-        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} themeColors={themeColor} />;
+        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} />;
 
         // when
         const tree = renderer.create(tokenIcon).toJSON();
@@ -25,7 +23,7 @@ describe('TokenIcon', () => {
         const symbol = 'mln';
         const primaryColor = '#232332';
 
-        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} themeColors={themeColor} />;
+        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} />;
 
         // when
         const tree = renderer.create(tokenIcon).toJSON();
@@ -39,7 +37,7 @@ describe('TokenIcon', () => {
         const symbol = 'test';
         const primaryColor = '#232332';
 
-        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} themeColors={themeColor} />;
+        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} />;
 
         // when
         const tree = renderer.create(tokenIcon).toJSON();

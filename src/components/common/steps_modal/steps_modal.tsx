@@ -3,14 +3,10 @@ import Modal from 'react-modal';
 import { connect } from 'react-redux';
 
 import { stepsModalReset } from '../../../store/actions';
-import {
-    getStepsModalCurrentStep,
-    getStepsModalDoneSteps,
-    getStepsModalPendingSteps,
-    getThemeModalsColors,
-} from '../../../store/selectors';
+import { getStepsModalCurrentStep, getStepsModalDoneSteps, getStepsModalPendingSteps } from '../../../store/selectors';
+import { themeModalStyle } from '../../../themes/ThemeCommons';
 import { getStepTitle, isLongStep } from '../../../util/steps';
-import { Step, StepKind, StoreState, StyledComponentThemeModalProps } from '../../../util/types';
+import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
 
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
@@ -20,7 +16,7 @@ import { StepItem } from './steps_progress';
 import { ToggleTokenLockStepContainer } from './toggle_token_lock_step';
 import { WrapEthStepContainer } from './wrap_eth_step';
 
-interface StateProps extends StyledComponentThemeModalProps {
+interface StateProps {
     currentStep: Step | null;
     doneSteps: Step[];
     pendingSteps: Step[];
@@ -34,7 +30,7 @@ type Props = StateProps & DispatchProps;
 
 class StepsModal extends React.Component<Props> {
     public render = () => {
-        const { currentStep, doneSteps, pendingSteps, reset, themeModalColors } = this.props;
+        const { currentStep, doneSteps, pendingSteps, reset } = this.props;
         const isOpen = currentStep !== null;
 
         const buildStepsProgress = (currentStepItem: StepItem): StepItem[] => [
@@ -57,7 +53,7 @@ class StepsModal extends React.Component<Props> {
         const stepIndex = doneSteps.length;
 
         return (
-            <Modal isOpen={isOpen} style={themeModalColors}>
+            <Modal isOpen={isOpen} style={themeModalStyle}>
                 <CloseModalButton onClick={reset} />
                 <ModalContent>
                     {currentStep && currentStep.kind === StepKind.ToggleTokenLock && (
@@ -83,7 +79,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
         currentStep: getStepsModalCurrentStep(state),
         doneSteps: getStepsModalDoneSteps(state),
         pendingSteps: getStepsModalPendingSteps(state),
-        themeModalColors: getThemeModalsColors(state),
     };
 };
 

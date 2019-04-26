@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
-import { getNetworkId, getThemeColors } from '../../store/selectors';
-import { themeDimensions } from '../../themes/ThemeCommons';
+import { getNetworkId } from '../../store/selectors';
+import { themeColors, themeDimensions } from '../../themes/ThemeCommons';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { Notification, NotificationKind, OrderSide, StoreState, StyledComponentThemeProps } from '../../util/types';
+import { Notification, NotificationKind, OrderSide, StoreState } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
 import { Interval } from '../common/interval';
@@ -20,7 +20,7 @@ interface OwnProps {
     estimatedTxTimeMs: number;
 }
 
-interface StateProps extends StyledComponentThemeProps {
+interface StateProps {
     networkId: number | null;
 }
 
@@ -30,14 +30,14 @@ interface State {
     pending: boolean;
 }
 
-interface StyledIsActive extends StyledComponentThemeProps {
+interface StyledIsActive {
     active?: boolean;
 }
 
 const notificationWrapperMixin = css<StyledIsActive>`
     align-items: center;
-    background-color: ${props => (props.active ? props.themeColors.rowActive : 'transparent')};
-    border-bottom: 1px solid ${props => props.themeColors.borderColor};
+    background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
+    border-bottom: 1px solid ${themeColors.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 20px ${themeDimensions.horizontalPadding};
@@ -53,15 +53,12 @@ const NotificationWrapperLimit = styled.div<StyledIsActive>`
     ${notificationWrapperMixin}
 `;
 
-interface NotificationWrapperMarketOrCancelProps extends StyledComponentThemeProps {
-    active: boolean;
-}
-const NotificationWrapperMarketOrCancel = styled.a<NotificationWrapperMarketOrCancelProps>`
+const NotificationWrapperMarketOrCancel = styled.a<StyledIsActive>`
     ${notificationWrapperMixin}
     text-decoration: none;
 
     &:hover {
-        background-color: ${props => props.themeColors.notificationActive};
+        background-color: ${themeColors.notificationActive};
         cursor: pointer;
     }
 `;
@@ -79,8 +76,8 @@ const NotificationTitle = styled.h2`
     margin: 0 0 8px;
 `;
 
-const NotificationText = styled.p<StyledComponentThemeProps>`
-    color: ${props => props.themeColors.textLight};
+const NotificationText = styled.p`
+    color: ${themeColors.textLight};
     font-size: 16px;
     font-weight: 400;
     line-height: 1.2;
@@ -123,28 +120,25 @@ class NotificationItem extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { item, themeColors } = this.props;
+        const { item } = this.props;
 
         const notificationBody = (
             <>
                 <NotificationContent>
                     <NotificationTitle>{this._getTitleFromItem(item)}</NotificationTitle>
-                    <NotificationText themeColors={themeColors}>{this._getTextFromItem(item)}</NotificationText>
+                    <NotificationText>{this._getTextFromItem(item)}</NotificationText>
                 </NotificationContent>
                 <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
             </>
         );
 
         return item.kind === NotificationKind.Limit ? (
-            <NotificationWrapperLimit active={this.state.pending} themeColors={themeColors}>
-                {notificationBody}
-            </NotificationWrapperLimit>
+            <NotificationWrapperLimit active={this.state.pending}>{notificationBody}</NotificationWrapperLimit>
         ) : (
             <NotificationWrapperMarketOrCancel
                 active={this.state.pending}
                 href={getEtherscanUrlForNotificationTx(this.props.networkId, item)}
                 target="_blank"
-                themeColors={themeColors}
             >
                 {notificationBody}
             </NotificationWrapperMarketOrCancel>
@@ -213,7 +207,6 @@ class NotificationItem extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         networkId: getNetworkId(state),
-        themeColors: getThemeColors(state),
     };
 };
 

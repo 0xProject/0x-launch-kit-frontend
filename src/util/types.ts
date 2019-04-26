@@ -3,14 +3,9 @@ import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
 
 import { BasicTheme } from '../themes/BasicTheme';
-import { BasicThemeModal } from '../themes/modal/BasicThemeModal';
 
 export interface StyledComponentThemeProps {
     themeColors: BasicTheme;
-}
-
-export interface StyledComponentThemeModalProps {
-    themeModalColors: BasicThemeModal;
 }
 
 export interface TabItem {
@@ -67,7 +62,6 @@ export interface UIState {
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
     readonly themeColors: BasicTheme;
-    readonly themeModalColors: BasicThemeModal;
 }
 
 export interface MarketState {

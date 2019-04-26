@@ -1,19 +1,20 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { StyledComponentThemeProps, TabItem } from '../../util/types';
+import { themeColors } from '../../themes/ThemeCommons';
+import { TabItem } from '../../util/types';
 
-interface Props extends StyledComponentThemeProps {
+interface Props extends HTMLAttributes<HTMLDivElement> {
     tabs: TabItem[];
 }
 
-interface ItemProps extends StyledComponentThemeProps {
+interface ItemProps {
     active?: boolean;
 }
 
-const CardTabSelectorWrapper = styled.div<StyledComponentThemeProps>`
+const CardTabSelectorWrapper = styled.div`
     align-items: center;
-    color: ${props => props.themeColors.lightGray};
+    color: ${themeColors.lightGray};
     display: flex;
     font-size: 14px;
     font-weight: 500;
@@ -22,7 +23,7 @@ const CardTabSelectorWrapper = styled.div<StyledComponentThemeProps>`
 `;
 
 const CardTabSelectorItem = styled.span<ItemProps>`
-    color: ${props => (props.active ? '#000' : props.themeColors.lightGray)};
+    color: ${props => (props.active ? '#000' : themeColors.lightGray)};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
     user-select: none;
 `;
@@ -40,17 +41,17 @@ const CardTabSelectorItemSeparator = styled.span<ItemProps>`
 `;
 
 export const CardTabSelector: React.FC<Props> = props => {
-    const { tabs, themeColors, ...restProps } = props;
+    const { tabs, ...restProps } = props;
 
     return (
-        <CardTabSelectorWrapper themeColors={themeColors} {...restProps}>
+        <CardTabSelectorWrapper {...restProps}>
             {tabs.map((item, index) => {
                 return (
                     <React.Fragment key={index}>
-                        <CardTabSelectorItem themeColors={themeColors} onClick={item.onClick} active={item.active}>
+                        <CardTabSelectorItem onClick={item.onClick} active={item.active}>
                             {item.text}
                         </CardTabSelectorItem>
-                        <CardTabSelectorItemSeparator themeColors={themeColors}>/</CardTabSelectorItemSeparator>
+                        <CardTabSelectorItemSeparator>/</CardTabSelectorItemSeparator>
                     </React.Fragment>
                 );
             })}

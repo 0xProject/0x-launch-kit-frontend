@@ -14,14 +14,12 @@ import {
     getEthAccount,
     getQuoteToken,
     getQuoteTokenBalance,
-    getThemeColors,
     getWeb3State,
 } from '../../store/selectors';
-import { BasicTheme } from '../../themes/BasicTheme';
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
-import { CurrencyPair, StoreState, StyledComponentThemeProps, Token, TokenBalance, Web3State } from '../../util/types';
+import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
@@ -35,8 +33,8 @@ const LabelTitleWrapper = styled.div`
     padding: 0 0 8px 0;
 `;
 
-const LabelTitle = styled.span<StyledComponentThemeProps>`
-    color: ${props => props.themeColors.lightGray};
+const LabelTitle = styled.span`
+    color: ${props => props.theme.lightGray};
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -76,21 +74,17 @@ const Value = styled.span`
     white-space: nowrap;
 `;
 
-interface WalletStatusBadgeProps extends StyledComponentThemeProps {
-    web3State?: Web3State;
-}
-
-const WalletStatusBadge = styled.div<WalletStatusBadgeProps>`
+const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
     background-color: ${props =>
-        props.web3State === Web3State.Done ? props.themeColors.green : props.themeColors.errorButtonBackground};
+        props.web3State === Web3State.Done ? props.theme.green : props.theme.errorButtonBackground};
     border-radius: 50%;
     height: 8px;
     margin-right: 6px;
     width: 8px;
 `;
 
-const WalletStatusTitle = styled.h3<StyledComponentThemeProps>`
-    color: ${props => props.themeColors.textLight};
+const WalletStatusTitle = styled.h3`
+    color: ${props => props.theme.textLight};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -144,7 +138,7 @@ const ButtonStyled = styled(Button)`
     width: 100%;
 `;
 
-interface StateProps extends StyledComponentThemeProps {
+interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
     baseToken: Token | null;
@@ -185,11 +179,11 @@ const getWalletName = () => {
     return 'MetaMask';
 };
 
-const getWallet = (web3State: Web3State, themeColors: BasicTheme) => {
+const getWallet = (web3State: Web3State) => {
     return (
         <WalletStatusContainer>
-            <WalletStatusBadge web3State={web3State} themeColors={themeColors} />
-            <WalletStatusTitle themeColors={themeColors}>{getWalletName()}</WalletStatusTitle>
+            <WalletStatusBadge web3State={web3State} />
+            <WalletStatusTitle>{getWalletName()}</WalletStatusTitle>
         </WalletStatusContainer>
     );
 };
@@ -213,14 +207,10 @@ const openMetamaskExtensionUrl = () => {
 
 class WalletBalance extends React.Component<Props, State> {
     public render = () => {
-        const { web3State, themeColors } = this.props;
+        const { web3State } = this.props;
         const walletContent = this._getWalletContent();
         return (
-            <Card
-                title={getWalletTitle(web3State)}
-                action={getWallet(web3State, themeColors)}
-                themeColors={themeColors}
-            >
+            <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
                 {walletContent}
             </Card>
         );
@@ -235,7 +225,6 @@ class WalletBalance extends React.Component<Props, State> {
             quoteToken,
             quoteTokenBalance,
             baseTokenBalance,
-            themeColors,
         } = this.props;
 
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
@@ -250,8 +239,8 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <LabelTitleWrapper>
-                        <LabelTitle themeColors={themeColors}>Token</LabelTitle>
-                        <LabelTitle themeColors={themeColors}>Amount</LabelTitle>
+                        <LabelTitle>Token</LabelTitle>
+                        <LabelTitle>Amount</LabelTitle>
                     </LabelTitleWrapper>
                     <LabelWrapper>
                         <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
@@ -277,7 +266,6 @@ class WalletBalance extends React.Component<Props, State> {
                         text={errorsWallet.mmConnect}
                         textAlign="center"
                         onClick={onConnectWallet}
-                        themeColors={themeColors}
                     />
                     <WalletErrorFiller top="0" left="0">
                         {fillerBig()}
@@ -299,7 +287,7 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl} themeColors={themeColors}>
+                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>
                 </>
@@ -309,9 +297,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled theme={'tertiary'} themeColors={themeColors}>
-                        {errorsWallet.mmLoading}
-                    </ButtonStyled>
+                    <ButtonStyled theme={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
             );
         }
@@ -329,7 +315,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethAccount: getEthAccount(state),
         quoteTokenBalance: getQuoteTokenBalance(state),
         baseTokenBalance: getBaseTokenBalance(state),
-        themeColors: getThemeColors(state),
     };
 };
 

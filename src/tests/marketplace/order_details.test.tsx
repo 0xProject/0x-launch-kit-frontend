@@ -4,7 +4,6 @@ import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
 import { CostValue, OrderDetails, Value } from '../../components/marketplace/order_details';
-import { WhiteTheme } from '../../themes/WhiteTheme';
 import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../util/tokens';
 import { OrderSide, OrderType, TokenSymbol } from '../../util/types';
 
@@ -49,7 +48,6 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[]}
-                themeColors={new WhiteTheme()}
             />,
         );
 
@@ -129,7 +127,6 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
-                themeColors={new WhiteTheme()}
             />,
         );
 
@@ -209,7 +206,6 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
-                themeColors={new WhiteTheme()}
             />,
         );
 
@@ -287,7 +283,6 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
-                themeColors={new WhiteTheme()}
             />,
         );
 

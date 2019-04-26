@@ -10,7 +10,7 @@ import { sleep } from '../../../util/sleep';
 import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
-import { BaseStepModalContainer } from './base_step_modal';
+import { BaseStepModal } from './base_step_modal';
 import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
 import { StepItem } from './steps_progress';
 
@@ -71,7 +71,7 @@ class WrapEthStep extends React.Component<Props> {
         const doneFooterCaption = `${convertingFrom} converted!`;
 
         return (
-            <BaseStepModalContainer
+            <BaseStepModal
                 step={step}
                 title={title}
                 confirmCaption={confirmCaption}
