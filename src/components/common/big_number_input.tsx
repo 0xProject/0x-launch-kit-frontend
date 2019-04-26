@@ -8,7 +8,7 @@ import { DECIMALS_TWO } from '../../common/constants';
 interface Props {
     autofocus?: boolean;
     className?: string;
-    // Make optional decimals to avoid throw an exception using toBaseUnitAmount, getPriceValue function manage problem
+    // If decimals is not specified, then toBaseUnitAmount` will not be applied.
     decimals?: number;
     placeholder?: string;
     max?: BigNumber;
