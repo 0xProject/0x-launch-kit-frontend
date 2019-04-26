@@ -34,7 +34,7 @@ const LabelTitleWrapper = styled.div`
 `;
 
 const LabelTitle = styled.span`
-    color: ${props => props.theme.lightGray};
+    color: ${props => props.theme.componentsTheme.lightGray};
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -76,7 +76,9 @@ const Value = styled.span`
 
 const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
     background-color: ${props =>
-        props.web3State === Web3State.Done ? props.theme.green : props.theme.errorButtonBackground};
+        props.web3State === Web3State.Done
+            ? props.theme.componentsTheme.green
+            : props.theme.componentsTheme.errorButtonBackground};
     border-radius: 50%;
     height: 8px;
     margin-right: 6px;
@@ -84,7 +86,7 @@ const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
 `;
 
 const WalletStatusTitle = styled.h3`
-    color: ${props => props.theme.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
