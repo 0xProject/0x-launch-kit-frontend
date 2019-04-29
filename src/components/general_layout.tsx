@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { getThemeColors } from '../store/selectors';
-import { themeBreakPoints } from '../themes/ThemeCommons';
+import { themeBreakPoints } from '../themes/theme_commons';
 import { StoreState, StyledComponentThemeProps } from '../util/types';
 
 import { Footer } from './common/footer';

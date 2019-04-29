@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors } from '../../themes/ThemeCommons';
+import { themeColors } from '../../themes/theme_commons';
 import { TabItem } from '../../util/types';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {

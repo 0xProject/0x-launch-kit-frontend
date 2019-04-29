@@ -2,9 +2,10 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { TEMPLATE_THEME } from '../../common/constants';
+import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
-import { BasicTheme } from '../../themes/BasicTheme';
+import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
 import { getThemeByName } from '../../util/template_meta_data';
@@ -21,36 +22,36 @@ import {
 } from '../../util/types';
 import * as selectors from '../selectors';
 
-export const setHasUnreadNotifications = createAction('SET_HAS_UNREAD_NOTIFICATIONS', resolve => {
+export const setHasUnreadNotifications = createAction('ui/UNREAD_NOTIFICATIONS_set', resolve => {
     return (hasUnreadNotifications: boolean) => resolve(hasUnreadNotifications);
 });
 
-export const addNotifications = createAction('ADD_NOTIFICATIONS', resolve => {
+export const addNotifications = createAction('ui/NOTIFICATIONS_add', resolve => {
     return (newNotifications: Notification[]) => resolve(newNotifications);
 });
 
-export const setNotifications = createAction('SET_NOTIFICATIONS', resolve => {
+export const setNotifications = createAction('ui/NOTIFICATIONS_set', resolve => {
     return (notifications: Notification[]) => resolve(notifications);
 });
 
-export const setStepsModalPendingSteps = createAction('SET_STEPSMODAL_PENDING_STEPS', resolve => {
+export const setStepsModalPendingSteps = createAction('ui/steps_modal/PENDING_STEPS_set', resolve => {
     return (pendingSteps: Step[]) => resolve(pendingSteps);
 });
 
-export const setStepsModalDoneSteps = createAction('SET_STEPSMODAL_DONE_STEPS', resolve => {
+export const setStepsModalDoneSteps = createAction('ui/steps_modal/DONE_STEPS_set', resolve => {
     return (doneSteps: Step[]) => resolve(doneSteps);
 });
 
-export const setStepsModalCurrentStep = createAction('SET_STEPSMODAL_CURRENT_STEP', resolve => {
+export const setStepsModalCurrentStep = createAction('ui/steps_modal/CURRENT_STEP_set', resolve => {
     return (currentStep: Step | null) => resolve(currentStep);
 });
 
-export const stepsModalAdvanceStep = createAction('STEPSMODAL_ADVANCE_STEP');
+export const stepsModalAdvanceStep = createAction('ui/steps_modal/advance_step');
 
-export const stepsModalReset = createAction('STEPSMODAL_RESET');
+export const stepsModalReset = createAction('ui/steps_modal/reset');
 
 export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
-    return (themeColor: BasicTheme) => resolve(themeColor);
+    return (themeColor: DefaultTheme) => resolve(themeColor);
 });
 
 export const updateThemeTemplate = () => {
@@ -172,24 +173,27 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
         const ethAccount = selectors.getEthAccount(state);
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
+            const contractWrappers = await getContractWrappers();
 
-        const web3Wrapper = await getWeb3Wrapper();
-        const contractWrappers = await getContractWrappers();
+            const order = buildLimitOrder(
+                {
+                    account: ethAccount,
+                    amount,
+                    price,
+                    baseTokenAddress: baseToken.address,
+                    quoteTokenAddress: quoteToken.address,
+                    exchangeAddress: contractWrappers.exchange.address,
+                },
+                side,
+            );
 
-        const order = buildLimitOrder(
-            {
-                account: ethAccount,
-                amount,
-                price,
-                baseTokenAddress: baseToken.address,
-                quoteTokenAddress: quoteToken.address,
-                exchangeAddress: contractWrappers.exchange.address,
-            },
-            side,
-        );
-
-        const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-        return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+            return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+        } catch (error) {
+            throw new SignedOrderException(error.message);
+        }
     };
 };
 

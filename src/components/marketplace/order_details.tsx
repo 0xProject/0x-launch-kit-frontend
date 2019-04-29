@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
 import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
-import { themeColors } from '../../themes/ThemeCommons';
+import { themeColors } from '../../themes/theme_commons';
 import { getKnownTokens } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';

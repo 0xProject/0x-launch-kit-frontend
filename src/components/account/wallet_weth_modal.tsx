@@ -3,7 +3,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-import { themeColors } from '../../themes/ThemeCommons';
+import { themeColors } from '../../themes/theme_commons';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';

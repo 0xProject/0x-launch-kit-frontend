@@ -1,4 +1,4 @@
-import { BasicTheme } from '../themes/BasicTheme';
+import { DefaultTheme } from '../themes/default_theme';
 import { KNOWN_THEMES_META_DATA } from '../themes/theme_meta_data';
 
 import { getLogger } from './logger';
@@ -10,7 +10,7 @@ export const getThemeByName = (templateName: string): any => {
     let templateReturn = null;
     if (!themeDataFetched) {
         logger.error(`Theme with name ${templateName} not found`);
-        templateReturn = new BasicTheme();
+        templateReturn = new DefaultTheme();
     } else {
         templateReturn = themeDataFetched.theme;
     }

@@ -4,11 +4,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { themeColors } from '../../themes/ThemeCommons';
+import { themeColors } from '../../themes/theme_commons';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderSide, StoreState, TabItem, Token, UIOrder, Web3State } from '../../util/types';
+import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
-import { CardTabSelector } from '../common/card_tab_selector';
 import { EmptyContent } from '../common/empty_content';
 import { CardLoading } from '../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../common/table';
@@ -20,15 +19,6 @@ interface StateProps {
     orders: UIOrder[];
     quoteToken: Token | null;
     web3State?: Web3State;
-}
-
-enum Tab {
-    Filled,
-    Open,
-}
-
-interface State {
-    tab: Tab;
 }
 
 type Props = StateProps;
@@ -65,31 +55,10 @@ const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
     );
 };
 
-class OrderHistory extends React.Component<Props, State> {
-    public state = {
-        tab: Tab.Open,
-    };
-
+class OrderHistory extends React.Component<Props> {
     public render = () => {
         const { orders, baseToken, quoteToken, web3State } = this.props;
-        const openOrders = orders.filter(order => order.status === OrderStatus.Fillable);
-        const filledOrders = orders.filter(order => order.status === OrderStatus.FullyFilled);
-        const ordersToShow = this.state.tab === Tab.Open ? openOrders : filledOrders;
-        const setTabOpen = () => this.setState({ tab: Tab.Open });
-        const setTabFilled = () => this.setState({ tab: Tab.Filled });
-
-        const cardTabs: TabItem[] = [
-            {
-                active: this.state.tab === Tab.Open,
-                onClick: setTabOpen,
-                text: 'Open',
-            },
-            {
-                active: this.state.tab === Tab.Filled,
-                onClick: setTabFilled,
-                text: 'Filled',
-            },
-        ];
+        const ordersToShow = orders.filter(order => order.status === OrderStatus.Fillable);
 
         let content: React.ReactNode;
         switch (web3State) {
@@ -125,11 +94,7 @@ class OrderHistory extends React.Component<Props, State> {
             }
         }
 
-        return (
-            <Card title="Orders" action={<CardTabSelector tabs={cardTabs} />}>
-                {content}
-            </Card>
-        );
+        return <Card title="Orders">{content}</Card>;
     };
 }
 

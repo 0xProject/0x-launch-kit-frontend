@@ -1,4 +1,4 @@
-import { Theme, themeColors, ThemeColors, ThemeModalStyle } from './ThemeCommons';
+import { Theme, themeColors, ThemeColors, ThemeModalStyle } from './theme_commons';
 
 const modalThemeStyle: ThemeModalStyle = {
     content: {
@@ -39,16 +39,11 @@ const whiteThemeColors: ThemeColors = {
     notificationActive: '#F8F8F8',
 };
 
-const objectTheme = {
-    componentsTheme: whiteThemeColors,
-    modalTheme: modalThemeStyle,
-};
-
-export class BasicTheme implements Theme {
+export class DefaultTheme implements Theme {
     public componentsTheme: ThemeColors;
     public modalTheme: ThemeModalStyle;
     constructor() {
-        this.componentsTheme = objectTheme.componentsTheme;
-        this.modalTheme = objectTheme.modalTheme;
+        this.componentsTheme = whiteThemeColors;
+        this.modalTheme = modalThemeStyle;
     }
 }

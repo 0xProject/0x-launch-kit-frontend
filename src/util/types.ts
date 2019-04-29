@@ -2,10 +2,10 @@ import { BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
 
-import { BasicTheme } from '../themes/BasicTheme';
+import { DefaultTheme } from '../themes/default_theme';
 
 export interface StyledComponentThemeProps {
-    themeColors: BasicTheme;
+    themeColors: DefaultTheme;
 }
 
 export interface TabItem {
@@ -61,7 +61,7 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
-    readonly themeColors: BasicTheme;
+    readonly themeColors: DefaultTheme;
 }
 
 export interface MarketState {

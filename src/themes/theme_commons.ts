@@ -1,5 +1,3 @@
-import { BasicTheme } from './BasicTheme';
-
 export interface Theme {
     componentsTheme: ThemeColors;
     modalTheme: ThemeModalStyle;
@@ -46,7 +44,7 @@ export interface ThemeModalStyle {
 
 export interface ThemeMetaData {
     name: string;
-    theme: BasicTheme;
+    theme: Theme;
 }
 
 // TODO -- Delete once the styling is finished

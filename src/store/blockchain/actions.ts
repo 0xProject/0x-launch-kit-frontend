@@ -27,39 +27,39 @@ import { addNotifications, setHasUnreadNotifications, setNotifications } from '.
 
 const logger = getLogger('Blockchain::Actions');
 
-export const initializeBlockchainData = createAction('INITIALIZE_BLOCKCHAIN_DATA', resolve => {
+export const initializeBlockchainData = createAction('blockchain/init', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
 });
 
-export const setEthAccount = createAction('SET_ETH_ACCOUNT', resolve => {
+export const setEthAccount = createAction('blockchain/ETH_ACCOUNT_set', resolve => {
     return (ethAccount: string) => resolve(ethAccount);
 });
 
-export const setWeb3State = createAction('SET_WEB3_STATE', resolve => {
+export const setWeb3State = createAction('blockchain/WEB3_STATE_set', resolve => {
     return (web3State: Web3State) => resolve(web3State);
 });
 
-export const setTokenBalances = createAction('SET_TOKEN_BALANCES', resolve => {
+export const setTokenBalances = createAction('blockchain/TOKEN_BALANCES_set', resolve => {
     return (tokenBalances: TokenBalance[]) => resolve(tokenBalances);
 });
 
-export const setEthBalance = createAction('SET_ETH_BALANCE', resolve => {
+export const setEthBalance = createAction('blockchain/ETH_BALANCE_set', resolve => {
     return (ethBalance: BigNumber) => resolve(ethBalance);
 });
 
-export const setWethBalance = createAction('SET_WETH_BALANCE', resolve => {
+export const setWethBalance = createAction('blockchain/WETH_BALANCE_set', resolve => {
     return (wethBalance: BigNumber) => resolve(wethBalance);
 });
 
-export const setWethTokenBalance = createAction('SET_WETH_TOKEN_BALANCE', resolve => {
+export const setWethTokenBalance = createAction('blockchain/WETH_TOKEN_BALANCE_set', resolve => {
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
 });
 
-export const setGasInfo = createAction('SET_GAS_INFO', resolve => {
+export const setGasInfo = createAction('blockchain/GAS_INFO_set', resolve => {
     return (gasInfo: GasInfo) => resolve(gasInfo);
 });
 
-export const setNetworkId = createAction('SET_NETWORK_ID', resolve => {
+export const setNetworkId = createAction('blockchain/NETWORK_ID_set', resolve => {
     return (networkId: number) => resolve(networkId);
 });
 

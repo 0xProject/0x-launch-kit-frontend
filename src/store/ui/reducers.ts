@@ -1,6 +1,6 @@
 import { getType } from 'typesafe-actions';
 
-import { BasicTheme } from '../../themes/BasicTheme';
+import { DefaultTheme } from '../../themes/default_theme';
 import { Step, StepsModalState, UIState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -15,7 +15,7 @@ const initialUIState: UIState = {
     notifications: [],
     hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
-    themeColors: new BasicTheme(),
+    themeColors: new DefaultTheme(),
 };
 
 export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {

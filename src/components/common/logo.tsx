@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeBreakPoints } from '../../themes/ThemeCommons';
+import { themeBreakPoints } from '../../themes/theme_commons';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getEthAccount } from '../../store/selectors';
-import { themeFeatures } from '../../themes/ThemeCommons';
+import { themeFeatures } from '../../themes/theme_commons';
 import { StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';

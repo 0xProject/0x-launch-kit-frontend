@@ -2,6 +2,7 @@ import { BigNumber, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../../common/constants';
+import { RelayerException } from '../../exceptions/relayer_exception';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
@@ -18,15 +19,15 @@ import {
 } from '../selectors';
 import { addNotifications } from '../ui/actions';
 
-export const initializeRelayerData = createAction('INITIALIZE_RELAYER_DATA', resolve => {
+export const initializeRelayerData = createAction('relayer/init', resolve => {
     return (relayerData: RelayerState) => resolve(relayerData);
 });
 
-export const setOrders = createAction('SET_ORDERS', resolve => {
+export const setOrders = createAction('relayer/ORDERS_set', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
 
-export const setUserOrders = createAction('SET_USER_ORDERS', resolve => {
+export const setUserOrders = createAction('relayer/USER_ORDERS_set', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
 });
 
@@ -85,24 +86,27 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
+        try {
+            const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
 
-        const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+            dispatch(getOrderbookAndUserOrders());
+            dispatch(
+                addNotifications([
+                    {
+                        id: signedOrder.signature,
+                        kind: NotificationKind.Limit,
+                        amount,
+                        token: baseToken,
+                        side,
+                        timestamp: new Date(),
+                    },
+                ]),
+            );
 
-        dispatch(getOrderbookAndUserOrders());
-        dispatch(
-            addNotifications([
-                {
-                    id: signedOrder.signature,
-                    kind: NotificationKind.Limit,
-                    amount,
-                    token: baseToken,
-                    side,
-                    timestamp: new Date(),
-                },
-            ]),
-        );
-
-        return submitResult;
+            return submitResult;
+        } catch (error) {
+            throw new RelayerException(error.message);
+        }
     };
 };
 

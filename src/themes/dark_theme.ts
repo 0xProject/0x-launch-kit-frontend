@@ -1,5 +1,5 @@
-import { BasicTheme } from './BasicTheme';
-import { ThemeColors } from './ThemeCommons';
+import { DefaultTheme } from './default_theme';
+import { ThemeColors } from './theme_commons';
 
 const darkThemeColors: ThemeColors = {
     background: 'black',
@@ -20,7 +20,7 @@ const darkThemeColors: ThemeColors = {
     notificationActive: '#F8F8F8',
 };
 
-export class DarkTheme extends BasicTheme {
+export class DarkTheme extends DefaultTheme {
     constructor() {
         super();
         this.componentsTheme = darkThemeColors;

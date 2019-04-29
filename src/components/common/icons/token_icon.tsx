@@ -30,7 +30,7 @@ import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
-import { themeColors } from '../../../themes/ThemeCommons';
+import { themeColors } from '../../../themes/theme_commons';
 
 interface Props {
     symbol: string;

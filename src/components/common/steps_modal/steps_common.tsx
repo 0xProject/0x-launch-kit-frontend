@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { SpinnerSize, themeColors } from '../../../themes/ThemeCommons';
+import { SpinnerSize, themeColors } from '../../../themes/theme_commons';
 import { MetamaskLarge } from '../icons/icon_metamask_large';
 import { NotificationCancelIcon } from '../icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../icons/notification_checkmark_icon';

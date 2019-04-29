@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/ThemeCommons';
+import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/theme_commons';
 
 interface TableStyleProps {
     borderBottom?: boolean;

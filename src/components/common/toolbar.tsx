@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { goToHome, goToWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
-import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/ThemeCommons';
+import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/theme_commons';
 import { errorsWallet } from '../../util/error_messages';
 import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';

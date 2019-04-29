@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 
 import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install_metamask.svg';
-import { themeModalStyle } from '../../themes/ThemeCommons';
+import { themeModalStyle } from '../../themes/theme_commons';
 import { errorsWallet } from '../../util/error_messages';
 import { ModalDisplay } from '../../util/types';
 
