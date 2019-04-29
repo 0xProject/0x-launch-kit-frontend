@@ -114,6 +114,34 @@ describe('BigNumberInput', () => {
         expect(wrapper.find('input').props().value).toEqual('');
         expect(onChange).toHaveBeenCalledTimes(0);
     });
+
+    it('should allow bignumber without decimals without props decimals ', () => {
+        // given
+        const value = new BigNumber('123');
+        const onChange = jest.fn();
+
+        // when
+        const wrapper = mount(<BigNumberInput value={value} onChange={onChange} />);
+
+        // then
+        const inputBefore = wrapper.find('input');
+
+        expect(inputBefore.props().value.toString()).toEqual(value.toString());
+    });
+
+    it('should allow values with decimals without props decimals', () => {
+        // given
+        const value = new BigNumber('0.23467');
+        const onChange = jest.fn();
+
+        // when
+        const wrapper = mount(<BigNumberInput value={value} onChange={onChange} />);
+
+        // then
+        const inputBefore = wrapper.find('input');
+
+        expect(inputBefore.props().value.toString()).toEqual(value.toString());
+    });
 });
 
 function changeValue(wrapper: any, value: string): void {
