@@ -42,7 +42,7 @@ export class BigNumberInput extends React.Component<Props, State> {
         currentValueStr:
             this.props.value && this.props.decimals
                 ? toUnitAmount(this.props.value, this.props.decimals).toFixed(DECIMALS_TWO)
-                : '',
+                : new BigNumber(this.props.value || '0').toString(),
     };
 
     private _textInput: any;
@@ -112,21 +112,17 @@ export class BigNumberInput extends React.Component<Props, State> {
         const { onChange, min, max } = this.props;
         const newValueStr = e.currentTarget.value;
 
-        const pattern = new RegExp(`^\\d*(\\.\\d{0,18})?$`);
+        const newValue = BigNumberInput.getPriceValue(this.props, newValueStr);
 
-        if (pattern.test(newValueStr)) {
-            const newValue = BigNumberInput.getPriceValue(this.props, newValueStr);
-
-            const invalidValue = (min && newValue.lessThan(min)) || (max && newValue.greaterThan(max));
-            if (invalidValue) {
-                return;
-            }
-
-            onChange(newValue);
-
-            this.setState({
-                currentValueStr: newValueStr,
-            });
+        const invalidValue = (min && newValue.lessThan(min)) || (max && newValue.greaterThan(max));
+        if (invalidValue) {
+            return;
         }
+
+        onChange(newValue);
+
+        this.setState({
+            currentValueStr: newValueStr,
+        });
     };
 }
