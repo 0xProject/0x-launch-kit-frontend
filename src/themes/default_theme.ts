@@ -1,4 +1,4 @@
-import { Theme, themeColors, ThemeColors, ThemeModalStyle } from './commons';
+import { Theme, themeColors, ThemeModalStyle, ThemeProperties } from './commons';
 
 const modalThemeStyle: ThemeModalStyle = {
     content: {
@@ -20,7 +20,7 @@ const modalThemeStyle: ThemeModalStyle = {
     },
 };
 
-const whiteThemeColors: ThemeColors = {
+const whiteThemeColors: ThemeProperties = {
     background: '#f5f5f5',
     borderColor: '#DEDEDE',
     darkBlue: '#002979',
@@ -40,7 +40,7 @@ const whiteThemeColors: ThemeColors = {
 };
 
 export class DefaultTheme implements Theme {
-    public componentsTheme: ThemeColors;
+    public componentsTheme: ThemeProperties;
     public modalTheme: ThemeModalStyle;
     constructor() {
         this.componentsTheme = whiteThemeColors;

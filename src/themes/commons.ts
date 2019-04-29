@@ -1,9 +1,9 @@
 export interface Theme {
-    componentsTheme: ThemeColors;
+    componentsTheme: ThemeProperties;
     modalTheme: ThemeModalStyle;
 }
 
-export interface ThemeColors {
+export interface ThemeProperties {
     background: string;
     borderColor: string;
     darkBlue: string;

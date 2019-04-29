@@ -1,7 +1,7 @@
-import { ThemeColors } from './commons';
+import { ThemeProperties } from './commons';
 import { DefaultTheme } from './default_theme';
 
-const darkThemeColors: ThemeColors = {
+const darkThemeColors: ThemeProperties = {
     background: 'black',
     borderColor: 'black',
     darkBlue: '#002979',
