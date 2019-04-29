@@ -21,7 +21,7 @@ export const themeDimensions = {
     fieldHeight: '46px',
     horizontalPadding: '16px',
     sidebarWidth: '350px',
-    verticalPadding: '10px',
+    verticalPadding: '16px',
     verticalSeparation: '30px',
 };
 
