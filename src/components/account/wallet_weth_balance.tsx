@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
-import { themeColors, themeDimensions, themeModalStyle } from '../../themes/theme_commons';
+import { themeColors, themeDimensions, themeModalStyle } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';

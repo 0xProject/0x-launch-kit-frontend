@@ -1,4 +1,4 @@
-import { Theme, themeColors, ThemeColors, ThemeModalStyle } from './theme_commons';
+import { Theme, themeColors, ThemeColors, ThemeModalStyle } from './commons';
 
 const modalThemeStyle: ThemeModalStyle = {
     content: {

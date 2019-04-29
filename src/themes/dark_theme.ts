@@ -1,5 +1,5 @@
+import { ThemeColors } from './commons';
 import { DefaultTheme } from './default_theme';
-import { ThemeColors } from './theme_commons';
 
 const darkThemeColors: ThemeColors = {
     background: 'black',

@@ -4,7 +4,7 @@ import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
 import { getNetworkId } from '../../store/selectors';
-import { themeColors, themeDimensions } from '../../themes/theme_commons';
+import { themeColors, themeDimensions } from '../../themes/commons';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
 import { tokenAmountInUnits } from '../../util/tokens';

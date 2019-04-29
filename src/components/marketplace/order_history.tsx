@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { themeColors } from '../../themes/theme_commons';
+import { themeColors } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';

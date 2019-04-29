@@ -1,14 +1,12 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { TEMPLATE_THEME } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
-import { getThemeByName } from '../../util/template_meta_data';
 import {
     Notification,
     NotificationKind,
@@ -53,13 +51,6 @@ export const stepsModalReset = createAction('ui/steps_modal/reset');
 export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
     return (themeColor: DefaultTheme) => resolve(themeColor);
 });
-
-export const updateThemeTemplate = () => {
-    return (dispatch: any) => {
-        const templateInstance = getThemeByName(TEMPLATE_THEME);
-        dispatch(setThemeColor(templateInstance));
-    };
-};
 
 export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => {
     return async (dispatch: any) => {

@@ -4,12 +4,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
-import {
-    initializeAppNoMetamaskOrLocked,
-    updateMarketPriceEther,
-    updateStore,
-    updateThemeTemplate,
-} from '../store/actions';
+import { initializeAppNoMetamaskOrLocked, updateMarketPriceEther, updateStore } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { StoreState, Web3State } from '../util/types';
 
@@ -25,7 +20,6 @@ interface DispatchProps {
     onInitMetamaskState: () => any;
     onUpdateStore: () => any;
     onUpdateMarketPriceEther: () => any;
-    updateThemeTemplate: () => any;
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -36,7 +30,6 @@ class App extends React.Component<Props> {
 
     public componentDidMount = () => {
         this.props.onInitMetamaskState();
-        this.props.updateThemeTemplate();
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<Props>, snapshot?: any) => {
@@ -101,7 +94,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
         onInitMetamaskState: () => dispatch(initializeAppNoMetamaskOrLocked()),
         onUpdateStore: () => dispatch(updateStore()),
         onUpdateMarketPriceEther: () => dispatch(updateMarketPriceEther()),
-        updateThemeTemplate: () => dispatch(updateThemeTemplate()),
     };
 };
 

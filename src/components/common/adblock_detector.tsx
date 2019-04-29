@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ReactComponent as RedExclamationSign } from '../../assets/icons/red_exclamation_sign.svg';
 import { LocalStorage } from '../../services/local_storage';
-import { themeModalStyle } from '../../themes/theme_commons';
+import { themeModalStyle } from '../../themes/commons';
 
 import { CloseModalButton } from './icons/close_modal_button';
 

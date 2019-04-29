@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, goToHome } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
-import { themeColors, themeDimensions, themeFeatures } from '../../themes/theme_commons';
+import { themeColors, themeDimensions, themeFeatures } from '../../themes/commons';
 import { getColorBySymbol } from '../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
