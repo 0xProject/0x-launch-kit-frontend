@@ -2,16 +2,15 @@ import { BigNumber } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
-import { getContractWrappers } from '../../services/contract_wrappers';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
-import { getWeb3Wrapper, initializeWeb3Wrapper, isMetamaskInstalled } from '../../services/web3_wrapper';
+import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, GasInfo, ThunkCreator, Token, TokenBalance, Web3State } from '../../util/types';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
@@ -63,8 +62,8 @@ export const setNetworkId = createAction('blockchain/NETWORK_ID_set', resolve =>
     return (networkId: number) => resolve(networkId);
 });
 
-export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
-    return async (dispatch: any, getState: any) => {
+export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlocked: boolean) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -95,8 +94,8 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     };
 };
 
-export const updateTokenBalancesOnToggleTokenLock = (token: Token, isUnlocked: boolean) => {
-    return async (dispatch: any, getState: any) => {
+export const updateTokenBalancesOnToggleTokenLock: ThunkCreator = (token: Token, isUnlocked: boolean) => {
+    return async (dispatch, getState) => {
         const state = getState();
 
         if (isWeth(token.symbol)) {
@@ -125,8 +124,8 @@ export const updateTokenBalancesOnToggleTokenLock = (token: Token, isUnlocked: b
     };
 };
 
-export const updateWethBalance = (newWethBalance: BigNumber) => {
-    return async (dispatch: any, getState: any) => {
+export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: BigNumber) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -178,16 +177,16 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
-export const updateGasInfo = () => {
-    return async (dispatch: any) => {
+export const updateGasInfo: ThunkCreator = () => {
+    return async dispatch => {
         const fetchedGasInfo = await getGasEstimationInfoAsync();
         dispatch(setGasInfo(fetchedGasInfo));
     };
 };
 
 let fillEventsSubscription: string | null = null;
-export const setConnectedUserNotifications = (ethAccount: string, networkId: number) => {
-    return async (dispatch: any, getState: any) => {
+export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAccount: string, networkId: number) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const knownTokens = getKnownTokens(networkId);
         const localStorage = new LocalStorage(window.localStorage);
 
@@ -262,8 +261,8 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
     };
 };
 
-export const initWallet = () => {
-    return async (dispatch: any, getState: any) => {
+export const initWallet: ThunkCreator<Promise<any>> = () => {
+    return async (dispatch, getState, { initializeWeb3Wrapper }) => {
         dispatch(setWeb3State(Web3State.Loading));
         const web3Wrapper = await initializeWeb3Wrapper();
         if (!web3Wrapper) {
@@ -326,14 +325,14 @@ export const initWallet = () => {
     };
 };
 
-export const unlockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+export const unlockToken: ThunkCreator = (token: Token) => {
+    return async dispatch => {
         return dispatch(toggleTokenLock(token, false));
     };
 };
 
-export const lockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+export const lockToken: ThunkCreator = (token: Token) => {
+    return async dispatch => {
         return dispatch(toggleTokenLock(token, true));
     };
 };
@@ -342,8 +341,8 @@ export const lockToken = (token: Token) => {
  *  Initializes the app with a default state if the user does not have metamask, with permissions rejected
  *  or if the user did not connected metamask to the dApp. Takes the info from MAINNET
  */
-export const initializeAppNoMetamaskOrLocked = () => {
-    return async (dispatch: any, getState: any) => {
+export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         if (isMetamaskInstalled()) {
             dispatch(setWeb3State(Web3State.Locked));
         } else {

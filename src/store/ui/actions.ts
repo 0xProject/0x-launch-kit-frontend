@@ -2,8 +2,6 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
-import { getContractWrappers } from '../../services/contract_wrappers';
-import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
 import {
@@ -14,6 +12,7 @@ import {
     StepKind,
     StepToggleTokenLock,
     StepWrapEth,
+    ThunkCreator,
     Token,
     TokenBalance,
 } from '../../util/types';
@@ -47,8 +46,8 @@ export const stepsModalAdvanceStep = createAction('ui/steps_modal/advance_step')
 
 export const stepsModalReset = createAction('ui/steps_modal/reset');
 
-export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => {
-    return async (dispatch: any) => {
+export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {
+    return async dispatch => {
         const toggleTokenLockStep = isUnlocked ? getLockTokenStep(token) : getUnlockTokenStep(token);
 
         dispatch(setStepsModalCurrentStep(toggleTokenLockStep));
@@ -57,8 +56,8 @@ export const startToggleTokenLockSteps = (token: Token, isUnlocked: boolean) => 
     };
 };
 
-export const startWrapEtherSteps = (newWethBalance: BigNumber) => {
-    return async (dispatch: any, getState: any) => {
+export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => {
+    return async (dispatch, getState) => {
         const state = getState();
         const currentWethBalance = selectors.getWethBalance(state);
 
@@ -75,8 +74,8 @@ export const startWrapEtherSteps = (newWethBalance: BigNumber) => {
     };
 };
 
-export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
+export const startBuySellLimitSteps: ThunkCreator = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch, getState) => {
         const state = getState();
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
@@ -99,8 +98,8 @@ export const startBuySellLimitSteps = (amount: BigNumber, price: BigNumber, side
     };
 };
 
-export const startBuySellMarketSteps = (amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
+export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide) => {
+    return async (dispatch, getState) => {
         const state = getState();
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
@@ -153,8 +152,8 @@ const getLockTokenStep = (token: Token): StepToggleTokenLock => {
     };
 };
 
-export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
+export const createSignedOrder: ThunkCreator = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
         const ethAccount = selectors.getEthAccount(state);
         const baseToken = selectors.getBaseToken(state) as Token;
@@ -183,14 +182,14 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
     };
 };
 
-export const addMarketBuySellNotification = (
+export const addMarketBuySellNotification: ThunkCreator = (
     id: string,
     amount: BigNumber,
     token: Token,
     side: OrderSide,
     tx: Promise<any>,
 ) => {
-    return async (dispatch: any) => {
+    return async dispatch => {
         dispatch(
             addNotifications([
                 {

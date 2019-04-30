@@ -1,7 +1,9 @@
 import { push } from 'connected-react-router';
 
-export const goToHome = () => {
-    return async (dispatch: any, getState: any) => {
+import { ThunkCreator } from '../../util/types';
+
+export const goToHome: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         const state = getState();
 
         dispatch(
@@ -13,8 +15,8 @@ export const goToHome = () => {
     };
 };
 
-export const goToWallet = () => {
-    return async (dispatch: any, getState: any) => {
+export const goToWallet: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         const state = getState();
 
         dispatch(

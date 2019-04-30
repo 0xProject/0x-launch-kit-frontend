@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { goToHome, initWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
@@ -78,7 +76,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onGoToHome: () => dispatch(goToHome()),
         onConnectWallet: () => dispatch(initWallet()),
