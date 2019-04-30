@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
 import 'sanitize.css';
 
-import { DEFAULT_BASE_PATH, ERC20APP_BASE_PATH, ERC721APP_BASE_PATH, LOGGER_ID } from './common/constants';
+import { DEFAULT_BASE_PATH, ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH, LOGGER_ID } from './common/constants';
 import { AppContainer } from './components/app';
 import { AdBlockDetector } from './components/common/adblock_detector';
 import { Erc20App } from './erc20/components/erc20_app';
@@ -30,8 +30,8 @@ const Web3WrappedApp = (
             <AppContainer>
                 <AdBlockDetector />
                 <Switch>
-                    <Route path={ERC20APP_BASE_PATH} component={Erc20App} />
-                    <Route path={ERC721APP_BASE_PATH} component={Erc721App} />
+                    <Route path={ERC20_APP_BASE_PATH} component={Erc20App} />
+                    <Route path={ERC721_APP_BASE_PATH} component={Erc721App} />
                     <Route component={RedirectToHome} />
                 </Switch>
             </AppContainer>

@@ -1,6 +1,6 @@
 import { push } from 'connected-react-router';
 
-import { ERC20APP_BASE_PATH } from '../../common/constants';
+import { ERC20_APP_BASE_PATH } from '../../common/constants';
 
 export const goToHome = () => {
     return async (dispatch: any, getState: any) => {
@@ -9,7 +9,7 @@ export const goToHome = () => {
         dispatch(
             push({
                 ...state.router.location,
-                pathname: `${ERC20APP_BASE_PATH}/`,
+                pathname: `${ERC20_APP_BASE_PATH}/`,
             }),
         );
     };
@@ -22,7 +22,7 @@ export const goToWallet = () => {
         dispatch(
             push({
                 ...state.router.location,
-                pathname: `${ERC20APP_BASE_PATH}/my-wallet`,
+                pathname: `${ERC20_APP_BASE_PATH}/my-wallet`,
             }),
         );
     };
