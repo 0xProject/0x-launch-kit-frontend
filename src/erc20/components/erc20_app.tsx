@@ -7,10 +7,10 @@ import { GeneralLayoutContainer } from '../../components/general_layout';
 import { Marketplace } from '../pages/marketplace';
 import { MyWallet } from '../pages/my_wallet';
 
-const Toolbar = () => <ToolbarContainer />;
+const Toolbar = <ToolbarContainer />;
 
 export const Erc20App = () => (
-    <GeneralLayoutContainer renderToolbar={Toolbar}>
+    <GeneralLayoutContainer toolbar={Toolbar}>
         <Switch>
             <Route exact={true} path={`${ERC20_APP_BASE_PATH}/`} component={Marketplace} />
             <Route exact={true} path={`${ERC20_APP_BASE_PATH}/my-wallet`} component={MyWallet} />

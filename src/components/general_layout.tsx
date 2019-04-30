@@ -41,17 +41,17 @@ interface StateProps {
 
 interface OwnProps {
     children: React.ReactNode;
-    renderToolbar: () => React.ReactNode;
+    toolbar: React.ReactNode;
 }
 
 type Props = OwnProps & StateProps;
 
 export const GeneralLayout = (props: Props) => {
-    const { children, renderToolbar, theme } = props;
+    const { children, toolbar, theme } = props;
     return (
         <ThemeProvider theme={theme}>
             <General>
-                {renderToolbar()}
+                {toolbar}
                 <ContentScroll>
                     <Content>{children}</Content>
                     <Footer />

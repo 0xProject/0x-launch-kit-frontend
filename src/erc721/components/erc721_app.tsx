@@ -6,10 +6,10 @@ import { ToolbarContainer } from '../../components/common/toolbar';
 import { GeneralLayoutContainer } from '../../components/general_layout';
 import { MyCollectibles } from '../pages/my_collectibles';
 
-const Toolbar = () => <ToolbarContainer />;
+const Toolbar = <ToolbarContainer />;
 
 export const Erc721App = () => (
-    <GeneralLayoutContainer renderToolbar={Toolbar}>
+    <GeneralLayoutContainer toolbar={Toolbar}>
         <Switch>
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={MyCollectibles} />
         </Switch>
