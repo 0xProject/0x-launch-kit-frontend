@@ -236,7 +236,7 @@ class BuySell extends React.Component<Props, State> {
                         currencyPair={currencyPair}
                     />
                     <Button
-                        theme="secondary"
+                        variant="secondary"
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                     >

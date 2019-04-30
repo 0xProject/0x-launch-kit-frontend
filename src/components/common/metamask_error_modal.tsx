@@ -90,7 +90,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled theme="tertiary">
+            <ButtonStyled variant="tertiary">
                 <LinkButton
                     target="_blank"
                     href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
@@ -113,7 +113,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled theme="tertiary">
+            <ButtonStyled variant="tertiary">
                 <LinkButton onClick={connectWallet}>{errorsWallet.mmConnect}</LinkButton>
             </ButtonStyled>
         </>
