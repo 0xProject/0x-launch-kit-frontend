@@ -3,11 +3,6 @@ import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
 
 import { Theme } from '../themes/commons';
-import { DefaultTheme } from '../themes/default_theme';
-
-export interface StyledComponentThemeProps {
-    themeColors: DefaultTheme;
-}
 
 export interface TabItem {
     active: boolean;

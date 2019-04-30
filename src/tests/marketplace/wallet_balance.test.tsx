@@ -5,9 +5,11 @@
 import { BigNumber } from '0x.js';
 import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { ThemeProvider } from 'styled-components';
 
 import { WalletBalance } from '../../components/marketplace/wallet_balance';
 import * as tokenServices from '../../services/tokens';
+import { DefaultTheme } from '../../themes/default_theme';
 import { addressFactory, tokenBalanceFactory, tokenFactory } from '../../util/test-utils';
 import { TokenSymbol, Web3State } from '../../util/types';
 
@@ -29,6 +31,7 @@ describe('WalletBalance', () => {
         // @ts-ignore
         tokenServices.getTokenBalance = originalGetTokenBalance;
     });
+    const themeColors = new DefaultTheme();
     it('should display a message if the user did not accepted metamask permissions', async () => {
         // given
         const resultExpected1 = 'Click to Connect MetaMask';
@@ -46,16 +49,18 @@ describe('WalletBalance', () => {
 
         // when
         const wrapper = mount(
-            <WalletBalance
-                web3State={Web3State.Locked}
-                onConnectWallet={onConnectWalletFn}
-                baseToken={baseToken}
-                quoteToken={quoteToken}
-                currencyPair={currencyPair}
-                ethAccount={ethAccount}
-                baseTokenBalance={baseTokenBalance}
-                quoteTokenBalance={quoteTokenBalance}
-            />,
+            <ThemeProvider theme={themeColors}>
+                <WalletBalance
+                    web3State={Web3State.Locked}
+                    onConnectWallet={onConnectWalletFn}
+                    baseToken={baseToken}
+                    quoteToken={quoteToken}
+                    currencyPair={currencyPair}
+                    ethAccount={ethAccount}
+                    baseTokenBalance={baseTokenBalance}
+                    quoteTokenBalance={quoteTokenBalance}
+                />
+            </ThemeProvider>,
         );
 
         // then
@@ -79,16 +84,18 @@ describe('WalletBalance', () => {
         const quoteTokenBalance = tokenBalanceFactory.build();
         // when
         const wrapper = mount(
-            <WalletBalance
-                web3State={Web3State.NotInstalled}
-                onConnectWallet={onConnectWalletFn}
-                baseToken={baseToken}
-                quoteToken={quoteToken}
-                currencyPair={currencyPair}
-                ethAccount={ethAccount}
-                baseTokenBalance={baseTokenBalance}
-                quoteTokenBalance={quoteTokenBalance}
-            />,
+            <ThemeProvider theme={themeColors}>
+                <WalletBalance
+                    web3State={Web3State.NotInstalled}
+                    onConnectWallet={onConnectWalletFn}
+                    baseToken={baseToken}
+                    quoteToken={quoteToken}
+                    currencyPair={currencyPair}
+                    ethAccount={ethAccount}
+                    baseTokenBalance={baseTokenBalance}
+                    quoteTokenBalance={quoteTokenBalance}
+                />
+            </ThemeProvider>,
         );
 
         // then

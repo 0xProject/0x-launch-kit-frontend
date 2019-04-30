@@ -4,7 +4,8 @@ import styled, { ThemeProvider } from 'styled-components';
 
 import { getThemeColors } from '../store/selectors';
 import { themeBreakPoints } from '../themes/commons';
-import { StoreState, StyledComponentThemeProps } from '../util/types';
+import { DefaultTheme } from '../themes/default_theme';
+import { StoreState } from '../util/types';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
@@ -36,7 +37,10 @@ const ContentScroll = styled.div`
     overflow: auto;
 `;
 
-interface StateProps extends StyledComponentThemeProps {}
+interface StateProps {
+    themeColors: DefaultTheme;
+}
+
 interface OwnProps {
     children: React.ReactNode;
 }
