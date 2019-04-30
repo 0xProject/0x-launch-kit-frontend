@@ -34,7 +34,7 @@ const LabelTitleWrapper = styled.div`
 `;
 
 const LabelTitle = styled.span`
-    color: ${props => (props.theme && props.theme.componentsTheme ? props.theme.componentsTheme.lightGray : '')};
+    color: ${props => props.theme.componentsTheme.lightGray};
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -88,7 +88,7 @@ const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
 `;
 
 const WalletStatusTitle = styled.h3`
-    color: ${props => (props.theme && props.theme.componentsTheme ? props.theme.componentsTheme.textLight : '')};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
