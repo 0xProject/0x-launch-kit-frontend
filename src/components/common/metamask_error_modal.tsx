@@ -3,8 +3,8 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 
 import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install_metamask.svg';
+import { themeModalStyle } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
-import { themeModalStyle } from '../../util/theme';
 import { ModalDisplay } from '../../util/types';
 
 import { Button } from './button';
@@ -90,7 +90,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled theme="tertiary">
+            <ButtonStyled variant="tertiary">
                 <LinkButton
                     target="_blank"
                     href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
@@ -113,7 +113,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled theme="tertiary">
+            <ButtonStyled variant="tertiary">
                 <LinkButton onClick={connectWallet}>{errorsWallet.mmConnect}</LinkButton>
             </ButtonStyled>
         </>

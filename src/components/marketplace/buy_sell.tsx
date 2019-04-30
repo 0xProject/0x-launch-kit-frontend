@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
 import { getCurrencyPair, getWeb3State } from '../../store/selectors';
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeColors, themeDimensions } from '../../themes/commons';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -236,7 +236,7 @@ class BuySell extends React.Component<Props, State> {
                         currencyPair={currencyPair}
                     />
                     <Button
-                        theme="secondary"
+                        variant="secondary"
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                     >

@@ -3,13 +3,14 @@
  */
 
 import { BigNumber } from '0x.js';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import React from 'react';
 
 import { WalletBalance } from '../../components/marketplace/wallet_balance';
 import * as tokenServices from '../../services/tokens';
 import { addressFactory, tokenBalanceFactory, tokenFactory } from '../../util/test-utils';
 import { TokenSymbol, Web3State } from '../../util/types';
+import { mountWithTheme } from '../util/mount_with_theme';
 
 describe('WalletBalance', () => {
     let originalGetTokenBalance: any;
@@ -45,7 +46,7 @@ describe('WalletBalance', () => {
         const quoteTokenBalance = tokenBalanceFactory.build();
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <WalletBalance
                 web3State={Web3State.Locked}
                 onConnectWallet={onConnectWalletFn}
@@ -78,7 +79,7 @@ describe('WalletBalance', () => {
         const baseTokenBalance = tokenBalanceFactory.build();
         const quoteTokenBalance = tokenBalanceFactory.build();
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <WalletBalance
                 web3State={Web3State.NotInstalled}
                 onConnectWallet={onConnectWalletFn}

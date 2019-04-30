@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import { stepsModalReset } from '../../../store/actions';
 import { getStepsModalCurrentStep, getStepsModalDoneSteps, getStepsModalPendingSteps } from '../../../store/selectors';
+import { themeModalStyle } from '../../../themes/commons';
 import { getStepTitle, isLongStep } from '../../../util/steps';
-import { themeModalStyle } from '../../../util/theme';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
 

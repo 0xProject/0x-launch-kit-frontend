@@ -2,6 +2,8 @@ import { BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
 
+import { Theme } from '../themes/commons';
+
 export interface TabItem {
     active: boolean;
     onClick: any;
@@ -55,6 +57,7 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
+    readonly theme: Theme;
 }
 
 export interface MarketState {
