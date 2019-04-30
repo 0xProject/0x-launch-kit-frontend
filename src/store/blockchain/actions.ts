@@ -87,7 +87,7 @@ export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlo
         }
 
         web3Wrapper.awaitTransactionSuccessAsync(tx).then(() => {
-            dispatch(updateTokenBalancesOnToggleTokenLock(token, isUnlocked));
+            dispatch(updateTokenBalancesOnToggleTokenLock(token, isUnlocked)); // tslint:disable-line:no-floating-promises
         });
 
         return tx;
@@ -306,12 +306,12 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                     }),
                 );
                 dispatch(setMarketTokens({ baseToken, quoteToken }));
-                dispatch(getOrderbookAndUserOrders());
+                dispatch(getOrderbookAndUserOrders()); // tslint:disable-line:no-floating-promises
                 try {
                     await dispatch(fetchMarkets());
                     // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
-                    dispatch(setConnectedUserNotifications(ethAccount, networkId));
-                    dispatch(updateMarketPriceEther());
+                    dispatch(setConnectedUserNotifications(ethAccount, networkId)); // tslint:disable-line:no-floating-promises
+                    dispatch(updateMarketPriceEther()); // tslint:disable-line:no-floating-promises
                 } catch (error) {
                     // Relayer error
                     logger.error('The fetch orders from the relayer failed', error);
@@ -363,8 +363,8 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
 
         dispatch(setMarketTokens({ baseToken, quoteToken }));
 
-        dispatch(getOrderBook());
+        dispatch(getOrderBook()); // tslint:disable-line:no-floating-promises
 
-        dispatch(updateMarketPriceEther());
+        dispatch(updateMarketPriceEther()); // tslint:disable-line:no-floating-promises
     };
 };

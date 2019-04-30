@@ -62,7 +62,7 @@ export const cancelOrder: ThunkCreator = (order: UIOrder) => {
 
         // tslint:disable-next-line:no-floating-promises no-unsafe-any
         tx.then(transaction => {
-            dispatch(getOrderbookAndUserOrders());
+            dispatch(getOrderbookAndUserOrders()); // tslint:disable-line:no-floating-promises
 
             dispatch(
                 addNotifications([
@@ -87,7 +87,7 @@ export const submitLimitOrder: ThunkCreator = (signedOrder: SignedOrder, amount:
         try {
             const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
 
-            dispatch(getOrderbookAndUserOrders());
+            dispatch(getOrderbookAndUserOrders()); // tslint:disable-line:no-floating-promises
             dispatch(
                 addNotifications([
                     {
@@ -138,7 +138,7 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
-            dispatch(getOrderbookAndUserOrders());
+            dispatch(getOrderbookAndUserOrders()); // tslint:disable-line:no-floating-promises
             dispatch(
                 addNotifications([
                     {
@@ -166,13 +166,13 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
 export const getOrderbookAndUserOrders: ThunkCreator = () => {
     return async dispatch => {
-        dispatch(getAllOrders());
-        dispatch(getUserOrders());
+        dispatch(getAllOrders()); // tslint:disable-line:no-floating-promises
+        dispatch(getUserOrders()); // tslint:disable-line:no-floating-promises
     };
 };
 
 export const getOrderBook: ThunkCreator = () => {
     return async dispatch => {
-        dispatch(getAllOrders());
+        return dispatch(getAllOrders());
     };
 };
