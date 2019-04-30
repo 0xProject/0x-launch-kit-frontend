@@ -16,7 +16,7 @@ const initialUIState: UIState = {
     notifications: [],
     hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
-    themeColors: getThemeByName(THEME_NAME),
+    theme: getThemeByName(THEME_NAME),
 };
 
 export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
@@ -55,7 +55,7 @@ export function stepsModal(state: StepsModalState = initialStepsModalState, acti
 export function ui(state: UIState = initialUIState, action: RootAction): UIState {
     switch (action.type) {
         case getType(actions.setThemeColor):
-            return { ...state, themeColors: action.payload };
+            return { ...state, theme: action.payload };
         case getType(actions.setHasUnreadNotifications):
             return { ...state, hasUnreadNotifications: action.payload };
         case getType(actions.setNotifications):

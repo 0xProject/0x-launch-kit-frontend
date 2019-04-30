@@ -2,9 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { ThemeProvider } from 'styled-components';
 
-import { getThemeColors } from '../store/selectors';
-import { themeBreakPoints } from '../themes/commons';
-import { DefaultTheme } from '../themes/default_theme';
+import { getTheme } from '../store/selectors';
+import { Theme, themeBreakPoints } from '../themes/commons';
 import { StoreState } from '../util/types';
 
 import { Footer } from './common/footer';
@@ -38,7 +37,7 @@ const ContentScroll = styled.div`
 `;
 
 interface StateProps {
-    themeColors: DefaultTheme;
+    theme: Theme;
 }
 
 interface OwnProps {
@@ -48,9 +47,9 @@ interface OwnProps {
 type Props = OwnProps & StateProps;
 
 const GeneralLayout = (props: Props) => {
-    const { themeColors, children } = props;
+    const { theme, children } = props;
     return (
-        <ThemeProvider theme={themeColors}>
+        <ThemeProvider theme={theme}>
             <General>
                 <ToolbarContainer />
                 <ContentScroll>
@@ -65,7 +64,7 @@ const GeneralLayout = (props: Props) => {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        themeColors: getThemeColors(state),
+        theme: getTheme(state),
     };
 };
 
