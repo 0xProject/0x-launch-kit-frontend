@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../util/theme';
+import { themeColors, themeDimensions } from '../../themes/commons';
 
 import { LockIcon } from './icons/lock_icon';
 import { MetamaskSideIcon } from './icons/metamask_side_icon';

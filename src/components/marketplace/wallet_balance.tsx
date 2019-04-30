@@ -18,7 +18,6 @@ import {
 } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
-import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Button } from '../common/button';
@@ -60,7 +59,9 @@ const Value = styled.span`
 
 const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
     background-color: ${props =>
-        props.web3State === Web3State.Done ? themeColors.green : themeColors.errorButtonBackground};
+        props.web3State === Web3State.Done
+            ? props.theme.componentsTheme.green
+            : props.theme.componentsTheme.errorButtonBackground};
     border-radius: 50%;
     height: 8px;
     margin-right: 6px;
@@ -68,7 +69,7 @@ const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
 `;
 
 const WalletStatusTitle = styled.h3`
-    color: ${themeColors.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -267,7 +268,7 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                    <ButtonStyled variant={'tertiary'} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>
                 </>
@@ -277,7 +278,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled theme={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
+                    <ButtonStyled variant={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
             );
         }
