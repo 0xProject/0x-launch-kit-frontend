@@ -10,8 +10,8 @@ import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
 import { ToolbarContainer } from './common/toolbar';
 
-const General = styled.div<StyledComponentThemeProps>`
-    background: ${props => props.themeColors.componentsTheme.background};
+const General = styled.div`
+    background: ${props => props.theme.componentsTheme.background};
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -47,7 +47,7 @@ const GeneralLayout = (props: Props) => {
     const { themeColors, children } = props;
     return (
         <ThemeProvider theme={themeColors}>
-            <General themeColors={themeColors}>
+            <General>
                 <ToolbarContainer />
                 <ContentScroll>
                     <Content>{children}</Content>
