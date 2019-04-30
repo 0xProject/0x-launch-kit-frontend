@@ -291,7 +291,7 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                    <ButtonStyled variant={'tertiary'} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>
                 </>
@@ -301,7 +301,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled theme={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
+                    <ButtonStyled variant={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
             );
         }
