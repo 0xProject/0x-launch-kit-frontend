@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { WalletConnectionStatusContainer } from '../../../components/account';
 import { ErrorCard, ErrorIcons, FontSize } from '../../../components/common/error_card';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
 import { goToHomeErc721, goToMyCollectibles } from '../../../store/router/actions';
@@ -10,6 +9,7 @@ import { getWeb3State } from '../../../store/selectors';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../../themes/commons';
 import { errorsWallet } from '../../../util/error_messages';
 import { StoreState, Web3State } from '../../../util/types';
+import { WalletConnectionStatusContainer } from '../account/wallet_connection_status';
 
 import { Search } from './inputSearch';
 import { Logo } from './logo';
@@ -116,7 +116,6 @@ const Toolbar = (props: Props) => {
             <ToolbarStart>
                 <LogoHeader onClick={handleLogoClick} />
             </ToolbarStart>
-            <Search />
             {isMmLocked ? (
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
             ) : null}
@@ -127,13 +126,16 @@ const Toolbar = (props: Props) => {
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
             ) : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? (
-                <ToolbarEnd>
-                    <MyWalletLink href="/my-collectibles" onClick={handleMyWalletClick}>
-                        My Collectibles
-                    </MyWalletLink>
-                    <WalletDropdown />
-                    <NotificationsDropdownContainer />
-                </ToolbarEnd>
+                <>
+                    <Search />
+                    <ToolbarEnd>
+                        <MyWalletLink href="/my-collectibles" onClick={handleMyWalletClick}>
+                            My Collectibles
+                        </MyWalletLink>
+                        <WalletDropdown />
+                        <NotificationsDropdownContainer />
+                    </ToolbarEnd>
+                </>
             ) : null}
         </ToolbarWrapper>
     );
