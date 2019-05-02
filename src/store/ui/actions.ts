@@ -2,6 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
+import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
 import {
@@ -45,6 +46,10 @@ export const setStepsModalCurrentStep = createAction('ui/steps_modal/CURRENT_STE
 export const stepsModalAdvanceStep = createAction('ui/steps_modal/advance_step');
 
 export const stepsModalReset = createAction('ui/steps_modal/reset');
+
+export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
+    return (themeColor: DefaultTheme) => resolve(themeColor);
+});
 
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {
     return async dispatch => {

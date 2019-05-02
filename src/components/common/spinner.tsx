@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { SpinnerSize } from '../../util/theme';
+import { SpinnerSize } from '../../themes/commons';
 
 import { ProcessingIcon } from './icons/processing_icon';
 

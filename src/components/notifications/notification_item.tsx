@@ -4,9 +4,9 @@ import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
 import { getNetworkId } from '../../store/selectors';
+import { themeColors, themeDimensions } from '../../themes/commons';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
-import { themeColors, themeDimensions } from '../../util/theme';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { Notification, NotificationKind, OrderSide, StoreState } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';

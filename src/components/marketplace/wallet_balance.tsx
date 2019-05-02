@@ -16,30 +16,12 @@ import {
 } from '../../store/selectors';
 import { errorsWallet } from '../../util/error_messages';
 import { isWeth } from '../../util/known_tokens';
-import { themeColors } from '../../util/theme';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
 import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { IconType, Tooltip } from '../common/tooltip';
-
-const LabelTitleWrapper = styled.div`
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    flex-shrink: 0;
-    padding: 0 0 8px 0;
-`;
-
-const LabelTitle = styled.span`
-    color: ${themeColors.lightGray};
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    line-height: normal;
-    text-transform: uppercase;
-`;
 
 const LabelWrapper = styled.div`
     align-items: center;
@@ -75,7 +57,9 @@ const Value = styled.span`
 
 const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
     background-color: ${props =>
-        props.web3State === Web3State.Done ? themeColors.green : themeColors.errorButtonBackground};
+        props.web3State === Web3State.Done
+            ? props.theme.componentsTheme.green
+            : props.theme.componentsTheme.errorButtonBackground};
     border-radius: 50%;
     height: 8px;
     margin-right: 6px;
@@ -83,7 +67,7 @@ const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
 `;
 
 const WalletStatusTitle = styled.h3`
-    color: ${themeColors.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -237,10 +221,6 @@ class WalletBalance extends React.Component<Props, State> {
             ) : null;
             content = (
                 <>
-                    <LabelTitleWrapper>
-                        <LabelTitle>Token</LabelTitle>
-                        <LabelTitle>Amount</LabelTitle>
-                    </LabelTitleWrapper>
                     <LabelWrapper>
                         <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
                         <Value>{baseBalanceString}</Value>
@@ -286,7 +266,7 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled theme={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                    <ButtonStyled variant={'tertiary'} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>
                 </>
@@ -296,7 +276,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled theme={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
+                    <ButtonStyled variant={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
             );
         }

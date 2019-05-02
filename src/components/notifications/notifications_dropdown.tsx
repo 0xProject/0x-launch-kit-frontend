@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { setHasUnreadNotifications } from '../../store/actions';
 import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
-import { themeColors, themeDimensions, themeFeatures } from '../../util/theme';
+import { themeColors, themeDimensions, themeFeatures } from '../../themes/commons';
 import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';

@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors } from '../../util/theme';
+import { themeColors } from '../../themes/commons';
 
 interface EmptyWrapperProps {
     alignAbsoluteCenter?: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 
-import { TokenIcon } from './token_icon';
+import { TokenIcon } from '../../../../components/common/icons/token_icon';
 
 describe('TokenIcon', () => {
     it('TokenIcon ZRX to match snapshot', () => {

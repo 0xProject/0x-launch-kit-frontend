@@ -5,6 +5,7 @@ import { ActionCreator, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { ExtraArgument } from '../store/index';
+import { Theme } from '../themes/commons';
 
 export interface TabItem {
     active: boolean;
@@ -59,6 +60,7 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
+    readonly theme: Theme;
 }
 
 export interface MarketState {
