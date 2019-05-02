@@ -17,14 +17,14 @@ const CardWrapper = styled(CardBase)`
 
 const CardHeader = styled.div`
     align-items: center;
-    border-bottom: 1px solid ${themeColors.borderColor};
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     display: flex;
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
 `;
 
 const CardTitle = styled.h1`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-size: 16px;
     font-style: normal;
     font-weight: 600;

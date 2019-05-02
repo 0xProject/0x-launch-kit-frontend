@@ -6,6 +6,9 @@ export interface Theme {
 export interface ThemeProperties {
     background: string;
     borderColor: string;
+    cardBackgroundColor: string;
+    cardBorderColor: string;
+    cardTitleColor: string;
     darkBlue: string;
     darkGray: string;
     darkerGray: string;
@@ -16,10 +19,11 @@ export interface ThemeProperties {
     gray: string;
     green: string;
     lightGray: string;
+    notificationActive: string;
     orange: string;
     rowActive: string;
     textLight: string;
-    notificationActive: string;
+    textColorCommon: string;
 }
 
 export interface ThemeModalStyle {

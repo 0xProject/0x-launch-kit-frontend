@@ -2,22 +2,26 @@ import { ThemeProperties } from './commons';
 import { DefaultTheme } from './default_theme';
 
 const darkThemeColors: ThemeProperties = {
-    background: 'black',
-    borderColor: 'black',
+    background: '#000',
+    borderColor: '#5A5A5A',
+    cardBackgroundColor: '#202123',
+    cardBorderColor: '#000',
+    cardTitleColor: '#fff',
     darkBlue: '#002979',
     darkGray: '#474747',
     darkerGray: '#666',
-    errorButtonBackground: 'red', // was #FF6534, changed for example test
+    errorButtonBackground: '#FF6534',
     errorCardBackground: '#FAF4EF',
     errorCardBorder: '#F39E4B',
     errorCardText: '#F68C24',
     gray: '#808080',
-    green: 'yellow', // was #3CB34F, changed for example test
+    green: '#3CB34F',
     lightGray: '#B9B9B9',
+    notificationActive: '#F8F8F8',
     orange: '#F6851B',
     rowActive: '#FBFDFF',
-    textLight: 'blue', // was #999, changed for example test
-    notificationActive: '#F8F8F8',
+    textLight: '#999',
+    textColorCommon: '#fff',
 };
 
 export class DarkTheme extends DefaultTheme {
