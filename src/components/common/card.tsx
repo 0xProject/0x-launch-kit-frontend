@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../themes/commons';
+import { themeDimensions } from '../../themes/commons';
 
 import { CardBase } from './card_base';
 
