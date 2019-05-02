@@ -48,7 +48,8 @@ export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
             }),
         );
         dispatch(setCurrencyPair(currencyPair));
-        dispatch(getOrderbookAndUserOrders()); // tslint:disable-line:no-floating-promises
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(getOrderbookAndUserOrders());
 
         const state = getState() as StoreState;
         const newSearch = queryString.stringify({

@@ -87,7 +87,8 @@ export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlo
         }
 
         web3Wrapper.awaitTransactionSuccessAsync(tx).then(() => {
-            dispatch(updateTokenBalancesOnToggleTokenLock(token, isUnlocked)); // tslint:disable-line:no-floating-promises
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(updateTokenBalancesOnToggleTokenLock(token, isUnlocked));
         });
 
         return tx;
@@ -306,12 +307,15 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                     }),
                 );
                 dispatch(setMarketTokens({ baseToken, quoteToken }));
-                dispatch(getOrderbookAndUserOrders()); // tslint:disable-line:no-floating-promises
+                // tslint:disable-next-line:no-floating-promises
+                dispatch(getOrderbookAndUserOrders());
                 try {
                     await dispatch(fetchMarkets());
                     // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
-                    dispatch(setConnectedUserNotifications(ethAccount, networkId)); // tslint:disable-line:no-floating-promises
-                    dispatch(updateMarketPriceEther()); // tslint:disable-line:no-floating-promises
+                    // tslint:disable-next-line:no-floating-promises
+                    dispatch(setConnectedUserNotifications(ethAccount, networkId));
+                    // tslint:disable-next-line:no-floating-promises
+                    dispatch(updateMarketPriceEther());
                 } catch (error) {
                     // Relayer error
                     logger.error('The fetch orders from the relayer failed', error);
@@ -363,8 +367,10 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
 
         dispatch(setMarketTokens({ baseToken, quoteToken }));
 
-        dispatch(getOrderBook()); // tslint:disable-line:no-floating-promises
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(getOrderBook());
 
-        dispatch(updateMarketPriceEther()); // tslint:disable-line:no-floating-promises
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(updateMarketPriceEther());
     };
 };
