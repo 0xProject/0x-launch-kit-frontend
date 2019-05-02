@@ -64,6 +64,15 @@ const orderToRow = (
 };
 
 class OrderBookTable extends React.Component<Props> {
+    private readonly _spreadRow: React.RefObject<HTMLTableRowElement>;
+    private _hasScrolled = false;
+
+    constructor(props: Props) {
+        super(props);
+
+        this._spreadRow = React.createRef();
+    }
+
     public render = () => {
         const { orderBook, baseToken, quoteToken, web3State } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
@@ -88,45 +97,64 @@ class OrderBookTable extends React.Component<Props> {
                     <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
                 ) : null;
             content = (
-                <Table fitInCard={true}>
-                    <THead>
-                        <TR>
-                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
-                            {mySizeHeader}
-                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>
-                                Price ({quoteToken.symbol})
-                            </THLast>
-                        </TR>
-                    </THead>
-                    <tbody>
-                        {sellOrders.map((order, index) =>
-                            orderToRow(order, index, sellOrders.length, baseToken, mySizeSellArray, web3State),
-                        )}
-                        <TR>
-                            <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                Spread
-                            </CustomTDTitle>
-                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
-                            <CustomTDLast
-                                styles={{
-                                    tabular: true,
-                                    textAlign: 'right',
-                                    borderBottom: true,
-                                    borderTop: true,
-                                }}
-                            >
-                                {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-                            </CustomTDLast>
-                        </TR>
-                        {buyOrders.map((order, index) =>
-                            orderToRow(order, index, buyOrders.length, baseToken, mySizeBuyArray, web3State),
-                        )}
-                    </tbody>
-                </Table>
+                <div style={{ maxHeight: '200px' }}>
+                    <Table fitInCard={true}>
+                        <THead>
+                            <TR>
+                                <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
+                                {mySizeHeader}
+                                <THLast styles={{ textAlign: 'right', borderBottom: true }}>
+                                    Price ({quoteToken.symbol})
+                                </THLast>
+                            </TR>
+                        </THead>
+                        <tbody>
+                            {sellOrders.map((order, index) =>
+                                orderToRow(order, index, sellOrders.length, baseToken, mySizeSellArray, web3State),
+                            )}
+                            <TR ref={this._spreadRow}>
+                                <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                                    Spread
+                                </CustomTDTitle>
+                                <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                                    {}
+                                </CustomTD>
+                                <CustomTDLast
+                                    styles={{
+                                        tabular: true,
+                                        textAlign: 'right',
+                                        borderBottom: true,
+                                        borderTop: true,
+                                    }}
+                                >
+                                    {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                                </CustomTDLast>
+                            </TR>
+                            {buyOrders.map((order, index) =>
+                                orderToRow(order, index, buyOrders.length, baseToken, mySizeBuyArray, web3State),
+                            )}
+                        </tbody>
+                    </Table>
+                </div>
             );
         }
 
         return <Card title="Orderbook">{content}</Card>;
+    };
+
+    public componentDidMount = () => {
+        this._scrollToSpread();
+    };
+
+    public componentDidUpdate = () => {
+        this._scrollToSpread();
+    };
+
+    private readonly _scrollToSpread = () => {
+        if (this._spreadRow.current && !this._hasScrolled) {
+            this._spreadRow.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            this._hasScrolled = true;
+        }
     };
 }
 
