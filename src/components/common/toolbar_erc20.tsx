@@ -11,7 +11,7 @@ import { WalletConnectionStatusContainer } from '../account';
 import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
 import { ErrorCard, ErrorIcons, FontSize } from './error_card';
-import { Logo } from './logo';
+import { LogoErc20 } from './logo_erc20';
 import { MarketsDropdownContainer } from './markets_dropdown';
 
 interface StateProps {
@@ -81,7 +81,7 @@ const ToolbarEnd = styled.div`
     justify-content: flex-end;
 `;
 
-const LogoHeader = styled(Logo)`
+const LogoHeader = styled(LogoErc20)`
     ${separatorTopbar}
 `;
 
@@ -103,7 +103,7 @@ const WalletDropdown = styled(WalletConnectionStatusContainer)`
     }
 `;
 
-const Toolbar = (props: Props) => {
+const ToolbarErc20 = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
     const isMmLoading = props.web3State === Web3State.Loading;
@@ -159,9 +159,9 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const ToolbarContainer = connect(
+const ToolbarErc20Container = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(Toolbar);
+)(ToolbarErc20);
 
-export { Toolbar, ToolbarContainer };
+export { ToolbarErc20, ToolbarErc20Container };

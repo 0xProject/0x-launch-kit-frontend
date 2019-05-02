@@ -36,13 +36,13 @@ const LogoSVG = () => (
     </svg>
 );
 
-export const Logo: React.FC<Props> = props => {
+export const LogoErc721: React.FC<Props> = props => {
     const { onClick, ...restProps } = props;
 
     return (
         <LogoLink onClick={onClick} {...restProps}>
             <LogoSVG />
-            <LogoText>Launch Kit</LogoText>
+            <LogoText>0x Collectibles</LogoText>
         </LogoLink>
     );
 };
