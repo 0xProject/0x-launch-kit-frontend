@@ -1,8 +1,8 @@
 import { push } from 'connected-react-router';
 
-import { ERC20_APP_BASE_PATH } from '../../common/constants';
+import { ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH } from '../../common/constants';
 
-export const goToHome = () => {
+export const goToHomeErc20 = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
 
@@ -23,6 +23,32 @@ export const goToWallet = () => {
             push({
                 ...state.router.location,
                 pathname: `${ERC20_APP_BASE_PATH}/my-wallet`,
+            }),
+        );
+    };
+};
+
+export const goToHomeErc721 = () => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        dispatch(
+            push({
+                ...state.router.location,
+                pathname: `${ERC721_APP_BASE_PATH}/`,
+            }),
+        );
+    };
+};
+
+export const goToMyCollectibles = () => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        dispatch(
+            push({
+                ...state.router.location,
+                pathname: `${ERC721_APP_BASE_PATH}/my-collectibles`,
             }),
         );
     };

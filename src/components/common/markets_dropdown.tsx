@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
-import { changeMarket, goToHome } from '../../store/actions';
+import { changeMarket, goToHomeErc20 } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
 import { themeColors, themeDimensions, themeFeatures } from '../../themes/commons';
 import { getColorBySymbol } from '../../util/known_tokens';
@@ -406,7 +406,7 @@ const mapStateToProps = (state: StoreState): PropsToken => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         changeMarket: (currencyPair: CurrencyPair) => dispatch(changeMarket(currencyPair)),
-        goToHome: () => dispatch(goToHome()),
+        goToHome: () => dispatch(goToHomeErc20()),
     };
 };
 
