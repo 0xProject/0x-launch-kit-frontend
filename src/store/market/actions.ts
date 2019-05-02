@@ -3,6 +3,7 @@ import { push } from 'connected-react-router';
 import queryString from 'query-string';
 import { createAction } from 'typesafe-actions';
 
+import { ERC20_APP_BASE_PATH } from '../../common/constants';
 import { availableMarkets } from '../../common/markets';
 import { getMarketPriceEther } from '../../services/markets';
 import { getRelayer } from '../../services/relayer';
@@ -61,7 +62,7 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
         dispatch(
             push({
                 ...state.router.location,
-                pathname: '/',
+                pathname: `${ERC20_APP_BASE_PATH}/`,
                 search: newSearch,
             }),
         );
