@@ -9,7 +9,7 @@ const notificationsKey = addPrefix('notifications');
 const hasUnreadNotificationsKey = addPrefix('hasUnreadNotifications');
 const lastBlockCheckedKey = addPrefix('lastBlockChecked');
 const adBlockMessageShownKey = addPrefix('adBlockMessageShown');
-const metamaskMessageShownKey = addPrefix('metamaskMessageShown');
+const walletConnectedKey = addPrefix('walletConnected');
 
 export class LocalStorage {
     private readonly _storage: Storage;
@@ -115,11 +115,11 @@ export class LocalStorage {
         return JSON.parse(this._storage.getItem(adBlockMessageShownKey) || 'false');
     }
 
-    public saveMetamaskMessageShown(metamaskMessageShown: boolean): void {
-        this._storage.setItem(metamaskMessageShownKey, JSON.stringify(metamaskMessageShown));
+    public saveWalletConnected(walletConnected: boolean): void {
+        this._storage.setItem(walletConnectedKey, JSON.stringify(walletConnected));
     }
 
-    public getMetamaskMessageShown(): boolean {
-        return JSON.parse(this._storage.getItem(metamaskMessageShownKey) || 'false');
+    public getWalletConnected(): boolean {
+        return JSON.parse(this._storage.getItem(walletConnectedKey) || 'false');
     }
 }
