@@ -50,25 +50,28 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
 
     public render = () => {
         const { shouldOpenModal, modalToDisplay } = this.state;
-        const { onConnectWallet, onGoToHome, children } = this.props;
+        const { onGoToHome, children } = this.props;
         return shouldOpenModal && modalToDisplay ? (
             <MetamaskErrorModal
                 isOpen={shouldOpenModal}
                 closeModal={onGoToHome}
                 noMetamaskType={modalToDisplay}
-                connectWallet={onConnectWallet}
+                connectWallet={this._connectWallet}
             />
         ) : (
             children || null
         );
     };
 
+    private readonly _connectWallet = () => {
+        this.props.onConnectWallet();
+        localStorage.saveWalletConnected(true);
+    };
+
     private readonly _updateState = () => {
         const { web3State } = this.props;
-        const wasMetamaskMessageShown = localStorage.getMetamaskMessageShown();
-        if (web3State === Web3State.Locked && !wasMetamaskMessageShown) {
+        if (web3State === Web3State.Locked) {
             this.setState({ shouldOpenModal: true, modalToDisplay: ModalDisplay.EnablePermissions });
-            localStorage.saveMetamaskMessageShown(true);
         } else if (web3State === Web3State.NotInstalled) {
             this.setState({ shouldOpenModal: true, modalToDisplay: ModalDisplay.InstallMetamask });
         } else {
