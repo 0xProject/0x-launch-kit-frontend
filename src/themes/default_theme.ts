@@ -23,6 +23,10 @@ const modalThemeStyle: ThemeModalStyle = {
 const whiteThemeColors: ThemeProperties = {
     background: '#f5f5f5',
     borderColor: '#DEDEDE',
+    buttonErrorBackgroundColor: '#FF6534',
+    buttonPrimaryBackgroundColor: '#002979',
+    buttonSecondaryBackgroundColor: '#474747',
+    buttonTertiaryBackgroundColor: '#F6851B',
     cardBackgroundColor: '#fff',
     cardBorderColor: '#DEDEDE',
     cardTitleColor: '#000',
@@ -35,12 +39,13 @@ const whiteThemeColors: ThemeProperties = {
     errorCardText: '#F68C24',
     gray: '#808080',
     green: '#3CB34F',
+    inactiveTabBackgroundColor: '#f9f9f9',
     lightGray: '#B9B9B9',
     notificationActive: '#F8F8F8',
     orange: '#F6851B',
     rowActive: '#FBFDFF',
-    textLight: '#999',
     textColorCommon: '#000',
+    textLight: '#999',
 };
 
 export class DefaultTheme implements Theme {

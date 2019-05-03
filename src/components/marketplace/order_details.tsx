@@ -29,7 +29,7 @@ const Row = styled.div`
 `;
 
 const Value = styled.div`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     flex-shrink: 0;
     font-feature-settings: 'tnum' 1;
     font-size: 14px;
@@ -50,7 +50,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: ${props => props.color || '#000'};
+    color: ${props => props.color || props.theme.componentsTheme.textColorCommon};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -60,11 +60,12 @@ const Label = styled.label<{ color?: string }>`
 const MainLabel = styled(Label)``;
 
 const FeeLabel = styled(Label)`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-weight: normal;
 `;
 
 const CostLabel = styled(Label)`
-    font-weight: bold;
+    font-weight: 700;
 `;
 
 interface OwnProps {
@@ -122,7 +123,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <MainLabel>Order Details</MainLabel>
                 </LabelContainer>
                 <Row>
-                    <FeeLabel color={themeColors.textLight}>Fee</FeeLabel>
+                    <FeeLabel>Fee</FeeLabel>
                     <Value>{fee}</Value>
                 </Row>
                 <Row>

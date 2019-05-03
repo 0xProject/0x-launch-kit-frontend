@@ -53,11 +53,11 @@ const TabsContainer = styled.div`
 
 const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     align-items: center;
-    background-color: ${props => (props.isSelected ? 'transparent' : '#f9f9f9')};
-    border-bottom-color: ${props => (props.isSelected ? 'transparent' : themeColors.borderColor)};
+    background-color: ${props => (props.isSelected ? 'transparent' : props.theme.componentsTheme.inactiveTabBackgroundColor)};
+    border-bottom-color: ${props => (props.isSelected ? 'transparent' : props.theme.componentsTheme.cardBorderColor)};
     border-bottom-style: solid;
     border-bottom-width: 1px;
-    border-right-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+    border-right-color: ${props => (props.isSelected ? props.theme.componentsTheme.cardBorderColor : 'transparent')};
     border-right-style: solid;
     border-right-width: 1px;
     color: ${props =>
@@ -89,7 +89,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: ${props => props.color || '#000'};
+    color: ${props => props.color || props.theme.componentsTheme.textColorCommon};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -236,9 +236,9 @@ class BuySell extends React.Component<Props, State> {
                         currencyPair={currencyPair}
                     />
                     <Button
-                        variant="secondary"
-                        onClick={tab === OrderSide.Buy ? this.buy : this.sell}
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
+                        onClick={tab === OrderSide.Buy ? this.buy : this.sell}
+                        variant="secondary"
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         {tokenSymbolToDisplayString(currencyPair.base)}

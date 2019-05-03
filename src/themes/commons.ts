@@ -24,6 +24,11 @@ export interface ThemeProperties {
     rowActive: string;
     textLight: string;
     textColorCommon: string;
+    inactiveTabBackgroundColor: string;
+    buttonPrimaryBackgroundColor: string;
+    buttonSecondaryBackgroundColor: string;
+    buttonTertiaryBackgroundColor: string;
+    buttonErrorBackgroundColor: string;
 }
 
 export interface ThemeModalStyle {
