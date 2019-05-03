@@ -74,6 +74,7 @@ export interface StoreState {
     readonly relayer: RelayerState;
     readonly ui: UIState;
     readonly market: MarketState;
+    readonly collectibles: CollectiblesState;
 }
 
 export enum StepKind {
@@ -226,4 +227,15 @@ export interface GasInfo {
 export enum ModalDisplay {
     InstallMetamask = 'INSTALL_METAMASK',
     EnablePermissions = 'ACCEPT_PERMISSIONS',
+}
+
+export interface Collectible {
+    name: string;
+    price: string;
+    color: string;
+    image: string;
+}
+
+export interface CollectiblesState {
+    readonly myCollectibles: Collectible[];
 }

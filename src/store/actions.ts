@@ -14,6 +14,7 @@ export * from './relayer/actions';
 export * from './router/actions';
 export * from './ui/actions';
 export * from './market/actions';
+export * from './collectibles/actions';
 
 export const updateStore = () => {
     return async (dispatch: any, getState: any) => {
