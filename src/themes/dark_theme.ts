@@ -1,5 +1,26 @@
-import { ThemeProperties } from './commons';
+import { ThemeModalStyle, ThemeProperties } from './commons';
 import { DefaultTheme } from './default_theme';
+
+const modalThemeStyle: ThemeModalStyle = {
+    content: {
+        backgroundColor: '#202123',
+        borderColor: '#000',
+        bottom: 'auto',
+        flexGrow: '0',
+        left: 'auto',
+        minWidth: '350px',
+        position: 'relative',
+        right: 'auto',
+        top: 'auto',
+    },
+    overlay: {
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        display: 'flex',
+        justifyContent: 'center',
+        zIndex: '12345',
+    },
+};
 
 const darkThemeColors: ThemeProperties = {
     background: '#000',
@@ -25,6 +46,9 @@ const darkThemeColors: ThemeProperties = {
     errorCardBackground: '#FAF4EF',
     errorCardBorder: '#F39E4B',
     errorCardText: '#F68C24',
+    ethBoxActiveColor: '#00AE99',
+    ethBoxBorderColor: '#5A5A5A',
+    ethSetMinEthButtonBorderColor: '#999',
     gray: '#808080',
     green: '#3CB34F',
     iconLockedColor: '#fff',
@@ -37,6 +61,7 @@ const darkThemeColors: ThemeProperties = {
     marketsSearchFieldBorderColor: '#404041',
     marketsSearchFieldTextColor: '#BFBFBF',
     notificationActive: '#F8F8F8',
+    notificationIconColor: '#fff',
     notificationsBadgeColor: '#ff6534',
     numberDecimalsColor: '#5A5A5A',
     orange: '#F6851B',
@@ -44,20 +69,24 @@ const darkThemeColors: ThemeProperties = {
     tableBorderColor: '#000',
     tdColor: '#fff',
     textColorCommon: '#fff',
+    textDark: '#666',
     textInputBackgroundColor: '#1B1B1B',
     textInputBorderColor: '#000',
     textInputTextColor: '#fff',
     textLight: '#999',
+    textLighter: '#666',
     thColor: '#B9B9B9',
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
-    notificationIconColor: '#fff',
+    ethSliderThumbColor: '#202123',
+    ethSliderThumbBorderColor: '#5A5A5A',
 };
 
 export class DarkTheme extends DefaultTheme {
     constructor() {
         super();
         this.componentsTheme = darkThemeColors;
+        this.modalTheme = modalThemeStyle;
     }
 }

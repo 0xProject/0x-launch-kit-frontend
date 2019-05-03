@@ -37,16 +37,15 @@ interface State {
 const sliderThumbDimensions = '16px';
 const sliderTrackProps = `
     background: #999;
-    background: linear-gradient(${themeColors.darkBlue}, ${themeColors.darkBlue}) 0 / var(--sx) 100% no-repeat #999;
     border-radius: 2.5px;
     border: none;
     box-sizing: border-box;
     height: 5px;
 `;
 const sliderThumbProps = `
-    background: #fff;
     border-radius: 50%;
-    border: 0.5px solid rgba(0, 0, 0, 0.142);
+    border-width: 0.5px;
+    border-style: solid;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     height: ${sliderThumbDimensions};
     width: ${sliderThumbDimensions};
@@ -68,23 +67,32 @@ const Slider = styled.input`
     }
     &::-webkit-slider-runnable-track {
         ${sliderTrackProps}
+        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props => props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-moz-range-track {
         ${sliderTrackProps}
+        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props => props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-ms-track {
         ${sliderTrackProps}
+        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props => props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
         ${sliderThumbProps}
+        background-color: ${props => props.theme.componentsTheme.ethSliderThumbColor};
+        border-color: ${props => props.theme.componentsTheme.ethSliderThumbBorderColor};
         margin-top: -6px;
     }
     &::-moz-range-thumb {
         ${sliderThumbProps}
+        background-color: ${props => props.theme.componentsTheme.ethSliderThumbColor};
+        border-color: ${props => props.theme.componentsTheme.ethSliderThumbBorderColor};
     }
     &::-ms-thumb {
         ${sliderThumbProps}
+        background-color: ${props => props.theme.componentsTheme.ethSliderThumbColor};
+        border-color: ${props => props.theme.componentsTheme.ethSliderThumbBorderColor};
         margin-top: 0;
     }
     &::-ms-tooltip {
@@ -100,7 +108,7 @@ const Button = styled(ButtonBase)`
 `;
 
 const Title = styled.h1<{ marginBottomSmall: any }>`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 20px;
     font-weight: 600;
     line-height: 1.2;
@@ -109,7 +117,7 @@ const Title = styled.h1<{ marginBottomSmall: any }>`
 `;
 
 const ETHPrice = styled.h2`
-    color: ${themeColors.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 14px;
     font-style: normal;
     font-weight: normal;
@@ -134,7 +142,7 @@ interface EthBoxProps {
 const EthBox = styled.div<EthBoxProps>`
     align-items: center;
     border-radius: 4px;
-    border: 1px solid ${themeColors.borderColor};
+    border: 1px solid ${props => props.theme.componentsTheme.ethBoxBorderColor};
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -145,10 +153,10 @@ const EthBox = styled.div<EthBoxProps>`
     transition: border-color 0.15s ease-in;
 
     &:focus-within {
-        border-color: ${props => (props.boxType === ETHBoxType.Weth ? themeColors.darkBlue : themeColors.darkerGray)};
+        border-color: ${props => (props.boxType === ETHBoxType.Weth ? props.theme.componentsTheme.ethBoxActiveColor : props.theme.componentsTheme.textDark)};
 
         h4 {
-            color: ${props => (props.boxType === ETHBoxType.Weth ? themeColors.darkBlue : themeColors.textLight)};
+            color: ${props => (props.boxType === ETHBoxType.Weth ? props.theme.componentsTheme.ethBoxActiveColor : props.theme.componentsTheme.textLight)};
         }
     }
 `;
@@ -161,7 +169,7 @@ const TooltipStyled = styled.div`
 `;
 
 const EthBoxValue = styled.h2<EthBoxProps>`
-    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkerGray : themeColors.darkBlue)};
+    color: ${props => (props.boxType === ETHBoxType.Eth ? props.theme.componentsTheme.textLight : props.theme.componentsTheme.ethBoxActiveColor)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -171,7 +179,7 @@ const EthBoxValue = styled.h2<EthBoxProps>`
 `;
 
 const EthBoxUnit = styled.h4`
-    color: ${themeColors.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 14px;
     font-weight: 400;
     line-height: 1.2;
@@ -180,7 +188,7 @@ const EthBoxUnit = styled.h4`
 `;
 
 const SetMinEthWrapper = styled.p<{ hideWarning: boolean }>`
-    color: ${themeColors.darkerGray};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 13px;
     font-style: italic;
     font-weight: 500;
@@ -191,14 +199,15 @@ const SetMinEthWrapper = styled.p<{ hideWarning: boolean }>`
 `;
 
 const SetMinEthButton = styled.a`
-    border-bottom: 1px dotted #000;
-    color: ${themeColors.darkerGray};
+    border-bottom: 1px dotted ${props => props.theme.componentsTheme.ethSetMinEthButtonBorderColor};
+    color: ${props => props.theme.componentsTheme.textLight};
     text-decoration: none;
 `;
 
 const InputEth = styled<any>(BigNumberInput)`
+    background-color: transparent;
     border-color: transparent;
-    color: ${props => (props.boxType === ETHBoxType.Eth ? themeColors.darkerGray : themeColors.darkBlue)};
+    color: ${props => (props.boxType === ETHBoxType.Eth ? props.theme.componentsTheme.textDark : props.theme.componentsTheme.ethBoxActiveColor)};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -313,7 +322,7 @@ class WethModal extends React.Component<Props, State> {
                         0.5 ETH Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>
-                <Button onClick={this.submit} disabled={isDisabled}>
+                <Button onClick={this.submit} disabled={isDisabled} variant="balance">
                     Update Balance{isSubmitting && '...'}
                 </Button>
             </Modal>

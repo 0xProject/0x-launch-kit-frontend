@@ -1,11 +1,11 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
-import { themeDimensions, themeModalStyle } from '../../themes/commons';
+import { Theme, themeDimensions } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -25,7 +25,11 @@ interface DispatchProps {
     onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
 }
 
-type Props = StateProps & DispatchProps;
+interface OwnProps {
+    theme: Theme;
+}
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     modalIsOpen: boolean;
@@ -145,7 +149,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd, theme } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.add(wethBalance);
 
@@ -187,7 +191,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         isSubmitting={isSubmitting}
                         onRequestClose={this.closeModal}
                         onSubmit={this.handleSubmit}
-                        style={themeModalStyle}
+                        style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
                         ethInUsd={ethInUsd}
@@ -248,9 +252,11 @@ const mapDispatchToProps = {
     onStartWrapEtherSteps: startWrapEtherSteps,
 };
 
-const WalletWethBalanceContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(WalletWethBalance);
+const WalletWethBalanceContainer = withTheme(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(WalletWethBalance),
+);
 
 export { WalletWethBalance, WalletWethBalanceContainer };

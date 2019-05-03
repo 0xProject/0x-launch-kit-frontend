@@ -27,6 +27,10 @@ const StyledButton = styled.button<{ variant?: string }>`
         props.variant && props.variant === 'error'
             ? `background-color: ${props.theme.componentsTheme.buttonErrorBackgroundColor};`
             : ''}
+    ${props =>
+        props.variant && props.variant === 'balance'
+            ? `background-color: ${props.theme.componentsTheme.ethBoxActiveColor};`
+            : ''}
 
     border-radius: ${themeDimensions.borderRadius};
     border: none;

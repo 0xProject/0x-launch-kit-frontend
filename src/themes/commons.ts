@@ -27,6 +27,11 @@ export interface ThemeProperties {
     errorCardBackground: string;
     errorCardBorder: string;
     errorCardText: string;
+    ethBoxActiveColor: string;
+    ethBoxBorderColor: string;
+    ethSetMinEthButtonBorderColor: string;
+    ethSliderThumbColor: string;
+    ethSliderThumbBorderColor: string;
     gray: string;
     green: string;
     iconLockedColor: string;
@@ -39,6 +44,7 @@ export interface ThemeProperties {
     marketsSearchFieldBorderColor: string;
     marketsSearchFieldTextColor: string;
     notificationActive: string;
+    notificationIconColor: string;
     notificationsBadgeColor: string;
     numberDecimalsColor: string;
     orange: string;
@@ -46,19 +52,21 @@ export interface ThemeProperties {
     tableBorderColor: string;
     tdColor: string;
     textColorCommon: string;
+    textDark: string;
     textInputBackgroundColor: string;
     textInputBorderColor: string;
     textInputTextColor: string;
     textLight: string;
+    textLighter: string;
     thColor: string;
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
-    notificationIconColor: string;
 }
 
 export interface ThemeModalStyle {
     content: {
+        backgroundColor: string;
         bottom: string;
         borderColor: string;
         flexGrow: string;
