@@ -56,7 +56,7 @@ export const GeneralLayout = (props: Props) => {
                     <Content>{children}</Content>
                     <Footer />
                 </ContentScroll>
-                <StepsModalContainer />
+                <StepsModalContainer/>
             </General>
         </ThemeProvider>
     );

@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
 import { initWallet } from '../../store/actions';
@@ -194,6 +194,8 @@ class WalletBalance extends React.Component<Props, State> {
     public render = () => {
         const { web3State } = this.props;
         const walletContent = this._getWalletContent();
+        // @ts-ignore
+        console.log('themaaaae ', this.props.theme);
         return (
             <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
                 {walletContent}
