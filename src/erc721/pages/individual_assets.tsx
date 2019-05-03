@@ -2,10 +2,10 @@ import React from 'react';
 
 import { CheckMetamaskStateModalContainer } from '../../components/common/check_metamask_state_modal_container';
 
-export const MyCollectibles = () => {
+export const IndividualAsset = (props: any) => {
     return (
         <>
-            <pre>My collectibles</pre>
+            <h2>Individual assets page</h2>
             <CheckMetamaskStateModalContainer />
         </>
     );
