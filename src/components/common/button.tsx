@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../themes/commons';
+import { themeDimensions } from '../../themes/commons';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
@@ -11,10 +11,22 @@ interface Props extends HTMLAttributes<HTMLButtonElement> {
 
 const StyledButton = styled.button<{ variant?: string }>`
 
-    ${props => (props.variant && props.variant === 'primary' ? `background-color: ${props.theme.componentsTheme.buttonPrimaryBackgroundColor};` : '')}
-    ${props => (props.variant && props.variant === 'secondary' ? `background-color: ${props.theme.componentsTheme.buttonSecondaryBackgroundColor};` : '')}
-    ${props => (props.variant && props.variant === 'tertiary' ? `background-color: ${props.theme.componentsTheme.buttonTertiaryBackgroundColor};` : '')}
-    ${props => (props.variant && props.variant === 'error' ? `background-color: ${props.theme.componentsTheme.buttonErrorBackgroundColor};` : '')}
+    ${props =>
+        props.variant && props.variant === 'primary'
+            ? `background-color: ${props.theme.componentsTheme.buttonPrimaryBackgroundColor};`
+            : ''}
+    ${props =>
+        props.variant && props.variant === 'secondary'
+            ? `background-color: ${props.theme.componentsTheme.buttonSecondaryBackgroundColor};`
+            : ''}
+    ${props =>
+        props.variant && props.variant === 'tertiary'
+            ? `background-color: ${props.theme.componentsTheme.buttonTertiaryBackgroundColor};`
+            : ''}
+    ${props =>
+        props.variant && props.variant === 'error'
+            ? `background-color: ${props.theme.componentsTheme.buttonErrorBackgroundColor};`
+            : ''}
 
     border-radius: ${themeDimensions.borderRadius};
     border: none;

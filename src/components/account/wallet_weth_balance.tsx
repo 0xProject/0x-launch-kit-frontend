@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
-import { themeColors, themeDimensions, themeModalStyle } from '../../themes/commons';
+import { themeDimensions, themeModalStyle } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -83,9 +83,10 @@ const Value = styled.div`
 
 const Button = styled.button`
     align-items: center;
-    background-color: #fff;
+    background-color: ${props => props.theme.componentsTheme.buttonConvertBackgroundColor};
     border-radius: 4px;
-    border: 1px solid ${themeColors.borderColor};
+    border: 1px solid ${props => props.theme.componentsTheme.buttonConvertBorderColor};
+    color: ${props => props.theme.componentsTheme.buttonConvertTextColor};
     cursor: pointer;
     display: flex;
     height: 40px;
@@ -112,10 +113,14 @@ const Button = styled.button`
         cursor: default;
         opacity: 0.5;
     }
+
+    path {
+        fill: ${props => props.theme.componentsTheme.buttonConvertTextColor};
+    }
 `;
 
 const ButtonLabel = styled.span`
-    color: #474747;
+    color: ${props => props.theme.componentsTheme.buttonConvertTextColor};
     font-size: 16px;
     font-weight: 700;
     line-height: 1.2;

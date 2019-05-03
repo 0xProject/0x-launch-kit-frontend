@@ -9,7 +9,6 @@ interface ShowNumberWithColorsProps {
 }
 
 class ShowNumberWithColors extends React.Component<ShowNumberWithColorsProps, {}> {
-
     public render = () => {
         const { num } = this.props;
         const numSplitted = padRightSplitted(num);

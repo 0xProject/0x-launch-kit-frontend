@@ -23,6 +23,9 @@ const modalThemeStyle: ThemeModalStyle = {
 const whiteThemeColors: ThemeProperties = {
     background: '#f5f5f5',
     borderColor: '#DEDEDE',
+    buttonConvertBackgroundColor: '#fff',
+    buttonConvertBorderColor: '#DEDEDE',
+    buttonConvertTextColor: '#474747',
     buttonErrorBackgroundColor: '#FF6534',
     buttonPrimaryBackgroundColor: '#002979',
     buttonSecondaryBackgroundColor: '#474747',
@@ -42,17 +45,19 @@ const whiteThemeColors: ThemeProperties = {
     inactiveTabBackgroundColor: '#f9f9f9',
     lightGray: '#B9B9B9',
     notificationActive: '#F8F8F8',
+    numberDecimalsColor: '#DEDEDE',
     orange: '#F6851B',
     rowActive: '#FBFDFF',
+    tableBorderColor: '#DEDEDE',
+    tdColor: '#000',
     textColorCommon: '#000',
     textInputBackgroundColor: '#F9F9F9',
     textInputBorderColor: '#dedede',
     textInputTextColor: '#000',
     textLight: '#999',
     thColor: '#B9B9B9',
-    tdColor: '#000',
-    numberDecimalsColor: '#DEDEDE',
-    tableBorderColor: '#DEDEDE',
+    iconLockedColor: '#000',
+    iconUnlockedColor: '#C4C4C4',
 };
 
 export class DefaultTheme implements Theme {

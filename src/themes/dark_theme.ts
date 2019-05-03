@@ -4,6 +4,9 @@ import { DefaultTheme } from './default_theme';
 const darkThemeColors: ThemeProperties = {
     background: '#000',
     borderColor: '#5A5A5A',
+    buttonConvertBackgroundColor: '#343434',
+    buttonConvertBorderColor: '#000',
+    buttonConvertTextColor: '#fff',
     buttonErrorBackgroundColor: '#FF6534',
     buttonPrimaryBackgroundColor: '#002979',
     buttonSecondaryBackgroundColor: '#3CB34F',
@@ -23,17 +26,19 @@ const darkThemeColors: ThemeProperties = {
     inactiveTabBackgroundColor: '#1B1B1B',
     lightGray: '#B9B9B9',
     notificationActive: '#F8F8F8',
+    numberDecimalsColor: '#5A5A5A',
     orange: '#F6851B',
     rowActive: '#FBFDFF',
+    tableBorderColor: '#000',
+    tdColor: '#fff',
     textColorCommon: '#fff',
     textInputBackgroundColor: '#1B1B1B',
     textInputBorderColor: '#000',
     textInputTextColor: '#fff',
     textLight: '#999',
     thColor: '#B9B9B9',
-    tdColor: '#fff',
-    numberDecimalsColor: '#5A5A5A',
-    tableBorderColor: '#000',
+    iconLockedColor: '#fff',
+    iconUnlockedColor: '#B9B9B9',
 };
 
 export class DarkTheme extends DefaultTheme {

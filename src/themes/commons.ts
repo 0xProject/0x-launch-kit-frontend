@@ -6,6 +6,9 @@ export interface Theme {
 export interface ThemeProperties {
     background: string;
     borderColor: string;
+    buttonConvertBackgroundColor: string;
+    buttonConvertBorderColor: string;
+    buttonConvertTextColor: string;
     buttonErrorBackgroundColor: string;
     buttonPrimaryBackgroundColor: string;
     buttonSecondaryBackgroundColor: string;
@@ -36,6 +39,8 @@ export interface ThemeProperties {
     textInputTextColor: string;
     textLight: string;
     thColor: string;
+    iconLockedColor: string;
+    iconUnlockedColor: string;
 }
 
 export interface ThemeModalStyle {
