@@ -9,6 +9,7 @@ const notificationsKey = addPrefix('notifications');
 const hasUnreadNotificationsKey = addPrefix('hasUnreadNotifications');
 const lastBlockCheckedKey = addPrefix('lastBlockChecked');
 const adBlockMessageShownKey = addPrefix('adBlockMessageShown');
+const metamaskMessageShownKey = addPrefix('metamaskMessageShown');
 
 export class LocalStorage {
     private readonly _storage: Storage;
@@ -112,5 +113,13 @@ export class LocalStorage {
 
     public getAdBlockMessageShown(): boolean {
         return JSON.parse(this._storage.getItem(adBlockMessageShownKey) || 'false');
+    }
+
+    public saveMetamaskMessageShown(metamaskMessageShown: boolean): void {
+        this._storage.setItem(metamaskMessageShownKey, JSON.stringify(metamaskMessageShown));
+    }
+
+    public getMetamaskMessageShown(): boolean {
+        return JSON.parse(this._storage.getItem(metamaskMessageShownKey) || 'false');
     }
 }

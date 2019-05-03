@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { LocalStorage } from '../../services/local_storage';
 import { goToHome, initWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { ModalDisplay, StoreState, Web3State } from '../../util/types';
@@ -29,6 +30,7 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
+const localStorage = new LocalStorage(window.localStorage);
 class CheckMetamaskStateModal extends React.Component<Props, State> {
     public state = {
         shouldOpenModal: true,
@@ -63,8 +65,10 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
 
     private readonly _updateState = () => {
         const { web3State } = this.props;
-        if (web3State === Web3State.Locked) {
+        const wasMetamaskMessageShown = localStorage.getMetamaskMessageShown();
+        if (web3State === Web3State.Locked && !wasMetamaskMessageShown) {
             this.setState({ shouldOpenModal: true, modalToDisplay: ModalDisplay.EnablePermissions });
+            localStorage.saveMetamaskMessageShown(true);
         } else if (web3State === Web3State.NotInstalled) {
             this.setState({ shouldOpenModal: true, modalToDisplay: ModalDisplay.InstallMetamask });
         } else {
