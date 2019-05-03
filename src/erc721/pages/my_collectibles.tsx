@@ -1,86 +1,76 @@
 import React from 'react';
 
-import img1 from '../../assets/cryptokitties/1.png';
-import img10 from '../../assets/cryptokitties/10.png';
-import img2 from '../../assets/cryptokitties/2.png';
-import img3 from '../../assets/cryptokitties/3.png';
-import img4 from '../../assets/cryptokitties/4.png';
-import img5 from '../../assets/cryptokitties/5.png';
-import img6 from '../../assets/cryptokitties/6.png';
-import img7 from '../../assets/cryptokitties/7.png';
-import img8 from '../../assets/cryptokitties/8.png';
-import img9 from '../../assets/cryptokitties/9.png';
 import { CheckMetamaskStateModalContainer } from '../../components/common/check_metamask_state_modal_container';
-import { ColumnMyCollectibles } from '../../components/common/column_my_collectibles';
-import { CryptoKitty } from '../../components/common/cryptokitty';
+import { CollectibleAsset } from '../components/collectible_asset';
+import { ColumnMyCollectibles } from '../components/column_my_collectibles';
 
-const cryptoKitties = [
+const collectibleAssets = [
     {
         name: 'Glitter',
         price: '2.30',
         color: '#F6FEFC',
-        image: img1,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png',
     },
     {
         name: 'Furbeard',
         price: '1.22',
         color: '#F6C68A',
-        image: img2,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/9_xunbhn.png',
     },
     {
         name: 'Glasswalker',
         price: '3.41',
         color: '#CAFAF7',
-        image: img3,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/10_iqm4un.png',
     },
     {
         name: 'Ande',
         price: '4.40',
         color: '#B8F1B9',
-        image: img4,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888667/5_sxqrol.png',
     },
     {
         name: 'Squib',
         price: '10.30',
         color: '#CFD4F9',
-        image: img5,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888664/1_sz6sji.png',
     },
     {
         name: 'Negato',
         price: '11.30',
         color: '#D7BBF3',
-        image: img6,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888661/8_qjebni.png',
     },
     {
         name: 'DuCat',
         price: '12.90',
         color: '#D6DDD8',
-        image: img7,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888654/2_yndavu.png',
     },
     {
         name: 'Berry',
         price: '2.30',
         color: '#F7B4D5',
-        image: img8,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888653/4_do9hzd.png',
     },
     {
         name: 'Vernon',
         price: '9.30',
         color: '#EADDDD',
-        image: img9,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888649/7_n9ro9n.png',
     },
     {
         name: 'Lee',
         price: '7.80',
         color: '#B8B2B3',
-        image: img10,
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888649/3_mpghqd.png',
     },
 ];
 
 export const MyCollectibles = () => {
-    const rows = cryptoKitties.map((item, index) => {
+    const rows = collectibleAssets.map((item, index) => {
         const { name, price, image, color } = item;
-        return <CryptoKitty name={name} price={price} image={image} color={color} key={index} />;
+        return <CollectibleAsset name={name} price={price} image={image} color={color} key={index} />;
     });
 
     const groupSize = 2;
