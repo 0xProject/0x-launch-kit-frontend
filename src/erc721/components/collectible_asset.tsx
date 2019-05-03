@@ -8,7 +8,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
     color: string;
 }
 
-const CryptoKittyWrapper = styled.div`
+const CollectibleAssetWrapper = styled.div`
     position: relative;
     left: 0%;
     right: 0%;
@@ -106,12 +106,12 @@ const BadgeAsset = styled.span`
     color: #000000;
 `;
 
-export const CryptoKitty: React.FC<Props> = props => {
+export const CollectibleAsset: React.FC<Props> = props => {
     const { name, price, image, color, ...restProps } = props;
 
     return (
         <>
-            <CryptoKittyWrapper {...restProps}>
+            <CollectibleAssetWrapper {...restProps}>
                 <ImageWrapper color={color}>
                     <Badge>
                         <BadgeImport>{price}</BadgeImport>
@@ -120,7 +120,7 @@ export const CryptoKitty: React.FC<Props> = props => {
                     <Image image={image} />
                 </ImageWrapper>
                 <Title>{name}</Title>
-            </CryptoKittyWrapper>
+            </CollectibleAssetWrapper>
         </>
     );
 };
