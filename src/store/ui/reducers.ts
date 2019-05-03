@@ -48,8 +48,9 @@ export function stepsModal(state: StepsModalState = initialStepsModalState, acti
             }
         case getType(actions.stepsModalReset):
             return initialStepsModalState;
+        default:
+            return state;
     }
-    return state;
 }
 
 export function ui(state: UIState = initialUIState, action: RootAction): UIState {
@@ -79,10 +80,10 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
                 return state;
             }
         }
+        default:
+            return {
+                ...state,
+                stepsModal: stepsModal(state.stepsModal, action),
+            };
     }
-
-    return {
-        ...state,
-        stepsModal: stepsModal(state.stepsModal, action),
-    };
 }

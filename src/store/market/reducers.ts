@@ -7,8 +7,8 @@ import { RootAction } from '../reducers';
 
 const initialMarketState: MarketState = {
     currencyPair: {
-        base: (queryString.parse(location.search).base as TokenSymbol) || TokenSymbol.Zrx,
-        quote: (queryString.parse(location.search).quote as TokenSymbol) || TokenSymbol.Weth,
+        base: (queryString.parse(window.location.search).base as TokenSymbol) || TokenSymbol.Zrx,
+        quote: (queryString.parse(window.location.search).quote as TokenSymbol) || TokenSymbol.Weth,
     },
     baseToken: null,
     quoteToken: null,
@@ -30,6 +30,7 @@ export function market(state: MarketState = initialMarketState, action: RootActi
             return state;
         case getType(actions.fetchMarketPriceEtherError):
             return state;
+        default:
+            return state;
     }
-    return state;
 }
