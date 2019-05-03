@@ -64,7 +64,7 @@ const ToolbarContent = (props: Props) => {
         e.preventDefault();
         props.goToMyCollectibles();
     };
-    const endContent = () => (
+    const endContent = (
         <>
             <Search />
             <MyWalletLink href="/my-collectibles" onClick={handleMyWalletClick}>

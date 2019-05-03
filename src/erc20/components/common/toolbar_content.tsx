@@ -5,11 +5,12 @@ import styled from 'styled-components';
 import { ReactComponent as LogoSvg } from '../../../assets/icons/erc20_logo.svg';
 import { WalletConnectionStatusContainer } from '../../../components/account';
 import { Logo } from '../../../components/common/logo';
-import { MarketsDropdownContainer } from '../../../components/common/markets_dropdown';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
 import { goToHomeErc20, goToWallet } from '../../../store/actions';
 import { themeBreakPoints, themeColors, themeDimensions } from '../../../themes/commons';
+
+import { MarketsDropdownContainer } from './markets_dropdown';
 
 interface DispatchProps {
     onGoToHome: () => any;
