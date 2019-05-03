@@ -45,7 +45,14 @@ const whiteThemeColors: ThemeProperties = {
     orange: '#F6851B',
     rowActive: '#FBFDFF',
     textColorCommon: '#000',
+    textInputBackgroundColor: '#F9F9F9',
+    textInputBorderColor: '#dedede',
+    textInputTextColor: '#000',
     textLight: '#999',
+    thColor: '#B9B9B9',
+    tdColor: '#000',
+    numberDecimalsColor: '#DEDEDE',
+    tableBorderColor: '#DEDEDE',
 };
 
 export class DefaultTheme implements Theme {

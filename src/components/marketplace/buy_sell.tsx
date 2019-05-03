@@ -53,7 +53,8 @@ const TabsContainer = styled.div`
 
 const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     align-items: center;
-    background-color: ${props => (props.isSelected ? 'transparent' : props.theme.componentsTheme.inactiveTabBackgroundColor)};
+    background-color: ${props =>
+        props.isSelected ? 'transparent' : props.theme.componentsTheme.inactiveTabBackgroundColor};
     border-bottom-color: ${props => (props.isSelected ? 'transparent' : props.theme.componentsTheme.cardBorderColor)};
     border-bottom-style: solid;
     border-bottom-width: 1px;
@@ -74,7 +75,7 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     width: 50%;
 
     &:last-child {
-        border-left-color: ${props => (props.isSelected ? themeColors.borderColor : 'transparent')};
+        border-left-color: ${props => (props.isSelected ? props.theme.componentsTheme.cardBorderColor : 'transparent')};
         border-left-style: solid;
         border-left-width: 1px;
         border-right: none;
@@ -106,10 +107,11 @@ const FieldContainer = styled.div`
     position: relative;
 `;
 
-const fieldStyle = `
-    border: 1px solid ${themeColors.borderColor};
+const BigInputNumberStyled = styled<any>(BigNumberInput)`
+    background-color: ${props => props.theme.componentsTheme.textInputBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
-    color: #000;
+    border: 1px solid ${props => props.theme.componentsTheme.textInputBorderColor};
+    color: ${props => props.theme.componentsTheme.textInputTextColor};
     font-feature-settings: 'tnum' 1;
     font-size: 16px;
     height: 100%;
@@ -118,10 +120,6 @@ const fieldStyle = `
     position: absolute;
     width: 100%;
     z-index: 1;
-`;
-
-const BigInputNumberStyled = styled<any>(BigNumberInput)`
-    ${fieldStyle}
 `;
 
 const TokenContainer = styled.div`
@@ -134,7 +132,7 @@ const TokenContainer = styled.div`
 `;
 
 const TokenText = styled.span`
-    color: #333;
+    color: ${props => props.theme.componentsTheme.textInputTextColor};
     font-size: 14px;
     font-weight: normal;
     line-height: 21px;

@@ -40,7 +40,7 @@ const Content = styled.div`
 
 const Row = styled.div`
     align-items: center;
-    border-bottom: solid 1px ${themeColors.borderColor};
+    border-bottom: solid 1px ${props => props.theme.componentsTheme.tableBorderColor};
     display: flex;
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
@@ -64,7 +64,7 @@ const LabelWrapper = styled.span`
 `;
 
 const Label = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     flex-shrink: 0;
     font-size: 16px;
     line-height: 1.2;
@@ -72,7 +72,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.div`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     flex-shrink: 0;
     font-feature-settings: 'tnum' 1;
     font-size: 16px;

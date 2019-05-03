@@ -6,6 +6,10 @@ export interface Theme {
 export interface ThemeProperties {
     background: string;
     borderColor: string;
+    buttonErrorBackgroundColor: string;
+    buttonPrimaryBackgroundColor: string;
+    buttonSecondaryBackgroundColor: string;
+    buttonTertiaryBackgroundColor: string;
     cardBackgroundColor: string;
     cardBorderColor: string;
     cardTitleColor: string;
@@ -18,17 +22,20 @@ export interface ThemeProperties {
     errorCardText: string;
     gray: string;
     green: string;
+    inactiveTabBackgroundColor: string;
     lightGray: string;
     notificationActive: string;
+    numberDecimalsColor: string;
     orange: string;
     rowActive: string;
-    textLight: string;
+    tableBorderColor: string;
+    tdColor: string;
     textColorCommon: string;
-    inactiveTabBackgroundColor: string;
-    buttonPrimaryBackgroundColor: string;
-    buttonSecondaryBackgroundColor: string;
-    buttonTertiaryBackgroundColor: string;
-    buttonErrorBackgroundColor: string;
+    textInputBackgroundColor: string;
+    textInputBorderColor: string;
+    textInputTextColor: string;
+    textLight: string;
+    thColor: string;
 }
 
 export interface ThemeModalStyle {

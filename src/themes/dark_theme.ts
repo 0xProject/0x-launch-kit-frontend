@@ -26,7 +26,14 @@ const darkThemeColors: ThemeProperties = {
     orange: '#F6851B',
     rowActive: '#FBFDFF',
     textColorCommon: '#fff',
+    textInputBackgroundColor: '#1B1B1B',
+    textInputBorderColor: '#000',
+    textInputTextColor: '#fff',
     textLight: '#999',
+    thColor: '#B9B9B9',
+    tdColor: '#fff',
+    numberDecimalsColor: '#5A5A5A',
+    tableBorderColor: '#000',
 };
 
 export class DarkTheme extends DefaultTheme {
