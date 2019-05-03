@@ -1,12 +1,12 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
-import { ToolbarErc20 } from '../../../components/common/toolbar_erc20';
+import { Toolbar } from '../../../components/common/toolbar';
 
 describe('Toolbar', () => {
     it('Toolbar to match snapshot', () => {
         // given
-        const toolbar = <ToolbarErc20 onGoToHome={jest.fn()} onGoToWallet={jest.fn()} />;
+        const toolbar = <Toolbar onGoToHome={jest.fn()} onGoToWallet={jest.fn()} />;
 
         // when
         const wrapper = shallow(toolbar);
