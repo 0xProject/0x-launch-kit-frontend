@@ -5,12 +5,12 @@ import { ERC721_APP_BASE_PATH } from '../../common/constants';
 import { GeneralLayoutContainer } from '../../components/general_layout';
 import { MyCollectibles } from '../pages/my_collectibles';
 
-import { ToolbarContainer } from './common/toolbar';
+import { ToolbarContentContainer } from './common/toolbar_content';
 
-const Toolbar = <ToolbarContainer />;
+const toolbar = <ToolbarContentContainer />;
 
 export const Erc721App = () => (
-    <GeneralLayoutContainer toolbar={Toolbar}>
+    <GeneralLayoutContainer toolbar={toolbar}>
         <Switch>
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={MyCollectibles} />
         </Switch>
