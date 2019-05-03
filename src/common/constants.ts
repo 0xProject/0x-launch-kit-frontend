@@ -59,3 +59,7 @@ export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_S
 export const LOGGER_ID: string = process.env.REACT_APP_LOGGER_ID || '0x-launch-kit-frontend';
 
 export const THEME_NAME: string = process.env.REACT_APP_THEME_NAME || 'DEFAULT_THEME';
+
+export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT
+    ? process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT === 'true'
+    : process.env.NODE_ENV === 'development';

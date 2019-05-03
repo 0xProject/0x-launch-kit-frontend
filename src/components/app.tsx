@@ -3,7 +3,11 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
+import {
+    SHOULD_ENABLE_NO_METAMASK_PROMPT,
+    UI_UPDATE_CHECK_INTERVAL,
+    UPDATE_ETHER_PRICE_INTERVAL,
+} from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
 import { initializeAppNoMetamaskOrLocked, initWallet, updateMarketPriceEther, updateStore } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
@@ -33,11 +37,8 @@ class App extends React.Component<Props> {
     private _updatePriceEtherInterval: number | undefined;
 
     public componentDidMount = () => {
-        const wasWalletConnected = localStorage.getWalletConnected();
-        if (wasWalletConnected) {
-            this.props.onConnectWallet();
-        } else {
-            this.props.onInitMetamaskState();
+        if (SHOULD_ENABLE_NO_METAMASK_PROMPT) {
+            this._enableDeactivateMetamaskPromptFeature();
         }
     };
 
@@ -88,6 +89,15 @@ class App extends React.Component<Props> {
         if (this._updatePriceEtherInterval) {
             clearInterval(this._updatePriceEtherInterval);
             this._updatePriceEtherInterval = undefined;
+        }
+    };
+
+    private readonly _enableDeactivateMetamaskPromptFeature = () => {
+        const wasWalletConnected = localStorage.getWalletConnected();
+        if (wasWalletConnected) {
+            this.props.onConnectWallet();
+        } else {
+            this.props.onInitMetamaskState();
         }
     };
 }
