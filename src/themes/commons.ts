@@ -6,6 +6,7 @@ export interface Theme {
 export interface ThemeProperties {
     background: string;
     borderColor: string;
+    boxShadow: string;
     buttonConvertBackgroundColor: string;
     buttonConvertBorderColor: string;
     buttonConvertTextColor: string;
@@ -19,15 +20,26 @@ export interface ThemeProperties {
     darkBlue: string;
     darkGray: string;
     darkerGray: string;
+    dropdownBackgroundColor: string;
+    dropdownBorderColor: string;
+    dropdownTextColor: string;
     errorButtonBackground: string;
     errorCardBackground: string;
     errorCardBorder: string;
     errorCardText: string;
     gray: string;
     green: string;
+    iconLockedColor: string;
+    iconUnlockedColor: string;
     inactiveTabBackgroundColor: string;
     lightGray: string;
+    logoColor: string;
+    logoTextColor: string;
+    marketsSearchFieldBackgroundColor: string;
+    marketsSearchFieldBorderColor: string;
+    marketsSearchFieldTextColor: string;
     notificationActive: string;
+    notificationsBadgeColor: string;
     numberDecimalsColor: string;
     orange: string;
     rowActive: string;
@@ -39,8 +51,10 @@ export interface ThemeProperties {
     textInputTextColor: string;
     textLight: string;
     thColor: string;
-    iconLockedColor: string;
-    iconUnlockedColor: string;
+    topbarBackgroundColor: string;
+    topbarBorderColor: string;
+    topbarSeparatorColor: string;
+    notificationIconColor: string;
 }
 
 export interface ThemeModalStyle {
