@@ -2,16 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { goToHomeErc20, goToWallet } from '../../store/actions';
-import { getWeb3State } from '../../store/selectors';
-import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/commons';
-import { errorsWallet } from '../../util/error_messages';
-import { StoreState, Web3State } from '../../util/types';
-import { WalletConnectionStatusContainer } from '../account';
-import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
+import { WalletConnectionStatusContainer } from '../../../components/account';
+import { ErrorCard, ErrorIcons, FontSize } from '../../../components/common/error_card';
+import { Logo } from '../../../components/common/logo';
+import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
+import { goToHomeErc20, goToWallet } from '../../../store/actions';
+import { getWeb3State } from '../../../store/selectors';
+import { themeBreakPoints, themeColors, themeDimensions } from '../../../themes/commons';
+import { errorsWallet } from '../../../util/error_messages';
+import { StoreState, Web3State } from '../../../util/types';
 
-import { ErrorCard, ErrorIcons, FontSize } from './error_card';
-import { Logo } from './logo';
 import { MarketsDropdownContainer } from './markets_dropdown';
 
 interface StateProps {

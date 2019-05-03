@@ -3,13 +3,13 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { CardBase } from '../../components/common/card_base';
+import { Dropdown, DropdownPositions } from '../../components/common/dropdown';
+import { DropdownTextItem } from '../../components/common/dropdown_text_item';
+import { ChevronDownIcon } from '../../components/common/icons/chevron_down_icon';
 import { getEthAccount } from '../../store/selectors';
 import { themeFeatures } from '../../themes/commons';
 import { StoreState } from '../../util/types';
-import { CardBase } from '../common/card_base';
-import { Dropdown, DropdownPositions } from '../common/dropdown';
-import { DropdownTextItem } from '../common/dropdown_text_item';
-import { ChevronDownIcon } from '../common/icons/chevron_down_icon';
 
 interface WrapperProps {
     status?: string;
