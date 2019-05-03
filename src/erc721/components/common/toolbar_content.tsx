@@ -3,15 +3,11 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { ReactComponent as LogoSvg } from '../../../assets/icons/erc721_logo.svg';
-import { ErrorCard, ErrorIcons, FontSize } from '../../../components/common/error_card';
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
 import { goToHomeErc721, goToMyCollectibles } from '../../../store/router/actions';
-import { getWeb3State } from '../../../store/selectors';
-import { themeBreakPoints, themeColors, themeDimensions } from '../../../themes/commons';
-import { errorsWallet } from '../../../util/error_messages';
-import { StoreState, Web3State } from '../../../util/types';
+import { themeBreakPoints } from '../../../themes/commons';
 import { WalletConnectionStatusContainer } from '../account/wallet_connection_status';
 
 import { Search } from './inputSearch';

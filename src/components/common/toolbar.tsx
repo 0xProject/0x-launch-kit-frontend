@@ -3,11 +3,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getWeb3State } from '../../store/selectors';
-import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/commons';
-import { errorsWallet } from '../../util/error_messages';
+import { themeColors, themeDimensions } from '../../themes/commons';
 import { StoreState, Web3State } from '../../util/types';
-
-import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 
 interface OwnProps {
     startContent: React.ReactNode;

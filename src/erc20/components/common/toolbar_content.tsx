@@ -8,7 +8,7 @@ import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
 import { goToHomeErc20, goToWallet } from '../../../store/actions';
-import { themeBreakPoints, themeColors, themeDimensions } from '../../../themes/commons';
+import { themeBreakPoints } from '../../../themes/commons';
 
 import { MarketsDropdownContainer } from './markets_dropdown';
 
