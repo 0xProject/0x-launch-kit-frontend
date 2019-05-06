@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
 import { initializeAppNoMetamaskOrLocked, updateMarketPriceEther, updateStore } from '../store/actions';
@@ -89,7 +87,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onInitMetamaskState: () => dispatch(initializeAppNoMetamaskOrLocked()),
         onUpdateStore: () => dispatch(updateStore()),

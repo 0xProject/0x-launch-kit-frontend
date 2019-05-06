@@ -1,9 +1,10 @@
 import { push } from 'connected-react-router';
 
 import { ERC20_APP_BASE_PATH } from '../../common/constants';
+import { ThunkCreator } from '../../util/types';
 
-export const goToHome = () => {
-    return async (dispatch: any, getState: any) => {
+export const goToHome: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         const state = getState();
 
         dispatch(
@@ -15,8 +16,8 @@ export const goToHome = () => {
     };
 };
 
-export const goToWallet = () => {
-    return async (dispatch: any, getState: any) => {
+export const goToWallet: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         const state = getState();
 
         dispatch(
