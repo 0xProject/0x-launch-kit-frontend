@@ -14,6 +14,7 @@ export function collectibles(state: CollectiblesState = initialCollectibles, act
     switch (action.type) {
         case getType(actions.setMyCollectibles):
             return { ...state, myCollectibles: action.payload };
+        default:
+            return state;
     }
-    return state;
 }

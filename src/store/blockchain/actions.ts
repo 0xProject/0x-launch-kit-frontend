@@ -310,6 +310,7 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 dispatch(setMarketTokens({ baseToken, quoteToken }));
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(getOrderbookAndUserOrders());
+                // tslint:disable-next-line:no-floating-promises
                 dispatch(getUserCollectibles());
                 try {
                     await dispatch(fetchMarkets());
