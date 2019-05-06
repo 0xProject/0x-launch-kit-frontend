@@ -15,16 +15,7 @@ import { Dropdown } from '../../common/dropdown';
 import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
 import { MagnifierIcon } from '../../common/icons/magnifier_icon';
 import { TokenIcon } from '../../common/icons/token_icon';
-import {
-  CustomTDFirst,
-  CustomTDLast,
-  Table,
-  TBody,
-  THead,
-  THFirst,
-  THLast,
-  TR,
-} from '../../common/table';
+import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from '../../common/table';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 
