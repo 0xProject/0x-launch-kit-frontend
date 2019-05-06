@@ -194,8 +194,6 @@ class WalletBalance extends React.Component<Props, State> {
     public render = () => {
         const { web3State } = this.props;
         const walletContent = this._getWalletContent();
-        // @ts-ignore
-        console.log('themaaaae ', this.props.theme);
         return (
             <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
                 {walletContent}

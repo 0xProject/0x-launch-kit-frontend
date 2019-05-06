@@ -23,7 +23,7 @@ const BuySellColumn = styled(ColumnWide)`
     @media (min-width: ${themeBreakPoints.xl}) {
         min-width: 256px;
         width: 256px;
-        margin-right: 6px;
+        margin-right: 12px;
         margin-left: 6px;
     }
 `;

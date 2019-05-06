@@ -1,35 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Button } from '../../../components/common/button';
-import { OrderSide } from '../../../util/types';
+import { Button as ButtonBase } from '../../../components/common/button';
 
-const CollectibleAssetWrapper = styled.div`
-    position: relative;
-    background: #ffefa7;
-    border: 1px solid #ededed;
-    box-sizing: border-box;
-    border-radius: 4px;
+const BuySellWrapper = styled.div`
     width: 270px;
-    height: 270px;
 `;
 
 const Image = styled.div<{ image: string }>`
-    position: absolute;
-    width: 216px;
-    height: 221px;
     left: calc(50% - 216px / 2);
-    top: calc(50% - 221px / 2);
     background-size: 100% 100%;
     background-image: url(${props => props.image});
+    background-color: #ffefa7;
+    border-radius: 4px;
+    height: 221px;
 `;
 
-const BtnStyled = styled.div<{ btnColor: string}>`
-    width: 270px;
-    height: 46px;
-    border-radius: 4px;
-    margin-top: 90%;
-    background-color: ${props => props.btnColor };
+interface BtnStyledProps {
+    btnColor: string;
+}
+
+const BtnStyled = styled(ButtonBase)`
+    width: 100%;
+    background-color: ${(props: BtnStyledProps) => props.btnColor};
+    margin-top: 12px;
 `;
 
 const assetImg = 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png';
@@ -42,9 +36,9 @@ enum AssetOrderType {
 
 // TODO REFACTOR
 export const BuySellAsset = (props: any) => {
-    const assetType = AssetOrderType.Cancel;
+    const assetType = AssetOrderType.Buy;
     let btnTxt;
-    let btnColor; // buy color
+    let btnColor = '#00AE99'; // buy color
     switch (assetType) {
         // @ts-ignore
         case AssetOrderType.Buy: {
@@ -58,6 +52,7 @@ export const BuySellAsset = (props: any) => {
             btnTxt = 'Sell';
             break;
         }
+        // @ts-ignore
         case AssetOrderType.Cancel: {
             btnColor = '#E5E5E5';
             btnTxt = 'Cancel Sale';
@@ -66,12 +61,12 @@ export const BuySellAsset = (props: any) => {
     }
     return (
         <>
-            <CollectibleAssetWrapper>
+            <BuySellWrapper>
                 <Image image={assetImg} />
                 <BtnStyled btnColor={btnColor}>{btnTxt}</BtnStyled>
                 <h3>Ends wednesday, February 27, 2019</h3>
-                <h3>Last price: 2023</h3>
-            </CollectibleAssetWrapper>
+                <h3>Last price: Ξ 2023</h3>
+            </BuySellWrapper>
         </>
     );
 };
