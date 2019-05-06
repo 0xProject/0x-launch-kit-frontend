@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
 import * as CONSTANTS from '../../common/constants';
-import { CostValue, OrderDetails, Value } from '../../components/marketplace/order_details';
+import { CostValue, OrderDetails, Value } from '../../components/erc20/marketplace/order_details';
 import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../util/tokens';
 import { OrderSide, OrderType, TokenSymbol } from '../../util/types';
 

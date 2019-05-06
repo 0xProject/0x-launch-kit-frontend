@@ -6,7 +6,7 @@ import { BigNumber } from '0x.js';
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { OrderBookTable } from '../../components/marketplace/order_book';
+import { OrderBookTable } from '../../components/erc20/marketplace/order_book';
 import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
 
