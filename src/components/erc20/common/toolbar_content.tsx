@@ -8,7 +8,7 @@ import { separatorTopbar, ToolbarContainer } from '../../../components/common/to
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
 import { goToHomeErc20, goToWallet } from '../../../store/actions';
 import { themeBreakPoints } from '../../../themes/commons';
-import { WalletConnectionStatusContainer } from '../account/wallet_connection_status';
+import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
 import { MarketsDropdownContainer } from './markets_dropdown';
 
@@ -45,7 +45,7 @@ const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     ${separatorTopbar}
 `;
 
-const WalletDropdown = styled(WalletConnectionStatusContainer)`
+const WalletDropdown = styled(WalletConnectionContentContainer)`
     display: none;
 
     @media (min-width: ${themeBreakPoints.sm}) {

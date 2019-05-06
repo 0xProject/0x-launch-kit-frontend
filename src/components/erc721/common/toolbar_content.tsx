@@ -8,7 +8,7 @@ import { themeBreakPoints } from '../../../themes/commons';
 import { Logo } from '../../common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../common/toolbar';
 import { NotificationsDropdownContainer } from '../../notifications/notifications_dropdown';
-import { WalletConnectionStatusContainer } from '../account/wallet_connection_status';
+import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
 import { Search } from './inputSearch';
 
@@ -38,7 +38,7 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
-const WalletDropdown = styled(WalletConnectionStatusContainer)`
+const WalletDropdown = styled(WalletConnectionContentContainer)`
     display: none;
 
     @media (min-width: ${themeBreakPoints.sm}) {
