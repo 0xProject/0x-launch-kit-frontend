@@ -49,7 +49,6 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-// TODO REFACTOR
 export const BuySellAsset = (props: Props) => {
     let btnTxt;
     let btnColor = '#ffffff'; // buy color
