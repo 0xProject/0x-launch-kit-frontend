@@ -7,6 +7,7 @@ import { ColumnWide } from '../../components/common/column_wide';
 import { themeBreakPoints } from '../../themes/commons';
 import { AssetDescriptionContainer } from '../components/marketplace/asset_description_container';
 import { BuySellAsset } from '../components/marketplace/buy_sell_asset';
+import { AssetOrderType } from '../components/marketplace/marketplace_common';
 
 const General = styled.div`
     position: fixed;
@@ -34,7 +35,7 @@ export const IndividualAsset = (props: any) => {
     return (
         <General>
             <BuySellColumn>
-                <BuySellAsset />
+                <BuySellAsset assetType={AssetOrderType.Buy} />
             </BuySellColumn>
             <AssetDescriptionColumn>
                 <AssetDescriptionContainer />

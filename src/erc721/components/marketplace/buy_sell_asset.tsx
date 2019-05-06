@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Button as ButtonBase } from '../../../components/common/button';
 
-import { TitleText } from './marketplace_common';
+import { AssetOrderType, TitleText } from './marketplace_common';
 
 const BuySellWrapper = styled.div`
     width: 270px;
@@ -20,21 +20,18 @@ const Image = styled.div<{ image: string }>`
 
 interface BtnStyledProps {
     btnColor: string;
+    backgroundColor?: string;
 }
 
 const BtnStyled = styled(ButtonBase)`
     width: 100%;
-    background-color: ${(props: BtnStyledProps) => props.btnColor};
     margin-top: 12px;
+    background-color: ${(props: BtnStyledProps) => (props.backgroundColor ? props.backgroundColor : 'transparent')};
+    border: ${(props: BtnStyledProps) => (props.btnColor ? '1px solid #ff6534' : 'none')};
+    color: ${(props: BtnStyledProps) => (props.btnColor ? props.btnColor : '#ffffff')};
 `;
 
 const assetImg = 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png';
-
-enum AssetOrderType {
-    Buy = 'BUY',
-    Sell = 'BUY',
-    Cancel = 'CANCEL',
-}
 
 const CenteredText = styled(TitleText)`
     text-align: center;
@@ -46,28 +43,33 @@ const TextWithIcon = styled(CenteredText)`
     }
 `;
 
+interface OwnProps {
+    assetType: AssetOrderType;
+}
+
+type Props = OwnProps;
+
 // TODO REFACTOR
-export const BuySellAsset = (props: any) => {
-    const assetType = AssetOrderType.Buy;
+export const BuySellAsset = (props: Props) => {
     let btnTxt;
-    let btnColor = '#00AE99'; // buy color
-    switch (assetType) {
-        // @ts-ignore
-        case AssetOrderType.Buy: {
-            btnColor = '#00AE99';
-            btnTxt = 'Buy';
-            break;
-        }
-        // @ts-ignore
+    let btnColor = '#ffffff'; // buy color
+    let backgroundColor;
+    const assetPrice = '4.4';
+    const assetName = 'Vulcat';
+    switch (props.assetType) {
         case AssetOrderType.Sell: {
-            btnColor = '#FF6534';
-            btnTxt = 'Sell';
+            backgroundColor = '#ff6534';
+            btnTxt = `Sell ${assetName}`;
             break;
         }
-        // @ts-ignore
+        case AssetOrderType.Buy: {
+            backgroundColor = '#00AE99';
+            btnTxt = `Buy for ${assetPrice} ETH`;
+            break;
+        }
         case AssetOrderType.Cancel: {
-            btnColor = '#E5E5E5';
             btnTxt = 'Cancel Sale';
+            btnColor = '#ff6534';
             break;
         }
     }
@@ -75,7 +77,9 @@ export const BuySellAsset = (props: any) => {
         <>
             <BuySellWrapper>
                 <Image image={assetImg} />
-                <BtnStyled btnColor={btnColor}>{btnTxt}</BtnStyled>
+                <BtnStyled btnColor={btnColor} backgroundColor={backgroundColor}>
+                    {btnTxt}
+                </BtnStyled>
                 <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
                 <CenteredText>Last price: Ξ 2023</CenteredText>
             </BuySellWrapper>
