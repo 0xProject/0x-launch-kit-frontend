@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Card } from '../../../components/common/card';
-import { EmptyContent } from '../../../components/common/empty_content';
+import { OutsideUrlIcon } from '../../../components/common/icons/outside_url_icon';
 import { CustomTD, TR } from '../../../components/common/table';
 import { truncateAddress } from '../../../util/number_utils';
 
@@ -20,13 +20,51 @@ const DescriptionText = styled.p`
     line-height: 1.5;
 `;
 
+const AssetNameTitleWrapper = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    flex-shrink: 0;
+    padding: 0 0 8px 0;
+    height: 22px;
+    margin-top: 16px;
+`;
+
+const AssetNameTitle = styled.h3`
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 600;
+    color: #333333;
+`;
+
+const AssetTypeTitle = styled(TitleText)`
+    :before {
+        content: url(''); // TODO add ASSET TYPE icon url
+    }
+`;
+
+const IconWrapper = styled.a`
+    margin-left: 6px;
+    width: 12px;
+    height: 12px;
+`;
+
 export const AssetDescriptionContainer = (props: any) => {
     const assetOwner = '0x5409ed021d9299bf6814279a6a1411a7e866a631';
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
     return (
         <>
             <DescriptionCard>
-                <h2>Vulcat</h2>
+                <AssetNameTitleWrapper>
+                    <AssetNameTitle>Vulcat</AssetNameTitle>
+                    <AssetTypeTitle>
+                        CryptoKitties
+                        <IconWrapper href="https://www.cryptokitties.co/" target="_blank">
+                            {OutsideUrlIcon()}
+                        </IconWrapper>
+                    </AssetTypeTitle>
+                </AssetNameTitleWrapper>
+
                 <TitleText>Description</TitleText>
                 <DescriptionText>
                     Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
@@ -62,14 +100,14 @@ export const AssetDescriptionContainer = (props: any) => {
                         </TR>
                         <TR>
                             <CustomTD styles={tableTitlesStyling}>Transfer</CustomTD>
-                            <EmptyContent text={''} />
+                            <CustomTD />
                             <CustomTD>Cryptokitties... =></CustomTD>
                             <CustomTD>0xa49...322</CustomTD>
                             <CustomTD>2/3/19</CustomTD>
                         </TR>
                         <TR>
                             <CustomTD styles={tableTitlesStyling}>Created</CustomTD>
-                            <EmptyContent text={''} />
+                            <CustomTD />
                             <CustomTD>Cryptokitties... =></CustomTD>
                             <CustomTD>Cryptokitties</CustomTD>
                             <CustomTD>2/3/19</CustomTD>
