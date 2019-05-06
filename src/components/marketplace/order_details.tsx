@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { MAKER_FEE } from '../../common/constants';
 import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
-import { themeColors } from '../../themes/commons';
 import { getKnownTokens } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
@@ -16,7 +15,7 @@ const logger = getLogger('OrderDetails');
 
 const Row = styled.div`
     align-items: center;
-    border-top: dashed 1px ${themeColors.borderColor};
+    border-top: dashed 1px ${props => props.theme.componentsTheme.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 12px 0;

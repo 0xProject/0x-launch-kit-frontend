@@ -1,7 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors } from '../../themes/commons';
 import { TabItem } from '../../util/types';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -14,7 +13,7 @@ interface ItemProps {
 
 const CardTabSelectorWrapper = styled.div`
     align-items: center;
-    color: ${themeColors.lightGray};
+    color: ${props => props.theme.componentsTheme.lightGray};
     display: flex;
     font-size: 14px;
     font-weight: 500;
@@ -23,7 +22,8 @@ const CardTabSelectorWrapper = styled.div`
 `;
 
 const CardTabSelectorItem = styled.span<ItemProps>`
-    color: ${props => (props.active ? props.theme.componentsTheme.textColorCommon : themeColors.lightGray)};
+    color: ${props =>
+        props.active ? props.theme.componentsTheme.textColorCommon : props.theme.componentsTheme.lightGray};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
     user-select: none;
 `;
