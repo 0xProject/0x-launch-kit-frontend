@@ -1,10 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
-import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
-import { initializeAppNoMetamaskOrLocked, updateMarketPriceEther, updateStore } from '../store/actions';
+import {
+    SHOULD_ENABLE_NO_METAMASK_PROMPT,
+    UI_UPDATE_CHECK_INTERVAL,
+    UPDATE_ETHER_PRICE_INTERVAL,
+} from '../common/constants';
+import { LocalStorage } from '../services/local_storage';
+import { initializeAppNoMetamaskOrLocked, initWallet, updateMarketPriceEther, updateStore } from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { StoreState, Web3State } from '../util/types';
 
@@ -17,6 +20,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
+    onConnectWallet: () => any;
     onInitMetamaskState: () => any;
     onUpdateStore: () => any;
     onUpdateMarketPriceEther: () => any;
@@ -24,12 +28,16 @@ interface DispatchProps {
 
 type Props = OwnProps & DispatchProps & StateProps;
 
+const localStorage = new LocalStorage(window.localStorage);
+
 class App extends React.Component<Props> {
     private _updateStoreInterval: number | undefined;
     private _updatePriceEtherInterval: number | undefined;
 
     public componentDidMount = () => {
-        this.props.onInitMetamaskState();
+        if (SHOULD_ENABLE_NO_METAMASK_PROMPT) {
+            this._enableDeactivateMetamaskPromptFeature();
+        }
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<Props>, snapshot?: any) => {
@@ -81,6 +89,15 @@ class App extends React.Component<Props> {
             this._updatePriceEtherInterval = undefined;
         }
     };
+
+    private readonly _enableDeactivateMetamaskPromptFeature = () => {
+        const wasWalletConnected = localStorage.getWalletConnected();
+        if (wasWalletConnected) {
+            this.props.onConnectWallet();
+        } else {
+            this.props.onInitMetamaskState();
+        }
+    };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
@@ -89,11 +106,12 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onInitMetamaskState: () => dispatch(initializeAppNoMetamaskOrLocked()),
         onUpdateStore: () => dispatch(updateStore()),
         onUpdateMarketPriceEther: () => dispatch(updateMarketPriceEther()),
+        onConnectWallet: () => dispatch(initWallet()),
     };
 };
 
