@@ -81,7 +81,9 @@ export const BuySellAsset = (props: Props) => {
                     {btnTxt}
                 </BtnStyled>
                 <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
-                <CenteredText>Last price: Ξ 2023</CenteredText>
+                {props.assetType === AssetOrderType.Buy || props.assetType === AssetOrderType.Cancel ? (
+                    <CenteredText>Last price: Ξ 2023</CenteredText>
+                ) : null}
             </BuySellWrapper>
         </>
     );
