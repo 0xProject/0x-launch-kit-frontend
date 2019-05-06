@@ -50,6 +50,7 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             };
         case getType(actions.setNetworkId):
             return { ...state, networkId: action.payload };
+        default:
+            return state;
     }
-    return state;
 }
