@@ -12,6 +12,7 @@ import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
+import { getUserCollectibles } from '../collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
@@ -308,6 +309,7 @@ export const initWallet = () => {
                 );
                 dispatch(setMarketTokens({ baseToken, quoteToken }));
                 dispatch(getOrderbookAndUserOrders());
+                dispatch(getUserCollectibles());
                 try {
                     await dispatch(fetchMarkets());
                     // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
