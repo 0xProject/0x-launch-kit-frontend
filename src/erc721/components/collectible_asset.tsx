@@ -9,12 +9,8 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CollectibleAssetWrapper = styled.div`
+    display: inline-block;
     position: relative;
-    left: 0%;
-    right: 0%;
-    top: 0%;
-    bottom: 0%;
-
     background: #ffffff;
     border: 1px solid #ededed;
     box-sizing: border-box;
@@ -106,21 +102,18 @@ const BadgeAsset = styled.span`
     color: #000000;
 `;
 
-export const CollectibleAsset: React.FC<Props> = props => {
+export const CollectibleAsset: React.FC<Props> = (props: Props) => {
     const { name, price, image, color, ...restProps } = props;
-
     return (
-        <>
-            <CollectibleAssetWrapper {...restProps}>
-                <ImageWrapper color={color}>
-                    <Badge>
-                        <BadgeImport>{price}</BadgeImport>
-                        <BadgeAsset>ETH</BadgeAsset>
-                    </Badge>
-                    <Image image={image} />
-                </ImageWrapper>
-                <Title>{name}</Title>
-            </CollectibleAssetWrapper>
-        </>
+        <CollectibleAssetWrapper {...restProps}>
+            <ImageWrapper color={color}>
+                <Badge>
+                    <BadgeImport>{price}</BadgeImport>
+                    <BadgeAsset>ETH</BadgeAsset>
+                </Badge>
+                <Image image={image} />
+            </ImageWrapper>
+            <Title>{name}</Title>
+        </CollectibleAssetWrapper>
     );
 };
