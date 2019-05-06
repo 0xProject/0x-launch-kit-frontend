@@ -76,7 +76,7 @@ const ButtonStyled = styled(Button)`
 `;
 
 const LinkButton = styled.a`
-    color: #fff;
+    color: ${props => props.theme.componentsTheme.buttonTextColor};
     text-decoration: none;
 `;
 

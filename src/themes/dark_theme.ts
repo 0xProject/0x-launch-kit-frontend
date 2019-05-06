@@ -33,6 +33,7 @@ const darkThemeColors: ThemeProperties = {
     buttonPrimaryBackgroundColor: '#002979',
     buttonSecondaryBackgroundColor: '#3CB34F',
     buttonTertiaryBackgroundColor: '#F6851B',
+    buttonTextColor: '#fff',
     cardBackgroundColor: '#202123',
     cardBorderColor: '#000',
     cardTitleColor: '#fff',
@@ -49,6 +50,8 @@ const darkThemeColors: ThemeProperties = {
     ethBoxActiveColor: '#00AE99',
     ethBoxBorderColor: '#5A5A5A',
     ethSetMinEthButtonBorderColor: '#999',
+    ethSliderThumbBorderColor: '#5A5A5A',
+    ethSliderThumbColor: '#202123',
     gray: '#808080',
     green: '#3CB34F',
     iconLockedColor: '#fff',
@@ -66,6 +69,12 @@ const darkThemeColors: ThemeProperties = {
     numberDecimalsColor: '#5A5A5A',
     orange: '#F6851B',
     rowActive: '#1B1B1B',
+    stepsProgressCheckMarkColor: '#202123',
+    stepsProgressStartingDotColor: '#fff',
+    stepsProgressStepLineColor: '#5A5A5A',
+    stepsProgressStepLineProgressColor: '#fff',
+    stepsProgressStepTitleColor: '#5A5A5A',
+    stepsProgressStepTitleColorActive: '#fff',
     tableBorderColor: '#000',
     tdColor: '#fff',
     textColorCommon: '#fff',
@@ -79,8 +88,6 @@ const darkThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
-    ethSliderThumbColor: '#202123',
-    ethSliderThumbBorderColor: '#5A5A5A',
 };
 
 export class DarkTheme extends DefaultTheme {

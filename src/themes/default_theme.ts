@@ -1,4 +1,4 @@
-import { Theme, themeColors, ThemeModalStyle, ThemeProperties } from './commons';
+import { Theme, ThemeModalStyle, ThemeProperties } from './commons';
 
 const modalThemeStyle: ThemeModalStyle = {
     content: {
@@ -32,6 +32,7 @@ const whiteThemeColors: ThemeProperties = {
     buttonPrimaryBackgroundColor: '#002979',
     buttonSecondaryBackgroundColor: '#474747',
     buttonTertiaryBackgroundColor: '#F6851B',
+    buttonTextColor: '#fff',
     cardBackgroundColor: '#fff',
     cardBorderColor: '#dedede',
     cardTitleColor: '#000',
@@ -48,6 +49,8 @@ const whiteThemeColors: ThemeProperties = {
     ethBoxActiveColor: '#002979',
     ethBoxBorderColor: '#dedede',
     ethSetMinEthButtonBorderColor: '#000',
+    ethSliderThumbBorderColor: 'rgba(0, 0, 0, 0.142)',
+    ethSliderThumbColor: '#fff',
     gray: '#808080',
     green: '#3CB34F',
     iconLockedColor: '#000',
@@ -65,6 +68,12 @@ const whiteThemeColors: ThemeProperties = {
     numberDecimalsColor: '#dedede',
     orange: '#F6851B',
     rowActive: '#FBFDFF',
+    stepsProgressCheckMarkColor: '#fff',
+    stepsProgressStartingDotColor: '#000',
+    stepsProgressStepLineColor: 'rgba(0, 0, 0, 0.1)',
+    stepsProgressStepLineProgressColor: '#000',
+    stepsProgressStepTitleColor: '#e6e6e6',
+    stepsProgressStepTitleColorActive: '#000',
     tableBorderColor: '#dedede',
     tdColor: '#000',
     textColorCommon: '#000',
@@ -78,8 +87,6 @@ const whiteThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#fff',
     topbarBorderColor: '#dedede',
     topbarSeparatorColor: '#dedede',
-    ethSliderThumbColor: '#fff',
-    ethSliderThumbBorderColor: 'rgba(0, 0, 0, 0.142)',
 };
 
 export class DefaultTheme implements Theme {

@@ -3,7 +3,6 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-import { themeColors } from '../../themes/commons';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
@@ -67,15 +66,18 @@ const Slider = styled.input`
     }
     &::-webkit-slider-runnable-track {
         ${sliderTrackProps}
-        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props => props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
+    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-moz-range-track {
         ${sliderTrackProps}
-        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props => props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
+    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-ms-track {
         ${sliderTrackProps}
-        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props => props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
+    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
@@ -153,10 +155,16 @@ const EthBox = styled.div<EthBoxProps>`
     transition: border-color 0.15s ease-in;
 
     &:focus-within {
-        border-color: ${props => (props.boxType === ETHBoxType.Weth ? props.theme.componentsTheme.ethBoxActiveColor : props.theme.componentsTheme.textDark)};
+        border-color: ${props =>
+            props.boxType === ETHBoxType.Weth
+                ? props.theme.componentsTheme.ethBoxActiveColor
+                : props.theme.componentsTheme.textDark};
 
         h4 {
-            color: ${props => (props.boxType === ETHBoxType.Weth ? props.theme.componentsTheme.ethBoxActiveColor : props.theme.componentsTheme.textLight)};
+            color: ${props =>
+                props.boxType === ETHBoxType.Weth
+                    ? props.theme.componentsTheme.ethBoxActiveColor
+                    : props.theme.componentsTheme.textLight};
         }
     }
 `;
@@ -169,7 +177,10 @@ const TooltipStyled = styled.div`
 `;
 
 const EthBoxValue = styled.h2<EthBoxProps>`
-    color: ${props => (props.boxType === ETHBoxType.Eth ? props.theme.componentsTheme.textLight : props.theme.componentsTheme.ethBoxActiveColor)};
+    color: ${props =>
+        props.boxType === ETHBoxType.Eth
+            ? props.theme.componentsTheme.textLight
+            : props.theme.componentsTheme.ethBoxActiveColor};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;
@@ -207,7 +218,10 @@ const SetMinEthButton = styled.a`
 const InputEth = styled<any>(BigNumberInput)`
     background-color: transparent;
     border-color: transparent;
-    color: ${props => (props.boxType === ETHBoxType.Eth ? props.theme.componentsTheme.textDark : props.theme.componentsTheme.ethBoxActiveColor)};
+    color: ${props =>
+        props.boxType === ETHBoxType.Eth
+            ? props.theme.componentsTheme.textDark
+            : props.theme.componentsTheme.ethBoxActiveColor};
     font-feature-settings: 'tnum' 1;
     font-size: 24px;
     font-weight: 600;

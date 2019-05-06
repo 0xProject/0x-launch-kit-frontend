@@ -34,7 +34,7 @@ const StyledButton = styled.button<{ variant?: string }>`
 
     border-radius: ${themeDimensions.borderRadius};
     border: none;
-    color: #fff;
+    color: ${props => props.theme.componentsTheme.buttonTextColor};
     cursor: pointer;
     font-weight: 600;
     padding: 15px;

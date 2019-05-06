@@ -62,6 +62,13 @@ export interface ThemeProperties {
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
+    stepsProgressStartingDotColor: string;
+    stepsProgressStepTitleColor: string;
+    stepsProgressStepTitleColorActive: string;
+    stepsProgressStepLineColor: string;
+    stepsProgressStepLineProgressColor: string;
+    stepsProgressCheckMarkColor: string;
+    buttonTextColor: string;
 }
 
 export interface ThemeModalStyle {

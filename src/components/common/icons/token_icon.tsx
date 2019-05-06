@@ -81,12 +81,13 @@ const IconContainer = styled.div<{ color: string; isInline?: boolean }>`
 `;
 
 const Label = styled.label`
-    color: #ffffff;
+    color: #fff;
     font-size: 0.7em;
     font-weight: 500;
     line-height: normal;
     margin: 0;
 `;
+
 export const TokenIcon = (props: Props) => {
     const { symbol, primaryColor, ...restProps } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(symbol) as keyof typeof TokenIcons;
