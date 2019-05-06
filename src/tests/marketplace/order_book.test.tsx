@@ -5,7 +5,7 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 
-import { OrderBookTable } from '../../components/marketplace/order_book';
+import { OrderBookTableWithTheme } from '../../components/marketplace/order_book';
 import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
 import { mountWithTheme } from '../util/mount_with_theme';
@@ -60,7 +60,7 @@ describe('OrderBookTable', () => {
 
         // when
         const wrapper = mountWithTheme(
-            <OrderBookTable
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
@@ -130,7 +130,7 @@ describe('OrderBookTable', () => {
 
         // when
         const wrapper = mountWithTheme(
-            <OrderBookTable
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
@@ -217,7 +217,7 @@ describe('OrderBookTable', () => {
 
         // when
         const wrapper = mountWithTheme(
-            <OrderBookTable
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
@@ -341,7 +341,7 @@ describe('OrderBookTable', () => {
 
         // when
         const wrapper = mountWithTheme(
-            <OrderBookTable
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={token}
                 quoteToken={token}
@@ -412,7 +412,7 @@ describe('OrderBookTable', () => {
 
         // when
         const wrapper = mountWithTheme(
-            <OrderBookTable
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={token}
                 quoteToken={token}
