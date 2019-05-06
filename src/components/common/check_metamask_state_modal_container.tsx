@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { LocalStorage } from '../../services/local_storage';
 import { goToHome, initWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { ModalDisplay, StoreState, Web3State } from '../../util/types';
@@ -29,6 +28,7 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
+const localStorage = new LocalStorage(window.localStorage);
 class CheckMetamaskStateModal extends React.Component<Props, State> {
     public state = {
         shouldOpenModal: true,
@@ -48,17 +48,22 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
 
     public render = () => {
         const { shouldOpenModal, modalToDisplay } = this.state;
-        const { onConnectWallet, onGoToHome, children } = this.props;
+        const { onGoToHome, children } = this.props;
         return shouldOpenModal && modalToDisplay ? (
             <MetamaskErrorModal
                 isOpen={shouldOpenModal}
                 closeModal={onGoToHome}
                 noMetamaskType={modalToDisplay}
-                connectWallet={onConnectWallet}
+                connectWallet={this._connectWallet}
             />
         ) : (
             children || null
         );
+    };
+
+    private readonly _connectWallet = () => {
+        this.props.onConnectWallet();
+        localStorage.saveWalletConnected(true);
     };
 
     private readonly _updateState = () => {
@@ -78,7 +83,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onGoToHome: () => dispatch(goToHome()),
         onConnectWallet: () => dispatch(initWallet()),

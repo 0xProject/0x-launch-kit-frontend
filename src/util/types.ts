@@ -1,7 +1,10 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
+import { ActionCreator, AnyAction } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 
+import { ExtraArgument } from '../store/index';
 import { Theme } from '../themes/commons';
 
 export interface TabItem {
@@ -227,3 +230,5 @@ export enum ModalDisplay {
     InstallMetamask = 'INSTALL_METAMASK',
     EnablePermissions = 'ACCEPT_PERMISSIONS',
 }
+
+export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
