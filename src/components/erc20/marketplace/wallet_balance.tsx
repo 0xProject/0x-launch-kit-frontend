@@ -1,8 +1,6 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../../common/constants';
@@ -24,23 +22,6 @@ import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 import { IconType, Tooltip } from '../../common/tooltip';
-
-const LabelTitleWrapper = styled.div`
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    flex-shrink: 0;
-    padding: 0 0 8px 0;
-`;
-
-const LabelTitle = styled.span`
-    color: ${props => props.theme.componentsTheme.lightGray};
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    line-height: normal;
-    text-transform: uppercase;
-`;
 
 const LabelWrapper = styled.div`
     align-items: center;
@@ -240,10 +221,6 @@ class WalletBalance extends React.Component<Props, State> {
             ) : null;
             content = (
                 <>
-                    <LabelTitleWrapper>
-                        <LabelTitle>Token</LabelTitle>
-                        <LabelTitle>Amount</LabelTitle>
-                    </LabelTitleWrapper>
                     <LabelWrapper>
                         <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
                         <Value>{baseBalanceString}</Value>
@@ -320,7 +297,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onConnectWallet: () => dispatch(initWallet()),
     };
