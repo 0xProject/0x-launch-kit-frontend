@@ -3,11 +3,11 @@
  */
 
 import { BigNumber } from '0x.js';
-import { mount } from 'enzyme';
 import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
 import { TokenBalance, TokenSymbol, Web3State } from '../../../util/types';
+import { mountWithTheme } from '../../util/mount_with_theme';
 
 const noop = () => ({});
 const ZERO = new BigNumber(0);
@@ -62,7 +62,7 @@ describe('WalletTokenBalances', () => {
         ];
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <WalletTokenBalances
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
@@ -114,7 +114,7 @@ describe('WalletTokenBalances', () => {
         ];
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <WalletTokenBalances
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
@@ -175,7 +175,7 @@ describe('WalletTokenBalances', () => {
         const onToggleTokenLock = jest.fn();
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <WalletTokenBalances
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
@@ -233,7 +233,7 @@ describe('WalletTokenBalances', () => {
         const onToggleTokenLock = jest.fn();
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <WalletTokenBalances
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}

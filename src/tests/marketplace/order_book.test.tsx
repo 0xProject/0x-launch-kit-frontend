@@ -3,12 +3,12 @@
  */
 
 import { BigNumber } from '0x.js';
-import { mount } from 'enzyme';
 import React from 'react';
 
 import { OrderBookTable } from '../../components/marketplace/order_book';
 import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
+import { mountWithTheme } from '../util/mount_with_theme';
 
 describe('OrderBookTable', () => {
     it('Renders my size column with value', () => {
@@ -59,7 +59,7 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <OrderBookTable
                 orderBook={orderBook}
                 baseToken={baseToken}
@@ -129,7 +129,7 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <OrderBookTable
                 orderBook={orderBook}
                 baseToken={baseToken}
@@ -216,7 +216,7 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <OrderBookTable
                 orderBook={orderBook}
                 baseToken={baseToken}
@@ -340,7 +340,7 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <OrderBookTable
                 orderBook={orderBook}
                 baseToken={token}
@@ -411,7 +411,7 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
+        const wrapper = mountWithTheme(
             <OrderBookTable
                 orderBook={orderBook}
                 baseToken={token}

@@ -1,8 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors } from '../../themes/commons';
-
 interface EmptyWrapperProps {
     alignAbsoluteCenter?: boolean;
 }
@@ -13,7 +11,7 @@ interface Props extends HTMLAttributes<HTMLDivElement>, EmptyWrapperProps {
 
 const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
     align-items: center;
-    color: ${themeColors.lightGray};
+    color: ${props => props.theme.componentsTheme.lightGray};
     display: flex;
     font-size: 16px;
     font-weight: 500;

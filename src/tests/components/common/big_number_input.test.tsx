@@ -7,6 +7,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { BigNumberInput } from '../../../components/common/big_number_input';
+import { mountWithTheme } from '../../util/mount_with_theme';
 
 const noop = () => ({});
 
@@ -16,7 +17,7 @@ describe('BigNumberInput', () => {
         const value = new BigNumber('123');
 
         // when
-        const wrapper = mount(<BigNumberInput value={value} decimals={2} onChange={noop} />);
+        const wrapper = mountWithTheme(<BigNumberInput value={value} decimals={2} onChange={noop} />);
 
         // then
         expect(wrapper.find('input').props().value).toEqual('1.23');
@@ -28,7 +29,7 @@ describe('BigNumberInput', () => {
         const onChange = jest.fn();
 
         // when
-        const wrapper = mount(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
+        const wrapper = mountWithTheme(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
         changeValue(wrapper, '2.45');
 
         // then
@@ -60,7 +61,7 @@ describe('BigNumberInput', () => {
         const onChange = jest.fn();
         // when
 
-        const wrapper = mount(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
+        const wrapper = mountWithTheme(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
         changeValue(wrapper, '');
 
         // then
@@ -75,7 +76,9 @@ describe('BigNumberInput', () => {
         const minValue = new BigNumber('100');
 
         // when
-        const wrapper = mount(<BigNumberInput min={minValue} value={value} decimals={2} onChange={onChange} />);
+        const wrapper = mountWithTheme(
+            <BigNumberInput min={minValue} value={value} decimals={2} onChange={onChange} />,
+        );
         changeValue(wrapper, '0.5');
 
         // then
@@ -90,7 +93,9 @@ describe('BigNumberInput', () => {
         const maxValue = new BigNumber('200');
 
         // when
-        const wrapper = mount(<BigNumberInput max={maxValue} value={value} decimals={2} onChange={onChange} />);
+        const wrapper = mountWithTheme(
+            <BigNumberInput max={maxValue} value={value} decimals={2} onChange={onChange} />,
+        );
         changeValue(wrapper, '3.5');
 
         // then
@@ -104,7 +109,7 @@ describe('BigNumberInput', () => {
         const onChange = jest.fn();
         // when
 
-        const wrapper = mount(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
+        const wrapper = mountWithTheme(<BigNumberInput value={value} decimals={2} onChange={onChange} />);
 
         // then
         expect(wrapper.find('input').props().value).toEqual('');

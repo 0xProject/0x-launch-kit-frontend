@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { goToHome, goToWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
-import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/commons';
+import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
 import { StoreState, Web3State } from '../../util/types';
 import { WalletConnectionStatusContainer } from '../account';
@@ -25,25 +25,10 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-const separatorTopbar = `
-    &:after {
-        background-color: ${themeColors.borderColor};
-        content: "";
-        height: 26px;
-        margin-left: 17px;
-        margin-right: 17px;
-        width: 1px;
-    }
-
-    &:last-child:after {
-        display: none;
-    }
-`;
-
 const ToolbarWrapper = styled.div`
     align-items: center;
-    background: #ffffff;
-    border-bottom: 1px solid ${themeColors.borderColor};
+    background: ${props => props.theme.componentsTheme.topbarBackgroundColor};
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.topbarBorderColor};
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
@@ -56,7 +41,7 @@ const ToolbarWrapper = styled.div`
 
 const MyWalletLink = styled.a`
     align-items: center;
-    color: #333333;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     display: flex;
     font-size: 16px;
     font-weight: 500;
@@ -66,7 +51,18 @@ const MyWalletLink = styled.a`
         text-decoration: underline;
     }
 
-    ${separatorTopbar}
+    &:after {
+        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
+        content: '';
+        height: 26px;
+        margin-left: 17px;
+        margin-right: 17px;
+        width: 1px;
+    }
+
+    &:last-child:after {
+        display: none;
+    }
 `;
 
 const ToolbarStart = styled.div`
@@ -82,14 +78,36 @@ const ToolbarEnd = styled.div`
 `;
 
 const LogoHeader = styled(Logo)`
-    ${separatorTopbar}
+    &:after {
+        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
+        content: '';
+        height: 26px;
+        margin-left: 17px;
+        margin-right: 17px;
+        width: 1px;
+    }
+
+    &:last-child:after {
+        display: none;
+    }
 `;
 
 const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     align-items: center;
     display: flex;
 
-    ${separatorTopbar}
+    &:after {
+        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
+        content: '';
+        height: 26px;
+        margin-left: 17px;
+        margin-right: 17px;
+        width: 1px;
+    }
+
+    &:last-child:after {
+        display: none;
+    }
 `;
 
 const WalletDropdown = styled(WalletConnectionStatusContainer)`
@@ -99,7 +117,18 @@ const WalletDropdown = styled(WalletConnectionStatusContainer)`
         align-items: center;
         display: flex;
 
-        ${separatorTopbar}
+        &:after {
+            background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
+            content: '';
+            height: 26px;
+            margin-left: 17px;
+            margin-right: 17px;
+            width: 1px;
+        }
+
+        &:last-child:after {
+            display: none;
+        }
     }
 `;
 

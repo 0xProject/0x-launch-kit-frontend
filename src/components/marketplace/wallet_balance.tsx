@@ -25,23 +25,6 @@ import { Card } from '../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
 import { IconType, Tooltip } from '../common/tooltip';
 
-const LabelTitleWrapper = styled.div`
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    flex-shrink: 0;
-    padding: 0 0 8px 0;
-`;
-
-const LabelTitle = styled.span`
-    color: ${props => props.theme.componentsTheme.lightGray};
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    line-height: normal;
-    text-transform: uppercase;
-`;
-
 const LabelWrapper = styled.div`
     align-items: center;
     display: flex;
@@ -56,7 +39,7 @@ const LabelWrapper = styled.div`
 
 const Label = styled.span`
     align-items: center;
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     display: flex;
     flex-shrink: 0;
     font-size: 16px;
@@ -64,7 +47,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;
@@ -240,10 +223,6 @@ class WalletBalance extends React.Component<Props, State> {
             ) : null;
             content = (
                 <>
-                    <LabelTitleWrapper>
-                        <LabelTitle>Token</LabelTitle>
-                        <LabelTitle>Amount</LabelTitle>
-                    </LabelTitleWrapper>
                     <LabelWrapper>
                         <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
                         <Value>{baseBalanceString}</Value>

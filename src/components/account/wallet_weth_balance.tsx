@@ -1,11 +1,11 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
-import { themeColors, themeDimensions, themeModalStyle } from '../../themes/commons';
+import { Theme, themeDimensions } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -25,7 +25,11 @@ interface DispatchProps {
     onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
 }
 
-type Props = StateProps & DispatchProps;
+interface OwnProps {
+    theme: Theme;
+}
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
     modalIsOpen: boolean;
@@ -40,7 +44,7 @@ const Content = styled.div`
 
 const Row = styled.div`
     align-items: center;
-    border-bottom: solid 1px ${themeColors.borderColor};
+    border-bottom: solid 1px ${props => props.theme.componentsTheme.tableBorderColor};
     display: flex;
     justify-content: space-between;
     padding: 15px ${themeDimensions.horizontalPadding};
@@ -64,7 +68,7 @@ const LabelWrapper = styled.span`
 `;
 
 const Label = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     flex-shrink: 0;
     font-size: 16px;
     line-height: 1.2;
@@ -72,7 +76,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.div`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     flex-shrink: 0;
     font-feature-settings: 'tnum' 1;
     font-size: 16px;
@@ -83,9 +87,10 @@ const Value = styled.div`
 
 const Button = styled.button`
     align-items: center;
-    background-color: #fff;
+    background-color: ${props => props.theme.componentsTheme.buttonConvertBackgroundColor};
     border-radius: 4px;
-    border: 1px solid ${themeColors.borderColor};
+    border: 1px solid ${props => props.theme.componentsTheme.buttonConvertBorderColor};
+    color: ${props => props.theme.componentsTheme.buttonConvertTextColor};
     cursor: pointer;
     display: flex;
     height: 40px;
@@ -112,10 +117,14 @@ const Button = styled.button`
         cursor: default;
         opacity: 0.5;
     }
+
+    path {
+        fill: ${props => props.theme.componentsTheme.buttonConvertTextColor};
+    }
 `;
 
 const ButtonLabel = styled.span`
-    color: #474747;
+    color: ${props => props.theme.componentsTheme.buttonConvertTextColor};
     font-size: 16px;
     font-weight: 700;
     line-height: 1.2;
@@ -140,7 +149,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd, theme } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.add(wethBalance);
 
@@ -182,7 +191,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         isSubmitting={isSubmitting}
                         onRequestClose={this.closeModal}
                         onSubmit={this.handleSubmit}
-                        style={themeModalStyle}
+                        style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
                         ethInUsd={ethInUsd}
@@ -243,9 +252,11 @@ const mapDispatchToProps = {
     onStartWrapEtherSteps: startWrapEtherSteps,
 };
 
-const WalletWethBalanceContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(WalletWethBalance);
+const WalletWethBalanceContainer = withTheme(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(WalletWethBalance),
+);
 
 export { WalletWethBalance, WalletWethBalanceContainer };
