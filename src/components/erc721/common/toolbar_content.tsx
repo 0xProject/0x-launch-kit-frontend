@@ -2,19 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { ReactComponent as LogoSvg } from '../../../assets/icons/erc20_logo.svg';
-import { WalletConnectionStatusContainer } from '../../../components/account';
-import { Logo } from '../../../components/common/logo';
-import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
-import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
-import { goToHomeErc20, goToWallet } from '../../../store/actions';
+import { ReactComponent as LogoSvg } from '../../../assets/icons/erc721_logo.svg';
+import { goToHomeErc721, goToMyCollectibles } from '../../../store/router/actions';
 import { themeBreakPoints } from '../../../themes/commons';
+import { Logo } from '../../common/logo';
+import { separatorTopbar, ToolbarContainer } from '../../common/toolbar';
+import { NotificationsDropdownContainer } from '../../notifications/notifications_dropdown';
+import { WalletConnectionStatusContainer } from '../account/wallet_connection_status';
 
-import { MarketsDropdownContainer } from './markets_dropdown';
+import { Search } from './inputSearch';
 
 interface DispatchProps {
     onGoToHome: () => any;
-    onGoToWallet: () => any;
+    goToMyCollectibles: () => any;
 }
 
 type Props = DispatchProps;
@@ -38,13 +38,6 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
-const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
-    align-items: center;
-    display: flex;
-
-    ${separatorTopbar}
-`;
-
 const WalletDropdown = styled(WalletConnectionStatusContainer)`
     display: none;
 
@@ -61,21 +54,17 @@ const ToolbarContent = (props: Props) => {
         e.preventDefault();
         props.onGoToHome();
     };
-    const startContent = (
-        <>
-            <LogoHeader text="Launch Kit" image={<LogoSvg />} onClick={handleLogoClick} />
-            <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-        </>
-    );
+    const startContent = <LogoHeader text="0x Collectibles" image={<LogoSvg />} onClick={handleLogoClick} />;
 
     const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
-        props.onGoToWallet();
+        props.goToMyCollectibles();
     };
     const endContent = (
         <>
-            <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
-                My Wallet
+            <Search />
+            <MyWalletLink href="/my-collectibles" onClick={handleMyWalletClick}>
+                My Collectibles
             </MyWalletLink>
             <WalletDropdown />
             <NotificationsDropdownContainer />
@@ -87,8 +76,8 @@ const ToolbarContent = (props: Props) => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        onGoToHome: () => dispatch(goToHomeErc20()),
-        onGoToWallet: () => dispatch(goToWallet()),
+        onGoToHome: () => dispatch(goToHomeErc721()),
+        goToMyCollectibles: () => dispatch(goToMyCollectibles()),
     };
 };
 

@@ -5,8 +5,8 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
-import { METAMASK_EXTENSION_URL } from '../../common/constants';
-import { initWallet } from '../../store/actions';
+import { METAMASK_EXTENSION_URL } from '../../../common/constants';
+import { initWallet } from '../../../store/actions';
 import {
     getBaseToken,
     getBaseTokenBalance,
@@ -15,15 +15,15 @@ import {
     getQuoteToken,
     getQuoteTokenBalance,
     getWeb3State,
-} from '../../store/selectors';
-import { errorsWallet } from '../../util/error_messages';
-import { isWeth } from '../../util/known_tokens';
-import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
-import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../util/types';
-import { Button } from '../common/button';
-import { Card } from '../common/card';
-import { ErrorCard, ErrorIcons, FontSize } from '../common/error_card';
-import { IconType, Tooltip } from '../common/tooltip';
+} from '../../../store/selectors';
+import { errorsWallet } from '../../../util/error_messages';
+import { isWeth } from '../../../util/known_tokens';
+import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
+import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
+import { Button } from '../../common/button';
+import { Card } from '../../common/card';
+import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
+import { IconType, Tooltip } from '../../common/tooltip';
 
 const LabelTitleWrapper = styled.div`
     align-items: center;

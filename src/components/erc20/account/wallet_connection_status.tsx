@@ -3,14 +3,13 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { WalletWethBalanceContainer } from '../../../components/account';
-import { CardBase } from '../../../components/common/card_base';
-import { Dropdown, DropdownPositions } from '../../../components/common/dropdown';
-import { DropdownTextItem } from '../../../components/common/dropdown_text_item';
-import { ChevronDownIcon } from '../../../components/common/icons/chevron_down_icon';
 import { getEthAccount } from '../../../store/selectors';
 import { themeFeatures } from '../../../themes/commons';
 import { StoreState } from '../../../util/types';
+import { CardBase } from '../../common/card_base';
+import { Dropdown, DropdownPositions } from '../../common/dropdown';
+import { DropdownTextItem } from '../../common/dropdown_text_item';
+import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
 
 interface WrapperProps {
     status?: string;
@@ -59,28 +58,32 @@ const connectToWallet = () => {
     alert('connect to another wallet');
 };
 
+const goToURL = () => {
+    alert('go to url');
+};
+
 class WalletConnectionStatus extends React.PureComponent<Props> {
     public render = () => {
         const { ethAccount, ...restProps } = this.props;
         const status: string = ethAccount ? 'active' : '';
 
-        const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
         const header = (
             <WalletConnectionStatusWrapper>
                 <WalletConnectionStatusDot status={status} />
-                <WalletConnectionStatusText>{ethAccountText}</WalletConnectionStatusText>
+                <WalletConnectionStatusText>
+                    {ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected'}
+                </WalletConnectionStatusText>
                 <ChevronDownIcon />
             </WalletConnectionStatusWrapper>
         );
 
         const body = (
             <DropdownItems>
-                <DropdownTextItem text={ethAccountText} />
-                <WalletWethBalanceContainer />
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
-                    <DropdownTextItem text="Copy Address" />
+                    <DropdownTextItem text="Copy Address to Clipboard" />
                 </CopyToClipboard>
-                <DropdownTextItem onClick={connectToWallet} text="Connect a different address" />
+                <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
+                <DropdownTextItem onClick={goToURL} text="Manage Account" />
             </DropdownItems>
         );
 

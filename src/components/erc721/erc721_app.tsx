@@ -3,9 +3,9 @@ import { Route, Switch } from 'react-router';
 
 import { ERC721_APP_BASE_PATH } from '../../common/constants';
 import { GeneralLayoutContainer } from '../../components/general_layout';
-import { MyCollectibles } from '../pages/my_collectibles';
 
 import { ToolbarContentContainer } from './common/toolbar_content';
+import { MyCollectibles } from './pages/my_collectibles';
 
 const toolbar = <ToolbarContentContainer />;
 

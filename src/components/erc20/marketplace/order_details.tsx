@@ -3,14 +3,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { MAKER_FEE } from '../../common/constants';
-import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../store/selectors';
-import { themeColors } from '../../themes/commons';
-import { getKnownTokens } from '../../util/known_tokens';
-import { getLogger } from '../../util/logger';
-import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
-import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
-import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, UIOrder } from '../../util/types';
+import { MAKER_FEE } from '../../../common/constants';
+import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
+import { themeColors } from '../../../themes/commons';
+import { getKnownTokens } from '../../../util/known_tokens';
+import { getLogger } from '../../../util/logger';
+import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
+import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
+import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, UIOrder } from '../../../util/types';
 
 const logger = getLogger('OrderDetails');
 

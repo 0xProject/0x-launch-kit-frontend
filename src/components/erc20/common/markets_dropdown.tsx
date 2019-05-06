@@ -3,21 +3,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
-import { CardBase } from '../../../components/common/card_base';
-import { Dropdown } from '../../../components/common/dropdown';
-import { ChevronDownIcon } from '../../../components/common/icons/chevron_down_icon';
-import { MagnifierIcon } from '../../../components/common/icons/magnifier_icon';
-import { TokenIcon } from '../../../components/common/icons/token_icon';
-import {
-    CustomTDFirst,
-    CustomTDLast,
-    Table,
-    TBody,
-    THead,
-    THFirst,
-    THLast,
-    TR,
-} from '../../../components/common/table';
 import { changeMarket, goToHomeErc20 } from '../../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
 import { themeColors, themeDimensions, themeFeatures } from '../../../themes/commons';
@@ -25,6 +10,21 @@ import { getColorBySymbol } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../../util/types';
+import { CardBase } from '../../common/card_base';
+import { Dropdown } from '../../common/dropdown';
+import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
+import { MagnifierIcon } from '../../common/icons/magnifier_icon';
+import { TokenIcon } from '../../common/icons/token_icon';
+import {
+  CustomTDFirst,
+  CustomTDLast,
+  Table,
+  TBody,
+  THead,
+  THFirst,
+  THLast,
+  TR,
+} from '../../common/table';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
 

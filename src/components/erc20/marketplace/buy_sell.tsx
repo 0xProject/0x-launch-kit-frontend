@@ -3,15 +3,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../store/actions';
-import { getCurrencyPair, getWeb3State } from '../../store/selectors';
-import { themeColors, themeDimensions } from '../../themes/commons';
-import { tokenSymbolToDisplayString } from '../../util/tokens';
-import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../util/types';
-import { BigNumberInput } from '../common/big_number_input';
-import { Button } from '../common/button';
-import { CardBase } from '../common/card_base';
-import { CardTabSelector } from '../common/card_tab_selector';
+import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
+import { getCurrencyPair, getWeb3State } from '../../../store/selectors';
+import { themeColors, themeDimensions } from '../../../themes/commons';
+import { tokenSymbolToDisplayString } from '../../../util/tokens';
+import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../../util/types';
+import { BigNumberInput } from '../../common/big_number_input';
+import { Button } from '../../common/button';
+import { CardBase } from '../../common/card_base';
+import { CardTabSelector } from '../../common/card_tab_selector';
 
 import { OrderDetailsContainer } from './order_details';
 

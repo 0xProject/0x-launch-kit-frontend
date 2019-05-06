@@ -3,14 +3,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { themeColors } from '../../themes/commons';
-import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
-import { Card } from '../common/card';
-import { EmptyContent } from '../common/empty_content';
-import { CardLoading } from '../common/loading';
-import { CustomTD, Table, TH, THead, TR } from '../common/table';
+import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
+import { themeColors } from '../../../themes/commons';
+import { tokenAmountInUnits } from '../../../util/tokens';
+import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
+import { Card } from '../../common/card';
+import { EmptyContent } from '../../common/empty_content';
+import { CardLoading } from '../../common/loading';
+import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
 
