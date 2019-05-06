@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
 import { initWallet } from '../../store/actions';

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { Button as ButtonBase } from '../../../components/common/button';
 
+import { TitleText } from './marketplace_common';
+
 const BuySellWrapper = styled.div`
     width: 270px;
 `;
@@ -34,6 +36,16 @@ enum AssetOrderType {
     Cancel = 'CANCEL',
 }
 
+const CenteredText = styled(TitleText)`
+    text-align: center;
+`;
+
+const TextWithIcon = styled(CenteredText)`
+    :before {
+        content: url(''); // TODO add icon url
+    }
+`;
+
 // TODO REFACTOR
 export const BuySellAsset = (props: any) => {
     const assetType = AssetOrderType.Buy;
@@ -64,8 +76,8 @@ export const BuySellAsset = (props: any) => {
             <BuySellWrapper>
                 <Image image={assetImg} />
                 <BtnStyled btnColor={btnColor}>{btnTxt}</BtnStyled>
-                <h3>Ends wednesday, February 27, 2019</h3>
-                <h3>Last price: Ξ 2023</h3>
+                <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
+                <CenteredText>Last price: Ξ 2023</CenteredText>
             </BuySellWrapper>
         </>
     );
