@@ -1,5 +1,6 @@
 import { push } from 'connected-react-router';
 
+import { ERC20_APP_BASE_PATH } from '../../common/constants';
 import { ThunkCreator } from '../../util/types';
 
 export const goToHome: ThunkCreator = () => {
@@ -9,7 +10,7 @@ export const goToHome: ThunkCreator = () => {
         dispatch(
             push({
                 ...state.router.location,
-                pathname: '/',
+                pathname: `${ERC20_APP_BASE_PATH}/`,
             }),
         );
     };
@@ -22,7 +23,7 @@ export const goToWallet: ThunkCreator = () => {
         dispatch(
             push({
                 ...state.router.location,
-                pathname: '/my-wallet',
+                pathname: `${ERC20_APP_BASE_PATH}/my-wallet`,
             }),
         );
     };

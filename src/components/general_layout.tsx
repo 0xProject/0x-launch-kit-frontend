@@ -8,7 +8,6 @@ import { StoreState } from '../util/types';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
-import { ToolbarContainer } from './common/toolbar';
 
 const General = styled.div`
     background: ${props => props.theme.componentsTheme.background};
@@ -42,16 +41,17 @@ interface StateProps {
 
 interface OwnProps {
     children: React.ReactNode;
+    toolbar: React.ReactNode;
 }
 
 type Props = OwnProps & StateProps;
 
-const GeneralLayout = (props: Props) => {
-    const { theme, children } = props;
+export const GeneralLayout = (props: Props) => {
+    const { children, toolbar, theme } = props;
     return (
         <ThemeProvider theme={theme}>
             <General>
-                <ToolbarContainer />
+                {toolbar}
                 <ContentScroll>
                     <Content>{children}</Content>
                     <Footer />
@@ -68,6 +68,4 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const GeneralLayoutContainer = connect(mapStateToProps)(GeneralLayout);
-
-export { GeneralLayout, GeneralLayoutContainer };
+export const GeneralLayoutContainer = connect(mapStateToProps)(GeneralLayout);
