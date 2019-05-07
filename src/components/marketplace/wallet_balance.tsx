@@ -39,7 +39,7 @@ const LabelWrapper = styled.div`
 
 const Label = styled.span`
     align-items: center;
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     display: flex;
     flex-shrink: 0;
     font-size: 16px;
@@ -47,7 +47,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;

@@ -4,7 +4,7 @@ import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
 import { getNetworkId } from '../../store/selectors';
-import { themeColors, themeDimensions } from '../../themes/commons';
+import { themeDimensions } from '../../themes/commons';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
 import { tokenAmountInUnits } from '../../util/tokens';
@@ -36,8 +36,9 @@ interface StyledIsActive {
 
 const notificationWrapperMixin = css<StyledIsActive>`
     align-items: center;
-    background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
-    border-bottom: 1px solid ${themeColors.borderColor};
+    background-color: ${props =>
+        props.active ? props.theme.componentsTheme.rowActive : props.theme.componentsTheme.dropdownBackgroundColor};
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
     display: flex;
     justify-content: space-between;
     padding: 20px ${themeDimensions.horizontalPadding};
@@ -58,7 +59,7 @@ const NotificationWrapperMarketOrCancel = styled.a<StyledIsActive>`
     text-decoration: none;
 
     &:hover {
-        background-color: ${themeColors.notificationActive};
+        background-color: ${props => props.theme.componentsTheme.rowActive};
         cursor: pointer;
     }
 `;
@@ -69,7 +70,7 @@ const NotificationContent = styled.div`
 `;
 
 const NotificationTitle = styled.h2`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 16px;
     font-weight: 600;
     line-height: 1.2;
@@ -77,7 +78,7 @@ const NotificationTitle = styled.h2`
 `;
 
 const NotificationText = styled.p`
-    color: ${themeColors.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 16px;
     font-weight: 400;
     line-height: 1.2;

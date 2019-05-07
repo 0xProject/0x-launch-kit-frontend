@@ -1,16 +1,20 @@
 import React, { HTMLAttributes } from 'react';
 import Modal from 'react-modal';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install_metamask.svg';
-import { themeModalStyle } from '../../themes/commons';
+import { Theme } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
 import { ModalDisplay } from '../../util/types';
 
 import { Button } from './button';
 import { CloseModalButton } from './icons/close_modal_button';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface OwnProps {
+    theme: Theme;
+}
+
+interface Props extends HTMLAttributes<HTMLDivElement>, OwnProps {
     isOpen: boolean;
     closeModal: any;
     noMetamaskType: ModalDisplay;
@@ -25,7 +29,7 @@ const ModalContent = styled.div`
 `;
 
 const ModalTitle = styled.h1`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 20px;
     font-weight: 600;
     line-height: 1.2;
@@ -34,7 +38,7 @@ const ModalTitle = styled.h1`
 `;
 
 const ModalText = styled.p`
-    color: #666;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 16px;
     font-weight: normal;
     line-height: 1.5;
@@ -48,7 +52,7 @@ const ModalText = styled.p`
 `;
 
 const ModalTextLink = styled.a`
-    color: #999;
+    color: ${props => props.theme.componentsTheme.textLight};
     cursor: pointer;
     font-size: 13px;
     text-decoration: underline;
@@ -72,12 +76,12 @@ const ButtonStyled = styled(Button)`
 `;
 
 const LinkButton = styled.a`
-    color: #fff;
+    color: ${props => props.theme.componentsTheme.buttonTextColor};
     text-decoration: none;
 `;
 
-const MetamaskErrorModal: React.FC<Props> = props => {
-    const { isOpen, closeModal, noMetamaskType, connectWallet } = props;
+const MetamaskErrorModalContainer: React.FC<Props> = props => {
+    const { isOpen, closeModal, noMetamaskType, connectWallet, theme } = props;
     const metamaskNotInstalledContent = (
         <>
             <ModalTitle>Install Metamask</ModalTitle>
@@ -120,7 +124,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
     );
 
     return (
-        <Modal isOpen={isOpen} style={themeModalStyle}>
+        <Modal isOpen={isOpen} style={theme.modalTheme}>
             <CloseModalButton onClick={closeModal} />
             <ModalContent>
                 {noMetamaskType === ModalDisplay.EnablePermissions
@@ -130,4 +134,7 @@ const MetamaskErrorModal: React.FC<Props> = props => {
         </Modal>
     );
 };
+
+const MetamaskErrorModal = withTheme(MetamaskErrorModalContainer);
+
 export { MetamaskErrorModal };

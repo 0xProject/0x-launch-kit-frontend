@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { changeMarket, goToHome } from '../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../store/selectors';
-import { themeColors, themeDimensions, themeFeatures } from '../../themes/commons';
+import { themeDimensions } from '../../themes/commons';
 import { getColorBySymbol } from '../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
 import { tokenSymbolToDisplayString } from '../../util/tokens';
@@ -57,7 +57,7 @@ const MarketsDropdownHeader = styled.div`
 `;
 
 const MarketsDropdownHeaderText = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 18px;
     font-weight: 600;
     line-height: 26px;
@@ -65,7 +65,7 @@ const MarketsDropdownHeaderText = styled.span`
 `;
 
 const MarketsDropdownBody = styled(CardBase)`
-    box-shadow: ${themeFeatures.boxShadow};
+    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
     max-height: 100%;
     max-width: 100%;
     width: 401px;
@@ -73,7 +73,7 @@ const MarketsDropdownBody = styled(CardBase)`
 
 const MarketsFilters = styled.div`
     align-items: center;
-    border-bottom: 1px solid ${themeColors.borderColor};
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
     display: flex;
     justify-content: space-between;
     min-height: ${rowHeight};
@@ -81,7 +81,7 @@ const MarketsFilters = styled.div`
 `;
 
 const MarketsFiltersLabel = styled.h2`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 16px;
     font-weight: 600;
     line-height: normal;
@@ -95,7 +95,8 @@ const TokenFiltersTabs = styled.div`
 `;
 
 const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
-    color: ${props => (props.active ? '#000' : themeColors.lightGray)};
+    color: ${props =>
+        props.active ? props.theme.componentsTheme.textColorCommon : props.theme.componentsTheme.lightGray};
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
@@ -103,7 +104,7 @@ const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
     user-select: none;
 
     &:after {
-        color: ${themeColors.lightGray};
+        color: ${props => props.theme.componentsTheme.lightGray};
         content: '/';
         margin: 0 6px;
     }
@@ -123,10 +124,10 @@ const SearchWrapper = styled.div`
 `;
 
 const SearchField = styled.input`
-    background: #eaeaea;
+    background: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${themeColors.borderColor};
-    color: #333;
+    border: 1px solid ${props => props.theme.componentsTheme.marketsSearchFieldBorderColor};
+    color: ${props => props.theme.componentsTheme.marketsSearchFieldTextColor};
     font-size: 13px;
     height: ${searchFieldHeight};
     left: 0;
@@ -138,7 +139,7 @@ const SearchField = styled.input`
     z-index: 1;
 
     &:focus {
-        border-color: #aaa;
+        border-color: ${props => props.theme.componentsTheme.marketsSearchFieldBorderColor};
     }
 `;
 
@@ -168,11 +169,11 @@ const tableHeaderFontWeight = `
 `;
 
 const TRStyled = styled(TR)<MarketRowProps>`
-    background-color: ${props => (props.active ? themeColors.rowActive : 'transparent')};
+    background-color: ${props => (props.active ? props.theme.componentsTheme.rowActive : 'transparent')};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
 
     &:hover {
-        background-color: ${themeColors.rowActive};
+        background-color: ${props => props.theme.componentsTheme.rowActive};
     }
 
     &:last-child > td {
@@ -212,7 +213,7 @@ const TokenIconAndLabel = styled.div`
 `;
 
 const TokenLabel = styled.div`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 14px;
     font-weight: 700;
     line-height: 1.2;

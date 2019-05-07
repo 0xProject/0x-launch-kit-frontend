@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as AeTokenIcon } from '../../../assets/icons/ae.svg';
 import { ReactComponent as AgiTokenIcon } from '../../../assets/icons/agi.svg';
@@ -30,12 +30,13 @@ import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
-import { themeColors } from '../../../themes/commons';
+import { Theme } from '../../../themes/commons';
 
 interface Props {
     symbol: string;
     primaryColor?: string;
     isInline?: boolean;
+    theme: Theme;
 }
 
 const TokenIcons = {
@@ -81,18 +82,19 @@ const IconContainer = styled.div<{ color: string; isInline?: boolean }>`
 `;
 
 const Label = styled.label`
-    color: #ffffff;
+    color: #fff;
     font-size: 0.7em;
     font-weight: 500;
     line-height: normal;
     margin: 0;
 `;
-export const TokenIcon = (props: Props) => {
-    const { symbol, primaryColor, ...restProps } = props;
+
+const TokenIconContainer = (props: Props) => {
+    const { symbol, primaryColor, theme, ...restProps } = props;
     const TokenIconComponentName = getTokenIconNameBySymbol(symbol) as keyof typeof TokenIcons;
     const Icon: React.FunctionComponent = TokenIcons[TokenIconComponentName];
     return (
-        <IconContainer color={primaryColor || themeColors.gray} {...restProps}>
+        <IconContainer color={primaryColor || theme.componentsTheme.gray} {...restProps}>
             {Icon ? <Icon /> : <Label>{symbol && symbol.toUpperCase()}</Label>}
         </IconContainer>
     );
@@ -101,3 +103,7 @@ export const TokenIcon = (props: Props) => {
 const getTokenIconNameBySymbol = (symbol: string): string => {
     return `${symbol.charAt(0).toUpperCase()}${symbol.slice(1).toLowerCase()}TokenIcon`;
 };
+
+const TokenIcon = withTheme(TokenIconContainer);
+
+export { TokenIcon };

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { SpinnerSize, themeColors } from '../../../themes/commons';
+import { SpinnerSize } from '../../../themes/commons';
 import { MetamaskLarge } from '../icons/icon_metamask_large';
 import { NotificationCancelIcon } from '../icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../icons/notification_checkmark_icon';
@@ -67,7 +67,7 @@ const StepsTimeline = styled(StepsProgress)`
 `;
 
 const Title = styled.h1`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 20px;
     font-weight: 600;
     line-height: 1.2;
@@ -84,7 +84,7 @@ const ModalContent = styled.div`
 `;
 
 const ModalText = styled.p`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 16px;
     font-weight: normal;
     line-height: 1.5;
@@ -94,13 +94,13 @@ const ModalText = styled.p`
 `;
 
 const ModalTextClickable = styled.span`
-    color: ${themeColors.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
     cursor: pointer;
     text-decoration: underline;
 `;
 
 const ModalStatusText = styled.p`
-    color: #666;
+    color: ${props => props.theme.componentsTheme.textLighter};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -110,7 +110,7 @@ const ModalStatusText = styled.p`
 `;
 
 const ModalStatusTextLight = styled.span`
-    color: ${themeColors.textLight};
+    color: ${props => props.theme.componentsTheme.textLight};
 `;
 
 const IconContainer = styled.div`
@@ -119,6 +119,7 @@ const IconContainer = styled.div`
     height: 62px;
     justify-content: center;
     margin-bottom: ${iconMarginBottom};
+
     svg {
         height: 52px;
         width: 52px;
