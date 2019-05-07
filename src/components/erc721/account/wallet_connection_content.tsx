@@ -26,7 +26,7 @@ const connectToWallet = () => {
 
 class WalletConnectionContent extends React.PureComponent<Props> {
     public render = () => {
-        const { ethAccount } = this.props;
+        const { ethAccount, ...restProps } = this.props;
 
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
 
@@ -41,7 +41,7 @@ class WalletConnectionContent extends React.PureComponent<Props> {
             </>
         );
 
-        return <WalletConnectionStatusContainer walletConnectionContent={content} />;
+        return <WalletConnectionStatusContainer walletConnectionContent={content}  {...restProps} />;
     };
 }
 
