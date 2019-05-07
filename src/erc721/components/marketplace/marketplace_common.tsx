@@ -11,3 +11,15 @@ export enum AssetOrderType {
     Sell = 'SELL',
     Cancel = 'CANCEL',
 }
+
+// TODO - remove once the my collectibles page and the store is ready
+export interface Collectible {
+    name: string;
+    price: string;
+    color: string;
+    image: string;
+    assetId: string;
+    description: string;
+    currentOwner: string;
+    assetUrl: string;
+}

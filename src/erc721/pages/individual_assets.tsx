@@ -7,7 +7,7 @@ import { ColumnWide } from '../../components/common/column_wide';
 import { themeBreakPoints } from '../../themes/commons';
 import { AssetDescriptionContainer } from '../components/marketplace/asset_description_container';
 import { BuySellAsset } from '../components/marketplace/buy_sell_asset';
-import { AssetOrderType } from '../components/marketplace/marketplace_common';
+import { AssetOrderType, Collectible } from '../components/marketplace/marketplace_common';
 
 const General = styled.div`
     position: fixed;
@@ -31,16 +31,38 @@ const BuySellColumn = styled(ColumnWide)`
 
 const AssetDescriptionColumn = styled(ColumnNarrow)``;
 
-export const IndividualAsset = (props: any) => {
+interface OwnProps {
+    assetId: string;
+}
+
+type Props = OwnProps;
+
+export const IndividualAsset = (props: Props) => {
+    const asset = getAssetById(props.assetId);
+    const orderType = AssetOrderType.Buy;
     return (
         <General>
             <BuySellColumn>
-                <BuySellAsset assetType={AssetOrderType.Buy} />
+                <BuySellAsset asset={asset} orderType={orderType} />
             </BuySellColumn>
             <AssetDescriptionColumn>
-                <AssetDescriptionContainer />
+                <AssetDescriptionContainer asset={asset} />
             </AssetDescriptionColumn>
             <CheckMetamaskStateModalContainer />
         </General>
     );
+};
+
+// TODO - mocked function, remove once the asset store implementation is ready
+const getAssetById = (assetId: string): Collectible => {
+    return {
+        name: 'Vulcat',
+        price: '4.4',
+        color: '#ffefa7',
+        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png',
+        assetId: '1',
+        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam.`,
+        currentOwner: '0x5409ed021d9299bf6814279a6a1411a7e866a631',
+        assetUrl: 'https://www.cryptokitties.co/',
+    };
 };

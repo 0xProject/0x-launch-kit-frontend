@@ -6,7 +6,7 @@ import { OutsideUrlIcon } from '../../../components/common/icons/outside_url_ico
 import { CustomTD, TR } from '../../../components/common/table';
 import { truncateAddress } from '../../../util/number_utils';
 
-import { TitleText } from './marketplace_common';
+import { Collectible, TitleText } from './marketplace_common';
 
 const DescriptionCard = styled(Card)`
     width: 586px;
@@ -49,14 +49,20 @@ const IconWrapper = styled.a`
     height: 12px;
 `;
 
-export const AssetDescriptionContainer = (props: any) => {
-    const assetOwner = '0x5409ed021d9299bf6814279a6a1411a7e866a631';
+interface OwnProps {
+    asset: Collectible;
+}
+
+type Props = OwnProps;
+
+export const AssetDescriptionContainer = (props: Props) => {
+    const { currentOwner, description, price, name } = props.asset;
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
     return (
         <>
             <DescriptionCard>
                 <AssetNameTitleWrapper>
-                    <AssetNameTitle>Vulcat</AssetNameTitle>
+                    <AssetNameTitle>{name}</AssetNameTitle>
                     <AssetTypeTitle>
                         CryptoKitties
                         <IconWrapper href="https://www.cryptokitties.co/" target="_blank">
@@ -66,17 +72,14 @@ export const AssetDescriptionContainer = (props: any) => {
                 </AssetNameTitleWrapper>
 
                 <TitleText>Description</TitleText>
-                <DescriptionText>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
-                    laoreet dolore magna aliquam.
-                </DescriptionText>
+                <DescriptionText>{description}</DescriptionText>
                 <TitleText>Current owner</TitleText>
-                <DescriptionText>{assetOwner ? `${truncateAddress(assetOwner)}` : ''}</DescriptionText>
+                <DescriptionText>{currentOwner ? `${truncateAddress(currentOwner)}` : ''}</DescriptionText>
             </DescriptionCard>
             <DescriptionCard>
                 <TitleText>Price Chart</TitleText>
                 <TitleText>Current price</TitleText>
-                <p>4.4 ETH</p>
+                <p>{price} ETH</p>
                 <TitleText>Time remaining</TitleText>
                 <p>2 Days 8 hrs</p>
             </DescriptionCard>
