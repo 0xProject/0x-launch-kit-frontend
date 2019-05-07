@@ -233,6 +233,7 @@ export enum ModalDisplay {
 }
 
 export interface Collectible {
+    tokenId: string;
     name: string;
     price: string;
     color: string;
@@ -240,7 +241,7 @@ export interface Collectible {
 }
 
 export interface CollectiblesState {
-    readonly myCollectibles: Collectible[];
+    readonly userCollectibles: { [tokenId: string]: Collectible };
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
