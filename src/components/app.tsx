@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import {
     SHOULD_ENABLE_NO_METAMASK_PROMPT,
@@ -102,7 +100,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onInitMetamaskState: () => dispatch(initializeAppNoMetamaskOrLocked()),
         onUpdateStore: () => dispatch(updateStore()),

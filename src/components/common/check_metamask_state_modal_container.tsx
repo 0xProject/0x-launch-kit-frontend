@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { LocalStorage } from '../../services/local_storage';
 import { goToHomeErc20, initWallet } from '../../store/actions';
@@ -85,7 +83,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onGoToHome: () => dispatch(goToHomeErc20()),
         onConnectWallet: () => dispatch(initWallet()),

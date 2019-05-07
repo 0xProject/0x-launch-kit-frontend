@@ -6,16 +6,15 @@ jobs:
         steps:
             - checkout
             - restore_cache: # special step to restore the dependency cache
+                  name: Restore Yarn Package Cache
                   keys:
-                      # when lock file changes, use increasingly general patterns to restore cache
-                      - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
-                      - yarn-packages-v1-{{ .Branch }}-
-                      - yarn-packages-v1-
+                      - yarn-packages-{{ checksum "yarn.lock" }}
             - run:
                   name: Setup Yarn Dependencies #install all the dependencies
-                  command: yarn
+                  command: yarn install --frozen-lockfile
             - save_cache: #saves a cache of the installed dependencies
-                  key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                  name: Save Yarn Package Cache
+                  key: yarn-packages-{{ checksum "yarn.lock" }}
                   paths:
                       - ~/.cache/yarn
             - run:

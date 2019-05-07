@@ -7,9 +7,8 @@ import { ERC20_APP_BASE_PATH } from '../../common/constants';
 import { availableMarkets } from '../../common/markets';
 import { getMarketPriceEther } from '../../services/markets';
 import { getRelayer } from '../../services/relayer';
-import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { getKnownTokens } from '../../util/known_tokens';
-import { CurrencyPair, Market, StoreState, Token } from '../../util/types';
+import { CurrencyPair, Market, StoreState, ThunkCreator, Token } from '../../util/types';
 import { getOrderbookAndUserOrders } from '../actions';
 
 export const setMarketTokens = createAction('market/MARKET_TOKENS_set', resolve => {
@@ -37,8 +36,8 @@ export const fetchMarketPriceEtherUpdate = createAction('market/PRICE_ETHER_fetc
     return (ethInUsd: BigNumber) => resolve(ethInUsd);
 });
 
-export const changeMarket = (currencyPair: CurrencyPair) => {
-    return async (dispatch: any, getState: any) => {
+export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
         const web3Wrapper = await getWeb3Wrapper();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const knownTokens = getKnownTokens(networkId);
@@ -50,6 +49,7 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
             }),
         );
         dispatch(setCurrencyPair(currencyPair));
+        // tslint:disable-next-line:no-floating-promises
         dispatch(getOrderbookAndUserOrders());
 
         const state = getState() as StoreState;
@@ -69,8 +69,8 @@ export const changeMarket = (currencyPair: CurrencyPair) => {
     };
 };
 
-export const fetchMarkets = () => {
-    return async (dispatch: any) => {
+export const fetchMarkets: ThunkCreator = () => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
         const web3Wrapper = await getWeb3Wrapper();
         const networkId = await web3Wrapper.getNetworkIdAsync();
         const knownTokens = getKnownTokens(networkId);
@@ -95,8 +95,8 @@ export const fetchMarkets = () => {
     };
 };
 
-export const updateMarketPriceEther = () => {
-    return async (dispatch: any) => {
+export const updateMarketPriceEther: ThunkCreator = () => {
+    return async dispatch => {
         dispatch(fetchMarketPriceEtherStart());
 
         try {

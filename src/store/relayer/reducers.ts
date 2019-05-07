@@ -17,6 +17,7 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
             return { ...state, userOrders: action.payload };
         case getType(actions.initializeRelayerData):
             return action.payload;
+        default:
+            return state;
     }
-    return state;
 }
