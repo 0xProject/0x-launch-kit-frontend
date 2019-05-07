@@ -1,17 +1,41 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
 import React from 'react';
+import renderer from 'react-test-renderer';
+import { ThemeProvider } from 'styled-components';
 
 import { Toolbar } from '../../../components/common/toolbar';
+import { DefaultTheme } from '../../../themes/default_theme';
+
+const theme = new DefaultTheme();
 
 describe('Toolbar', () => {
     it('Toolbar to match snapshot', () => {
         // given
-        const toolbar = <Toolbar startContent={null} endContent={null} />;
+        const startContent = (
+            <>
+                <label>Start Content</label>
+            </>
+        );
+
+        const endContent = (
+            <>
+                <label>End Content</label>
+            </>
+        );
+
+        const toolbar = (
+            <ThemeProvider theme={theme}>
+                <Toolbar startContent={startContent} endContent={endContent} />
+            </ThemeProvider>
+        );
 
         // when
-        const wrapper = shallow(toolbar);
+        const tree = renderer.create(toolbar).toJSON();
 
         // then
-        expect(wrapper).toMatchSnapshot();
+        expect(tree).toMatchSnapshot();
     });
 });
