@@ -1,30 +1,5 @@
 # Contribution Guide
 
-## Running locally
-
-You can create a `docker-compose.yml` file like this:
-
-```yml
-version: '3'
-services:
-    ganache:
-        image: fvictorio/0x-ganache-testing
-        ports:
-            - '8545:8545'
-    launch-kit:
-        image: fvictorio/0x-launch-kit-testing
-        environment:
-            HTTP_PORT: '3000'
-            RPC_URL: 'http://ganache:8545'
-            NETWORK_ID: '50'
-        ports:
-            - '3000:3000'
-```
-
-and then run `docker-compose up`. This will create two containers: one has a ganache with the 0x contracts deployed and some test tokens, the other one has an instance of the [launch kit](https://github.com/0xProject/0x-launch-kit) implementation of a relayer that connects to ganache.
-
-Just running these containers and then doing `yarn start` in this repository should be enough to use this frontend locally.
-
 ## Structure
 
 The following short project walk-through may come in handy to understand the code base.
