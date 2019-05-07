@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { getTheme } from '../store/selectors';
-import { Theme, themeBreakPoints } from '../themes/commons';
+import { Theme, themeBreakPoints, themeDimensions } from '../themes/commons';
 import { StoreState } from '../util/types';
 
 import { Footer } from './common/footer';
@@ -21,7 +21,7 @@ const Content = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    min-height: fit-content;
+    height: calc(100% - ${themeDimensions.footerHeight});
     padding: 10px;
 
     @media (min-width: ${themeBreakPoints.xl}) {
@@ -33,6 +33,7 @@ const ContentScroll = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    height: calc(100% - ${themeDimensions.toolbarHeight});
     overflow: auto;
 `;
 

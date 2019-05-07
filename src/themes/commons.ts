@@ -104,6 +104,8 @@ export const themeDimensions = {
     sidebarWidth: '350px',
     verticalPadding: '10px',
     verticalSeparation: '30px',
+    toolbarHeight: '64px',
+    footerHeight: '38px',
 };
 
 export const themeBreakPoints = {

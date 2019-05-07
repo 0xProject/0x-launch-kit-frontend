@@ -10,7 +10,7 @@ const FooterWrapper = styled.div`
     align-items: center;
     display: flex;
     justify-content: center;
-    min-height: 38px;
+    height: ${themeDimensions.footerHeight};
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
 `;
 
