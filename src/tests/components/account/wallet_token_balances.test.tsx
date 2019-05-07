@@ -7,7 +7,7 @@ import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
 import { TokenBalance, TokenSymbol, Web3State } from '../../../util/types';
-import { mountWithTheme } from '../../util/mount_with_theme';
+import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
 
 const noop = () => ({});
 const ZERO = new BigNumber(0);
@@ -113,8 +113,7 @@ describe('WalletTokenBalances', () => {
             },
         ];
 
-        // when
-        const wrapper = mountWithTheme(
+        const tree = renderWithTheme(
             <WalletTokenBalances
                 ethBalance={ZERO}
                 wethTokenBalance={wethTokenBalance}
@@ -124,16 +123,8 @@ describe('WalletTokenBalances', () => {
             />,
         );
 
-        // then
-        const rows = wrapper.find('tbody tr');
-
-        // total eth
-        expect(rows.at(0).find('[data-icon="lock-open"]')).toExist();
-
-        // other tokens
-        expect(rows.at(1).find('[data-icon="lock-open"]')).toExist();
-        expect(rows.at(2).find('[data-icon="lock"]')).toExist();
-        expect(rows.at(3).find('[data-icon="lock-open"]')).toExist();
+        // when
+        expect(tree).toMatchSnapshot();
     });
 
     it('should call the onToggleTokenLock function when a locked token is clicked', () => {
@@ -184,6 +175,7 @@ describe('WalletTokenBalances', () => {
                 web3State={Web3State.Done}
             />,
         );
+
         wrapper
             .find('tbody tr')
             .at(2)

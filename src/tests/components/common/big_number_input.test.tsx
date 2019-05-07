@@ -7,7 +7,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { BigNumberInput } from '../../../components/common/big_number_input';
-import { mountWithTheme } from '../../util/mount_with_theme';
+import { mountWithTheme } from '../../util/test_with_theme';
 
 const noop = () => ({});
 

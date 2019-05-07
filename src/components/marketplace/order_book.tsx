@@ -268,5 +268,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
 };
 
 const OrderBookTableContainer = withTheme(connect(mapStateToProps)(OrderBookTable));
+const OrderBookTableWithTheme = withTheme(OrderBookTable);
 
-export { OrderBookTable, OrderBookTableContainer };
+export { OrderBookTable, OrderBookTableWithTheme, OrderBookTableContainer };

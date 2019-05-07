@@ -77,6 +77,7 @@ const LockIcon = styled.span`
 const lockedIcon = () => {
     return (
         <svg
+            data-icon="lock"
             className="lockedIcon"
             fill="none"
             height="16"
@@ -95,6 +96,7 @@ const lockedIcon = () => {
 const unlockedIcon = () => {
     return (
         <svg
+            data-icon="lock-open"
             className="unlockedIcon"
             fill="none"
             height="17"
