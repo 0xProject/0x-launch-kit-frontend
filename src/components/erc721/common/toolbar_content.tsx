@@ -40,11 +40,9 @@ const LogoHeader = styled(Logo)`
 
 const WalletDropdown = styled(WalletConnectionContentContainer)`
     display: none;
-
     @media (min-width: ${themeBreakPoints.sm}) {
         align-items: center;
         display: flex;
-
         ${separatorTopbar}
     }
 `;
