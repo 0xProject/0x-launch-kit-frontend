@@ -7,6 +7,7 @@ import { StoreState } from '../util/types';
 
 import * as actions from './actions';
 import { blockchain } from './blockchain/reducers';
+import { collectibles } from './collectibles/reducers';
 import { market } from './market/reducers';
 import { relayer } from './relayer/reducers';
 import { ui } from './ui/reducers';
@@ -20,4 +21,5 @@ export const createRootReducer = (history: History) =>
         relayer,
         ui,
         market,
+        collectibles,
     });
