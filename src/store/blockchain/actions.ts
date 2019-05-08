@@ -11,6 +11,7 @@ import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { BlockchainState, GasInfo, ThunkCreator, Token, TokenBalance, Web3State } from '../../util/types';
+import { getUserCollectibles } from '../collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
@@ -309,6 +310,8 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 dispatch(setMarketTokens({ baseToken, quoteToken }));
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(getOrderbookAndUserOrders());
+                // tslint:disable-next-line:no-floating-promises
+                dispatch(getUserCollectibles());
                 try {
                     await dispatch(fetchMarkets());
                     // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
