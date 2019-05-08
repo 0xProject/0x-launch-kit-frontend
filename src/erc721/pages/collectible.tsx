@@ -68,7 +68,7 @@ const getAssetOrderType = (currentUserAccount: string, asset: Asset): AssetButto
         }
         // The owner is the current user and the asset doesn't have a price: Show sell button
         return AssetButtonOrderType.Sell;
-    } else if (asset.price) {
+    } else if (price) {
         // The owner is not the current user and the asset has a price: Show buy button
         return AssetButtonOrderType.Buy;
     }
