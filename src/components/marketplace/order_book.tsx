@@ -26,13 +26,27 @@ interface OwnProps {
     theme: Theme;
 }
 
+// interface Props extends HTMLAttributes<HTMLDivElement>{};
+
 type Props = OwnProps & StateProps;
+
+interface State {
+    showStickySpread: boolean;
+    stickTo: string;
+}
+
+interface GridRowSpreadProps {
+    sticky?: boolean;
+    isVisible?: boolean;
+    stickTo?: string;
+}
 
 const OrderbookCard = styled(Card)`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     margin: 0;
+    max-height: 100%;
 
     > div:first-child {
         flex-grow: 0;
@@ -40,11 +54,10 @@ const OrderbookCard = styled(Card)`
     }
 
     > div:nth-child(2) {
-        /* align-items: flex-start; */
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        /* justify-content: center; */
+        overflow: hidden;
         padding-bottom: 0;
         padding-left: 0;
         padding-right: 0;
@@ -59,38 +72,55 @@ const GridRow = styled.div`
 const GridRowTop = styled(GridRow)`
     flex-grow: 0;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 `;
 
-const GridRowSpread = styled(GridRow)`
+const GridRowSpread = styled(GridRow)<GridRowSpreadProps>`
+    ${props => (props.stickTo === 'bottom' ? 'bottom: -1px;' : '')};
+    ${props => (props.stickTo === 'top' ? 'top: 29px;' : '')};
+    background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
     flex-grow: 0;
     flex-shrink: 0;
+    display: ${props => (props.isVisible ? 'grid' : 'none')};
+    position: ${props => (props.sticky ? 'absolute' : 'relative')};
+    width: 100%;
+    z-index: 12;
 `;
 
 const CenteredLoading = styled(CardLoading)`
     align-self: center;
 `;
 
-const ItemsContainer = styled.div`
+const ItemsScroll = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+`;
+
+const ItemsMainContainer = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     justify-content: center;
-    overflow: auto;
+    min-height: fit-content;
+    position: relative;
+    z-index: 1;
 `;
 
-const TopItems = styled.div`
+const ItemsInnerContainer = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     flex-shrink: 1;
+`;
+
+const TopItems = styled(ItemsInnerContainer)`
     justify-content: flex-end;
 `;
 
-const BottomItems = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-shrink: 1;
+const BottomItems = styled(ItemsInnerContainer)`
     justify-content: flex-start;
 `;
 
@@ -134,19 +164,95 @@ const orderToRow = (
     );
 };
 
-class OrderBookTable extends React.Component<Props> {
-    private readonly _spreadRow: React.RefObject<HTMLTableRowElement>;
+const getSpreadRow = (
+    ref: React.RefObject<HTMLDivElement>,
+    spread: string,
+    isVisible: boolean = true,
+    sticky: boolean = false,
+    stickTo: string = 'top',
+): React.ReactNode => {
+    return (
+        <GridRowSpread ref={ref} sticky={sticky} stickTo={stickTo} isVisible={isVisible}>
+            <CustomTDTitle as="div" styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                Spread
+            </CustomTDTitle>
+            <CustomTD as="div" styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
+                {}
+            </CustomTD>
+            <CustomTDLast
+                as="div"
+                styles={{
+                    tabular: true,
+                    textAlign: 'right',
+                    borderBottom: true,
+                    borderTop: true,
+                }}
+            >
+                {spread}
+            </CustomTDLast>
+        </GridRowSpread>
+    );
+};
+
+class OrderBookTable extends React.Component<Props, State> {
+    public readonly state: State = {
+        showStickySpread: false,
+        stickTo: 'top',
+    };
+
+    private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
+    private readonly _spreadRowFixed: React.RefObject<HTMLDivElement>;
+    private readonly _itemsScroll: React.RefObject<HTMLDivElement>;
     private _hasScrolled = false;
 
     constructor(props: Props) {
         super(props);
 
-        this._spreadRow = React.createRef();
+        this._spreadRowScrollable = React.createRef();
+        this._spreadRowFixed = React.createRef();
+        this._itemsScroll = React.createRef();
     }
 
     public render = () => {
+        const bunchaTestItems = (
+            <>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+                <GridRow>12313123</GridRow>
+            </>
+        );
         const { orderBook, baseToken, quoteToken, web3State, theme } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
+        const spreadToFixed = spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
 
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
@@ -184,56 +290,46 @@ class OrderBookTable extends React.Component<Props> {
                             Price ({quoteToken.symbol})
                         </THLast>
                     </GridRowTop>
-                    <ItemsContainer>
-                        <TopItems>
-                            {sellOrders.map((order, index) =>
-                                orderToRow(
-                                    order,
-                                    index,
-                                    sellOrders.length,
-                                    baseToken,
-                                    getColor(order),
-                                    mySizeSellArray,
-                                    web3State,
-                                ),
-                            )}
-                        </TopItems>
-                        <GridRowSpread ref={this._spreadRow}>
-                            <CustomTDTitle
-                                as="div"
-                                styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}
-                            >
-                                Spread
-                            </CustomTDTitle>
-                            <CustomTD as="div" styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                {}
-                            </CustomTD>
-                            <CustomTDLast
-                                as="div"
-                                styles={{
-                                    tabular: true,
-                                    textAlign: 'right',
-                                    borderBottom: true,
-                                    borderTop: true,
-                                }}
-                            >
-                                {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-                            </CustomTDLast>
-                        </GridRowSpread>
-                        <BottomItems>
-                            {buyOrders.map((order, index) =>
-                                orderToRow(
-                                    order,
-                                    index,
-                                    buyOrders.length,
-                                    baseToken,
-                                    getColor(order),
-                                    mySizeBuyArray,
-                                    web3State,
-                                ),
-                            )}
-                        </BottomItems>
-                    </ItemsContainer>
+                    <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpread}>
+                        {getSpreadRow(
+                            this._spreadRowFixed,
+                            spreadToFixed,
+                            this.state.showStickySpread,
+                            true,
+                            this.state.stickTo,
+                        )}
+                        <ItemsMainContainer>
+                            <TopItems>
+                                {bunchaTestItems}
+                                {sellOrders.map((order, index) =>
+                                    orderToRow(
+                                        order,
+                                        index,
+                                        sellOrders.length,
+                                        baseToken,
+                                        getColor(order),
+                                        mySizeSellArray,
+                                        web3State,
+                                    ),
+                                )}
+                            </TopItems>
+                            {getSpreadRow(this._spreadRowScrollable, spreadToFixed)}
+                            <BottomItems>
+                                {buyOrders.map((order, index) =>
+                                    orderToRow(
+                                        order,
+                                        index,
+                                        buyOrders.length,
+                                        baseToken,
+                                        getColor(order),
+                                        mySizeBuyArray,
+                                        web3State,
+                                    ),
+                                )}
+                                {bunchaTestItems}
+                            </BottomItems>
+                        </ItemsMainContainer>
+                    </ItemsScroll>
                 </>
             );
         }
@@ -249,9 +345,25 @@ class OrderBookTable extends React.Component<Props> {
         this._scrollToSpread();
     };
 
+    private readonly _updateStickySpread = (event: any) => {
+        const spreadOffsetTop = this._spreadRowScrollable.current ? this._spreadRowScrollable.current.offsetTop : 0;
+        const spreadHeight = this._spreadRowScrollable.current ? this._spreadRowScrollable.current.clientHeight : 0;
+        const itemsListScroll = this._itemsScroll.current ? this._itemsScroll.current.scrollTop : 0;
+        const itemsListHeight = this._itemsScroll.current ? this._itemsScroll.current.clientHeight : 0;
+        const topLimit = 0;
+
+        if (spreadOffsetTop - itemsListScroll <= topLimit) {
+            this.setState({ stickTo: 'top', showStickySpread: true });
+        } else if (itemsListScroll + itemsListHeight - spreadHeight <= spreadOffsetTop) {
+            this.setState({ stickTo: 'bottom', showStickySpread: true });
+        } else {
+            this.setState({ showStickySpread: false });
+        }
+    };
+
     private readonly _scrollToSpread = () => {
-        if (this._spreadRow.current && !this._hasScrolled) {
-            this._spreadRow.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        if (this._spreadRowScrollable.current && !this._hasScrolled) {
+            this._spreadRowScrollable.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
             this._hasScrolled = true;
         }
     };
