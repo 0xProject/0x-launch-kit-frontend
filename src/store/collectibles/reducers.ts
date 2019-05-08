@@ -10,7 +10,7 @@ const initialCollectibles: CollectiblesState = {
 
 export function collectibles(state: CollectiblesState = initialCollectibles, action: RootAction): CollectiblesState {
     switch (action.type) {
-        case getType(actions.fetchUserCollectiblesUpdate):
+        case getType(actions.fetchUserCollectiblesAsync.success):
             const userCollectibles = {
                 ...state.userCollectibles,
             };
