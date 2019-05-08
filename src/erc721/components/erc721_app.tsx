@@ -11,13 +11,11 @@ import { MyCollectibles } from '../pages/my_collectibles';
 const Toolbar = <ToolbarContainer />;
 
 export const Erc721App = () => (
-    <>
-        <GeneralLayoutContainer toolbar={Toolbar}>
-            <AdBlockDetector />
-            <Switch>
-                <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={MyCollectibles} />
-                <Route path={`${ERC721_APP_BASE_PATH}/asset/:id`} component={CollectibleContainer} />
-            </Switch>
-        </GeneralLayoutContainer>
-    </>
+    <GeneralLayoutContainer toolbar={Toolbar}>
+        <AdBlockDetector />
+        <Switch>
+            <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={MyCollectibles} />
+            <Route path={`${ERC721_APP_BASE_PATH}/asset/:id`} component={CollectibleContainer} />
+        </Switch>
+    </GeneralLayoutContainer>
 );
