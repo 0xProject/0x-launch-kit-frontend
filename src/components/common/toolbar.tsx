@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { goToHome, goToWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
@@ -24,6 +24,20 @@ interface DispatchProps {
 }
 
 type Props = StateProps & DispatchProps;
+
+const separatorTopbar = css`
+    &:after {
+        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
+        content: '';
+        height: 26px;
+        margin-left: 17px;
+        margin-right: 17px;
+        width: 1px;
+    }
+    &:last-child:after {
+        display: none;
+    }
+`;
 
 const ToolbarWrapper = styled.div`
     align-items: center;
@@ -51,18 +65,7 @@ const MyWalletLink = styled.a`
         text-decoration: underline;
     }
 
-    &:after {
-        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
-        content: '';
-        height: 26px;
-        margin-left: 17px;
-        margin-right: 17px;
-        width: 1px;
-    }
-
-    &:last-child:after {
-        display: none;
-    }
+    ${separatorTopbar}
 `;
 
 const ToolbarStart = styled.div`
@@ -78,36 +81,14 @@ const ToolbarEnd = styled.div`
 `;
 
 const LogoHeader = styled(Logo)`
-    &:after {
-        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
-        content: '';
-        height: 26px;
-        margin-left: 17px;
-        margin-right: 17px;
-        width: 1px;
-    }
-
-    &:last-child:after {
-        display: none;
-    }
+    ${separatorTopbar}
 `;
 
 const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     align-items: center;
     display: flex;
 
-    &:after {
-        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
-        content: '';
-        height: 26px;
-        margin-left: 17px;
-        margin-right: 17px;
-        width: 1px;
-    }
-
-    &:last-child:after {
-        display: none;
-    }
+    ${separatorTopbar}
 `;
 
 const WalletDropdown = styled(WalletConnectionStatusContainer)`
@@ -117,18 +98,7 @@ const WalletDropdown = styled(WalletConnectionStatusContainer)`
         align-items: center;
         display: flex;
 
-        &:after {
-            background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
-            content: '';
-            height: 26px;
-            margin-left: 17px;
-            margin-right: 17px;
-            width: 1px;
-        }
-
-        &:last-child:after {
-            display: none;
-        }
+        ${separatorTopbar}
     }
 `;
 
