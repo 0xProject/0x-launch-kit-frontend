@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { themeBreakPoints, themeColors, themeDimensions } from '../../themes/commons';
+import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 
 interface TableStyleProps {
     borderBottom?: boolean;
@@ -22,8 +22,11 @@ interface TableTDProps {
 
 export const Table = styled.table<TableProps>`
     border-bottom: ${props =>
-        props.styles && props.styles.borderBottom ? `1px solid ${themeColors.borderColor}` : 'none'};
-    border-top: ${props => (props.styles && props.styles.borderTop ? `1px solid ${themeColors.borderColor}` : 'none')};
+        props.styles && props.styles.borderBottom
+            ? `1px solid ${props.theme.componentsTheme.tableBorderColor}`
+            : 'none'};
+    border-top: ${props =>
+        props.styles && props.styles.borderTop ? `1px solid ${props.theme.componentsTheme.tableBorderColor}` : 'none'};
     margin-left: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
     margin-right: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
     min-width: ${props => (props.isResponsive ? 'fit-content' : '0')};
@@ -38,7 +41,6 @@ export const Table = styled.table<TableProps>`
 `;
 
 export const THead = styled.thead`
-    color: #ccc;
     font-size: 12px;
     text-transform: uppercase;
 `;
@@ -49,9 +51,12 @@ export const TR = styled.tr``;
 
 export const TH = styled.th<TableTDProps>`
     border-bottom: ${props =>
-        props.styles && props.styles.borderBottom ? `1px solid ${themeColors.borderColor}` : 'none'};
-    border-top: ${props => (props.styles && props.styles.borderTop ? `1px solid ${themeColors.borderColor}` : 'none')};
-    color: ${props => (props.styles && props.styles.color ? props.styles.color : themeColors.lightGray)};
+        props.styles && props.styles.borderBottom
+            ? `1px solid ${props.theme.componentsTheme.tableBorderColor}`
+            : 'none'};
+    border-top: ${props =>
+        props.styles && props.styles.borderTop ? `1px solid ${props.theme.componentsTheme.tableBorderColor}` : 'none'};
+    color: ${props => (props.styles && props.styles.color ? props.styles.color : props.theme.componentsTheme.thColor)};
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -69,9 +74,12 @@ export const TH = styled.th<TableTDProps>`
 
 export const CustomTD = styled.td<TableTDProps>`
     border-bottom: ${props =>
-        props.styles && props.styles.borderBottom ? `1px solid ${themeColors.borderColor}` : 'none'};
-    border-top: ${props => (props.styles && props.styles.borderTop ? `1px solid ${themeColors.borderColor}` : 'none')};
-    color: ${props => (props.styles && props.styles.color ? props.styles.color : '#000')};
+        props.styles && props.styles.borderBottom
+            ? `1px solid ${props.theme.componentsTheme.tableBorderColor}`
+            : 'none'};
+    border-top: ${props =>
+        props.styles && props.styles.borderTop ? `1px solid ${props.theme.componentsTheme.tableBorderColor}` : 'none'};
+    color: ${props => (props.styles && props.styles.color ? props.styles.color : props.theme.componentsTheme.tdColor)};
     font-feature-settings: 'tnum' ${props => (props.styles && props.styles.tabular ? '1' : '0')};
     font-size: 14px;
     font-weight: normal;
@@ -100,7 +108,7 @@ export const CustomTDLast = styled(CustomTD)`
 `;
 
 export const CustomTDTitle = styled(CustomTD)`
-    color: ${props => (props.styles && props.styles.color ? props.styles.color : themeColors.lightGray)};
+    color: ${props => (props.styles && props.styles.color ? props.styles.color : props.theme.componentsTheme.thColor)};
     font-size: 12px;
     text-transform: uppercase;
 `;

@@ -5,27 +5,70 @@
 [![devDependencies Status](https://david-dm.org/0xproject/0x-launch-kit-frontend/dev-status.svg)](https://david-dm.org/0xproject/0x-launch-kit-frontend?type=dev)
 [![Coverage Status](https://coveralls.io/repos/github/0xProject/0x-launch-kit-frontend/badge.svg?branch=feature%2Fcoveralls)](https://coveralls.io/github/0xProject/0x-launch-kit-frontend?branch=feature%2Fcoveralls)
 
-The project was bootstraped using [`create-react-app`](https://github.com/facebook/create-react-app), but the development server will listen for incoming requests on port `3001`. The configuration proxies `'^/api'` requests to a running instance of `0x-launch-kit` on port `3000`.
+This is an example implementation of a dApp that interacts with a [0x relayer](https://github.com/0xProject/standard-relayer-api). To use it, you need to have the URL of an existing relayer, or you can start one locally for use during development.
 
-### How to launch dev server:
+## Usage
 
-To start a [`0x-launch-kit`](https://github.com/0xProject/0x-launch-kit) instance, head to its GitHub page, clone the repository and follow the corresponding instructions.
-
-```
-$ git clone https://github.com/0xProject/0x-launch-kit-frontend
-$ cd 0x-launch-kit-frontend
-$ yarn
-$ yarn start
-```
-
-### How to use with docker
+Clone this repository and install its dependencies:
 
 ```
-To run the app with docker, follow these steps:
-
-1. Create the docker image: `docker build -t 0x-launch-kit-frontend .`
-2. Run the container, exposing the port 80 to whichever port you want: `docker run -p 8080:80 0x-launch-kit-frontend`
-3. Open `localhost:8080` in your browser.
+git clone git@github.com:0xProject/0x-launch-kit-frontend.git
+cd 0x-launch-kit-frontend
+yarn
 ```
 
-You can configure the dApp by setting the proper values in a `.env` file **before** building the image. Check `env.example` to see what variables can be set.
+### Using an existing relayer
+
+If you have the URL of an existing relayer, you can use this frontend against it. After installing the dependencies, start the application with this command, replacing `RELAYER_URL` with the proper value:
+
+```
+REACT_APP_RELAYER_URL='https://RELAYER_URL/api/v2' yarn start
+```
+
+A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to the network used by the relayer.
+
+These commands start the app in development mode. You can run `yarn build` to build the assets. The results will be in the `build` directory. Remember to set the environment variable with the relayer URL when running the `build` command:
+
+```
+REACT_APP_RELAYER_URL='https://RELAYER_URL/api/v2' yarn build
+serve ./build
+```
+
+### Creating a relayer for development
+
+If you don't have a relayer, you can start one locally for development. First create a `docker-compose.yml` file like this:
+
+```yml
+version: '3'
+services:
+    ganache:
+        image: fvictorio/0x-ganache-testing
+        ports:
+            - '8545:8545'
+    launch-kit:
+        image: fvictorio/0x-launch-kit-testing
+        environment:
+            HTTP_PORT: '3000'
+            RPC_URL: 'http://ganache:8545'
+            NETWORK_ID: '50'
+        ports:
+            - '3000:3000'
+        depends_on:
+            - ganache
+```
+
+and then run `docker-compose up`. This will create two containers: one has a ganache with the 0x contracts deployed and some test tokens, and the other one has an instance of the [launch kit](https://github.com/0xProject/0x-launch-kit) implementation of a relayer that connects to that ganache.
+
+After starting those containers, you can run `yarn start` in another terminal. A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to `localhost:8545`.
+
+> _Note: the state of the relayer will be kept between runs. If you want to start from scratch, use `docker-compose up --force-recreate`_
+
+## Environment variables
+
+You can create a `.env` file to set environment variables and configure the behavior of the dApp. Start by copying the example file (`cp .env.example .env`) and modify the ones you want. Some things you can configure are:
+
+-   `REACT_APP_RELAYER_URL`: The URL of the relayer used by the dApp. Defaults to `http://localhost:3001/api/v2`
+-   `REACT_APP_MAKER_FEE`: The fee in ZRX payed by the maker of an order. Defaults to `1000000000000000000`
+-   `REACT_APP_TAKER_FEE`: The fee in ZRX payed when filling an order. Defaults to `100000000000000000`
+
+Check `.env.example` for the full list.
