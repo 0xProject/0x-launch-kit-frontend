@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { setHasUnreadNotifications } from '../../store/actions';
 import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
-import { themeColors, themeDimensions, themeFeatures } from '../../themes/commons';
+import { themeDimensions } from '../../themes/commons';
 import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
@@ -29,10 +29,14 @@ const NotificationsDropdownHeader = styled.div`
     align-items: center;
     display: flex;
     position: relative;
+
+    path {
+        fill: ${props => props.theme.componentsTheme.notificationIconColor};
+    }
 `;
 
 const NewNotificationsBadge = styled.div`
-    background: #ff6534;
+    background: ${props => props.theme.componentsTheme.notificationsBadgeColor};
     border-radius: 50%;
     height: 7px;
     position: absolute;
@@ -42,7 +46,7 @@ const NewNotificationsBadge = styled.div`
 `;
 
 const NotificationsDropdownBody = styled(CardBase)`
-    box-shadow: ${themeFeatures.boxShadow};
+    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
     width: 400px;
 `;
 const NotificationsList = styled.div`
@@ -51,8 +55,8 @@ const NotificationsList = styled.div`
 `;
 
 const NotificationDropdownTitle = styled.h1`
-    border-bottom: 1px solid ${themeColors.borderColor};
-    color: #000;
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 16px;
     font-weight: 600;
     line-height: 1.2;
@@ -61,8 +65,8 @@ const NotificationDropdownTitle = styled.h1`
 `;
 
 const NoNotifications = styled.div`
-    text-align: center;
     line-height: 3em;
+    text-align: center;
 `;
 
 class NotificationsDropdown extends React.Component<Props, {}> {

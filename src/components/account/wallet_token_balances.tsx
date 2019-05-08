@@ -46,6 +46,20 @@ const CustomTDTokenName = styled(CustomTD)`
     white-space: nowrap;
 `;
 
+const CustomTDLockIcon = styled(CustomTD)`
+    .lockedIcon {
+        path {
+            fill: ${props => props.theme.componentsTheme.iconLockedColor};
+        }
+    }
+
+    .unlockedIcon {
+        path {
+            fill: ${props => props.theme.componentsTheme.iconUnlockedColor};
+        }
+    }
+`;
+
 const TokenName = styled.span`
     font-weight: 700;
 `;
@@ -62,7 +76,15 @@ const LockIcon = styled.span`
 
 const lockedIcon = () => {
     return (
-        <svg data-icon="lock" width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+            data-icon="lock"
+            className="lockedIcon"
+            fill="none"
+            height="16"
+            viewBox="0 0 13 16"
+            width="13"
+            xmlns="http://www.w3.org/2000/svg"
+        >
             <path
                 d="M6.24949 0C3.66224 0 1.54871 2.21216 1.54871 4.92014V6.33135C0.692363 6.33135 0 7.05602 0 7.95232V14.379C0 15.2753 0.692363 16 1.54871 16H10.9503C11.8066 16 12.499 15.2753 12.499 14.379V7.95232C12.499 7.05602 11.8066 6.33135 10.9503 6.33135V4.92014C10.9503 2.21216 8.83674 0 6.24949 0ZM9.31046 6.33135H3.18851V4.92014C3.18851 3.16567 4.55502 1.71633 6.24949 1.71633C7.94395 1.71633 9.31046 3.16567 9.31046 4.92014V6.33135Z"
                 fill="black"
@@ -75,10 +97,11 @@ const unlockedIcon = () => {
     return (
         <svg
             data-icon="lock-open"
-            width="13"
+            className="unlockedIcon"
+            fill="none"
             height="17"
             viewBox="0 0 13 17"
-            fill="none"
+            width="13"
             xmlns="http://www.w3.org/2000/svg"
         >
             <path
@@ -97,9 +120,9 @@ interface LockCellProps {
 
 const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
     return (
-        <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
+        <CustomTDLockIcon styles={{ borderBottom: true, textAlign: 'center' }}>
             <LockIcon onClick={onClick}>{isUnlocked ? unlockedIcon() : lockedIcon()}</LockIcon>
-        </CustomTD>
+        </CustomTDLockIcon>
     );
 };
 

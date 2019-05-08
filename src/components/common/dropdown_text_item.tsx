@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeColors, themeDimensions } from '../../themes/commons';
+import { themeDimensions } from '../../themes/commons';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     active?: boolean;
@@ -10,18 +10,18 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
-    background-color: ${props => (props.active ? themeColors.rowActive : '#fff')};
-    border-bottom: 1px solid ${themeColors.borderColor};
-    color: #000;
+    background-color: ${props =>
+        props.active ? props.theme.componentsTheme.rowActive : props.theme.componentsTheme.dropdownBackgroundColor};
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
+    color: ${props => props.theme.componentsTheme.dropdownTextColor};
     cursor: pointer;
     font-size: 14px;
     font-weight: normal;
     line-height: 1.3;
-
     padding: 12px ${themeDimensions.horizontalPadding};
 
     &:hover {
-        background-color: ${themeColors.rowActive};
+        background-color: ${props => props.theme.componentsTheme.rowActive};
     }
 
     &:first-child {

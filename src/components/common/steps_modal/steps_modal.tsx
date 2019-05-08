@@ -1,10 +1,11 @@
 import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
+import { withTheme } from 'styled-components';
 
 import { stepsModalReset } from '../../../store/actions';
 import { getStepsModalCurrentStep, getStepsModalDoneSteps, getStepsModalPendingSteps } from '../../../store/selectors';
-import { themeModalStyle } from '../../../themes/commons';
+import { Theme } from '../../../themes/commons';
 import { getStepTitle, isLongStep } from '../../../util/steps';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
@@ -22,15 +23,19 @@ interface StateProps {
     pendingSteps: Step[];
 }
 
+interface OwnProps {
+    theme: Theme;
+}
+
 interface DispatchProps {
     reset: () => void;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 class StepsModal extends React.Component<Props> {
     public render = () => {
-        const { currentStep, doneSteps, pendingSteps, reset } = this.props;
+        const { currentStep, doneSteps, pendingSteps, reset, theme } = this.props;
         const isOpen = currentStep !== null;
 
         const buildStepsProgress = (currentStepItem: StepItem): StepItem[] => [
@@ -53,7 +58,7 @@ class StepsModal extends React.Component<Props> {
         const stepIndex = doneSteps.length;
 
         return (
-            <Modal isOpen={isOpen} style={themeModalStyle}>
+            <Modal isOpen={isOpen} style={theme.modalTheme}>
                 <CloseModalButton onClick={reset} />
                 <ModalContent>
                     {currentStep && currentStep.kind === StepKind.ToggleTokenLock && (
@@ -82,11 +87,11 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const StepsModalContainer = connect(
-    mapStateToProps,
-    {
-        reset: stepsModalReset,
-    },
-)(StepsModal);
+const StepsModalContainer = withTheme(
+    connect(
+        mapStateToProps,
+        { reset: stepsModalReset },
+    )(StepsModal),
+);
 
 export { StepsModal, StepsModalContainer };
