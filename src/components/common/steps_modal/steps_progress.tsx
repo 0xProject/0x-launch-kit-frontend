@@ -27,7 +27,7 @@ const StepsProgressWrapper = styled.div`
 `;
 
 const StartingDot = styled.div`
-    background: #000;
+    background: ${props => props.theme.componentsTheme.stepsProgressStartingDotColor};
     border-radius: 50%;
     flex-grow: 0;
     flex-shrink: 0;
@@ -48,7 +48,10 @@ const StepLineContainer = styled.div`
 `;
 
 const StepTitle = styled.h4<{ active?: boolean }>`
-    color: ${props => (props.active ? '#000' : '#e6e6e6')};
+    color: ${props =>
+        props.active
+            ? props.theme.componentsTheme.stepsProgressStepTitleColorActive
+            : props.theme.componentsTheme.stepsProgressStepTitleColor};
     font-size: 12px;
     font-weight: 500;
     line-height: 1.2;
@@ -61,14 +64,14 @@ const StepTitle = styled.h4<{ active?: boolean }>`
 `;
 
 const StepLine = styled.div`
-    background: rgba(0, 0, 0, 0.1);
+    background: ${props => props.theme.componentsTheme.stepsProgressStepLineColor};
     height: 3px;
     margin: 0;
     position: relative;
 `;
 
 const StepLineProgress = styled.div<{ progress?: number }>`
-    background: #000;
+    background: ${props => props.theme.componentsTheme.stepsProgressStepLineProgressColor};
     height: 3px;
     left: 0;
     margin: 0;
@@ -77,7 +80,10 @@ const StepLineProgress = styled.div<{ progress?: number }>`
 `;
 
 const StepDot = styled.div<{ progress?: number }>`
-    background: ${props => (props.progress && props.progress >= 100 ? '#000' : 'rgba(0, 0, 0, 0.1)')};
+    background: ${props =>
+        props.progress && props.progress >= 100
+            ? props.theme.componentsTheme.stepsProgressStepLineProgressColor
+            : props.theme.componentsTheme.stepsProgressStepLineColor};
     border-radius: 50%;
     flex-shrink: 0;
     height: 16px;
@@ -88,17 +94,16 @@ const StepDot = styled.div<{ progress?: number }>`
         position: relative;
         top: -2px;
     }
+
+    path {
+        stroke: ${props => props.theme.componentsTheme.stepsProgressCheckMarkColor};
+    }
 `;
 
 const checkMark = () => {
     return (
         <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M1.6665 4.23416L3.94864 6.51339L8.44045 1.33331"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-            />
+            <path d="M1.6665 4.23416L3.94864 6.51339L8.44045 1.33331" strokeWidth="2" strokeLinecap="round" />
         </svg>
     );
 };

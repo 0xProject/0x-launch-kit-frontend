@@ -16,10 +16,14 @@ const LogoLink = styled.a<any>`
     height: 33px;
     font-family: 'Inter var', sans-serif;
     text-decoration: none;
+
+    path {
+        fill: ${props => props.theme.componentsTheme.logoColor};
+    }
 `;
 
 const LogoText = styled.h1`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.logoTextColor};
     display: none;
     font-size: 18px;
     font-weight: 500;

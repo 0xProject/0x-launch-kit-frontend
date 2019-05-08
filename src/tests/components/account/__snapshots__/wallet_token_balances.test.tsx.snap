@@ -1,0 +1,325 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`] = `
+<div
+  className="sc-dnqmqq gSaoM sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-iwsKbI iOxuht"
+  >
+    <h1
+      className="sc-gZMcBi bGMOPW"
+    >
+      Token Balances
+    </h1>
+  </div>
+  <div
+    className="sc-gqjmRU eptite"
+  >
+    <table
+      className="sc-kAzzGY guYYtw"
+    >
+      <thead
+        className="sc-chPdSV cBMkGM"
+      >
+        <tr
+          className="sc-kGXeez eIIwaK"
+        >
+          <th
+            className="sc-kpOJdX sc-kkGfuU cIBRCA"
+          >
+            Token
+          </th>
+          <th
+            className="sc-kpOJdX sc-kkGfuU cIBRCA"
+          />
+          <th
+            className="sc-kpOJdX sc-kkGfuU dTIWig"
+          >
+            Available Qty.
+          </th>
+          <th
+            className="sc-kpOJdX sc-kkGfuU dTIWig"
+          >
+            Price (USD)
+          </th>
+          <th
+            className="sc-kpOJdX sc-kkGfuU dTIWig"
+          >
+            % Change
+          </th>
+          <th
+            className="sc-kpOJdX sc-kEYyzF fkWbcp"
+          >
+            Locked?
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        className="sc-brqgnP bPUEUp"
+      >
+        <tr
+          className="sc-kGXeez eIIwaK"
+        >
+          <td
+            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+          >
+            <div
+              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              color="white"
+            >
+              <svg>
+                weth.svg
+              </svg>
+            </div>
+          </td>
+          <td
+            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+          >
+            ETH Total (ETH + wETH)
+          </td>
+          <td
+            className="sc-dxgOiQ ghISBd"
+          >
+            0.00
+          </td>
+          <td
+            className="sc-dxgOiQ ghISBd"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ ghISBd"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+          >
+            <span
+              className="sc-cMljjf dawIni"
+              onClick={[Function]}
+            >
+              <svg
+                className="unlockedIcon"
+                data-icon="lock-open"
+                fill="none"
+                height="17"
+                viewBox="0 0 13 17"
+                width="13"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.54871 4.92014C1.54871 2.21216 3.66224 0 6.24949 0C8.83674 0 10.9503 2.21216 10.9503 4.92014H9.31046C9.31046 3.16567 7.94395 1.71633 6.24949 1.71633C4.55502 1.71633 3.18851 3.16567 3.18851 4.92014V7.33135H9.31046H10.9503C11.8066 7.33135 12.499 8.05602 12.499 8.95232V15.379C12.499 16.2753 11.8066 17 10.9503 17H1.54871C0.692363 17 0 16.2753 0 15.379V8.95232C0 8.05602 0.692363 7.33135 1.54871 7.33135V4.92014Z"
+                  fill="#C4C4C4"
+                />
+              </svg>
+            </span>
+          </td>
+        </tr>
+        <tr
+          className="sc-kGXeez eIIwaK"
+        >
+          <td
+            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+          >
+            <div
+              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              color="white"
+            >
+              <label
+                className="sc-jTzLTM eGLEac"
+              >
+                MOCK1
+              </label>
+            </div>
+          </td>
+          <td
+            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+          >
+            <span
+              className="sc-jWBwVP iYUHzL"
+            >
+              MOCK1
+            </span>
+             
+            - MOCK1
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            0.00
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+          >
+            <span
+              className="sc-cMljjf dawIni"
+              onClick={[Function]}
+            >
+              <svg
+                className="unlockedIcon"
+                data-icon="lock-open"
+                fill="none"
+                height="17"
+                viewBox="0 0 13 17"
+                width="13"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.54871 4.92014C1.54871 2.21216 3.66224 0 6.24949 0C8.83674 0 10.9503 2.21216 10.9503 4.92014H9.31046C9.31046 3.16567 7.94395 1.71633 6.24949 1.71633C4.55502 1.71633 3.18851 3.16567 3.18851 4.92014V7.33135H9.31046H10.9503C11.8066 7.33135 12.499 8.05602 12.499 8.95232V15.379C12.499 16.2753 11.8066 17 10.9503 17H1.54871C0.692363 17 0 16.2753 0 15.379V8.95232C0 8.05602 0.692363 7.33135 1.54871 7.33135V4.92014Z"
+                  fill="#C4C4C4"
+                />
+              </svg>
+            </span>
+          </td>
+        </tr>
+        <tr
+          className="sc-kGXeez eIIwaK"
+        >
+          <td
+            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+          >
+            <div
+              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              color="white"
+            >
+              <label
+                className="sc-jTzLTM eGLEac"
+              >
+                MOCK2
+              </label>
+            </div>
+          </td>
+          <td
+            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+          >
+            <span
+              className="sc-jWBwVP iYUHzL"
+            >
+              MOCK2
+            </span>
+             
+            - MOCK2
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            0.00
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+          >
+            <span
+              className="sc-cMljjf dawIni"
+              onClick={[Function]}
+            >
+              <svg
+                className="lockedIcon"
+                data-icon="lock"
+                fill="none"
+                height="16"
+                viewBox="0 0 13 16"
+                width="13"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.24949 0C3.66224 0 1.54871 2.21216 1.54871 4.92014V6.33135C0.692363 6.33135 0 7.05602 0 7.95232V14.379C0 15.2753 0.692363 16 1.54871 16H10.9503C11.8066 16 12.499 15.2753 12.499 14.379V7.95232C12.499 7.05602 11.8066 6.33135 10.9503 6.33135V4.92014C10.9503 2.21216 8.83674 0 6.24949 0ZM9.31046 6.33135H3.18851V4.92014C3.18851 3.16567 4.55502 1.71633 6.24949 1.71633C7.94395 1.71633 9.31046 3.16567 9.31046 4.92014V6.33135Z"
+                  fill="black"
+                />
+              </svg>
+            </span>
+          </td>
+        </tr>
+        <tr
+          className="sc-kGXeez eIIwaK"
+        >
+          <td
+            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+          >
+            <div
+              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              color="white"
+            >
+              <label
+                className="sc-jTzLTM eGLEac"
+              >
+                MOCK3
+              </label>
+            </div>
+          </td>
+          <td
+            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+          >
+            <span
+              className="sc-jWBwVP iYUHzL"
+            >
+              MOCK3
+            </span>
+             
+            - MOCK3
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            0.00
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ gYurgZ"
+          >
+            -
+          </td>
+          <td
+            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+          >
+            <span
+              className="sc-cMljjf dawIni"
+              onClick={[Function]}
+            >
+              <svg
+                className="unlockedIcon"
+                data-icon="lock-open"
+                fill="none"
+                height="17"
+                viewBox="0 0 13 17"
+                width="13"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.54871 4.92014C1.54871 2.21216 3.66224 0 6.24949 0C8.83674 0 10.9503 2.21216 10.9503 4.92014H9.31046C9.31046 3.16567 7.94395 1.71633 6.24949 1.71633C4.55502 1.71633 3.18851 3.16567 3.18851 4.92014V7.33135H9.31046H10.9503C11.8066 7.33135 12.499 8.05602 12.499 8.95232V15.379C12.499 16.2753 11.8066 17 10.9503 17H1.54871C0.692363 17 0 16.2753 0 15.379V8.95232C0 8.05602 0.692363 7.33135 1.54871 7.33135V4.92014Z"
+                  fill="#C4C4C4"
+                />
+              </svg>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;

@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { getWeb3State } from '../../store/selectors';
-import { themeColors, themeDimensions } from '../../themes/commons';
+import { themeDimensions } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
 import { StoreState, Web3State } from '../../util/types';
 
@@ -20,16 +20,15 @@ interface StateProps {
 
 type Props = OwnProps & StateProps;
 
-export const separatorTopbar = `
+export const separatorTopbar = css`
     &:after {
-        background-color: ${themeColors.borderColor};
-        content: "";
+        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
+        content: '';
         height: 26px;
         margin-left: 17px;
         margin-right: 17px;
         width: 1px;
     }
-
     &:last-child:after {
         display: none;
     }
@@ -37,8 +36,8 @@ export const separatorTopbar = `
 
 const ToolbarWrapper = styled.div`
     align-items: center;
-    background: #ffffff;
-    border-bottom: 1px solid ${themeColors.borderColor};
+    background: ${props => props.theme.componentsTheme.topbarBackgroundColor};
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.topbarBorderColor};
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;

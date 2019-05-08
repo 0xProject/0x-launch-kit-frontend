@@ -3,12 +3,12 @@
  */
 
 import { BigNumber } from '0x.js';
-import { mount } from 'enzyme';
 import React from 'react';
 
-import { OrderBookTable } from '../../components/erc20/marketplace/order_book';
+import { OrderBookTableWithTheme } from '../../components/erc20/marketplace/order_book';
 import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
+import { mountWithTheme } from '../util/test_with_theme';
 
 describe('OrderBookTable', () => {
     it('Renders my size column with value', () => {
@@ -59,8 +59,8 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
-            <OrderBookTable
+        const wrapper = mountWithTheme(
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
@@ -129,8 +129,8 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
-            <OrderBookTable
+        const wrapper = mountWithTheme(
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
@@ -216,8 +216,8 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
-            <OrderBookTable
+        const wrapper = mountWithTheme(
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
@@ -340,8 +340,8 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
-            <OrderBookTable
+        const wrapper = mountWithTheme(
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={token}
                 quoteToken={token}
@@ -411,8 +411,8 @@ describe('OrderBookTable', () => {
         const userOrders = [userOrder1];
 
         // when
-        const wrapper = mount(
-            <OrderBookTable
+        const wrapper = mountWithTheme(
+            <OrderBookTableWithTheme
                 orderBook={orderBook}
                 baseToken={token}
                 quoteToken={token}
