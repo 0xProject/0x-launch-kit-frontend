@@ -8,7 +8,6 @@ import 'sanitize.css';
 
 import { DEFAULT_BASE_PATH, ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH, LOGGER_ID } from './common/constants';
 import { AppContainer } from './components/app';
-import { AdBlockDetector } from './components/common/adblock_detector';
 import { Erc20App } from './erc20/components/erc20_app';
 import { Erc721App } from './erc721/components/erc721_app';
 import './index.css';
@@ -28,7 +27,6 @@ const Web3WrappedApp = (
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <AppContainer>
-                <AdBlockDetector />
                 <Switch>
                     <Route path={ERC20_APP_BASE_PATH} component={Erc20App} />
                     <Route path={ERC721_APP_BASE_PATH} component={Erc721App} />
