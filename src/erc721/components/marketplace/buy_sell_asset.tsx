@@ -74,6 +74,9 @@ export const BuySellAsset = (props: Props) => {
             btnColor = '#ff6534';
             break;
         }
+        default: {
+            break;
+        }
     }
     return (
         <>

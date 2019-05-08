@@ -79,7 +79,7 @@ export const AssetDescriptionContainer = (props: Props) => {
             <DescriptionCard>
                 <TitleText>Price Chart</TitleText>
                 <TitleText>Current price</TitleText>
-                <p>{price} ETH</p>
+                {price ? <p>{price} ETH</p> : '----'}
                 <TitleText>Time remaining</TitleText>
                 <p>2 Days 8 hrs</p>
             </DescriptionCard>
