@@ -5,8 +5,9 @@ import { Card } from '../../../components/common/card';
 import { OutsideUrlIcon } from '../../../components/common/icons/outside_url_icon';
 import { CustomTD, TR } from '../../../components/common/table';
 import { truncateAddress } from '../../../util/number_utils';
+import { Collectible } from '../../../util/types';
 
-import { Asset, TitleText } from './marketplace_common';
+import { TitleText } from './marketplace_common';
 
 const DescriptionCard = styled(Card)`
     width: 586px;
@@ -50,7 +51,7 @@ const IconWrapper = styled.a`
 `;
 
 interface OwnProps {
-    asset: Asset;
+    asset: Collectible;
 }
 
 type Props = OwnProps;

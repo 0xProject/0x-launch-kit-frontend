@@ -238,6 +238,9 @@ export interface Collectible {
     price: string;
     color: string;
     image: string;
+    currentOwner: string;
+    assetUrl: string;
+    description: string;
 }
 
 export interface CollectiblesState {

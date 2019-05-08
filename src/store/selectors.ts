@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 
 import { isWeth } from '../util/known_tokens';
 import {
+    Collectible,
     OrderBook,
     OrderSide,
     SearchTokenBalanceObject,
@@ -37,6 +38,8 @@ export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
 export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getUserCollectibles = (state: StoreState) => state.collectibles.userCollectibles;
+export const getCollectibleById = (state: StoreState, props: { assetId: string }): Collectible | undefined =>
+    state.collectibles.userCollectibles[props.assetId];
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {

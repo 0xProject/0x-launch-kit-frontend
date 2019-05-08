@@ -4,7 +4,7 @@ import { Route, Switch } from 'react-router';
 import { ERC721_APP_BASE_PATH } from '../../common/constants';
 import { AdBlockDetector } from '../../components/common/adblock_detector';
 import { GeneralLayoutContainer } from '../../components/general_layout';
-import { CollectibleContainer } from '../../erc721/pages/collectible';
+import { CollectibleContainer } from '../../erc721/pages/collectible_page';
 
 import { ToolbarContentContainer } from './common/toolbar_content';
 import { Collectibles } from './pages/collectibles';
@@ -19,7 +19,10 @@ export const Erc721App = () => (
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={Collectibles} />
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/my-collectibles`} component={MyCollectibles} />
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={MyCollectibles} />
-            <Route path={`${ERC721_APP_BASE_PATH}/asset/:id`} component={CollectibleContainer} />
+
+            <Route path={`${ERC721_APP_BASE_PATH}/asset/:id`}>
+                {({ match }) => match && <CollectibleContainer assetId={match.params.id} />}
+            </Route>
         </Switch>
     </GeneralLayoutContainer>
 );

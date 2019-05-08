@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Button as ButtonBase } from '../../../components/common/button';
+import { Collectible } from '../../../util/types';
 
-import { Asset, AssetButtonOrderType, TitleText } from './marketplace_common';
+import { AssetButtonOrderType, TitleText } from './marketplace_common';
 
 const BuySellWrapper = styled.div`
     width: 270px;
@@ -48,7 +49,7 @@ const TextWithIcon = styled(CenteredText)`
 
 interface OwnProps {
     orderType: AssetButtonOrderType;
-    asset: Asset;
+    asset: Collectible;
 }
 
 type Props = OwnProps;

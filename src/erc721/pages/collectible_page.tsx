@@ -5,12 +5,12 @@ import styled from 'styled-components';
 import { CheckMetamaskStateModalContainer } from '../../components/common/check_metamask_state_modal_container';
 import { ColumnNarrow } from '../../components/common/column_narrow';
 import { ColumnWide } from '../../components/common/column_wide';
-import { getEthAccount } from '../../store/selectors';
+import { getCollectibleById, getEthAccount } from '../../store/selectors';
 import { themeBreakPoints } from '../../themes/commons';
-import { StoreState } from '../../util/types';
+import { Collectible, StoreState } from '../../util/types';
 import { AssetDescriptionContainer } from '../components/marketplace/asset_description_container';
 import { BuySellAsset } from '../components/marketplace/buy_sell_asset';
-import { Asset, AssetButtonOrderType } from '../components/marketplace/marketplace_common';
+import { AssetButtonOrderType } from '../components/marketplace/marketplace_common';
 
 const General = styled.div`
     position: fixed;
@@ -40,25 +40,12 @@ interface OwnProps {
 
 interface StateProps {
     ethAccount: string;
+    asset: Collectible | undefined;
 }
 
 type Props = OwnProps & StateProps;
 
-// TODO - mocked function, remove once the asset store implementation is ready
-const getAssetById = (assetId: string): Asset => {
-    return {
-        name: 'Vulcat',
-        price: '4.4',
-        color: '#ffefa7',
-        image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png',
-        assetId: '1',
-        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam.`,
-        currentOwner: '0x5409ed021d9299bf6814279a6a1411a7e866a631',
-        assetUrl: 'https://www.cryptokitties.co/',
-    };
-};
-
-const getAssetOrderType = (currentUserAccount: string, asset: Asset): AssetButtonOrderType => {
+const getAssetOrderType = (currentUserAccount: string, asset: Collectible): AssetButtonOrderType => {
     const { price, currentOwner } = asset;
 
     if (currentUserAccount === currentOwner) {
@@ -76,9 +63,11 @@ const getAssetOrderType = (currentUserAccount: string, asset: Asset): AssetButto
     throw new Error('An order without price should have an owner equal to the current user');
 };
 
-const Collectible = (props: Props) => {
-    const { assetId, ethAccount } = props;
-    const asset = getAssetById(assetId);
+const CollectiblePage = (props: Props) => {
+    const { asset, ethAccount } = props;
+    if (!asset) {
+        return null;
+    }
     const orderType = getAssetOrderType(ethAccount, asset);
     return (
         <General>
@@ -93,12 +82,13 @@ const Collectible = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: StoreState): StateProps => {
+const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
     return {
         ethAccount: getEthAccount(state),
+        asset: getCollectibleById(state, props),
     };
 };
 
-const CollectibleContainer = connect(mapStateToProps)(Collectible);
+const CollectibleContainer = connect(mapStateToProps)(CollectiblePage);
 
-export { Collectible, CollectibleContainer };
+export { CollectiblePage, CollectibleContainer };
