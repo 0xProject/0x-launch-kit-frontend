@@ -3,15 +3,16 @@ import { Route, Switch } from 'react-router';
 
 import { ERC721_APP_BASE_PATH } from '../../common/constants';
 import { AdBlockDetector } from '../../components/common/adblock_detector';
-import { ToolbarContainer } from '../../components/common/toolbar';
 import { GeneralLayoutContainer } from '../../components/general_layout';
-import { CollectibleContainer } from '../pages/collectible';
-import { MyCollectibles } from '../pages/my_collectibles';
+import { CollectibleContainer } from '../../erc721/pages/collectible';
 
-const Toolbar = <ToolbarContainer />;
+import { ToolbarContentContainer } from './common/toolbar_content';
+import { MyCollectibles } from './pages/my_collectibles';
+
+const toolbar = <ToolbarContentContainer />;
 
 export const Erc721App = () => (
-    <GeneralLayoutContainer toolbar={Toolbar}>
+    <GeneralLayoutContainer toolbar={toolbar}>
         <AdBlockDetector />
         <Switch>
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={MyCollectibles} />
