@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { LocalStorage } from '../../services/local_storage';
-import { goToHome, initWallet } from '../../store/actions';
+import { goToHomeErc20, initWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { ModalDisplay, StoreState, Web3State } from '../../util/types';
 
@@ -85,7 +85,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onGoToHome: () => dispatch(goToHome()),
+        onGoToHome: () => dispatch(goToHomeErc20()),
         onConnectWallet: () => dispatch(initWallet()),
     };
 };

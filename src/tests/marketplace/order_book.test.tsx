@@ -5,7 +5,7 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 
-import { OrderBookTableWithTheme } from '../../components/marketplace/order_book';
+import { OrderBookTableWithTheme } from '../../components/erc20/marketplace/order_book';
 import { openOrder, tokenFactory } from '../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
 import { mountWithTheme } from '../util/test_with_theme';

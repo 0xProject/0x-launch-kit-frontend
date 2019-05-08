@@ -1,4 +1,4 @@
-import { assetDataUtils, BigNumber } from '0x.js';
+import { assetDataUtils, BigNumber, Order } from '0x.js';
 
 import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { addressFactory, uiOrder } from '../../util/test-utils';
