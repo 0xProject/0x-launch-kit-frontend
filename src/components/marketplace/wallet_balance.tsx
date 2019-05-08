@@ -1,8 +1,6 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../common/constants';
@@ -299,7 +297,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onConnectWallet: () => dispatch(initWallet()),
     };
