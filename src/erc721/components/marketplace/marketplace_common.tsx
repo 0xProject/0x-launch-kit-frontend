@@ -6,16 +6,16 @@ export const TitleText = styled.h3`
     font-weight: 500;
 `;
 
-export enum AssetOrderType {
+export enum AssetButtonOrderType {
     Buy = 'BUY',
     Sell = 'SELL',
     Cancel = 'CANCEL',
 }
 
 // TODO - remove once the my collectibles page and the store is ready
-export interface Collectible {
+export interface Asset {
     name: string;
-    price: string;
+    price?: string;
     color: string;
     image: string;
     assetId: string;

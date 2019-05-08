@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Button as ButtonBase } from '../../../components/common/button';
 
-import { AssetOrderType, Collectible, TitleText } from './marketplace_common';
+import { Asset, AssetButtonOrderType, TitleText } from './marketplace_common';
 
 const BuySellWrapper = styled.div`
     width: 270px;
@@ -47,8 +47,8 @@ const TextWithIcon = styled(CenteredText)`
 `;
 
 interface OwnProps {
-    orderType: AssetOrderType;
-    asset: Collectible;
+    orderType: AssetButtonOrderType;
+    asset: Asset;
 }
 
 type Props = OwnProps;
@@ -59,17 +59,17 @@ export const BuySellAsset = (props: Props) => {
     let backgroundColor;
     const { price, name, color, image } = props.asset;
     switch (props.orderType) {
-        case AssetOrderType.Sell: {
+        case AssetButtonOrderType.Sell: {
             backgroundColor = '#ff6534';
             btnTxt = `Sell ${name}`;
             break;
         }
-        case AssetOrderType.Buy: {
+        case AssetButtonOrderType.Buy: {
             backgroundColor = '#00AE99';
             btnTxt = `Buy for ${price} ETH`;
             break;
         }
-        case AssetOrderType.Cancel: {
+        case AssetButtonOrderType.Cancel: {
             btnTxt = 'Cancel Sale';
             btnColor = '#ff6534';
             break;
@@ -83,7 +83,7 @@ export const BuySellAsset = (props: Props) => {
                     {btnTxt}
                 </BtnStyled>
                 <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
-                {props.orderType === AssetOrderType.Buy || props.orderType === AssetOrderType.Cancel ? (
+                {props.orderType === AssetButtonOrderType.Buy || props.orderType === AssetButtonOrderType.Cancel ? (
                     <CenteredText>Last price: Ξ 2023</CenteredText>
                 ) : null}
             </BuySellWrapper>
