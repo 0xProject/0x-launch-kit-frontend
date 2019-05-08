@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { getUserCollectibles } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
+
 import { CollectibleAsset } from './collectible_asset';
 
 const CollectiblesListWrapper = styled.div``;

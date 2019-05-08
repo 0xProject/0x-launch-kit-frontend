@@ -6,8 +6,8 @@ import { AdBlockDetector } from '../../components/common/adblock_detector';
 import { GeneralLayoutContainer } from '../../components/general_layout';
 
 import { ToolbarContentContainer } from './common/toolbar_content';
-import { MyCollectibles } from './pages/my_collectibles';
 import { Collectibles } from './pages/collectibles';
+import { MyCollectibles } from './pages/my_collectibles';
 
 const toolbar = <ToolbarContentContainer />;
 
