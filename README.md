@@ -72,3 +72,7 @@ You can create a `.env` file to set environment variables and configure the beha
 -   `REACT_APP_TAKER_FEE`: The fee in ZRX payed when filling an order. Defaults to `100000000000000000`
 
 Check `.env.example` for the full list.
+
+### Using custom themes
+
+If you want to add your own theme for the app, please read the THEMES.MD file
