@@ -1,6 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
 
-import { fetchUserCollectibles } from '../../services/collectibles';
 import { Collectible, ThunkCreator } from '../../util/types';
 
 export const fetchUserCollectiblesAsync = createAsyncAction(
@@ -10,10 +9,11 @@ export const fetchUserCollectiblesAsync = createAsyncAction(
 )<void, Collectible[], Error>();
 
 export const getUserCollectibles: ThunkCreator = () => {
-    return async dispatch => {
+    return async (dispatch, getState, extraArgument) => {
         dispatch(fetchUserCollectiblesAsync.request());
         try {
-            const collectibles = await fetchUserCollectibles();
+            const collectiblesMetadataSource = extraArgument.getCollectiblesMetadataSource();
+            const collectibles = await collectiblesMetadataSource.fetchUserCollectibles();
             dispatch(fetchUserCollectiblesAsync.success(collectibles));
         } catch (err) {
             dispatch(fetchUserCollectiblesAsync.failure(err));
