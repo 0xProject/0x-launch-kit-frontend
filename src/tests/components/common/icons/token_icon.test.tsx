@@ -1,7 +1,11 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
+import { ThemeProvider } from 'styled-components';
 
 import { TokenIcon } from '../../../../components/common/icons/token_icon';
+import { DefaultTheme } from '../../../../themes/default_theme';
+
+const theme = new DefaultTheme();
 
 describe('TokenIcon', () => {
     it('TokenIcon ZRX to match snapshot', () => {
@@ -9,7 +13,11 @@ describe('TokenIcon', () => {
         const symbol = 'zrx';
         const primaryColor = '#232332';
 
-        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} />;
+        const tokenIcon = (
+            <ThemeProvider theme={theme}>
+                <TokenIcon symbol={symbol} primaryColor={primaryColor} />
+            </ThemeProvider>
+        );
 
         // when
         const tree = renderer.create(tokenIcon).toJSON();
@@ -23,7 +31,11 @@ describe('TokenIcon', () => {
         const symbol = 'mln';
         const primaryColor = '#232332';
 
-        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} />;
+        const tokenIcon = (
+            <ThemeProvider theme={theme}>
+                <TokenIcon symbol={symbol} primaryColor={primaryColor} />
+            </ThemeProvider>
+        );
 
         // when
         const tree = renderer.create(tokenIcon).toJSON();
@@ -37,7 +49,11 @@ describe('TokenIcon', () => {
         const symbol = 'test';
         const primaryColor = '#232332';
 
-        const tokenIcon = <TokenIcon symbol={symbol} primaryColor={primaryColor} />;
+        const tokenIcon = (
+            <ThemeProvider theme={theme}>
+                <TokenIcon symbol={symbol} primaryColor={primaryColor} />
+            </ThemeProvider>
+        );
 
         // when
         const tree = renderer.create(tokenIcon).toJSON();

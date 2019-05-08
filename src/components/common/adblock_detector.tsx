@@ -1,10 +1,10 @@
 import React, { HTMLAttributes } from 'react';
 import Modal from 'react-modal';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as RedExclamationSign } from '../../assets/icons/red_exclamation_sign.svg';
 import { LocalStorage } from '../../services/local_storage';
-import { themeModalStyle } from '../../themes/commons';
+import { Theme } from '../../themes/commons';
 
 import { CloseModalButton } from './icons/close_modal_button';
 
@@ -12,7 +12,11 @@ interface State {
     isOpen: boolean;
 }
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+interface OwnProps {
+    theme: Theme;
+}
+
+interface Props extends HTMLAttributes<HTMLDivElement>, OwnProps {}
 
 const ModalContent = styled.div`
     align-items: center;
@@ -22,7 +26,7 @@ const ModalContent = styled.div`
 `;
 
 const ModalTitle = styled.h1`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 20px;
     font-weight: 600;
     line-height: 1.2;
@@ -31,7 +35,7 @@ const ModalTitle = styled.h1`
 `;
 
 const ModalText = styled.p`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 16px;
     font-weight: normal;
     line-height: 1.5;
@@ -55,7 +59,7 @@ const IconContainer = styled.div`
 
 const localStorage = new LocalStorage(window.localStorage);
 
-class AdBlockDetector extends React.Component<Props, State> {
+class AdBlockDetectorContainer extends React.Component<Props, State> {
     public readonly state: State = {
         isOpen: false,
     };
@@ -91,7 +95,7 @@ class AdBlockDetector extends React.Component<Props, State> {
 
     public render = () => {
         return (
-            <Modal isOpen={this.state.isOpen} style={themeModalStyle}>
+            <Modal isOpen={this.state.isOpen} style={this.props.theme.modalTheme}>
                 <CloseModalButton onClick={this.closeModal} />
                 <ModalContent>
                     <ModalTitle>Ad Blocker Detected</ModalTitle>
@@ -104,4 +108,7 @@ class AdBlockDetector extends React.Component<Props, State> {
         );
     };
 }
+
+const AdBlockDetector = withTheme(AdBlockDetectorContainer);
+
 export { AdBlockDetector };

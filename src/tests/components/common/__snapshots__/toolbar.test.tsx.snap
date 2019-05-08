@@ -1,24 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Toolbar Toolbar to match snapshot 1`] = `
-<styled.div>
-  <styled.div>
-    <Styled(Logo)
-      onClick={[Function]}
-    />
-    <Styled(Connect(MarketsDropdown))
-      shouldCloseDropdownBodyOnClick={false}
-    />
-  </styled.div>
-  <styled.div>
-    <styled.a
-      href="/my-wallet"
-      onClick={[Function]}
-    >
-      My Wallet
-    </styled.a>
-    <Styled(Connect(WalletConnectionStatus)) />
-    <Connect(NotificationsDropdown) />
-  </styled.div>
-</styled.div>
+<div
+  className="sc-ifAKCX fSDNQc"
+>
+  <div
+    className="sc-EHOje jtSruX"
+  >
+    <label>
+      Start Content
+    </label>
+  </div>
+  <div
+    className="sc-bZQynM kEqDtR"
+  >
+    <label>
+      End Content
+    </label>
+  </div>
+</div>
 `;

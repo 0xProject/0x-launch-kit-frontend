@@ -35,8 +35,11 @@ class App extends React.Component<Props> {
     private _updatePriceEtherInterval: number | undefined;
 
     public componentDidMount = () => {
-        if (SHOULD_ENABLE_NO_METAMASK_PROMPT) {
-            this._enableDeactivateMetamaskPromptFeature();
+        const wasWalletConnected = localStorage.getWalletConnected();
+        if (SHOULD_ENABLE_NO_METAMASK_PROMPT && wasWalletConnected) {
+            this.props.onConnectWallet();
+        } else {
+            this.props.onInitMetamaskState();
         }
     };
 
@@ -87,15 +90,6 @@ class App extends React.Component<Props> {
         if (this._updatePriceEtherInterval) {
             clearInterval(this._updatePriceEtherInterval);
             this._updatePriceEtherInterval = undefined;
-        }
-    };
-
-    private readonly _enableDeactivateMetamaskPromptFeature = () => {
-        const wasWalletConnected = localStorage.getWalletConnected();
-        if (wasWalletConnected) {
-            this.props.onConnectWallet();
-        } else {
-            this.props.onInitMetamaskState();
         }
     };
 }
