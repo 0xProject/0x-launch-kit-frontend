@@ -2,23 +2,23 @@
 
 ## How to add new themes
 
-By default the app uses a `WHITE THEME` and there is also available a `DARK THEME`.
+By default the app uses a `LIGHT THEME` and there is also available a `DARK THEME`.
 
-If you want to customize the app with a custom theme you can add your own new theme and then apply it to the app.
+If you want to customize the app with a custom theme you can add your own.
 
 ### How to create a new theme
 
-1. First of all you need to go to `/src/themes` and copy the `DefaultTheme` class and rename it with the name of your theme.
+Note: All the relevant files are in the `src/themes` folder.
 
-2. Change the signature of the class to `extends DefaultTheme`
+For this example our new theme will be called `NEW THEME`.
 
-3. Then you can replace both objects `modalThemeStyle` and `darkThemeColors` with the properties you want
+1. Copy default_theme.ts to new_theme.ts
+2. Change `export class DefaultTheme` to `export class NewTheme` in `new_theme.ts`
+3. Add:
+   `{ name: 'NEW_THEME', theme: new NewTheme(), },`
+   in the `KNOWN_THEMES_META_DATA` array found in `themes/theme_meta_data.ts`
 
-4. Go to `/src/themes/theme_meta_data.tsx` and on the `KNOWN_THEMES_META_DATA` array, add a new object with a name and the instance of your class
-
-5. Go to your `.env` file and change the value of `REACT_APP_THEME_NAME` to the name of your new theme
-
-Note: you can use the `/src/themes/dark_theme.tsx` as an example.
+4. In your `.env` file change the value of `REACT_APP_THEME_NAME` from `DEFAULT_THEME` to `NEW_THEME`
 
 #### Dark Theme example
 
