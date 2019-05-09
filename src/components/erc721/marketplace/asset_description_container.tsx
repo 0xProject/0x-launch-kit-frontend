@@ -57,7 +57,7 @@ interface OwnProps {
 type Props = OwnProps;
 
 export const AssetDescriptionContainer = (props: Props) => {
-    const { currentOwner, description, price, name } = props.asset;
+    const { currentOwner, description, price, name, assetUrl } = props.asset;
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
     return (
         <>
@@ -66,7 +66,7 @@ export const AssetDescriptionContainer = (props: Props) => {
                     <AssetNameTitle>{name}</AssetNameTitle>
                     <AssetTypeTitle>
                         CryptoKitties
-                        <IconWrapper href="https://www.cryptokitties.co/" target="_blank">
+                        <IconWrapper href={assetUrl} target="_blank">
                             {OutsideUrlIcon()}
                         </IconWrapper>
                     </AssetTypeTitle>
