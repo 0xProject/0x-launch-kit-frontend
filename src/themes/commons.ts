@@ -104,6 +104,7 @@ export const themeDimensions = {
     sidebarWidth: '350px',
     verticalPadding: '10px',
     verticalSeparation: '30px',
+    verticalSeparationSm: '10px',
     toolbarHeight: '64px',
     footerHeight: '38px',
 };

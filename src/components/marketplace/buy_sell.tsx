@@ -36,7 +36,7 @@ interface State {
 }
 
 const BuySellWrapper = styled(CardBase)`
-    margin-bottom: ${themeDimensions.verticalSeparation};
+    margin-bottom: ${themeDimensions.verticalSeparationSm};
 `;
 
 const Content = styled.div`

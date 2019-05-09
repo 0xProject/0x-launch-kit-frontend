@@ -5,7 +5,7 @@ import styled, { withTheme } from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
-import { Theme } from '../../themes/commons';
+import { Theme, themeBreakPoints } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -26,26 +26,22 @@ interface OwnProps {
     theme: Theme;
 }
 
-// interface Props extends HTMLAttributes<HTMLDivElement>{};
-
 type Props = OwnProps & StateProps;
 
 interface State {
-    showStickySpread: boolean;
-    stickTo: string;
+    stickySpreadPosition: string;
+    stickySpreadWidth: string;
 }
 
 interface GridRowSpreadProps {
-    sticky?: boolean;
-    isVisible?: boolean;
-    stickTo?: string;
+    stickySpreadPosition?: string;
+    stickySpreadWidth?: string;
 }
 
 const OrderbookCard = styled(Card)`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: 0;
     max-height: 100%;
 
     > div:first-child {
@@ -77,14 +73,15 @@ const GridRowTop = styled(GridRow)`
 `;
 
 const GridRowSpread = styled(GridRow)<GridRowSpreadProps>`
-    ${props => (props.stickTo === 'bottom' ? 'bottom: -1px;' : '')};
-    ${props => (props.stickTo === 'top' ? 'top: 29px;' : '')};
+    ${props => (props.stickySpreadPosition && props.stickySpreadPosition === 'top' ? 'top: 29px;' : '')}
+    ${props => (props.stickySpreadPosition && props.stickySpreadPosition === 'bottom' ? 'bottom: 0;' : '')}
+
     background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
     flex-grow: 0;
     flex-shrink: 0;
-    display: ${props => (props.isVisible ? 'grid' : 'none')};
-    position: ${props => (props.sticky ? 'absolute' : 'relative')};
-    width: 100%;
+    display: grid;
+    position: ${props => (props.stickySpreadPosition !== '' ? 'absolute' : 'relative')};
+    width: ${props => (props.stickySpreadWidth ? props.stickySpreadWidth : 'auto')};
     z-index: 12;
 `;
 
@@ -96,7 +93,12 @@ const ItemsScroll = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    max-height: 500px;
     overflow: auto;
+
+    @media (min-width: ${themeBreakPoints.xl}) {
+        max-height: none;
+    }
 `;
 
 const ItemsMainContainer = styled.div`
@@ -167,12 +169,11 @@ const orderToRow = (
 const getSpreadRow = (
     ref: React.RefObject<HTMLDivElement>,
     spread: string,
-    isVisible: boolean = true,
-    sticky: boolean = false,
-    stickTo: string = 'top',
+    stickySpreadPosition: string = '',
+    stickySpreadWidth: string = '',
 ): React.ReactNode => {
     return (
-        <GridRowSpread ref={ref} sticky={sticky} stickTo={stickTo} isVisible={isVisible}>
+        <GridRowSpread ref={ref} stickySpreadPosition={stickySpreadPosition} stickySpreadWidth={stickySpreadWidth}>
             <CustomTDTitle as="div" styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                 Spread
             </CustomTDTitle>
@@ -196,8 +197,8 @@ const getSpreadRow = (
 
 class OrderBookTable extends React.Component<Props, State> {
     public readonly state: State = {
-        showStickySpread: false,
-        stickTo: 'top',
+        stickySpreadPosition: '',
+        stickySpreadWidth: '100%',
     };
 
     private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
@@ -291,13 +292,14 @@ class OrderBookTable extends React.Component<Props, State> {
                         </THLast>
                     </GridRowTop>
                     <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpread}>
-                        {getSpreadRow(
-                            this._spreadRowFixed,
-                            spreadToFixed,
-                            this.state.showStickySpread,
-                            true,
-                            this.state.stickTo,
-                        )}
+                        {this.state.stickySpreadPosition
+                            ? getSpreadRow(
+                                  this._spreadRowFixed,
+                                  spreadToFixed,
+                                  this.state.stickySpreadPosition,
+                                  this.state.stickySpreadWidth,
+                              )
+                            : null}
                         <ItemsMainContainer>
                             <TopItems>
                                 {bunchaTestItems}
@@ -352,12 +354,18 @@ class OrderBookTable extends React.Component<Props, State> {
         const itemsListHeight = this._itemsScroll.current ? this._itemsScroll.current.clientHeight : 0;
         const topLimit = 0;
 
+        // Note: it's necessary to set the sticky spread's width to be the same
+        // as the items list to account for the scrollbar's width.
+        this.setState({
+            stickySpreadWidth: this._itemsScroll.current ? `${this._itemsScroll.current.clientWidth}px` : '',
+        });
+
         if (spreadOffsetTop - itemsListScroll <= topLimit) {
-            this.setState({ stickTo: 'top', showStickySpread: true });
+            this.setState({ stickySpreadPosition: 'top' });
         } else if (itemsListScroll + itemsListHeight - spreadHeight <= spreadOffsetTop) {
-            this.setState({ stickTo: 'bottom', showStickySpread: true });
+            this.setState({ stickySpreadPosition: 'bottom' });
         } else {
-            this.setState({ showStickySpread: false });
+            this.setState({ stickySpreadPosition: '' });
         }
     };
 

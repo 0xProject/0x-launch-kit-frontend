@@ -50,6 +50,7 @@ const ToolbarWrapper = styled.div`
     justify-content: space-between;
     padding: 0 ${themeDimensions.horizontalPadding};
     position: sticky;
+    top: 0;
     z-index: 123;
 `;
 
