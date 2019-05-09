@@ -193,7 +193,7 @@ class WalletBalance extends React.Component<Props, State> {
         const { web3State } = this.props;
         const walletContent = this._getWalletContent();
         return (
-            <Card title={getWalletTitle(web3State)} action={getWallet(web3State)}>
+            <Card title={getWalletTitle(web3State)} action={getWallet(web3State)} minHeightBody={'0px'}>
                 {walletContent}
             </Card>
         );
