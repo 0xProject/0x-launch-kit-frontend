@@ -109,18 +109,16 @@ const CollectibleBuySell = (props: Props) => {
         }
     }
     return (
-        <>
-            <BuySellWrapper>
-                <Image imageUrl={image} imageColor={color} />
-                <BtnStyled btnColor={btnColor} backgroundColor={backgroundColor}>
-                    {btnTxt}
-                </BtnStyled>
-                <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
-                {orderType === CollectibleButtonOrderType.Buy || orderType === CollectibleButtonOrderType.Cancel ? (
-                    <CenteredText>Last price: Ξ 2023</CenteredText>
-                ) : null}
-            </BuySellWrapper>
-        </>
+        <BuySellWrapper>
+            <Image imageUrl={image} imageColor={color} />
+            <BtnStyled btnColor={btnColor} backgroundColor={backgroundColor}>
+                {btnTxt}
+            </BtnStyled>
+            <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
+            {orderType === CollectibleButtonOrderType.Buy || orderType === CollectibleButtonOrderType.Cancel ? (
+                <CenteredText>Last price: Ξ 2023</CenteredText>
+            ) : null}
+        </BuySellWrapper>
     );
 };
 
