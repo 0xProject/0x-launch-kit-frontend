@@ -9,6 +9,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
     title?: string;
     action?: React.ReactNode;
     children: React.ReactNode;
+    minHeightBody?: string;
 }
 
 const CardWrapper = styled(CardBase)`
@@ -25,7 +26,7 @@ const CardHeader = styled.div`
     flex-grow: 0;
     flex-shrink: 0;
     justify-content: space-between;
-    padding: 15px ${themeDimensions.horizontalPadding};
+    padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
 `;
 
 const CardTitle = styled.h1`
@@ -38,17 +39,20 @@ const CardTitle = styled.h1`
     padding: 0 20px 0 0;
 `;
 
-const CardBody = styled.div`
-    flex-grow: 1;
+const CardBody = styled.div<{ minHeightBody?: string }>`
     margin: 0;
-    min-height: 140px;
+    min-height: ${props => props.minHeightBody};
     overflow: auto;
     padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
     position: relative;
 `;
 
+CardBody.defaultProps = {
+    minHeightBody: '140px',
+};
+
 export const Card: React.FC<Props> = props => {
-    const { title, action, children, ...restProps } = props;
+    const { title, action, children, minHeightBody, ...restProps } = props;
 
     return (
         <CardWrapper {...restProps}>
@@ -58,7 +62,7 @@ export const Card: React.FC<Props> = props => {
                     {action ? action : null}
                 </CardHeader>
             ) : null}
-            <CardBody>{children}</CardBody>
+            <CardBody minHeightBody={minHeightBody}>{children}</CardBody>
         </CardWrapper>
     );
 };
