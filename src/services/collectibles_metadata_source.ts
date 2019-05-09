@@ -85,8 +85,9 @@ const allCollectibles: Collectible[] = [
 ];
 
 export class CollectiblesMetadataSource {
-    public fetchUserCollectibles = (): Promise<Collectible[]> => {
-        return Promise.resolve(allCollectibles);
+    public fetchUserCollectibles = (address: string): Promise<Collectible[]> => {
+        const userCollectibles = allCollectibles.filter(x => x.currentOwner.toLowerCase() === address.toLowerCase());
+        return Promise.resolve(userCollectibles);
     };
 }
 

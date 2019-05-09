@@ -311,7 +311,7 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(getOrderbookAndUserOrders());
                 // tslint:disable-next-line:no-floating-promises
-                dispatch(getUserCollectibles());
+                dispatch(getUserCollectibles(ethAccount));
                 try {
                     await dispatch(fetchMarkets());
                     // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
