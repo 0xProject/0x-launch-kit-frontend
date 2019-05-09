@@ -1,3 +1,4 @@
+import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../common/constants';
 import { Collectible } from '../util/types';
 
 // @TODO: abstract the source of collectibles data (opensea/mocked)
@@ -74,27 +75,9 @@ import { Collectible } from '../util/types';
 //     },
 // ];
 
-interface CollectibleConstant {
-    [key: number]: any;
-}
-
-const collectibleConstants: CollectibleConstant = {
-    1: {
-        contractAddress: `0x06012c8cf97bead5deae237070f9587f8e7a266d`,
-        metadataSourceUrl: `https://api.opensea.io/api/v1`,
-    },
-    4: {
-        contractAddress: `0x16baf0de678e52367adc69fd067e5edd1d33e3bf`,
-        metadataSourceUrl: `https://rinkeby-api.opensea.io/api/v1`,
-    },
-    42: {
-        contractAddress: `0x...`,
-        metadataSourceUrl: `https://rinkeby-api.opensea.io/api/v1`,
-    },
-    50: {
-        contractAddress: `0x...`,
-        metadataSourceUrl: `https://rinkeby-api.opensea.io/api/v1`,
-    },
+const openseaEndpointUrls: { [key: number]: string } = {
+    1: 'https://api.opensea.io/api/v1',
+    4: 'https://rinkeby-api.opensea.io/api/v1',
 };
 
 const getAssetsAsCollectible = (assets: any[]): Collectible[] => {
@@ -114,7 +97,8 @@ export class CollectiblesMetadataSource {
         if (!networkId) {
             return Promise.resolve([]);
         }
-        const { metadataSourceUrl, contractAddress } = collectibleConstants[networkId];
+        const metadataSourceUrl = openseaEndpointUrls[networkId];
+        const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${ownerAddress}`;
         const assetsResponse = await fetch(url);
         const assetsJson = await assetsResponse.json();
