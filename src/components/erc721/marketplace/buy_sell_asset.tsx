@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Button as ButtonBase } from '../../../components/common/button';
 import { Collectible } from '../../../util/types';
+import { Button as ButtonBase } from '../../common/button';
 
 import { AssetButtonOrderType, TitleText } from './marketplace_common';
 

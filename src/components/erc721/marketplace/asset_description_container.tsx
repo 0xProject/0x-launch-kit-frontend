@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Card } from '../../../components/common/card';
-import { OutsideUrlIcon } from '../../../components/common/icons/outside_url_icon';
-import { CustomTD, TR } from '../../../components/common/table';
 import { truncateAddress } from '../../../util/number_utils';
 import { Collectible } from '../../../util/types';
+import { Card } from '../../common/card';
+import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
+import { CustomTD, TR } from '../../common/table';
 
 import { TitleText } from './marketplace_common';
 

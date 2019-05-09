@@ -2,15 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { CheckMetamaskStateModalContainer } from '../../components/common/check_metamask_state_modal_container';
-import { ColumnNarrow } from '../../components/common/column_narrow';
-import { ColumnWide } from '../../components/common/column_wide';
-import { getCollectibleById, getEthAccount } from '../../store/selectors';
-import { themeBreakPoints } from '../../themes/commons';
-import { Collectible, StoreState } from '../../util/types';
-import { AssetDescriptionContainer } from '../components/marketplace/asset_description_container';
-import { BuySellAsset } from '../components/marketplace/buy_sell_asset';
-import { AssetButtonOrderType } from '../components/marketplace/marketplace_common';
+import { getCollectibleById, getEthAccount } from '../../../store/selectors';
+import { themeBreakPoints } from '../../../themes/commons';
+import { Collectible, StoreState } from '../../../util/types';
+import { CheckMetamaskStateModalContainer } from '../../common/check_metamask_state_modal_container';
+import { ColumnNarrow } from '../../common/column_narrow';
+import { ColumnWide } from '../../common/column_wide';
+import { AssetDescriptionContainer } from '../marketplace/asset_description_container';
+import { BuySellAsset } from '../marketplace/buy_sell_asset';
+import { AssetButtonOrderType } from '../marketplace/marketplace_common';
 
 const General = styled.div`
     position: fixed;
