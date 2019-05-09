@@ -36,11 +36,15 @@ const CardTitle = styled.h1`
 
 const CardBody = styled.div<{ minHeightBody?: string }>`
     margin: 0;
-    min-height: ${props => (props.minHeightBody ? props.minHeightBody : '140px')};
+    min-height: ${props => props.minHeightBody};
     overflow-x: auto;
     padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
     position: relative;
 `;
+
+CardBody.defaultProps = {
+    minHeightBody: '140px',
+};
 
 export const Card: React.FC<Props> = props => {
     const { title, action, children, minHeightBody, ...restProps } = props;
