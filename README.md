@@ -42,7 +42,7 @@ If you don't have a relayer, you can start one locally for development. First cr
 version: '3'
 services:
     ganache:
-        image: fvictorio/0x-ganache-testing
+        image: fvictorio/0x-ganache-testing:0.0.1
         ports:
             - '8545:8545'
     launch-kit:
