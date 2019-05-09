@@ -62,7 +62,7 @@ export const goToIndividualCollectible = (collectibleId: string) => {
         dispatch(
             push({
                 ...state.router.location,
-                pathname: `${ERC721_APP_BASE_PATH}/asset/${collectibleId}`,
+                pathname: `${ERC721_APP_BASE_PATH}/collectible/${collectibleId}`,
             }),
         );
     };
