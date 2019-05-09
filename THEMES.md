@@ -24,7 +24,7 @@ For this example our new theme will be called `NEW THEME`.
 
 dark_theme.ts:
 
-```
+```typescript
 const modalThemeStyle: ThemeModalStyle = {
     content: {
         ......
@@ -54,7 +54,7 @@ export class DarkTheme extends DefaultTheme {
 
 theme_meta_data.ts object:
 
-```
+```typescript
 export const KNOWN_THEMES_META_DATA: ThemeMetaData[] = [
     {
         name: 'DEFAULT_THEME',
