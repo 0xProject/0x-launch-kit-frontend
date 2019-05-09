@@ -74,7 +74,11 @@ import { Collectible } from '../util/types';
 //     },
 // ];
 
-const collectibleConstants = {
+interface CollectibleConstant {
+    [key: number]: any;
+}
+
+const collectibleConstants: CollectibleConstant = {
     1: {
         contractAddress: `0x06012c8cf97bead5deae237070f9587f8e7a266d`,
         metadataSourceUrl: `https://api.opensea.io/api/v1`,
@@ -106,8 +110,11 @@ const getAssetsAsCollectible = (assets: any[]): Collectible[] => {
 };
 
 export class CollectiblesMetadataSource {
-    public fetchUserCollectibles = async (ownerAddress: string): Promise<any> => {
-        const { metadataSourceUrl, contractAddress } = collectibleConstants[4];
+    public fetchUserCollectibles = async (ownerAddress: string, networkId: number | null): Promise<any> => {
+        if (!networkId) {
+            return Promise.resolve([]);
+        }
+        const { metadataSourceUrl, contractAddress } = collectibleConstants[networkId];
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${ownerAddress}`;
         const assetsResponse = await fetch(url);
         const assetsJson = await assetsResponse.json();
