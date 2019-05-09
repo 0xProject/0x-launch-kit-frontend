@@ -79,7 +79,11 @@ const ModalContent = styled.div`
     align-items: center;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 0;
+    max-height: 100%;
     min-height: 300px;
+    overflow: auto;
     width: 310px;
 `;
 
@@ -109,8 +113,10 @@ const ModalStatusText = styled.p`
     text-align: center;
 `;
 
-const ModalStatusTextLight = styled.span`
+const ModalStatusTextLight = styled(ModalStatusText)`
     color: ${props => props.theme.componentsTheme.textLight};
+    margin-bottom: 0px;
+    padding: 0;
 `;
 
 const IconContainer = styled.div`

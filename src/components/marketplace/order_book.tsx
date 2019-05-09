@@ -215,42 +215,6 @@ class OrderBookTable extends React.Component<Props, State> {
     }
 
     public render = () => {
-        const bunchaTestItems = (
-            <>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-                <GridRow>12313123</GridRow>
-            </>
-        );
         const { orderBook, baseToken, quoteToken, web3State, theme } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
         const spreadToFixed = spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
@@ -302,7 +266,6 @@ class OrderBookTable extends React.Component<Props, State> {
                             : null}
                         <ItemsMainContainer>
                             <TopItems>
-                                {bunchaTestItems}
                                 {sellOrders.map((order, index) =>
                                     orderToRow(
                                         order,
@@ -328,7 +291,6 @@ class OrderBookTable extends React.Component<Props, State> {
                                         web3State,
                                     ),
                                 )}
-                                {bunchaTestItems}
                             </BottomItems>
                         </ItemsMainContainer>
                     </ItemsScroll>
@@ -370,6 +332,10 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     private readonly _scrollToSpread = () => {
+        if (window.outerWidth < parseInt(themeBreakPoints.xl, 10)) {
+            return;
+        }
+
         if (this._spreadRowScrollable.current && !this._hasScrolled) {
             this._spreadRowScrollable.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
             this._hasScrolled = true;

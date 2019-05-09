@@ -74,11 +74,15 @@ export interface ThemeProperties {
 export interface ThemeModalStyle {
     content: {
         backgroundColor: string;
-        bottom: string;
         borderColor: string;
+        bottom: string;
+        display: string;
+        flexDirection: string;
         flexGrow: string;
         left: string;
+        maxHeight: string;
         minWidth: string;
+        overflow: string;
         position: string;
         right: string;
         top: string;
