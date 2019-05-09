@@ -99,7 +99,7 @@ const getAssetsAsCollectible = (assets: any[]): Collectible[] => {
             tokenId: asset.token_id,
             name: asset.name,
             price: '',
-            color: asset.background_color,
+            color: `#${asset.background_color}`,
             image: asset.image_url,
         };
     });
@@ -110,8 +110,8 @@ export class CollectiblesMetadataSource {
         const { metadataSourceUrl, contractAddress } = collectibleConstants[4];
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${ownerAddress}`;
         const assetsResponse = await fetch(url);
-        const assets = await assetsResponse.json().assets;
-        return getAssetsAsCollectible(assets);
+        const assetsJson = await assetsResponse.json();
+        return getAssetsAsCollectible(assetsJson.assets);
     };
 }
 
