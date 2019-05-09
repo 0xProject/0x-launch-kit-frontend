@@ -6,7 +6,7 @@ import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 import { Button as ButtonBase } from '../../common/button';
 
-import { AssetButtonOrderType, TitleText } from './marketplace_common';
+import { CollectibleButtonOrderType, TitleText } from './marketplace_common';
 
 const BuySellWrapper = styled.div`
     width: 270px;
@@ -60,19 +60,19 @@ interface StateProps {
 
 type Props = OwnProps & StateProps;
 
-const getAssetOrderType = (currentUserAccount: string, asset: Collectible): AssetButtonOrderType => {
+const getCollectibleOrderType = (currentUserAccount: string, asset: Collectible): CollectibleButtonOrderType => {
     const { price, currentOwner } = asset;
 
     if (currentUserAccount === currentOwner) {
         // The owner is the current user and the asset has a price: Show cancel button
         if (price) {
-            return AssetButtonOrderType.Cancel;
+            return CollectibleButtonOrderType.Cancel;
         }
         // The owner is the current user and the asset doesn't have a price: Show sell button
-        return AssetButtonOrderType.Sell;
+        return CollectibleButtonOrderType.Sell;
     } else if (price) {
         // The owner is not the current user and the asset has a price: Show buy button
-        return AssetButtonOrderType.Buy;
+        return CollectibleButtonOrderType.Buy;
     }
     // The owner is not the current user and the asset doesn't have a price: Should never happen
     throw new Error('An order without price should have an owner equal to the current user');
@@ -84,22 +84,22 @@ const CollectibleBuySell = (props: Props) => {
         return null;
     }
     const { price, name, color, image } = asset;
-    const orderType = getAssetOrderType(ethAccount, asset);
+    const orderType = getCollectibleOrderType(ethAccount, asset);
     let btnTxt;
     let btnColor = '#ffffff'; // buy color
     let backgroundColor;
     switch (orderType) {
-        case AssetButtonOrderType.Sell: {
+        case CollectibleButtonOrderType.Sell: {
             backgroundColor = '#ff6534';
             btnTxt = `Sell ${name}`;
             break;
         }
-        case AssetButtonOrderType.Buy: {
+        case CollectibleButtonOrderType.Buy: {
             backgroundColor = '#00AE99';
             btnTxt = `Buy for ${price} ETH`;
             break;
         }
-        case AssetButtonOrderType.Cancel: {
+        case CollectibleButtonOrderType.Cancel: {
             btnTxt = 'Cancel Sale';
             btnColor = '#ff6534';
             break;
@@ -116,7 +116,7 @@ const CollectibleBuySell = (props: Props) => {
                     {btnTxt}
                 </BtnStyled>
                 <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
-                {orderType === AssetButtonOrderType.Buy || orderType === AssetButtonOrderType.Cancel ? (
+                {orderType === CollectibleButtonOrderType.Buy || orderType === CollectibleButtonOrderType.Cancel ? (
                     <CenteredText>Last price: Ξ 2023</CenteredText>
                 ) : null}
             </BuySellWrapper>

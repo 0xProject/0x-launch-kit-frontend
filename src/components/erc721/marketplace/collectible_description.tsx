@@ -23,7 +23,7 @@ const DescriptionText = styled.p`
     line-height: 1.5;
 `;
 
-const AssetNameTitleWrapper = styled.div`
+const CollectibleNameTitleWrapper = styled.div`
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -33,14 +33,14 @@ const AssetNameTitleWrapper = styled.div`
     margin-top: 16px;
 `;
 
-const AssetNameTitle = styled.h3`
+const CollectibleNameTitle = styled.h3`
     font-size: 18px;
     line-height: 22px;
     font-weight: 600;
     color: #333333;
 `;
 
-const AssetTypeTitle = styled(TitleText)`
+const CollectibleTypeTitle = styled(TitleText)`
     :before {
         content: url(''); // TODO add ASSET TYPE icon url
     }
@@ -72,15 +72,15 @@ const CollectibleDescription = (props: Props) => {
     return (
         <>
             <DescriptionCard>
-                <AssetNameTitleWrapper>
-                    <AssetNameTitle>{name}</AssetNameTitle>
-                    <AssetTypeTitle>
+                <CollectibleNameTitleWrapper>
+                    <CollectibleNameTitle>{name}</CollectibleNameTitle>
+                    <CollectibleTypeTitle>
                         CryptoKitties
                         <IconWrapper href={assetUrl} target="_blank">
                             {OutsideUrlIcon()}
                         </IconWrapper>
-                    </AssetTypeTitle>
-                </AssetNameTitleWrapper>
+                    </CollectibleTypeTitle>
+                </CollectibleNameTitleWrapper>
 
                 <TitleText>Description</TitleText>
                 <DescriptionText>{description}</DescriptionText>

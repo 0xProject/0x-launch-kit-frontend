@@ -6,7 +6,7 @@ export const TitleText = styled.h3`
     font-weight: 500;
 `;
 
-export enum AssetButtonOrderType {
+export enum CollectibleButtonOrderType {
     Buy = 'BUY',
     Sell = 'SELL',
     Cancel = 'CANCEL',
