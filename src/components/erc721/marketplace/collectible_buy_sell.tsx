@@ -1,7 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { Collectible } from '../../../util/types';
+import { getCollectibleById, getEthAccount } from '../../../store/selectors';
+import { Collectible, StoreState } from '../../../util/types';
 import { Button as ButtonBase } from '../../common/button';
 
 import { AssetButtonOrderType, TitleText } from './marketplace_common';
@@ -48,18 +50,45 @@ const TextWithIcon = styled(CenteredText)`
 `;
 
 interface OwnProps {
-    orderType: AssetButtonOrderType;
-    asset: Collectible;
+    assetId: string;
 }
 
-type Props = OwnProps;
+interface StateProps {
+    ethAccount: string;
+    asset: Collectible | undefined;
+}
 
-export const BuySellAsset = (props: Props) => {
+type Props = OwnProps & StateProps;
+
+const getAssetOrderType = (currentUserAccount: string, asset: Collectible): AssetButtonOrderType => {
+    const { price, currentOwner } = asset;
+
+    if (currentUserAccount === currentOwner) {
+        // The owner is the current user and the asset has a price: Show cancel button
+        if (price) {
+            return AssetButtonOrderType.Cancel;
+        }
+        // The owner is the current user and the asset doesn't have a price: Show sell button
+        return AssetButtonOrderType.Sell;
+    } else if (price) {
+        // The owner is not the current user and the asset has a price: Show buy button
+        return AssetButtonOrderType.Buy;
+    }
+    // The owner is not the current user and the asset doesn't have a price: Should never happen
+    throw new Error('An order without price should have an owner equal to the current user');
+};
+
+const CollectibleBuySell = (props: Props) => {
+    const { asset, ethAccount } = props;
+    if (!asset) {
+        return null;
+    }
+    const { price, name, color, image } = asset;
+    const orderType = getAssetOrderType(ethAccount, asset);
     let btnTxt;
     let btnColor = '#ffffff'; // buy color
     let backgroundColor;
-    const { price, name, color, image } = props.asset;
-    switch (props.orderType) {
+    switch (orderType) {
         case AssetButtonOrderType.Sell: {
             backgroundColor = '#ff6534';
             btnTxt = `Sell ${name}`;
@@ -87,10 +116,21 @@ export const BuySellAsset = (props: Props) => {
                     {btnTxt}
                 </BtnStyled>
                 <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
-                {props.orderType === AssetButtonOrderType.Buy || props.orderType === AssetButtonOrderType.Cancel ? (
+                {orderType === AssetButtonOrderType.Buy || orderType === AssetButtonOrderType.Cancel ? (
                     <CenteredText>Last price: Ξ 2023</CenteredText>
                 ) : null}
             </BuySellWrapper>
         </>
     );
 };
+
+const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
+    return {
+        ethAccount: getEthAccount(state),
+        asset: getCollectibleById(state, props),
+    };
+};
+
+const CollectibleBuySellContainer = connect(mapStateToProps)(CollectibleBuySell);
+
+export { CollectibleBuySell, CollectibleBuySellContainer };

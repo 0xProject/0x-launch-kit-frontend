@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { getCollectibleById } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
-import { Collectible } from '../../../util/types';
+import { Collectible, StoreState } from '../../../util/types';
 import { Card } from '../../common/card';
 import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
 import { CustomTD, TR } from '../../common/table';
@@ -51,13 +53,21 @@ const IconWrapper = styled.a`
 `;
 
 interface OwnProps {
-    asset: Collectible;
+    assetId: string;
 }
 
-type Props = OwnProps;
+interface StateProps {
+    asset: Collectible | undefined;
+}
 
-export const AssetDescriptionContainer = (props: Props) => {
-    const { currentOwner, description, price, name, assetUrl } = props.asset;
+type Props = OwnProps & StateProps;
+
+const CollectibleDescription = (props: Props) => {
+    const { asset } = props;
+    if (!asset) {
+        return null;
+    }
+    const { currentOwner, description, price, name, assetUrl } = asset;
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
     return (
         <>
@@ -122,3 +132,13 @@ export const AssetDescriptionContainer = (props: Props) => {
         </>
     );
 };
+
+const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
+    return {
+        asset: getCollectibleById(state, props),
+    };
+};
+
+const CollectibleDescriptionContainer = connect(mapStateToProps)(CollectibleDescription);
+
+export { CollectibleDescription, CollectibleDescriptionContainer };

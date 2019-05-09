@@ -1,16 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
-import { Collectible, StoreState } from '../../../util/types';
 import { CheckMetamaskStateModalContainer } from '../../common/check_metamask_state_modal_container';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
-import { AssetDescriptionContainer } from '../marketplace/asset_description_container';
-import { BuySellAsset } from '../marketplace/buy_sell_asset';
-import { AssetButtonOrderType } from '../marketplace/marketplace_common';
+import { CollectibleBuySellContainer } from '../marketplace/collectible_buy_sell';
+import { CollectibleDescriptionContainer } from '../marketplace/collectible_description';
 
 const General = styled.div`
     position: fixed;
@@ -32,63 +28,29 @@ const BuySellColumn = styled(ColumnWide)`
     }
 `;
 
-const AssetDescriptionColumn = styled(ColumnNarrow)``;
+const CollectibleDescriptionColumn = styled(ColumnNarrow)``;
 
 interface OwnProps {
     assetId: string;
 }
 
-interface StateProps {
-    ethAccount: string;
-    asset: Collectible | undefined;
-}
+type Props = OwnProps;
 
-type Props = OwnProps & StateProps;
-
-const getAssetOrderType = (currentUserAccount: string, asset: Collectible): AssetButtonOrderType => {
-    const { price, currentOwner } = asset;
-
-    if (currentUserAccount === currentOwner) {
-        // The owner is the current user and the asset has a price: Show cancel button
-        if (price) {
-            return AssetButtonOrderType.Cancel;
-        }
-        // The owner is the current user and the asset doesn't have a price: Show sell button
-        return AssetButtonOrderType.Sell;
-    } else if (price) {
-        // The owner is not the current user and the asset has a price: Show buy button
-        return AssetButtonOrderType.Buy;
-    }
-    // The owner is not the current user and the asset doesn't have a price: Should never happen
-    throw new Error('An order without price should have an owner equal to the current user');
-};
-
-const CollectiblePage = (props: Props) => {
-    const { asset, ethAccount } = props;
-    if (!asset) {
+export const IndividualCollectible = (props: Props) => {
+    const { assetId } = props;
+    if (!assetId) {
         return null;
     }
-    const orderType = getAssetOrderType(ethAccount, asset);
+
     return (
         <General>
             <BuySellColumn>
-                <BuySellAsset asset={asset} orderType={orderType} />
+                <CollectibleBuySellContainer assetId={assetId} />
             </BuySellColumn>
-            <AssetDescriptionColumn>
-                <AssetDescriptionContainer asset={asset} />
-            </AssetDescriptionColumn>
+            <CollectibleDescriptionColumn>
+                <CollectibleDescriptionContainer assetId={assetId} />
+            </CollectibleDescriptionColumn>
             <CheckMetamaskStateModalContainer />
         </General>
     );
 };
-
-const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
-    return {
-        ethAccount: getEthAccount(state),
-        asset: getCollectibleById(state, props),
-    };
-};
-
-const CollectibleContainer = connect(mapStateToProps)(CollectiblePage);
-
-export { CollectiblePage, CollectibleContainer };
