@@ -76,8 +76,8 @@ import { Collectible } from '../util/types';
 
 const collectibleConstants = {
     1: {
-        contractAddress: `0x...`,
-        metadataSourceUrl: `https://rinkeby-api.opensea.io/api/v1`,
+        contractAddress: `0x06012c8cf97bead5deae237070f9587f8e7a266d`,
+        metadataSourceUrl: `https://api.opensea.io/api/v1`,
     },
     4: {
         contractAddress: `0x16baf0de678e52367adc69fd067e5edd1d33e3bf`,
