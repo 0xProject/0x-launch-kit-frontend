@@ -52,7 +52,7 @@ export class DarkTheme extends DefaultTheme {
 }
 ```
 
-theme_mete_data.ts object:
+theme_meta_data.ts object:
 
 ```
 export const KNOWN_THEMES_META_DATA: ThemeMetaData[] = [
