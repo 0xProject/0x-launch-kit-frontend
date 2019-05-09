@@ -54,3 +54,16 @@ export const goToMyCollectibles = () => {
         );
     };
 };
+
+export const goToIndividualCollectible = (collectibleId: string) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+
+        dispatch(
+            push({
+                ...state.router.location,
+                pathname: `${ERC721_APP_BASE_PATH}/asset/${collectibleId}`,
+            }),
+        );
+    };
+};

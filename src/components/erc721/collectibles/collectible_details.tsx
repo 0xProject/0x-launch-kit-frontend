@@ -1,12 +1,22 @@
 import React, { HTMLAttributes } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+import { goToIndividualCollectible } from '../../../store/router/actions';
+
+interface OwnProps extends HTMLAttributes<HTMLDivElement> {
+    id: string;
     name: string;
     price: string;
     image: string;
     color: string;
 }
+
+interface DispatchProps {
+    goToIndividualCollectible: (collectibleId: string) => any;
+}
+
+type Props = DispatchProps & OwnProps;
 
 const CollectibleAssetWrapper = styled.div`
     display: inline-block;
@@ -18,6 +28,7 @@ const CollectibleAssetWrapper = styled.div`
     width: 256px;
     height: 313px;
     margin-bottom: 8px;
+    cursor: pointer;
 `;
 
 const ImageWrapper = styled.div<{ color: string }>`
@@ -103,9 +114,14 @@ const BadgeAsset = styled.span`
 `;
 
 export const CollectibleAsset: React.FC<Props> = (props: Props) => {
-    const { name, price, image, color, ...restProps } = props;
+    const { id, name, price, image, color, ...restProps } = props;
+
+    const handleAssetClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        props.goToIndividualCollectible(id);
+    };
     return (
-        <CollectibleAssetWrapper {...restProps}>
+        <CollectibleAssetWrapper {...restProps} onClick={handleAssetClick}>
             <ImageWrapper color={color}>
                 <Badge>
                     <BadgeImport>{price}</BadgeImport>
@@ -117,3 +133,14 @@ export const CollectibleAsset: React.FC<Props> = (props: Props) => {
         </CollectibleAssetWrapper>
     );
 };
+
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        goToIndividualCollectible: (collectibleId: string) => dispatch(goToIndividualCollectible(collectibleId)),
+    };
+};
+
+export const CollectibleAssetContainer = connect(
+    null,
+    mapDispatchToProps,
+)(CollectibleAsset);

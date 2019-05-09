@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { getUserCollectibles } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 
-import { CollectibleAsset } from './collectible_asset';
+import { CollectibleAssetContainer } from './collectible_details';
 
 const CollectiblesListWrapper = styled.div``;
 
@@ -19,8 +19,17 @@ export const MyCollectiblesList = (props: Props) => {
     return (
         <CollectiblesListWrapper>
             {collectibles.map((item, index) => {
-                const { name, price, image, color } = item;
-                return <CollectibleAsset name={name} price={price} image={image} color={color} key={index} />;
+                const { name, price, image, color, tokenId } = item;
+                return (
+                    <CollectibleAssetContainer
+                        name={name}
+                        price={price}
+                        image={image}
+                        color={color}
+                        id={tokenId}
+                        key={index}
+                    />
+                );
             })}
         </CollectiblesListWrapper>
     );

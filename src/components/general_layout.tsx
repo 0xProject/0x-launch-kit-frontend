@@ -46,7 +46,7 @@ interface OwnProps {
 
 type Props = OwnProps & StateProps;
 
-export const GeneralLayout = (props: Props) => {
+const GeneralLayout = (props: Props) => {
     const { children, toolbar, theme } = props;
     return (
         <ThemeProvider theme={theme}>
@@ -68,4 +68,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-export const GeneralLayoutContainer = connect(mapStateToProps)(GeneralLayout);
+const GeneralLayoutContainer = connect(mapStateToProps)(GeneralLayout);
+
+export { GeneralLayout, GeneralLayoutContainer };

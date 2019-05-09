@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getEthAccount } from '../../store/selectors';
+import { truncateAddress } from '../../util/number_utils';
 import { StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
@@ -48,10 +49,6 @@ interface StateProps {
 }
 
 type Props = StateProps & OwnProps;
-
-const truncateAddress = (address: string) => {
-    return `${address.slice(0, 7)}...${address.slice(address.length - 5)}`;
-};
 
 class WalletConnectionStatus extends React.PureComponent<Props> {
     public render = () => {
