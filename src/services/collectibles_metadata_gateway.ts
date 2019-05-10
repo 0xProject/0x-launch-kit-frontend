@@ -1,10 +1,10 @@
-import { Collectible } from '../util/types';
+import { Collectible, CollectibleMetadataSource } from '../util/types';
 
 import { getConfiguredSource } from './collectibles_metadata_sources';
 
 export class CollectiblesMetadataGateway {
     public fetchUserCollectibles = async (ownerAddress: string, networkId: number | null): Promise<Collectible[]> => {
-        const source = getConfiguredSource();
+        const source: CollectibleMetadataSource = getConfiguredSource();
         return source.fetchUserCollectiblesAsync(ownerAddress, networkId);
     };
 }
