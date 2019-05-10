@@ -1,10 +1,12 @@
 import { COLLECTIBLES_SOURCE } from '../../common/constants';
 import { CollectibleMetadataSource } from '../../util/types';
 
-import { OpenSea } from './opensea';
+import { Mocked } from './mocked';
+import { Opensea } from './opensea';
 
 const sources: { [key: string]: CollectibleMetadataSource } = {
-    opensea: new OpenSea(),
+    opensea: new Opensea(),
+    mocked: new Mocked(),
 };
 
 export const getConfiguredSource = () => {
