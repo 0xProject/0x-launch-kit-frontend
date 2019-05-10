@@ -64,11 +64,13 @@ export const LOGGER_ID: string = process.env.REACT_APP_LOGGER_ID || '0x-launch-k
 
 export const THEME_NAME: string = process.env.REACT_APP_THEME_NAME || 'DEFAULT_THEME';
 
+export const SERVICE_GATEWAY_ERC721: string = process.env.REACT_APP_SERVICE_GATEWAY_ERC721 || 'OPEN_SEA';
+
 export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT
     ? process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT === 'true'
     : process.env.NODE_ENV === 'development';
 
-// CryptoKitties addreses
+// CryptoKitties addresses
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
     1: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
     4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',

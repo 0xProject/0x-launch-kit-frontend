@@ -245,3 +245,7 @@ export interface CollectiblesState {
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
+
+export interface Gateway {
+    [key: string]: any;
+}

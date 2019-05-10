@@ -3,7 +3,7 @@ import { createBrowserHistory } from 'history';
 import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 
-import { getCollectiblesMetadataSource } from '../services/collectibles_metadata_source';
+import { getCollectiblesMetadataSource } from '../services/collectibles/collectibles_metadata_source';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { getWeb3Wrapper, initializeWeb3Wrapper } from '../services/web3_wrapper';
 import { StoreState } from '../util/types';
