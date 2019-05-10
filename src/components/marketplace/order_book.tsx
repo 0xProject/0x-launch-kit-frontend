@@ -28,13 +28,15 @@ interface OwnProps {
 
 type Props = OwnProps & StateProps;
 
+type StickySpreadPosition = 'top' | 'bottom' | 'normal';
+
 interface State {
-    stickySpreadPosition: string;
+    stickySpreadPosition: StickySpreadPosition;
     stickySpreadWidth: string;
 }
 
 interface GridRowSpreadProps {
-    stickySpreadPosition?: string;
+    stickySpreadPosition: StickySpreadPosition;
     stickySpreadWidth?: string;
 }
 
@@ -73,14 +75,14 @@ const GridRowTop = styled(GridRow)`
 `;
 
 const GridRowSpread = styled(GridRow)<GridRowSpreadProps>`
-    ${props => (props.stickySpreadPosition && props.stickySpreadPosition === 'top' ? 'top: 29px;' : '')}
-    ${props => (props.stickySpreadPosition && props.stickySpreadPosition === 'bottom' ? 'bottom: 0;' : '')}
+    ${props => (props.stickySpreadPosition === 'top' ? 'top: 29px;' : '')}
+    ${props => (props.stickySpreadPosition === 'bottom' ? 'bottom: 0;' : '')}
 
     background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
     flex-grow: 0;
     flex-shrink: 0;
     display: grid;
-    position: ${props => (props.stickySpreadPosition !== '' ? 'absolute' : 'relative')};
+    position: ${props => (props.stickySpreadPosition === 'normal' ? 'relative' : 'absolute')};
     width: ${props => props.stickySpreadWidth};
     z-index: 12;
 `;
@@ -173,7 +175,7 @@ const orderToRow = (
 const getSpreadRow = (
     ref: React.RefObject<HTMLDivElement>,
     spread: string,
-    stickySpreadPosition: string = '',
+    stickySpreadPosition: StickySpreadPosition = 'normal',
     stickySpreadWidth: string = '',
 ): React.ReactNode => {
     return (
@@ -201,7 +203,7 @@ const getSpreadRow = (
 
 class OrderBookTable extends React.Component<Props, State> {
     public readonly state: State = {
-        stickySpreadPosition: '',
+        stickySpreadPosition: 'normal',
         stickySpreadWidth: '100%',
     };
 
@@ -260,7 +262,7 @@ class OrderBookTable extends React.Component<Props, State> {
                         </THLast>
                     </GridRowTop>
                     <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpread}>
-                        {this.state.stickySpreadPosition
+                        {this.state.stickySpreadPosition !== 'normal'
                             ? getSpreadRow(
                                   this._spreadRowFixed,
                                   spreadToFixed,
@@ -331,7 +333,7 @@ class OrderBookTable extends React.Component<Props, State> {
         } else if (itemsListScroll + itemsListHeight - spreadHeight <= spreadOffsetTop) {
             this.setState({ stickySpreadPosition: 'bottom' });
         } else {
-            this.setState({ stickySpreadPosition: '' });
+            this.setState({ stickySpreadPosition: 'normal' });
         }
     };
 
