@@ -148,7 +148,7 @@ const orderToRow = (
     const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }} id="mySize">
                 {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
             </CustomTD>
         ) : null;
@@ -332,12 +332,14 @@ class OrderBookTable extends React.Component<Props, State> {
     };
 
     private readonly _scrollToSpread = () => {
+        const { current } = this._spreadRowScrollable;
         if (window.outerWidth < parseInt(themeBreakPoints.xl, 10)) {
             return;
         }
 
-        if (this._spreadRowScrollable.current && !this._hasScrolled) {
-            this._spreadRowScrollable.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        if (current && !this._hasScrolled) {
+            // tslint:disable-next-line:no-unused-expression
+            current.scrollIntoView && current.scrollIntoView({ block: 'center', behavior: 'smooth' });
             this._hasScrolled = true;
         }
     };

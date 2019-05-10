@@ -67,12 +67,10 @@ describe('OrderBookTable', () => {
                 userOrders={userOrders}
             />,
         );
-
         // then
         const mySizeRowValue = wrapper
-            .find('tbody tr')
-            .at(0)
-            .find('td')
+            .find('CardBase')
+            .find('#mySize')
             .at(1);
         expect(mySizeRowValue.text()).toEqual('1.0000');
     });
@@ -140,9 +138,8 @@ describe('OrderBookTable', () => {
 
         // then
         const mySizeRowValue = wrapper
-            .find('tbody tr')
-            .at(0)
-            .find('td')
+            .find('CardBase')
+            .find('#mySize')
             .at(1);
         expect(mySizeRowValue.text()).toEqual('2.0000');
     });
@@ -225,55 +222,15 @@ describe('OrderBookTable', () => {
             />,
         );
 
+        const baseRows = wrapper.find('CardBase').find('span');
+
         // then
-        const sizeRow1 = wrapper
-            .find('tbody tr')
-            .at(0)
-            .find('td')
-            .at(0)
-            .find('span')
-            .at(0)
-            .text();
-        const sizeRow2 = wrapper
-            .find('tbody tr')
-            .at(1)
-            .find('td')
-            .at(0)
-            .find('span')
-            .at(0)
-            .text();
-        const sizeRow3 = wrapper
-            .find('tbody tr')
-            .at(2)
-            .find('td')
-            .at(0)
-            .find('span')
-            .at(0)
-            .text();
-        const sizeRow4 = wrapper
-            .find('tbody tr')
-            .at(3)
-            .find('td')
-            .at(0)
-            .find('span')
-            .at(0)
-            .text();
-        const sizeRow5 = wrapper
-            .find('tbody tr')
-            .at(4)
-            .find('td')
-            .at(0)
-            .find('span')
-            .at(0)
-            .text();
-        const sizeRow6 = wrapper
-            .find('tbody tr')
-            .at(5)
-            .find('td')
-            .at(0)
-            .find('span')
-            .at(0)
-            .text();
+        const sizeRow1 = baseRows.at(0).text();
+        const sizeRow2 = baseRows.at(2).text();
+        const sizeRow3 = baseRows.at(4).text();
+        const sizeRow4 = baseRows.at(6).text();
+        const sizeRow5 = baseRows.at(8).text();
+        const sizeRow6 = baseRows.at(10).text();
 
         expect(sizeRow1).toEqual(resultExpected1);
         expect(sizeRow2).toEqual(resultExpected2);
