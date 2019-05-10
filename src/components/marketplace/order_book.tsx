@@ -81,9 +81,13 @@ const GridRowSpread = styled(GridRow)<GridRowSpreadProps>`
     flex-shrink: 0;
     display: grid;
     position: ${props => (props.stickySpreadPosition !== '' ? 'absolute' : 'relative')};
-    width: ${props => (props.stickySpreadWidth ? props.stickySpreadWidth : 'auto')};
+    width: ${props => props.stickySpreadWidth};
     z-index: 12;
 `;
+
+GridRowSpread.defaultProps = {
+    stickySpreadWidth: 'auto',
+};
 
 const CenteredLoading = styled(CardLoading)`
     align-self: center;
