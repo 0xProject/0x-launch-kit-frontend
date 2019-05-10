@@ -4,7 +4,7 @@ import * as Factory from 'factory.ts';
 
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { OrderSide, Token, TokenBalance, UIOrder } from './types';
+import { Collectible, OrderSide, Token, TokenBalance, UIOrder } from './types';
 
 export const makeOrder = ({
     makerAssetAmount,
@@ -100,4 +100,15 @@ export const tokenBalanceFactory = Factory.Sync.makeFactory<TokenBalance>({
     balance: new BigNumber(2),
     isUnlocked: true,
     token: tokenFactory.build(),
+});
+
+export const collectibleFactory = Factory.Sync.makeFactory<Collectible>({
+    assetUrl: '',
+    color: '',
+    currentOwner: addressFactory.build().address,
+    description: Factory.each(i => `Mocked collectible ${i}`),
+    image: '',
+    name: Factory.each(i => `NFT ${i}`),
+    price: new BigNumber(1),
+    tokenId: Factory.each(i => i.toString()),
 });
