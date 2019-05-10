@@ -15,6 +15,10 @@ export class Opensea implements CollectibleMetadataSource {
                 price: '',
                 color: `#${asset.background_color}`,
                 image: asset.image_url,
+                currentOwner: asset.owner,
+                assetUrl: asset.external_link,
+                // @TODO: https://docs.opensea.io/reference#asset-object
+                description: asset.name,
             };
         });
     }

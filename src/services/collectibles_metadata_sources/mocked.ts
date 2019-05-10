@@ -85,6 +85,7 @@ const allCollectibles: any[] = [
 
 export class Mocked implements CollectibleMetadataSource {
     public fetchUserCollectiblesAsync = (address: string, networkId: number | null): Promise<Collectible[]> => {
-        return Promise.resolve(allCollectibles);
+        const userCollectibles = allCollectibles.filter(x => x.currentOwner.toLowerCase() === address.toLowerCase());
+        return Promise.resolve(userCollectibles);
     };
 }
