@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { updateSelectedCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 
@@ -42,26 +43,39 @@ interface OwnProps {
 
 interface StateProps {
     ethAccount: string;
-    asset: Collectible | undefined;
+    collectible: Collectible | undefined;
 }
 
-type Props = OwnProps & StateProps;
+interface DispatchProps {
+    updateSelectedCollectible: (collectible: Collectible) => any;
+}
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 const CollectibleBuySell = (props: Props) => {
-    const { asset, ethAccount } = props;
-    if (!asset) {
+    const { collectible, ethAccount } = props;
+    if (!collectible) {
         return null;
     }
-    const { price, color, image } = asset;
+    const { price, color, image } = collectible;
 
     const onBuy = () => window.alert('buy');
-    const onSell = () => window.alert('sell');
+
+    const onSell = () => {
+        props.updateSelectedCollectible(collectible);
+    };
     const onCancel = () => window.alert('cancel');
 
     return (
         <BuySellWrapper>
             <Image imageUrl={image} imageColor={color} />
-            <TradeButton ethAccount={ethAccount} asset={asset} onBuy={onBuy} onSell={onSell} onCancel={onCancel} />
+            <TradeButton
+                ethAccount={ethAccount}
+                asset={collectible}
+                onBuy={onBuy}
+                onSell={onSell}
+                onCancel={onCancel}
+            />
             <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
             {price && <CenteredText>Last price: Ξ {price.toString()}</CenteredText>}
         </BuySellWrapper>
@@ -71,10 +85,19 @@ const CollectibleBuySell = (props: Props) => {
 const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
     return {
         ethAccount: getEthAccount(state),
-        asset: getCollectibleById(state, props),
+        collectible: getCollectibleById(state, props),
     };
 };
 
-const CollectibleBuySellContainer = connect(mapStateToProps)(CollectibleBuySell);
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        updateSelectedCollectible: (collectible: Collectible) => dispatch(updateSelectedCollectible(collectible)),
+    };
+};
+
+const CollectibleBuySellContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(CollectibleBuySell);
 
 export { CollectibleBuySell, CollectibleBuySellContainer };

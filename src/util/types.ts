@@ -61,6 +61,7 @@ export interface UIState {
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
     readonly theme: Theme;
+    readonly isModalSellCollectibleOpen: boolean;
 }
 
 export interface MarketState {
@@ -85,6 +86,8 @@ export enum StepKind {
     ToggleTokenLock = 'ToggleTokenLock',
     BuySellLimit = 'BuySellLimit',
     BuySellMarket = 'BuySellMarket',
+    ToggleCollectibleLock = 'ToggleCollectibleLock',
+    BuySellCollectible = 'BuySellCollectible',
 }
 
 export interface StepWrapEth {
@@ -99,6 +102,12 @@ export interface StepToggleTokenLock {
     token: Token;
     isUnlocked: boolean;
     context: 'order' | 'standalone';
+}
+
+export interface StepToggleCollectibleLock {
+    kind: StepKind.ToggleCollectibleLock;
+    collectible: Collectible;
+    isUnlocked: boolean;
 }
 
 export interface StepBuySellLimitOrder {
@@ -116,7 +125,21 @@ export interface StepBuySellMarket {
     token: Token;
 }
 
-export type Step = StepWrapEth | StepToggleTokenLock | StepBuySellLimitOrder | StepBuySellMarket;
+export interface StepBuySellCollectible {
+    kind: StepKind.BuySellCollectible;
+    collectible: Collectible;
+    startPrice: BigNumber;
+    endPrice?: BigNumber;
+    expirationDate: string;
+}
+
+export type Step =
+    | StepWrapEth
+    | StepToggleTokenLock
+    | StepBuySellLimitOrder
+    | StepBuySellMarket
+    | StepBuySellCollectible
+    | StepToggleCollectibleLock;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];
@@ -245,6 +268,7 @@ export interface Collectible {
 
 export interface CollectiblesState {
     readonly userCollectibles: { [tokenId: string]: Collectible };
+    collectibleSelected: Collectible | null;
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;

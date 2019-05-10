@@ -28,6 +28,7 @@ export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnre
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
+export const getIsModalSellCollectibleOpen = (state: StoreState) => state.ui.isModalSellCollectibleOpen;
 export const getTheme = (state: StoreState) => state.ui.theme;
 export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
 export const getBaseToken = (state: StoreState) => state.market.baseToken;
@@ -40,6 +41,7 @@ export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getUserCollectibles = (state: StoreState) => state.collectibles.userCollectibles;
 export const getCollectibleById = (state: StoreState, props: { assetId: string }): Collectible | undefined =>
     state.collectibles.userCollectibles[props.assetId];
+export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {

@@ -4,8 +4,13 @@ import { createAction } from 'typesafe-actions';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
-import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
 import {
+    createBuySellCollectibleSteps,
+    createBuySellLimitSteps,
+    createBuySellMarketSteps,
+} from '../../util/steps_modals_generation';
+import {
+    Collectible,
     Notification,
     NotificationKind,
     OrderSide,
@@ -51,6 +56,8 @@ export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
     return (themeColor: DefaultTheme) => resolve(themeColor);
 });
 
+export const toggleModalSellCollectible = createAction('ui/colllectibles');
+
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {
     return async dispatch => {
         const toggleTokenLockStep = isUnlocked ? getLockTokenStep(token) : getUnlockTokenStep(token);
@@ -75,6 +82,25 @@ export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => 
 
         dispatch(setStepsModalCurrentStep(wrapEthStep));
         dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startBuySellCollectibleSteps: ThunkCreator = (
+    collectible: Collectible,
+    expirationDate: string,
+    startingPrice: BigNumber,
+    endingPrice?: BigNumber,
+) => {
+    return async dispatch => {
+        const buySellCollectibleSteps: Step[] = createBuySellCollectibleSteps(
+            collectible,
+            expirationDate,
+            startingPrice,
+            endingPrice,
+        );
+        dispatch(setStepsModalCurrentStep(buySellCollectibleSteps[0]));
+        dispatch(setStepsModalPendingSteps(buySellCollectibleSteps.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
 };
