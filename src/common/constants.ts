@@ -68,7 +68,7 @@ export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_E
     ? process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT === 'true'
     : process.env.NODE_ENV === 'development';
 
-export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || '';
+export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || 'mocked';
 
 // CryptoKitties addresses
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
