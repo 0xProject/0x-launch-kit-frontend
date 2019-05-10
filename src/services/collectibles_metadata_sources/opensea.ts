@@ -1,9 +1,7 @@
-import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../../common/constants';
-import { Collectible } from '../../../util/types';
+import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
-import { GatewayClass } from './base';
-
-export class OpenSea implements GatewayClass {
+export class Opensea implements CollectibleMetadataSource {
     private readonly _endpointsUrls: { [key: number]: string } = {
         1: 'https://api.opensea.io/api/v1',
         4: 'https://rinkeby-api.opensea.io/api/v1',
@@ -30,6 +28,6 @@ export class OpenSea implements GatewayClass {
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${ownerAddress}`;
         const assetsResponse = await fetch(url);
         const assetsResponseJson = await assetsResponse.json();
-        return OpenSea.getAssetsAsCollectible(assetsResponseJson.assets);
+        return Opensea.getAssetsAsCollectible(assetsResponseJson.assets);
     }
 }

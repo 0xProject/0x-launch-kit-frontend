@@ -10,14 +10,14 @@ export const fetchUserCollectiblesAsync = createAsyncAction(
 )<void, Collectible[], Error>();
 
 export const getUserCollectibles: ThunkCreator = () => {
-    return async (dispatch, getState, { getCollectiblesMetadataSource }) => {
+    return async (dispatch, getState, { getCollectiblesMetadataGateway }) => {
         dispatch(fetchUserCollectiblesAsync.request());
         try {
             const state = getState();
             const ethAccount = getEthAccount(state);
             const networkId = getNetworkId(state);
-            const collectiblesMetadataSource = getCollectiblesMetadataSource();
-            const collectibles = await collectiblesMetadataSource.fetchUserCollectibles(ethAccount, networkId);
+            const collectiblesMetadataGateway = getCollectiblesMetadataGateway();
+            const collectibles = await collectiblesMetadataGateway.fetchUserCollectibles(ethAccount, networkId);
             dispatch(fetchUserCollectiblesAsync.success(collectibles));
         } catch (err) {
             dispatch(fetchUserCollectiblesAsync.failure(err));
