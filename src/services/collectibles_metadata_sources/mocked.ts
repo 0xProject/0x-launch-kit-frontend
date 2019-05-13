@@ -90,4 +90,8 @@ export class Mocked implements CollectibleMetadataSource {
         const userCollectibles = allCollectibles.filter(x => x.currentOwner.toLowerCase() === address.toLowerCase());
         return Promise.resolve(userCollectibles);
     };
+
+    public fetchAllCollectiblesAsync = (networkId: number | null): Promise<Collectible[]> => {
+        return Promise.resolve(allCollectibles);
+    };
 }

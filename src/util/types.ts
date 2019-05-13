@@ -245,10 +245,12 @@ export interface Collectible {
 
 export interface CollectiblesState {
     readonly userCollectibles: { [tokenId: string]: Collectible };
+    readonly allCollectibles: { [tokenId: string]: Collectible };
 }
 
 export interface CollectibleMetadataSource {
     fetchUserCollectiblesAsync(ownerAddress: string, networkId: number | null): Promise<Collectible[]>;
+    fetchAllCollectiblesAsync(networkId: number | null): Promise<Collectible[]>;
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;

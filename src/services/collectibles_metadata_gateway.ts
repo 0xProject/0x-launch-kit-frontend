@@ -7,6 +7,11 @@ export class CollectiblesMetadataGateway {
         const source: CollectibleMetadataSource = getConfiguredSource();
         return source.fetchUserCollectiblesAsync(ownerAddress, networkId);
     };
+
+    public fetchAllCollectibles = async (networkId: number | null): Promise<Collectible[]> => {
+        const source: CollectibleMetadataSource = getConfiguredSource();
+        return source.fetchAllCollectiblesAsync(networkId);
+    };
 }
 
 let collectiblesMetadataGateway: CollectiblesMetadataGateway;
