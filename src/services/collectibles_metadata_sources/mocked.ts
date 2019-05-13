@@ -11,7 +11,7 @@ const allCollectibles: any[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '1',
@@ -21,7 +21,7 @@ const allCollectibles: any[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/9_xunbhn.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '2',
@@ -31,7 +31,7 @@ const allCollectibles: any[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/10_iqm4un.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '3',
@@ -41,7 +41,7 @@ const allCollectibles: any[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888667/5_sxqrol.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '4',
@@ -51,7 +51,7 @@ const allCollectibles: any[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888664/1_sz6sji.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '10',
