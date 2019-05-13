@@ -2,10 +2,9 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep } from '../../../store/selectors';
-import { addMarketBuySellNotification } from '../../../store/ui/actions';
-import { OrderSide, StepBuySellCollectible, StoreState, Token } from '../../../util/types';
+import { submitMarketOrder } from '../../../store/actions';
+import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
+import { OrderSide, StepBuySellCollectible, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -16,13 +15,12 @@ interface OwnProps {
 interface StateProps {
     estimatedTxTimeMs: number;
     step: StepBuySellCollectible;
-    quoteToken: Token;
 }
 
 interface DispatchProps {
     onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<{ txHash: string; amountInReturn: BigNumber }>;
-    refreshOrders: () => any;
-    notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) => any;
+    // refreshOrders: () => any; // TODO: once the integration with openSea is done, this should be uncommented
+    // TODO: later this should contain something like 'notifyBuySellCollectible'
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -85,7 +83,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepBuySellCollectible,
-        quoteToken: getQuoteToken(state) as Token,
     };
 };
 
@@ -94,9 +91,7 @@ const BuySellCollectibleStepContainer = connect(
     (dispatch: any) => {
         return {
             onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => dispatch(submitMarketOrder(amount, side)),
-            notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) =>
-                dispatch(addMarketBuySellNotification(id, amount, token, side, tx)),
-            refreshOrders: () => dispatch(getOrderbookAndUserOrders()),
+            // refreshOrders: () => dispatch(getUserCollectibles()),
         };
     },
 )(BuySellCollectibleStep);
