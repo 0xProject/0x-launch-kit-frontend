@@ -85,7 +85,7 @@ export enum StepKind {
     ToggleTokenLock = 'ToggleTokenLock',
     BuySellLimit = 'BuySellLimit',
     BuySellMarket = 'BuySellMarket',
-    ToggleCollectibleLock = 'ToggleCollectibleLock',
+    UnlockCollectibles = 'UnlockCollectibles',
     BuySellCollectible = 'BuySellCollectible',
 }
 
@@ -103,8 +103,8 @@ export interface StepToggleTokenLock {
     context: 'order' | 'standalone';
 }
 
-export interface StepToggleCollectibleLock {
-    kind: StepKind.ToggleCollectibleLock;
+export interface StepUnlockCollectibles {
+    kind: StepKind.UnlockCollectibles;
     collectible: Collectible;
     isUnlocked: boolean;
 }
@@ -139,7 +139,7 @@ export type Step =
     | StepBuySellLimitOrder
     | StepBuySellMarket
     | StepBuySellCollectible
-    | StepToggleCollectibleLock;
+    | StepUnlockCollectibles;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];

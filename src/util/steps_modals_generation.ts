@@ -8,8 +8,8 @@ import {
     OrderSide,
     Step,
     StepKind,
-    StepToggleCollectibleLock,
     StepToggleTokenLock,
+    StepUnlockCollectibles,
     StepWrapEth,
     Token,
     TokenBalance,
@@ -150,9 +150,9 @@ export const getUnlockTokenStepIfNeeded = (
     }
 };
 
-export const getUnlockCollectibleStep = (collectible: Collectible): StepToggleCollectibleLock => {
+export const getUnlockCollectibleStep = (collectible: Collectible): StepUnlockCollectibles => {
     return {
-        kind: StepKind.ToggleCollectibleLock,
+        kind: StepKind.UnlockCollectibles,
         collectible,
         isUnlocked: false,
     };

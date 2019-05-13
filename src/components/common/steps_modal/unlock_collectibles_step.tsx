@@ -6,7 +6,7 @@ import { unlockCollectible } from '../../../store/blockchain/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
 import { sleep } from '../../../util/sleep';
-import { Collectible, StepToggleCollectibleLock, StoreState } from '../../../util/types';
+import { Collectible, StepUnlockCollectibles, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
@@ -17,7 +17,7 @@ interface OwnProps {
 }
 interface StateProps {
     estimatedTxTimeMs: number;
-    step: StepToggleCollectibleLock;
+    step: StepUnlockCollectibles;
 }
 
 interface DispatchProps {
@@ -27,7 +27,7 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-class ToggleCollectibleLockStep extends React.Component<Props> {
+class UnlockCollectiblesStep extends React.Component<Props> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
         const { isUnlocked, collectible } = step;
@@ -58,13 +58,13 @@ class ToggleCollectibleLockStep extends React.Component<Props> {
                 doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
-                runAction={this._toggleCollectible}
+                runAction={this._unlockCollectibles}
                 showPartialProgress={true}
             />
         );
     };
 
-    private readonly _toggleCollectible = async ({ onLoading, onDone, onError }: any) => {
+    private readonly _unlockCollectibles = async ({ onLoading, onDone, onError }: any) => {
         const { advanceStep, onUnlockCollectible, step } = this.props;
 
         try {
@@ -86,11 +86,11 @@ class ToggleCollectibleLockStep extends React.Component<Props> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
-        step: getStepsModalCurrentStep(state) as StepToggleCollectibleLock,
+        step: getStepsModalCurrentStep(state) as StepUnlockCollectibles,
     };
 };
 
-const ToggleCollectibleLockStepContainer = connect(
+const UnlockCollectiblesStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
@@ -98,6 +98,6 @@ const ToggleCollectibleLockStepContainer = connect(
             onUnlockCollectible: (collectible: Collectible) => dispatch(unlockCollectible(collectible)),
         };
     },
-)(ToggleCollectibleLockStep);
+)(UnlockCollectiblesStep);
 
-export { ToggleCollectibleLockStep, ToggleCollectibleLockStepContainer };
+export { UnlockCollectiblesStep, UnlockCollectiblesStepContainer };
