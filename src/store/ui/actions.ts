@@ -88,6 +88,7 @@ export const startBuySellCollectibleSteps: ThunkCreator = (
     collectible: Collectible,
     expirationDate: string,
     startingPrice: BigNumber,
+    side: OrderSide,
     endingPrice?: BigNumber,
 ) => {
     return async dispatch => {
@@ -95,6 +96,7 @@ export const startBuySellCollectibleSteps: ThunkCreator = (
             collectible,
             expirationDate,
             startingPrice,
+            side,
             endingPrice,
         );
         dispatch(setStepsModalCurrentStep(buySellCollectibleSteps[0]));

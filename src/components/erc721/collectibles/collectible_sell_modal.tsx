@@ -8,7 +8,7 @@ import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startBuySellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
-import { Collectible, StoreState } from '../../../util/types';
+import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
 
@@ -21,6 +21,7 @@ interface DispatchProps {
         collectible: Collectible,
         expirationDate: string,
         startingPrice: BigNumber,
+        side: OrderSide,
         endingPrice?: BigNumber,
     ) => Promise<any>;
     updateSelectedCollectible: (collectible: Collectible | null) => any;
@@ -110,7 +111,13 @@ class CollectibleSellModalContainer extends React.Component<Props> {
         // TODO Get this info from the modal
         const expirationDate = '123';
         this._closeModal();
-        await this.props.onSubmitCollectibleOrder(currentCollectible, expirationDate, startPrice, endingPrice);
+        await this.props.onSubmitCollectibleOrder(
+            currentCollectible,
+            expirationDate,
+            startPrice,
+            OrderSide.Sell,
+            endingPrice,
+        );
     };
 }
 
@@ -126,8 +133,9 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
             collectible: Collectible,
             expirationDate: string,
             startingPrice: BigNumber,
+            side: OrderSide,
             endingPrice?: BigNumber,
-        ) => dispatch(startBuySellCollectibleSteps(collectible, expirationDate, startingPrice, endingPrice)),
+        ) => dispatch(startBuySellCollectibleSteps(collectible, expirationDate, startingPrice, side, endingPrice)),
         updateSelectedCollectible: (collectible: Collectible | null) => dispatch(selectCollectible(collectible)),
     };
 };

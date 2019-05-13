@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { lockToken, unlockToken } from '../../../store/blockchain/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
-import { StepToggleCollectibleLock, StoreState, Token } from '../../../util/types';
+import { sleep } from '../../../util/sleep';
+import { StepToggleCollectibleLock, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
+import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
@@ -18,8 +19,6 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onLockToken: (token: Token) => Promise<any>;
-    onUnlockToken: (token: Token) => Promise<any>;
     advanceStep: () => void;
 }
 
@@ -29,23 +28,20 @@ class ToggleCollectibleLockStep extends React.Component<Props> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
         const { isUnlocked, collectible } = step;
-        const tokenSymbol = collectible.name;
-        // const context = 'order';
-
-        // const title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock Collectible' : 'Unlock Collectible';
-        const title = 'Order setup';
+        const collectibleSymbol = collectible.name;
+        const title = `Selling ${collectibleSymbol}`;
         const confirmCaption = `Confirm on Metamask to ${
             isUnlocked ? 'lock' : 'unlock'
-        } ${tokenSymbol} for trading on 0x.`;
+        } ${collectibleSymbol} for trading on 0x.`;
         const loadingCaption = isUnlocked
-            ? `Locking ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
-            : `Unlocking ${tokenSymbol}. It will remain unlocked for future trades`;
+            ? `Locking ${collectibleSymbol}. You won't be able to use it for trading until you unlock it again`
+            : `Unlocking ${collectibleSymbol}. It will remain unlocked for future trades`;
         const doneCaption = isUnlocked
-            ? `Locked ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
-            : `Unlocked ${tokenSymbol}. It will remain unlocked for future trades`;
-        const errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${tokenSymbol} failed.`;
+            ? `Locked ${collectibleSymbol}. You won't be able to use it for trading until you unlock it again`
+            : `Unlocked ${collectibleSymbol}. It will remain unlocked for future trades`;
+        const errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${collectibleSymbol} failed.`;
         const loadingFooterCaption = `Waiting for confirmation...`;
-        const doneFooterCaption = !isUnlocked ? ` ${tokenSymbol} Unlocked!` : ` ${tokenSymbol} Locked!`;
+        const doneFooterCaption = !isUnlocked ? ` ${collectibleSymbol} Unlocked!` : ` ${collectibleSymbol} Locked!`;
 
         return (
             <BaseStepModal
@@ -59,30 +55,21 @@ class ToggleCollectibleLockStep extends React.Component<Props> {
                 doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
-                runAction={this._toggleToken}
+                runAction={this._toggleCollectible}
                 showPartialProgress={true}
             />
         );
     };
 
-    private readonly _toggleToken = async ({ onLoading, onDone, onError }: any) => {
-        /*
-                const { step, onLockToken, onUnlockToken } = this.props;
-        const toggleToken = step.isUnlocked ? onLockToken : onUnlockToken;
-        try {
-            const web3Wrapper = await getWeb3Wrapper();
-            const txHash = await toggleToken(step.token);
-            onLoading();
-
-            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
+    private readonly _toggleCollectible = async ({ onLoading, onDone, onError }: any) => {
+        const { advanceStep } = this.props;
+        // TODO Implement
+        onLoading();
+        setTimeout(async () => {
             onDone();
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
-        } catch (err) {
-            onError(err);
-        }
-
-         */
+        }, 500);
     };
 }
 
@@ -97,8 +84,6 @@ const ToggleCollectibleLockStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            onLockToken: (token: Token) => dispatch(lockToken(token)),
-            onUnlockToken: (token: Token) => dispatch(unlockToken(token)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },

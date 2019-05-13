@@ -10,11 +10,12 @@ import { getStepTitle, isLongStep } from '../../../util/steps';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
 
+import { BuySellCollectibleStepContainer } from './buy_sell_collectible_step';
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
 import { SignOrderStepContainer } from './sign_order_step';
 import { ModalContent } from './steps_common';
 import { StepItem } from './steps_progress';
-import { ToggleCollectibleLockStepContainer } from './toggle_token_lock_collectible_step';
+import { ToggleCollectibleLockStepContainer } from './toggle_collectible_lock_step';
 import { ToggleTokenLockStepContainer } from './toggle_token_lock_step';
 import { WrapEthStepContainer } from './wrap_eth_step';
 
@@ -75,7 +76,7 @@ class StepsModal extends React.Component<Props> {
                         <BuySellTokenStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                     {currentStep && currentStep.kind === StepKind.BuySellCollectible && (
-                        <BuySellTokenStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
+                        <BuySellCollectibleStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                     {currentStep && currentStep.kind === StepKind.WrapEth && (
                         <WrapEthStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />

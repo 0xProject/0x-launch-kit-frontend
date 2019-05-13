@@ -130,6 +130,7 @@ export interface StepBuySellCollectible {
     startPrice: BigNumber;
     endPrice?: BigNumber;
     expirationDate: string;
+    side: OrderSide;
 }
 
 export type Step =

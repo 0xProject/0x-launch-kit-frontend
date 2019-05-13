@@ -71,6 +71,7 @@ export const createBuySellCollectibleSteps = (
     collectible: Collectible,
     expirationDate: string,
     startPrice: BigNumber,
+    side: OrderSide,
     endPrice?: BigNumber,
 ): Step[] => {
     const buySellCollectibleFlow: Step[] = [];
@@ -87,6 +88,7 @@ export const createBuySellCollectibleSteps = (
         startPrice,
         endPrice,
         expirationDate,
+        side,
     });
 
     return buySellCollectibleFlow;
