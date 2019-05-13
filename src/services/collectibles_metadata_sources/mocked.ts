@@ -4,6 +4,7 @@ import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
 const allCollectibles: any[] = [
     {
+        contractAddress: '',
         tokenId: '0',
         name: 'Glitter',
         price: new BigNumber('2.30'),
@@ -14,6 +15,7 @@ const allCollectibles: any[] = [
         currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
+        contractAddress: '',
         tokenId: '1',
         name: 'Furbeard',
         price: null,
@@ -24,6 +26,7 @@ const allCollectibles: any[] = [
         currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
+        contractAddress: '',
         tokenId: '2',
         name: 'Glasswalker',
         price: new BigNumber('3.41'),
@@ -34,6 +37,7 @@ const allCollectibles: any[] = [
         currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
+        contractAddress: '',
         tokenId: '3',
         name: 'Ande',
         price: null,
@@ -44,6 +48,7 @@ const allCollectibles: any[] = [
         currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
+        contractAddress: '',
         tokenId: '4',
         name: 'Squib',
         price: null,
@@ -54,6 +59,7 @@ const allCollectibles: any[] = [
         currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
+        contractAddress: '',
         tokenId: '10',
         name: 'Negato',
         price: null,
@@ -64,6 +70,7 @@ const allCollectibles: any[] = [
         currentOwner: '0x6Ecbe1DB9EF729CBe972C83Fb886247691Fb6beb',
     },
     {
+        contractAddress: '',
         tokenId: '11',
         name: 'DuCat',
         price: new BigNumber('12.90'),
@@ -74,6 +81,7 @@ const allCollectibles: any[] = [
         currentOwner: '0x6Ecbe1DB9EF729CBe972C83Fb886247691Fb6beb',
     },
     {
+        contractAddress: '',
         tokenId: '12',
         name: 'Berry',
         price: new BigNumber('2.30'),

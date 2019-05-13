@@ -256,6 +256,7 @@ export enum ModalDisplay {
 }
 
 export interface Collectible {
+    contractAddress: string;
     tokenId: string;
     name: string;
     price: BigNumber | null;

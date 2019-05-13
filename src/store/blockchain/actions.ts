@@ -10,7 +10,7 @@ import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, GasInfo, ThunkCreator, Token, TokenBalance, Web3State } from '../../util/types';
+import { BlockchainState, Collectible, GasInfo, ThunkCreator, Token, TokenBalance, Web3State } from '../../util/types';
 import { getUserCollectibles } from '../collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
@@ -19,6 +19,7 @@ import {
     getEthAccount,
     getGasPriceInWei,
     getMarkets,
+    getNetworkId,
     getTokenBalances,
     getWethBalance,
     getWethTokenBalance,
@@ -328,6 +329,29 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 logger.error('There was an error fetching the account or networkId from web3', error);
                 dispatch(setWeb3State(Web3State.Error));
             }
+        }
+    };
+};
+
+export const unlockCollectible: ThunkCreator = (collectible: Collectible) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const state = getState();
+        const networkId = getNetworkId(state);
+        if (networkId) {
+            const { tokenId, contractAddress } = collectible;
+            const contractWrappers = await getContractWrappers();
+            const gasPrice = getGasPriceInWei(state);
+
+            const tx = await contractWrappers.erc721Token.setProxyApprovalAsync(
+                contractAddress,
+                new BigNumber(tokenId),
+                {
+                    ...TX_DEFAULTS,
+                    gasPrice,
+                },
+            );
+
+            return tx;
         }
     };
 };

@@ -103,6 +103,7 @@ export const tokenBalanceFactory = Factory.Sync.makeFactory<TokenBalance>({
 });
 
 export const collectibleFactory = Factory.Sync.makeFactory<Collectible>({
+    contractAddress: '',
     assetUrl: '',
     color: '',
     currentOwner: addressFactory.build().address,

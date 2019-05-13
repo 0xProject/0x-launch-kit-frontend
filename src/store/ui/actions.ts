@@ -3,7 +3,7 @@ import { createAction } from 'typesafe-actions';
 
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
-import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
+import { buildLimitOrder, buildMarketOrders, buildSellCollectibleOrder } from '../../util/orders';
 import {
     createBuySellCollectibleSteps,
     createBuySellLimitSteps,
@@ -180,6 +180,39 @@ const getLockTokenStep = (token: Token): StepToggleTokenLock => {
         token,
         isUnlocked: true,
         context: 'standalone',
+    };
+};
+
+export const createSignedCollectibleOrder: ThunkCreator = (
+    collectible: Collectible,
+    price: BigNumber,
+    side: OrderSide,
+) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+        const ethAccount = selectors.getEthAccount(state);
+        const amount = new BigNumber('1');
+        const collectibleId = new BigNumber(collectible.tokenId);
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
+            const contractWrappers = await getContractWrappers();
+
+            const order = buildSellCollectibleOrder(
+                {
+                    account: ethAccount,
+                    amount,
+                    price,
+                    exchangeAddress: contractWrappers.exchange.address,
+                    collectibleId,
+                    collectibleAddress: collectible.currentOwner,
+                },
+                side,
+            );
+            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+            return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+        } catch (error) {
+            throw new SignedOrderException(error.message);
+        }
     };
 };
 

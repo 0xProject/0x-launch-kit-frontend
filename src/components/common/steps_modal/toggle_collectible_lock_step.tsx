@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
+import { unlockCollectible } from '../../../store/blockchain/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
 import { sleep } from '../../../util/sleep';
-import { StepToggleCollectibleLock, StoreState } from '../../../util/types';
+import { Collectible, StepToggleCollectibleLock, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
@@ -20,6 +22,7 @@ interface StateProps {
 
 interface DispatchProps {
     advanceStep: () => void;
+    onUnlockCollectible: (collectible: Collectible) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -62,14 +65,19 @@ class ToggleCollectibleLockStep extends React.Component<Props> {
     };
 
     private readonly _toggleCollectible = async ({ onLoading, onDone, onError }: any) => {
-        const { advanceStep } = this.props;
-        // TODO Implement
-        onLoading();
-        setTimeout(async () => {
+        const { advanceStep, onUnlockCollectible, step } = this.props;
+
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
+            const txHash = await onUnlockCollectible(step.collectible);
+            onLoading();
+            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
             onDone();
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
-        }, 500);
+        } catch (error) {
+            onError(error);
+        }
     };
 }
 
@@ -85,6 +93,7 @@ const ToggleCollectibleLockStepContainer = connect(
     (dispatch: any) => {
         return {
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
+            onUnlockCollectible: (collectible: Collectible) => dispatch(unlockCollectible(collectible)),
         };
     },
 )(ToggleCollectibleLockStep);
