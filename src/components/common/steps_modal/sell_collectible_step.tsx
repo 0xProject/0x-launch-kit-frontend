@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { createSignedCollectibleOrder, submitCollectibleOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
-import { Collectible, OrderSide, StepBuySellCollectible, StoreState } from '../../../util/types';
+import { Collectible, OrderSide, StepSellCollectible, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -14,12 +14,12 @@ interface OwnProps {
 }
 interface StateProps {
     estimatedTxTimeMs: number;
-    step: StepBuySellCollectible;
+    step: StepSellCollectible;
 }
 
 interface DispatchProps {
     // refreshOrders: () => any; // TODO: once the integration with openSea is done, this should be uncommented
-    // TODO: later this should contain something like 'notifyBuySellCollectible'
+    // TODO: later this should contain something like 'notifySellCollectible'
     createSignedCollectibleOrder: (collectible: Collectible, price: BigNumber, side: OrderSide) => Promise<any>;
     submitCollectibleOrder: (signedOrder: SignedOrder) => Promise<any>;
 }
@@ -30,7 +30,7 @@ interface State {
     amountInReturn: BigNumber | null;
 }
 
-class BuySellCollectibleStep extends React.Component<Props, State> {
+class SellCollectibleStep extends React.Component<Props, State> {
     public state = {
         amountInReturn: null,
     };
@@ -87,7 +87,7 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
-        step: getStepsModalCurrentStep(state) as StepBuySellCollectible,
+        step: getStepsModalCurrentStep(state) as StepSellCollectible,
     };
 };
 
@@ -100,9 +100,9 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const BuySellCollectibleStepContainer = connect(
+const SellCollectibleStepContainer = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(BuySellCollectibleStep);
+)(SellCollectibleStep);
 
-export { BuySellCollectibleStep, BuySellCollectibleStepContainer };
+export { SellCollectibleStep, SellCollectibleStepContainer };

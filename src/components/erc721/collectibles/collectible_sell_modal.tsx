@@ -6,7 +6,7 @@ import styled, { withTheme } from 'styled-components';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
-import { startBuySellCollectibleSteps } from '../../../store/ui/actions';
+import { startSellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
 import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
@@ -135,7 +135,7 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
             startingPrice: BigNumber,
             side: OrderSide,
             endingPrice?: BigNumber,
-        ) => dispatch(startBuySellCollectibleSteps(collectible, expirationDate, startingPrice, side, endingPrice)),
+        ) => dispatch(startSellCollectibleSteps(collectible, expirationDate, startingPrice, side, endingPrice)),
         updateSelectedCollectible: (collectible: Collectible | null) => dispatch(selectCollectible(collectible)),
     };
 };

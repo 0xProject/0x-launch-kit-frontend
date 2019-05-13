@@ -2,7 +2,7 @@ import { OrderSide, Step, StepKind } from './types';
 
 export const getStepTitle = (step: Step): string => {
     switch (step.kind) {
-        case StepKind.BuySellCollectible:
+        case StepKind.SellCollectible:
         case StepKind.BuySellLimit:
             return 'Sign';
         case StepKind.BuySellMarket:
@@ -20,7 +20,7 @@ export const getStepTitle = (step: Step): string => {
 
 export const isLongStep = (step: Step): boolean => {
     switch (step.kind) {
-        case StepKind.BuySellCollectible:
+        case StepKind.SellCollectible:
         case StepKind.BuySellLimit:
             return false;
         case StepKind.BuySellMarket:

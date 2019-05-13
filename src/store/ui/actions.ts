@@ -6,9 +6,9 @@ import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import {
-    createBuySellCollectibleSteps,
     createBuySellLimitSteps,
     createBuySellMarketSteps,
+    createSellCollectibleSteps,
 } from '../../util/steps_modals_generation';
 import {
     Collectible,
@@ -85,7 +85,7 @@ export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => 
     };
 };
 
-export const startBuySellCollectibleSteps: ThunkCreator = (
+export const startSellCollectibleSteps: ThunkCreator = (
     collectible: Collectible,
     expirationDate: string,
     startingPrice: BigNumber,
@@ -104,7 +104,7 @@ export const startBuySellCollectibleSteps: ThunkCreator = (
 
         const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(collectibleAddress, ethAccount);
 
-        const buySellCollectibleSteps: Step[] = createBuySellCollectibleSteps(
+        const sellCollectibleSteps: Step[] = createSellCollectibleSteps(
             collectible,
             expirationDate,
             startingPrice,
@@ -112,8 +112,8 @@ export const startBuySellCollectibleSteps: ThunkCreator = (
             isUnlocked,
             endingPrice,
         );
-        dispatch(setStepsModalCurrentStep(buySellCollectibleSteps[0]));
-        dispatch(setStepsModalPendingSteps(buySellCollectibleSteps.slice(1)));
+        dispatch(setStepsModalCurrentStep(sellCollectibleSteps[0]));
+        dispatch(setStepsModalPendingSteps(sellCollectibleSteps.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
 };
