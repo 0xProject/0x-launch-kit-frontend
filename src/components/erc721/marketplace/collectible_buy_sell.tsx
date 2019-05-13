@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { updateSelectedCollectible } from '../../../store/collectibles/actions';
+import { selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 
@@ -91,7 +91,7 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        updateSelectedCollectible: (collectible: Collectible) => dispatch(updateSelectedCollectible(collectible)),
+        updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
     };
 };
 

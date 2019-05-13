@@ -4,15 +4,16 @@ import Modal from 'react-modal';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { getIsModalSellCollectibleOpen, getSelectedCollectible } from '../../../store/selectors';
-import { startBuySellCollectibleSteps, toggleModalSellCollectible } from '../../../store/ui/actions';
+import { selectCollectible } from '../../../store/collectibles/actions';
+import { getSelectedCollectible } from '../../../store/selectors';
+import { startBuySellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
 import { Collectible, StoreState } from '../../../util/types';
+import { BigNumberInput } from '../../common/big_number_input';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
 
 interface StateProps {
     currentCollectible: Collectible | null;
-    shouldOpenModal: boolean;
 }
 
 interface DispatchProps {
@@ -22,7 +23,7 @@ interface DispatchProps {
         startingPrice: BigNumber,
         endingPrice?: BigNumber,
     ) => Promise<any>;
-    toggleModalSellCollectible: () => any;
+    updateSelectedCollectible: (collectible: Collectible | null) => any;
 }
 
 interface OwnProps {
@@ -30,6 +31,13 @@ interface OwnProps {
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
+
+interface State {
+    startPrice: BigNumber;
+    endingPrice: BigNumber;
+    includeEndPrice: boolean;
+    expirationDate: string;
+}
 
 const ModalContent = styled.div`
     align-items: center;
@@ -39,32 +47,68 @@ const ModalContent = styled.div`
 `;
 
 class CollectibleSellModalContainer extends React.Component<Props> {
+    public state: State = {
+        startPrice: new BigNumber(0),
+        endingPrice: new BigNumber(0),
+        includeEndPrice: false,
+        expirationDate: '',
+    };
+
     public render = () => {
-        const { theme, shouldOpenModal } = this.props;
+        const { theme, currentCollectible } = this.props;
+        const { startPrice, endingPrice } = this.state;
+
         return (
-            <Modal isOpen={shouldOpenModal} style={theme.modalTheme}>
+            <Modal isOpen={currentCollectible ? true : false} style={theme.modalTheme}>
                 <CloseModalButton onClick={this._closeModal} />
                 <ModalContent>
-                    <h1>This is a modal</h1>
-                    <button onClick={this._openStepsModals}>Open steps modals</button>
+                    <h3>Enter a starting price</h3>
+                    <BigNumberInput
+                        decimals={18}
+                        min={new BigNumber(0)}
+                        onChange={this._updateStartingPrice}
+                        value={startPrice}
+                        placeholder={'0.00'}
+                    />
+                    <h3>Include ending price</h3>
+                    <h3>Placeholder for toggle switch</h3>
+                    <h3>Enter ending price</h3>
+                    <BigNumberInput
+                        decimals={18}
+                        min={new BigNumber(0)}
+                        onChange={this._updateEndingPrice}
+                        value={endingPrice}
+                        placeholder={'0.00'}
+                    />
+                    <h3>Placeholder for expiration date dropdown</h3>
+                    <button onClick={this._openStepsModals}>Sell</button>
                 </ModalContent>
             </Modal>
         );
     };
 
+    private readonly _updateStartingPrice = (startPrice: BigNumber) => {
+        this.setState({
+            startPrice,
+        });
+    };
+
+    private readonly _updateEndingPrice = (endingPrice: BigNumber) => {
+        this.setState({ endingPrice });
+    };
+
     private readonly _closeModal = () => {
-        this.props.toggleModalSellCollectible();
+        this.props.updateSelectedCollectible(null);
     };
 
     private readonly _openStepsModals = async () => {
         const { currentCollectible } = this.props;
+        const { startPrice, endingPrice } = this.state;
         if (!currentCollectible) {
             return;
         }
         // TODO Get this info from the modal
         const expirationDate = '123';
-        const startPrice = new BigNumber('100');
-        const endingPrice = new BigNumber('500');
         this._closeModal();
         await this.props.onSubmitCollectibleOrder(currentCollectible, expirationDate, startPrice, endingPrice);
     };
@@ -73,19 +117,18 @@ class CollectibleSellModalContainer extends React.Component<Props> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         currentCollectible: getSelectedCollectible(state),
-        shouldOpenModal: getIsModalSellCollectibleOpen(state),
     };
 };
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        toggleModalSellCollectible: () => dispatch(toggleModalSellCollectible()),
         onSubmitCollectibleOrder: (
             collectible: Collectible,
             expirationDate: string,
             startingPrice: BigNumber,
             endingPrice?: BigNumber,
         ) => dispatch(startBuySellCollectibleSteps(collectible, expirationDate, startingPrice, endingPrice)),
+        updateSelectedCollectible: (collectible: Collectible | null) => dispatch(selectCollectible(collectible)),
     };
 };
 
