@@ -235,7 +235,7 @@ export enum ModalDisplay {
 export interface Collectible {
     tokenId: string;
     name: string;
-    price: string;
+    price: BigNumber | null;
     color: string;
     image: string;
     currentOwner: string;

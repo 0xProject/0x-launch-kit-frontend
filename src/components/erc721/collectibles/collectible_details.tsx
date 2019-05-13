@@ -1,3 +1,4 @@
+import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -7,7 +8,7 @@ import { goToIndividualCollectible } from '../../../store/router/actions';
 interface OwnProps extends HTMLAttributes<HTMLDivElement> {
     id: string;
     name: string;
-    price: string;
+    price: BigNumber | null;
     image: string;
     color: string;
 }
@@ -120,13 +121,16 @@ export const CollectibleAsset: React.FC<Props> = (props: Props) => {
         e.preventDefault();
         props.goToIndividualCollectible(id);
     };
+
     return (
         <CollectibleAssetWrapper {...restProps} onClick={handleAssetClick}>
             <ImageWrapper color={color}>
-                <Badge>
-                    <BadgeImport>{price}</BadgeImport>
-                    <BadgeAsset>ETH</BadgeAsset>
-                </Badge>
+                {price && (
+                    <Badge>
+                        <BadgeImport>{price.toString()}</BadgeImport>
+                        <BadgeAsset>ETH</BadgeAsset>
+                    </Badge>
+                )}
                 <Image image={image} />
             </ImageWrapper>
             <Title>{name}</Title>

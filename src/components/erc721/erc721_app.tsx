@@ -20,7 +20,7 @@ export const Erc721App = () => (
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/my-collectibles`} component={MyCollectibles} />
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={MyCollectibles} />
 
-            <Route path={`${ERC721_APP_BASE_PATH}/asset/:id`}>
+            <Route path={`${ERC721_APP_BASE_PATH}/collectible/:id`}>
                 {({ match }) => match && <IndividualCollectible assetId={match.params.id} />}
             </Route>
         </Switch>
