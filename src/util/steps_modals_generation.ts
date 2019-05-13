@@ -72,15 +72,17 @@ export const createBuySellCollectibleSteps = (
     expirationDate: string,
     startPrice: BigNumber,
     side: OrderSide,
+    isUnlocked: boolean,
     endPrice?: BigNumber,
 ): Step[] => {
     const buySellCollectibleFlow: Step[] = [];
 
     // Unlock collectible
-    const unlockCollectibleStep = getUnlockCollectibleStepIfNeeded(collectible);
-    if (unlockCollectibleStep) {
+    if (!isUnlocked) {
+        const unlockCollectibleStep = getUnlockCollectibleStep(collectible);
         buySellCollectibleFlow.push(unlockCollectibleStep);
     }
+
     // Sign order step
     buySellCollectibleFlow.push({
         kind: StepKind.BuySellCollectible,
@@ -148,8 +150,7 @@ export const getUnlockTokenStepIfNeeded = (
     }
 };
 
-export const getUnlockCollectibleStepIfNeeded = (collectible: Collectible): StepToggleCollectibleLock | null => {
-    // TODO check if the collectible is unlocked
+export const getUnlockCollectibleStep = (collectible: Collectible): StepToggleCollectibleLock => {
     return {
         kind: StepKind.ToggleCollectibleLock,
         collectible,

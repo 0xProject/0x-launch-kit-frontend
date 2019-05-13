@@ -1,6 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
@@ -91,12 +92,24 @@ export const startBuySellCollectibleSteps: ThunkCreator = (
     side: OrderSide,
     endingPrice?: BigNumber,
 ) => {
-    return async dispatch => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+
+        const contractWrapers = await getContractWrappers();
+        const ethAccount = selectors.getEthAccount(state);
+
+        const web3Wrapper = await getWeb3Wrapper();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const collectibleAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
+
+        const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(collectibleAddress, ethAccount);
+
         const buySellCollectibleSteps: Step[] = createBuySellCollectibleSteps(
             collectible,
             expirationDate,
             startingPrice,
             side,
+            isUnlocked,
             endingPrice,
         );
         dispatch(setStepsModalCurrentStep(buySellCollectibleSteps[0]));

@@ -33,6 +33,7 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
     const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
+
     return {
         exchangeAddress,
         expirationTimeSeconds: tomorrow,
@@ -46,7 +47,7 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
         salt: generatePseudoRandomSalt(),
-        senderAddress: '0x0000000000000000000000000000000000000000',
+        senderAddress: ZERO_ADDRESS,
     };
 };
 

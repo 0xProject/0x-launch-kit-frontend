@@ -356,27 +356,17 @@ export const unlockCollectible: ThunkCreator = (collectible: Collectible) => {
             ...TX_DEFAULTS,
             gasPrice,
         };
-        const tokenId = new BigNumber(collectible.tokenId);
 
         if (networkId) {
             const collectibleContractAddress = getCollectibleContractAddress(networkId);
 
-            // Check if needs to unlock TODO -- maybe we could just remove this because the check should be on the token steps generation
-            const needUnlock = await contractWrappers.erc721Token.isProxyApprovedAsync(
+            const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
                 collectibleContractAddress,
-                tokenId,
+                ethAccount,
+                true,
+                defaultParams,
             );
-
-            // Unlocks if needed
-            if (needUnlock) {
-                const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
-                    collectibleContractAddress,
-                    ethAccount,
-                    true,
-                    defaultParams,
-                );
-                return tx;
-            }
+            return tx;
         }
         return null;
     };
