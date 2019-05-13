@@ -1,9 +1,8 @@
 import { BigNumber } from '0x.js';
 
-import { Collectible } from '../util/types';
+import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
-// @TODO: abstract the source of collectibles data (opensea/mocked)
-const allCollectibles: Collectible[] = [
+const allCollectibles: any[] = [
     {
         tokenId: '0',
         name: 'Glitter',
@@ -12,7 +11,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '1',
@@ -22,7 +21,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/9_xunbhn.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '2',
@@ -32,7 +31,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/10_iqm4un.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '3',
@@ -42,7 +41,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888667/5_sxqrol.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '4',
@@ -52,7 +51,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888664/1_sz6sji.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
     },
     {
         tokenId: '10',
@@ -86,17 +85,9 @@ const allCollectibles: Collectible[] = [
     },
 ];
 
-export class CollectiblesMetadataSource {
-    public fetchUserCollectibles = (address: string): Promise<Collectible[]> => {
+export class Mocked implements CollectibleMetadataSource {
+    public fetchUserCollectiblesAsync = (address: string, networkId: number | null): Promise<Collectible[]> => {
         const userCollectibles = allCollectibles.filter(x => x.currentOwner.toLowerCase() === address.toLowerCase());
         return Promise.resolve(userCollectibles);
     };
 }
-
-let collectiblesMetadataSource: CollectiblesMetadataSource;
-export const getCollectiblesMetadataSource = (): CollectiblesMetadataSource => {
-    if (!collectiblesMetadataSource) {
-        collectiblesMetadataSource = new CollectiblesMetadataSource();
-    }
-    return collectiblesMetadataSource;
-};
