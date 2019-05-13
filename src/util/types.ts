@@ -271,4 +271,8 @@ export interface CollectiblesState {
     collectibleSelected: Collectible | null;
 }
 
+export interface CollectibleMetadataSource {
+    fetchUserCollectiblesAsync(ownerAddress: string, networkId: number | null): Promise<Collectible[]>;
+}
+
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
