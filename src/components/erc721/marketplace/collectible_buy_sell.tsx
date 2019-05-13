@@ -63,7 +63,7 @@ type Props = OwnProps & StateProps;
 const getCollectibleOrderType = (currentUserAccount: string, asset: Collectible): CollectibleButtonOrderType => {
     const { price, currentOwner } = asset;
 
-    if (currentUserAccount === currentOwner) {
+    if (currentUserAccount.toLowerCase() === currentOwner.toLowerCase()) {
         // The owner is the current user and the asset has a price: Show cancel button
         if (price) {
             return CollectibleButtonOrderType.Cancel;

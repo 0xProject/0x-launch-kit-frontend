@@ -12,12 +12,11 @@ export class Opensea implements CollectibleMetadataSource {
             return {
                 tokenId: asset.token_id,
                 name: asset.name,
-                price: '',
+                price: null,
                 color: `#${asset.background_color}`,
                 image: asset.image_url,
                 currentOwner: asset.owner,
                 assetUrl: asset.external_link,
-                // @TODO: https://docs.opensea.io/reference#asset-object
                 description: asset.name,
             };
         });
