@@ -1,9 +1,5 @@
 import React from 'react';
 
-import { AllCollectiblesListContainer } from '../collectibles/all_collectibles_list';
+import { AllCollectiblesListContainer } from '../collectibles/collectibles_list';
 
-export const AllCollectibles = () => (
-    <>
-        <AllCollectiblesListContainer />
-    </>
-);
+export const AllCollectibles = () => <AllCollectiblesListContainer />;
