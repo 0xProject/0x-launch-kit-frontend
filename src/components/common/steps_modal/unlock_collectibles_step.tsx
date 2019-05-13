@@ -31,20 +31,20 @@ class UnlockCollectiblesStep extends React.Component<Props> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
         const { isUnlocked, collectible } = step;
-        const collectibleSymbol = collectible.name;
-        const title = `Selling ${collectibleSymbol}`;
+        const collectibleName = collectible.name;
+        const title = `Selling ${collectibleName}`;
         const confirmCaption = `Confirm on Metamask to ${
             isUnlocked ? 'lock' : 'unlock'
-        } ${collectibleSymbol} for trading on 0x.`;
+        } ${collectibleName} for trading on 0x.`;
         const loadingCaption = isUnlocked
-            ? `Locking ${collectibleSymbol}. You won't be able to use it for trading until you unlock it again`
-            : `Unlocking ${collectibleSymbol}. It will remain unlocked for future trades`;
+            ? `Locking ${collectibleName}. You won't be able to use it for trading until you unlock it again`
+            : `Unlocking ${collectibleName}. It will remain unlocked for future trades`;
         const doneCaption = isUnlocked
-            ? `Locked ${collectibleSymbol}. You won't be able to use it for trading until you unlock it again`
-            : `Unlocked ${collectibleSymbol}. It will remain unlocked for future trades`;
-        const errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${collectibleSymbol} failed.`;
+            ? `Locked ${collectibleName}. You won't be able to use it for trading until you unlock it again`
+            : `Unlocked ${collectibleName}. It will remain unlocked for future trades`;
+        const errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${collectibleName} failed.`;
         const loadingFooterCaption = `Waiting for confirmation...`;
-        const doneFooterCaption = !isUnlocked ? ` ${collectibleSymbol} Unlocked!` : ` ${collectibleSymbol} Locked!`;
+        const doneFooterCaption = !isUnlocked ? ` ${collectibleName} Unlocked!` : ` ${collectibleName} Locked!`;
 
         return (
             <BaseStepModal

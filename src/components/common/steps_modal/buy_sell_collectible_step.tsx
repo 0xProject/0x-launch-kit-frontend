@@ -38,20 +38,20 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
         const { collectible } = step;
-        const collectibleSymbol = collectible.name;
+        const collectibleName = collectible.name;
 
         const isBuy = step.side === OrderSide.Buy;
 
-        const title = `${isBuy ? 'Buying' : 'Selling'} ${collectibleSymbol}`;
+        const title = `${isBuy ? 'Buying' : 'Selling'} ${collectibleName}`;
 
-        const confirmCaption = `Confirm on Metamask to submit ${isBuy ? 'purchase' : 'sell'} for ${collectibleSymbol}.`;
-        const loadingCaption = `Processing ${isBuy ? 'purchase' : 'sale'} of ${collectibleSymbol}.`;
+        const confirmCaption = `Confirm on Metamask to submit ${isBuy ? 'purchase' : 'sell'} for ${collectibleName}.`;
+        const loadingCaption = `Processing ${isBuy ? 'purchase' : 'sale'} of ${collectibleName}.`;
         const doneCaption = isBuy
-            ? `Purchase of ${collectibleSymbol} Successful!`
-            : `Order placed. ${collectibleSymbol} is now listed on sale`;
-        const errorCaption = `${isBuy ? 'Buying' : 'Selling'} ${collectibleSymbol}.`;
+            ? `Purchase of ${collectibleName} Successful!`
+            : `Order placed. ${collectibleName} is now listed on sale`;
+        const errorCaption = `${isBuy ? 'Buying' : 'Selling'} ${collectibleName}.`;
         const loadingFooterCaption = `Waiting for confirmation....`;
-        const doneFooterCaption = isBuy ? `${collectibleSymbol} received` : `Order for ${collectibleSymbol} placed!`;
+        const doneFooterCaption = isBuy ? `${collectibleName} received` : `Order for ${collectibleName} placed!`;
 
         return (
             <BaseStepModal
