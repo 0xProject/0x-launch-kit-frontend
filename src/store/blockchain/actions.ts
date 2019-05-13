@@ -393,22 +393,22 @@ export const createSignedCollectibleOrder: ThunkCreator = (
         const state = getState();
         const ethAccount = getEthAccount(state);
         const networkId = getNetworkId(state);
-        const amount = new BigNumber('1');
         const collectibleId = new BigNumber(collectible.tokenId);
         if (networkId) {
             try {
                 const web3Wrapper = await getWeb3Wrapper();
                 const contractWrappers = await getContractWrappers();
+                const wethAddress = getKnownTokens(networkId).getWethToken().address;
                 const collectibleAddress = getCollectibleContractAddress(networkId);
                 const order = buildSellCollectibleOrder(
                     {
                         account: ethAccount,
-                        amount,
+                        amount: new BigNumber('1'),
                         price,
                         exchangeAddress: contractWrappers.exchange.address,
                         collectibleId,
                         collectibleAddress,
-                        wethAddress: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
+                        wethAddress,
                     },
                     side,
                 );
