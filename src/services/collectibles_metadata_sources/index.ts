@@ -1,4 +1,4 @@
-import { COLLECTIBLES_SOURCE } from '../../common/constants';
+import { COLLECTIBLE_CONTRACT_ADDRESSES, COLLECTIBLES_SOURCE } from '../../common/constants';
 import { CollectibleMetadataSource } from '../../util/types';
 
 import { Mocked } from './mocked';
@@ -11,4 +11,8 @@ const sources: { [key: string]: CollectibleMetadataSource } = {
 
 export const getConfiguredSource = () => {
     return sources[COLLECTIBLES_SOURCE.toLowerCase()];
+};
+
+export const getCollectibleContractAddress = (networkId: number) => {
+    return COLLECTIBLE_CONTRACT_ADDRESSES[networkId] ? COLLECTIBLE_CONTRACT_ADDRESSES[networkId] : '';
 };

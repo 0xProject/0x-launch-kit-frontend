@@ -11,6 +11,7 @@ interface BuildSellCollectibleOrderParams {
     amount: BigNumber;
     price: BigNumber;
     exchangeAddress: string;
+    wethAddress: string;
 }
 
 interface BuildLimitOrderParams {
@@ -28,9 +29,10 @@ interface BuildMarketOrderParams {
 }
 
 export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
-    const { account, collectibleId, collectibleAddress, amount, price, exchangeAddress } = params;
+    const { account, collectibleId, collectibleAddress, amount, price, exchangeAddress, wethAddress } = params;
     const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
+    const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
     return {
         exchangeAddress,
         expirationTimeSeconds: tomorrow,
@@ -40,7 +42,7 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
         makerAssetData: collectibleData,
         takerAddress: ZERO_ADDRESS,
         takerAssetAmount: side === OrderSide.Buy ? amount : amount.mul(price),
-        takerAssetData: collectibleData,
+        takerAssetData: wethAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
         salt: generatePseudoRandomSalt(),

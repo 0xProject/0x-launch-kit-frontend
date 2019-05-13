@@ -71,7 +71,9 @@ class ToggleCollectibleLockStep extends React.Component<Props> {
             const web3Wrapper = await getWeb3Wrapper();
             const txHash = await onUnlockCollectible(step.collectible);
             onLoading();
-            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
+            if (txHash) {
+                await web3Wrapper.awaitTransactionSuccessAsync(txHash);
+            }
             onDone();
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();

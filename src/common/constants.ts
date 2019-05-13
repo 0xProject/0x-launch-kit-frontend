@@ -74,4 +74,5 @@ export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SO
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
     1: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
     4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
+    50: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
 };

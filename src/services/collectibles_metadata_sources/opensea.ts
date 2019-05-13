@@ -7,10 +7,9 @@ export class Opensea implements CollectibleMetadataSource {
         4: 'https://rinkeby-api.opensea.io/api/v1',
     };
 
-    public static getAssetsAsCollectible(assets: any[], contractAddress: string): Collectible[] {
+    public static getAssetsAsCollectible(assets: any[]): Collectible[] {
         return assets.map((asset: any) => {
             return {
-                contractAddress,
                 tokenId: asset.token_id,
                 name: asset.name,
                 price: null,
@@ -32,6 +31,6 @@ export class Opensea implements CollectibleMetadataSource {
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${ownerAddress}`;
         const assetsResponse = await fetch(url);
         const assetsResponseJson = await assetsResponse.json();
-        return Opensea.getAssetsAsCollectible(assetsResponseJson.assets, contractAddress);
+        return Opensea.getAssetsAsCollectible(assetsResponseJson.assets);
     }
 }
