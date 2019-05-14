@@ -22,7 +22,7 @@ interface StateProps {
 
 interface DispatchProps {
     advanceStep: () => void;
-    onUnlockCollectible: (collectible: Collectible) => Promise<any>;
+    onUnlockCollectible: (collectible: Collectible) => Promise<string>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -71,9 +71,7 @@ class UnlockCollectiblesStep extends React.Component<Props> {
             const web3Wrapper = await getWeb3Wrapper();
             const txHash = await onUnlockCollectible(step.collectible);
             onLoading();
-            if (txHash) {
-                await web3Wrapper.awaitTransactionSuccessAsync(txHash);
-            }
+            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
             onDone();
             await sleep(DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
