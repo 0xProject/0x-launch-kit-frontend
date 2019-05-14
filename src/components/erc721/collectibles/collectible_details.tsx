@@ -57,44 +57,34 @@ const Title = styled.h2`
 `;
 
 const Badge = styled.div`
-    background: #ffffff;
+    align-items: center;
+    background: #fff;
     border-radius: 16px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
+    display: flex;
     height: 31px;
+    justify-content: center;
+    padding: 8px 12px;
     position: absolute;
     right: 10px;
     top: 10px;
-    width: 84px;
 `;
 
-const BadgeImport = styled.span`
+const BadgeValue = styled.span`
     color: #000;
-    font-family: Inter UI;
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 14px;
-    font-style: normal;
-    font-weight: normal;
-    height: 23px;
-    line-height: 21px;
-    position: absolute;
-    right: 30px;
-    top: 6px;
-    width: 42px;
+    font-weight: 400;
+    line-height: 14px;
+    margin-right: 6px;
 `;
 
 const BadgeAsset = styled.span`
-    color: #000000;
-    font-family: Inter UI;
+    color: #000;
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 10px;
-    font-style: normal;
-    font-weight: normal;
-    height: 15px;
-    line-height: 15px; /* identical to box height */
-    position: absolute;
-    right: 9px;
-    top: 11px;
-    width: 20px;
+    font-weight: 400;
+    line-height: 10px;
 `;
 
 export const CollectibleAsset: React.FC<Props> = (props: Props) => {
@@ -110,7 +100,7 @@ export const CollectibleAsset: React.FC<Props> = (props: Props) => {
             <ImageWrapper color={color} image={image}>
                 {price && (
                     <Badge>
-                        <BadgeImport>{price.toString()}</BadgeImport>
+                        <BadgeValue>{price.toString()}</BadgeValue>
                         <BadgeAsset>ETH</BadgeAsset>
                     </Badge>
                 )}
