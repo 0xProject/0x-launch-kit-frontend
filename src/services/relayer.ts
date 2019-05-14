@@ -1,4 +1,4 @@
-import { assetDataUtils, BigNumber } from '0x.js';
+import { assetDataUtils, AssetProxyId, BigNumber } from '0x.js';
 import { HttpClient, SignedOrder } from '@0x/connect';
 
 import { RELAYER_URL } from '../common/constants';
@@ -48,6 +48,20 @@ export class Relayer {
         }
 
         return null;
+    }
+
+    public async getSellCollectibleOrdersAsync(
+        collectibleAddress: string,
+        wethAddress: string,
+    ): Promise<SignedOrder[]> {
+        const result = await this.client.getOrdersAsync({
+            makerAssetProxyId: AssetProxyId.ERC721,
+            takerAssetProxyId: AssetProxyId.ERC20,
+            makerAssetAddress: collectibleAddress,
+            takerAssetAddress: wethAddress,
+        });
+
+        return result.records.map(record => record.order);
     }
 
     private async _getOrdersAsync(

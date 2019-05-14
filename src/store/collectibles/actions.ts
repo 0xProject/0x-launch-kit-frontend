@@ -1,30 +1,38 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { Collectible, ThunkCreator } from '../../util/types';
-import { getEthAccount, getNetworkId } from '../selectors';
+import { getEthAccount } from '../selectors';
 
-export const fetchUserCollectiblesAsync = createAsyncAction(
-    'collectibles/USER_COLLECTIBLES_fetch_request',
-    'collectibles/USER_COLLECTIBLES_fetch_success',
-    'collectibles/USER_COLLECTIBLES_fetch_failure',
-)<void, Collectible[], Error>();
+export const fetchAllCollectiblesAsync = createAsyncAction(
+    'collectibles/ALL_COLLECTIBLES_fetch_request',
+    'collectibles/ALL_COLLECTIBLES_fetch_success',
+    'collectibles/ALL_COLLECTIBLES_fetch_failure',
+)<
+    void,
+    {
+        collectibles: Collectible[];
+        ethAccount: string;
+    },
+    Error
+>();
 
 export const selectCollectible = createAction('collectibles/selectCollectible', resolve => {
     return (collectible: Collectible | null) => resolve(collectible);
 });
 
-export const getUserCollectibles: ThunkCreator = () => {
-    return async (dispatch, getState, { getCollectiblesMetadataGateway }) => {
-        dispatch(fetchUserCollectiblesAsync.request());
+export const getAllCollectibles: ThunkCreator = () => {
+    return async (dispatch, getState, { getCollectiblesMetadataGateway, getWeb3Wrapper }) => {
+        dispatch(fetchAllCollectiblesAsync.request());
         try {
             const state = getState();
+            const web3Wrapper = await getWeb3Wrapper();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
             const ethAccount = getEthAccount(state);
-            const networkId = getNetworkId(state);
             const collectiblesMetadataGateway = getCollectiblesMetadataGateway();
-            const collectibles = await collectiblesMetadataGateway.fetchUserCollectibles(ethAccount, networkId);
-            dispatch(fetchUserCollectiblesAsync.success(collectibles));
+            const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(ethAccount, networkId);
+            dispatch(fetchAllCollectiblesAsync.success({ collectibles, ethAccount }));
         } catch (err) {
-            dispatch(fetchUserCollectiblesAsync.failure(err));
+            dispatch(fetchAllCollectiblesAsync.failure(err));
         }
     };
 };

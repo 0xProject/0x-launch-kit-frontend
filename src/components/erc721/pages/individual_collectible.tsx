@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
-import { CheckMetamaskStateModalContainer } from '../../common/check_metamask_state_modal_container';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
 import { CollectibleBuySellContainer } from '../marketplace/collectible_buy_sell';
@@ -50,7 +49,6 @@ export const IndividualCollectible = (props: Props) => {
             <CollectibleDescriptionColumn>
                 <CollectibleDescriptionContainer assetId={assetId} />
             </CollectibleDescriptionColumn>
-            <CheckMetamaskStateModalContainer />
         </General>
     );
 };

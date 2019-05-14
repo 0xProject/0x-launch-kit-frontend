@@ -57,7 +57,9 @@ const CollectibleBuySell = (props: Props) => {
     if (!collectible) {
         return null;
     }
-    const { price, color, image } = collectible;
+    const { color, image, order } = collectible;
+
+    const price = order ? order.takerAssetAmount : null;
 
     const onBuy = () => window.alert('buy');
 
