@@ -4,6 +4,16 @@ import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/con
 
 import { OrderSide, UIOrder } from './types';
 
+interface BuildSellCollectibleOrderParams {
+    collectibleAddress: string;
+    collectibleId: BigNumber;
+    account: string;
+    amount: BigNumber;
+    price: BigNumber;
+    exchangeAddress: string;
+    wethAddress: string;
+}
+
 interface BuildLimitOrderParams {
     account: string;
     amount: BigNumber;
@@ -17,6 +27,29 @@ interface BuildMarketOrderParams {
     amount: BigNumber;
     orders: UIOrder[];
 }
+
+export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
+    const { account, collectibleId, collectibleAddress, amount, price, exchangeAddress, wethAddress } = params;
+    const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
+    const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
+    const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
+
+    return {
+        exchangeAddress,
+        expirationTimeSeconds: tomorrow,
+        feeRecipientAddress: FEE_RECIPIENT,
+        makerAddress: account,
+        makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,
+        makerAssetData: collectibleData,
+        takerAddress: ZERO_ADDRESS,
+        takerAssetAmount: side === OrderSide.Buy ? amount : amount.mul(price),
+        takerAssetData: wethAssetData,
+        makerFee: MAKER_FEE,
+        takerFee: TAKER_FEE,
+        salt: generatePseudoRandomSalt(),
+        senderAddress: ZERO_ADDRESS,
+    };
+};
 
 export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide): Order => {
     const { account, baseTokenAddress, exchangeAddress, amount, price, quoteTokenAddress } = params;

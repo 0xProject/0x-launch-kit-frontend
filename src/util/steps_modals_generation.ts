@@ -3,7 +3,17 @@ import { BigNumber } from '0x.js';
 import { MAKER_FEE, TAKER_FEE } from '../common/constants';
 
 import { isWeth, isZrx } from './known_tokens';
-import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, Token, TokenBalance } from './types';
+import {
+    Collectible,
+    OrderSide,
+    Step,
+    StepKind,
+    StepToggleTokenLock,
+    StepUnlockCollectibles,
+    StepWrapEth,
+    Token,
+    TokenBalance,
+} from './types';
 
 export const createBuySellLimitSteps = (
     baseToken: Token,
@@ -55,6 +65,35 @@ export const createBuySellLimitSteps = (
     });
 
     return buySellLimitFlow;
+};
+
+export const createSellCollectibleSteps = (
+    collectible: Collectible,
+    expirationDate: string,
+    startPrice: BigNumber,
+    side: OrderSide,
+    isUnlocked: boolean,
+    endPrice?: BigNumber,
+): Step[] => {
+    const sellCollectibleFlow: Step[] = [];
+
+    // Unlock collectible
+    if (!isUnlocked) {
+        const unlockCollectibleStep = getUnlockCollectibleStep(collectible);
+        sellCollectibleFlow.push(unlockCollectibleStep);
+    }
+
+    // Sign order step
+    sellCollectibleFlow.push({
+        kind: StepKind.SellCollectible,
+        collectible,
+        startPrice,
+        endPrice,
+        expirationDate,
+        side,
+    });
+
+    return sellCollectibleFlow;
 };
 
 export const createBuySellMarketSteps = (
@@ -109,6 +148,14 @@ export const getUnlockTokenStepIfNeeded = (
             context: 'order',
         };
     }
+};
+
+export const getUnlockCollectibleStep = (collectible: Collectible): StepUnlockCollectibles => {
+    return {
+        kind: StepKind.UnlockCollectibles,
+        collectible,
+        isUnlocked: false,
+    };
 };
 
 export const getWrapEthStepIfNeeded = (

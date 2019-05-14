@@ -41,6 +41,7 @@ export const getAllCollectibles = (state: StoreState) => state.collectibles.allC
 export const getUserCollectibles = (state: StoreState) => state.collectibles.userCollectibles;
 export const getCollectibleById = (state: StoreState, props: { assetId: string }): Collectible | undefined =>
     state.collectibles.userCollectibles[props.assetId];
+export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {

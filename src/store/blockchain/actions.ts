@@ -1,7 +1,9 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
+import { SignedOrderException } from '../../exceptions/signed_order_exception';
+import { getCollectibleContractAddress } from '../../services/collectibles_metadata_sources';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
@@ -10,7 +12,17 @@ import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, GasInfo, ThunkCreator, Token, TokenBalance, Web3State } from '../../util/types';
+import { buildSellCollectibleOrder } from '../../util/orders';
+import {
+    BlockchainState,
+    Collectible,
+    GasInfo,
+    OrderSide,
+    ThunkCreator,
+    Token,
+    TokenBalance,
+    Web3State,
+} from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
@@ -19,6 +31,7 @@ import {
     getEthAccount,
     getGasPriceInWei,
     getMarkets,
+    getNetworkId,
     getTokenBalances,
     getWethBalance,
     getWethTokenBalance,
@@ -335,6 +348,30 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
     };
 };
 
+export const unlockCollectible: ThunkCreator<Promise<string>> = (collectible: Collectible) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const state = getState();
+        const contractWrappers = await getContractWrappers();
+        const gasPrice = getGasPriceInWei(state);
+        const networkId = getNetworkId(state) as number;
+        const ethAccount = getEthAccount(state);
+        const defaultParams = {
+            ...TX_DEFAULTS,
+            gasPrice,
+        };
+
+        const collectibleContractAddress = getCollectibleContractAddress(networkId);
+
+        const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
+            collectibleContractAddress,
+            ethAccount,
+            true,
+            defaultParams,
+        );
+        return tx;
+    };
+};
+
 export const unlockToken: ThunkCreator = (token: Token) => {
     return async dispatch => {
         return dispatch(toggleTokenLock(token, false));
@@ -347,6 +384,42 @@ export const lockToken: ThunkCreator = (token: Token) => {
     };
 };
 
+export const createSignedCollectibleOrder: ThunkCreator = (
+    collectible: Collectible,
+    price: BigNumber,
+    side: OrderSide,
+) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const networkId = getNetworkId(state);
+        const collectibleId = new BigNumber(collectible.tokenId);
+        if (networkId) {
+            try {
+                const web3Wrapper = await getWeb3Wrapper();
+                const contractWrappers = await getContractWrappers();
+                const wethAddress = getKnownTokens(networkId).getWethToken().address;
+                const collectibleAddress = getCollectibleContractAddress(networkId);
+                const order = buildSellCollectibleOrder(
+                    {
+                        account: ethAccount,
+                        amount: new BigNumber('1'),
+                        price,
+                        exchangeAddress: contractWrappers.exchange.address,
+                        collectibleId,
+                        collectibleAddress,
+                        wethAddress,
+                    },
+                    side,
+                );
+                const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+                return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            } catch (error) {
+                throw new SignedOrderException(error.message);
+            }
+        }
+    };
+};
 /**
  *  Initializes the app with a default state if the user does not have metamask, with permissions rejected
  *  or if the user did not connected metamask to the dApp. Takes the info from MAINNET
