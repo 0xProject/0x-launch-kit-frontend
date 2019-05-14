@@ -3,15 +3,16 @@ import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
 import { getWeb3State } from '../../store/selectors';
-import { themeDimensions } from '../../themes/commons';
+import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
 import { StoreState, Web3State } from '../../util/types';
 
 import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 
 interface OwnProps {
-    startContent: React.ReactNode;
+    centerContent?: React.ReactNode;
     endContent: React.ReactNode;
+    startContent: React.ReactNode;
 }
 
 interface StateProps {
@@ -52,19 +53,39 @@ const ToolbarStart = styled.div`
     align-items: center;
     display: flex;
     justify-content: flex-start;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
+    }
+`;
+
+const ToolbarCenter = styled.div`
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
+    }
 `;
 
 const ToolbarEnd = styled.div`
     align-items: center;
     display: flex;
     justify-content: flex-end;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
+    }
 `;
 
 const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
     const isMmLoading = props.web3State === Web3State.Loading;
-    const { startContent, endContent } = props;
+    const { startContent, endContent, centerContent } = props;
+
     return (
         <ToolbarWrapper>
             <ToolbarStart>{startContent}</ToolbarStart>
@@ -77,6 +98,7 @@ const Toolbar = (props: Props) => {
             {isMmLoading ? (
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
             ) : null}
+            {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarCenter>{centerContent}</ToolbarCenter> : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarEnd>{endContent}</ToolbarEnd> : null}
         </ToolbarWrapper>
     );
