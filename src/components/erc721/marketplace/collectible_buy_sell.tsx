@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
+import { startBuyCollectibleSteps } from '../../../store/ui/actions';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { TitleText } from './marketplace_common';
@@ -48,6 +49,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible) => any;
+    startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -59,7 +61,9 @@ const CollectibleBuySell = (props: Props) => {
     }
     const { price, color, image } = collectible;
 
-    const onBuy = () => window.alert('buy');
+    const onBuy = () => {
+        return props.startBuyCollectibleSteps(collectible, ethAccount);
+    };
 
     const onSell = () => {
         props.updateSelectedCollectible(collectible);
@@ -92,6 +96,8 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
+        startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
+            dispatch(startBuyCollectibleSteps(collectible, ethAccount)),
     };
 };
 

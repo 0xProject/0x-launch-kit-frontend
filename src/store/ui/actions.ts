@@ -6,6 +6,7 @@ import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
 import {
+    createBuyCollectibleSteps,
     createBuySellLimitSteps,
     createBuySellMarketSteps,
     createSellCollectibleSteps,
@@ -114,6 +115,19 @@ export const startSellCollectibleSteps: ThunkCreator = (
         );
         dispatch(setStepsModalCurrentStep(sellCollectibleSteps[0]));
         dispatch(setStepsModalPendingSteps(sellCollectibleSteps.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startBuyCollectibleSteps: ThunkCreator = (collectible: Collectible, ethAccount: string) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        if (!collectible.order) {
+            throw new Error('Collectible is not for sale');
+        }
+
+        const buyCollectibleSteps: Step[] = createBuyCollectibleSteps(collectible.order);
+        dispatch(setStepsModalCurrentStep(buyCollectibleSteps[0]));
+        dispatch(setStepsModalPendingSteps(buyCollectibleSteps.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
 };
