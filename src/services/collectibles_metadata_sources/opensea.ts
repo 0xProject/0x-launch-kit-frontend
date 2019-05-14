@@ -12,35 +12,23 @@ export class Opensea implements CollectibleMetadataSource {
             return {
                 tokenId: asset.token_id,
                 name: asset.name,
-                price: null,
                 color: `#${asset.background_color}`,
                 image: asset.image_url,
                 currentOwner: asset.owner.address,
                 assetUrl: asset.external_link,
                 description: asset.name,
+                order: null,
             };
         });
     }
 
-    public async fetchUserCollectiblesAsync(ownerAddress: string, networkId: number | null): Promise<Collectible[]> {
+    public async fetchAllCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]> {
         if (!networkId) {
             return Promise.resolve([]);
         }
         const metadataSourceUrl = this._endpointsUrls[networkId];
         const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
-        const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${ownerAddress}`;
-        const assetsResponse = await fetch(url);
-        const assetsResponseJson = await assetsResponse.json();
-        return Opensea.getAssetsAsCollectible(assetsResponseJson.assets);
-    }
-
-    public async fetchAllCollectiblesAsync(networkId: number | null): Promise<Collectible[]> {
-        if (!networkId) {
-            return Promise.resolve([]);
-        }
-        const metadataSourceUrl = this._endpointsUrls[networkId];
-        const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
-        const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}`;
+        const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${userAddress}`;
         const assetsResponse = await fetch(url);
         const assetsResponseJson = await assetsResponse.json();
         return Opensea.getAssetsAsCollectible(assetsResponseJson.assets);

@@ -29,22 +29,24 @@ interface Props {
 }
 
 export const TradeButton: React.FC<Props> = ({ ethAccount, asset, onBuy, onSell, onCancel }) => {
-    const { currentOwner, name, price } = asset;
+    const { currentOwner, name, order } = asset;
     const isOwner = ethAccount.toLowerCase() === currentOwner.toLowerCase();
 
-    if (isOwner && price) {
+    if (isOwner && order) {
         return (
             <BtnStyled btnColor={'#ff6534'} onClick={onCancel}>
                 Cancel Sale
             </BtnStyled>
         );
-    } else if (isOwner && !price) {
+    } else if (isOwner && !order) {
         return (
             <BtnStyled btnColor={'#ffffff'} backgroundColor={'#ff6534'} onClick={onSell}>
                 Sell {name}
             </BtnStyled>
         );
-    } else if (!isOwner && price) {
+    } else if (!isOwner && order) {
+        const price = order.takerAssetAmount;
+
         return (
             <BtnStyled btnColor={'#ffffff'} backgroundColor={'#00AE99'} onClick={onBuy}>
                 Buy for {price.toString()} ETH

@@ -50,6 +50,20 @@ export class Relayer {
         return null;
     }
 
+    public async getSellCollectibleOrdersAsync(
+        collectibleAddress: string,
+        wethAddress: string,
+    ): Promise<SignedOrder[]> {
+        const result = await this.client.getOrdersAsync({
+            makerAssetProxyId: '0x02571792',
+            takerAssetProxyId: '0xf47261b0',
+            makerAssetAddress: collectibleAddress,
+            takerAssetAddress: wethAddress,
+        });
+
+        return result.records.map(record => record.order);
+    }
+
     private async _getOrdersAsync(
         makerAssetData: string,
         takerAssetData: string,

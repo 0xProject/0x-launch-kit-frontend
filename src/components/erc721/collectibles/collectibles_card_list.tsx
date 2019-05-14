@@ -16,7 +16,8 @@ export const CollectiblesCardList = (props: Props) => {
     return (
         <CollectiblesListWrapper>
             {collectibles.map((item, index) => {
-                const { name, price, image, color, tokenId } = item;
+                const { name, image, color, order, tokenId } = item;
+                const price = order ? order.takerAssetAmount : null;
                 return (
                     <CollectibleAssetContainer
                         name={name}

@@ -1,7 +1,7 @@
 import { createAsyncAction } from 'typesafe-actions';
 
 import { Collectible, ThunkCreator } from '../../util/types';
-import { getEthAccount, getNetworkId } from '../selectors';
+import { getEthAccount } from '../selectors';
 
 export const fetchAllCollectiblesAsync = createAsyncAction(
     'collectibles/ALL_COLLECTIBLES_fetch_request',
@@ -17,14 +17,15 @@ export const fetchAllCollectiblesAsync = createAsyncAction(
 >();
 
 export const getAllCollectibles: ThunkCreator = () => {
-    return async (dispatch, getState, { getCollectiblesMetadataGateway }) => {
+    return async (dispatch, getState, { getCollectiblesMetadataGateway, getWeb3Wrapper }) => {
         dispatch(fetchAllCollectiblesAsync.request());
         try {
             const state = getState();
-            const networkId = getNetworkId(state);
+            const web3Wrapper = await getWeb3Wrapper();
+            const networkId = await web3Wrapper.getNetworkIdAsync();
             const ethAccount = getEthAccount(state);
             const collectiblesMetadataGateway = getCollectiblesMetadataGateway();
-            const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(networkId);
+            const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(ethAccount, networkId);
             dispatch(fetchAllCollectiblesAsync.success({ collectibles, ethAccount }));
         } catch (err) {
             dispatch(fetchAllCollectiblesAsync.failure(err));

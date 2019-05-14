@@ -100,7 +100,7 @@ export const sumTakerAssetFillableOrders = (
     }
     return ordersToFill.reduce((sum, order, index) => {
         // Check buildMarketOrders for more details
-        const price = side === OrderSide.Buy ? 1 : order.makerAssetAmount.div(order.takerAssetAmount);
+        const price = side === OrderSide.Buy ? 1 : order.takerAssetAmount.div(order.takerAssetAmount);
         return sum.add(amounts[index].mul(price));
     }, new BigNumber(0));
 };
