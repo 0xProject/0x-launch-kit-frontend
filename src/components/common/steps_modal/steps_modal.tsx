@@ -10,9 +10,8 @@ import { getStepTitle, isLongStep } from '../../../util/steps';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
 
-import { BuyCollectibleStepContainer } from './buy_collectible_step';
+import { BuySellCollectibleStepContainer } from './buy_sell_collectible_step';
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
-import { SellCollectibleStepContainer } from './sell_collectible_step';
 import { SignOrderStepContainer } from './sign_order_step';
 import { ModalContent } from './steps_common';
 import { StepItem } from './steps_progress';
@@ -76,14 +75,13 @@ class StepsModal extends React.Component<Props> {
                     {currentStep && currentStep.kind === StepKind.BuySellMarket && (
                         <BuySellTokenStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
-                    {currentStep && currentStep.kind === StepKind.SellCollectible && (
-                        <SellCollectibleStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
-                    )}
+                    {currentStep &&
+                        (currentStep.kind === StepKind.SellCollectible ||
+                            currentStep.kind === StepKind.BuyCollectible) && (
+                            <BuySellCollectibleStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
+                        )}
                     {currentStep && currentStep.kind === StepKind.WrapEth && (
                         <WrapEthStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
-                    )}
-                    {currentStep && currentStep.kind === StepKind.BuyCollectible && (
-                        <BuyCollectibleStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                 </ModalContent>
             </Modal>

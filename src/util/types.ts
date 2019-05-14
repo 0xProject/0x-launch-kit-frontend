@@ -137,6 +137,7 @@ export interface StepSellCollectible {
 export interface StepBuyCollectible {
     kind: StepKind.BuyCollectible;
     order: SignedOrder;
+    collectible: Collectible;
 }
 
 export type Step =

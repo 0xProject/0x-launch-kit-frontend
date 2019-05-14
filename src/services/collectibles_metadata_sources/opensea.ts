@@ -18,6 +18,7 @@ export class Opensea implements CollectibleMetadataSource {
                 currentOwner: asset.owner.address,
                 assetUrl: asset.external_link,
                 description: asset.name,
+                order: null,
             };
         });
     }

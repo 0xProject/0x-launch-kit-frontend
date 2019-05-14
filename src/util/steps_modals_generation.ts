@@ -97,8 +97,8 @@ export const createSellCollectibleSteps = (
     return sellCollectibleFlow;
 };
 
-export const createBuyCollectibleSteps = (order: SignedOrder): Step[] => {
-    return [getBuyCollectibleStep(order)];
+export const createBuyCollectibleSteps = (order: SignedOrder, collectible: Collectible): Step[] => {
+    return [getBuyCollectibleStep(order, collectible)];
 };
 
 export const createBuySellMarketSteps = (
@@ -163,10 +163,11 @@ export const getUnlockCollectibleStep = (collectible: Collectible): StepUnlockCo
     };
 };
 
-export const getBuyCollectibleStep = (order: SignedOrder): StepBuyCollectible => {
+export const getBuyCollectibleStep = (order: SignedOrder, collectible: Collectible): StepBuyCollectible => {
     return {
         kind: StepKind.BuyCollectible,
         order,
+        collectible,
     };
 };
 

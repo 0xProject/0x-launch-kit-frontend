@@ -125,7 +125,7 @@ export const startBuyCollectibleSteps: ThunkCreator = (collectible: Collectible,
             throw new Error('Collectible is not for sale');
         }
 
-        const buyCollectibleSteps: Step[] = createBuyCollectibleSteps(collectible.order);
+        const buyCollectibleSteps: Step[] = createBuyCollectibleSteps(collectible.order, collectible);
         dispatch(setStepsModalCurrentStep(buyCollectibleSteps[0]));
         dispatch(setStepsModalPendingSteps(buyCollectibleSteps.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
