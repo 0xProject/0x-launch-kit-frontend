@@ -19,7 +19,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/9_xunbhn.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0xAEC3C8eD9516A206a4fD47EC77f026EDD533CF17',
+        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
     },
     {
         tokenId: '2',

@@ -7,6 +7,7 @@ import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } fr
 import { getRelayer } from '../../services/relayer';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder } from '../../util/types';
+import { getAllCollectibles } from '../collectibles/actions';
 import {
     getBaseToken,
     getEthAccount,
@@ -78,6 +79,20 @@ export const cancelOrder: ThunkCreator = (order: UIOrder) => {
                 ]),
             );
         });
+    };
+};
+
+export const submitCollectibleOrder: ThunkCreator = (signedOrder: SignedOrder) => {
+    return async dispatch => {
+        try {
+            const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(getAllCollectibles());
+            // TODO: Dispatch notification
+            return submitResult;
+        } catch (error) {
+            throw new RelayerException(error.message);
+        }
     };
 };
 

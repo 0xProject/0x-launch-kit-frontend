@@ -2,11 +2,13 @@ import { OrderSide, Step, StepKind } from './types';
 
 export const getStepTitle = (step: Step): string => {
     switch (step.kind) {
+        case StepKind.SellCollectible:
         case StepKind.BuySellLimit:
             return 'Sign';
         case StepKind.BuySellMarket:
             return step.side === OrderSide.Buy ? 'Buy' : 'Sell';
         case StepKind.ToggleTokenLock:
+        case StepKind.UnlockCollectibles:
             return step.isUnlocked ? 'Lock' : 'Unlock';
         case StepKind.WrapEth:
             return 'Convert';
@@ -18,10 +20,12 @@ export const getStepTitle = (step: Step): string => {
 
 export const isLongStep = (step: Step): boolean => {
     switch (step.kind) {
+        case StepKind.SellCollectible:
         case StepKind.BuySellLimit:
             return false;
         case StepKind.BuySellMarket:
         case StepKind.ToggleTokenLock:
+        case StepKind.UnlockCollectibles:
         case StepKind.WrapEth:
             return true;
         default:

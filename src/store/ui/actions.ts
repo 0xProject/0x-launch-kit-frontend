@@ -1,11 +1,17 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
-import { createBuySellLimitSteps, createBuySellMarketSteps } from '../../util/steps_modals_generation';
 import {
+    createBuySellLimitSteps,
+    createBuySellMarketSteps,
+    createSellCollectibleSteps,
+} from '../../util/steps_modals_generation';
+import {
+    Collectible,
     Notification,
     NotificationKind,
     OrderSide,
@@ -75,6 +81,39 @@ export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => 
 
         dispatch(setStepsModalCurrentStep(wrapEthStep));
         dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startSellCollectibleSteps: ThunkCreator = (
+    collectible: Collectible,
+    expirationDate: string,
+    startingPrice: BigNumber,
+    side: OrderSide,
+    endingPrice?: BigNumber,
+) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+
+        const contractWrapers = await getContractWrappers();
+        const ethAccount = selectors.getEthAccount(state);
+
+        const web3Wrapper = await getWeb3Wrapper();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const collectibleAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
+
+        const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(collectibleAddress, ethAccount);
+
+        const sellCollectibleSteps: Step[] = createSellCollectibleSteps(
+            collectible,
+            expirationDate,
+            startingPrice,
+            side,
+            isUnlocked,
+            endingPrice,
+        );
+        dispatch(setStepsModalCurrentStep(sellCollectibleSteps[0]));
+        dispatch(setStepsModalPendingSteps(sellCollectibleSteps.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
 };
