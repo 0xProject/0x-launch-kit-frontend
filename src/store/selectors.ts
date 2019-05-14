@@ -40,7 +40,7 @@ export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
 export const getUserCollectibles = (state: StoreState) => state.collectibles.userCollectibles;
 export const getCollectibleById = (state: StoreState, props: { assetId: string }): Collectible | undefined =>
-    state.collectibles.userCollectibles[props.assetId];
+    state.collectibles.userCollectibles[props.assetId] || state.collectibles.allCollectibles[props.assetId];
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
