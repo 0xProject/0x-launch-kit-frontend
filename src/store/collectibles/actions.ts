@@ -43,14 +43,14 @@ const isDutchAuction = (order: SignedOrder) => {
     return false;
 };
 
-export const submitBuyCollectible: ThunkCreator = (order: SignedOrder, ethAccount: string) => {
+export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: SignedOrder, ethAccount: string) => {
     return async (dispatch, getState, { getContractWrappers }) => {
         const contractWrappers = await getContractWrappers();
 
         if (isDutchAuction(order)) {
             throw new Error('not implemented');
         } else {
-            contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+            return contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
                 [order],
                 order.makerAssetAmount,
                 ethAccount,
