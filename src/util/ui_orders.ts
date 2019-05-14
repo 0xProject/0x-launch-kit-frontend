@@ -1,6 +1,8 @@
 import { assetDataUtils, OrderInfo } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
+import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../common/constants';
+
 import { OrderBookItem, OrderSide, Token, UIOrder } from './types';
 
 export const ordersToUIOrders = (orders: SignedOrder[], baseToken: Token, ordersInfo?: OrderInfo[]): UIOrder[] => {
@@ -81,8 +83,9 @@ const ordersToUIOrdersWithOrdersInfo = (
 export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
     const initialValue: { [x: string]: UIOrder[] } = {};
     const ordersByPrice = orders.reduce((acc, order) => {
-        acc[order.price.toFixed(2)] = acc[order.price.toFixed(2)] || [];
-        acc[order.price.toFixed(2)].push(order);
+        acc[order.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)] =
+            acc[order.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)] || [];
+        acc[order.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)].push(order);
         return acc;
     }, initialValue);
 
