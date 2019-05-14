@@ -1,4 +1,4 @@
-import { assetDataUtils, BigNumber } from '0x.js';
+import { assetDataUtils, AssetProxyId, BigNumber } from '0x.js';
 import { HttpClient, SignedOrder } from '@0x/connect';
 
 import { RELAYER_URL } from '../common/constants';
@@ -55,8 +55,8 @@ export class Relayer {
         wethAddress: string,
     ): Promise<SignedOrder[]> {
         const result = await this.client.getOrdersAsync({
-            makerAssetProxyId: '0x02571792',
-            takerAssetProxyId: '0xf47261b0',
+            makerAssetProxyId: AssetProxyId.ERC721,
+            takerAssetProxyId: AssetProxyId.ERC20,
             makerAssetAddress: collectibleAddress,
             takerAssetAddress: wethAddress,
         });
