@@ -1,6 +1,6 @@
-import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order, SignedOrder } from '0x.js';
+import { assetDataUtils, BigNumber, DutchAuctionWrapper, generatePseudoRandomSalt, Order, SignedOrder } from '0x.js';
 
-import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
+import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, TOMORROW, ZERO_ADDRESS } from '../common/constants';
 
 import { OrderSide, UIOrder } from './types';
 
@@ -9,9 +9,15 @@ interface BuildSellCollectibleOrderParams {
     collectibleId: BigNumber;
     account: string;
     amount: BigNumber;
-    price: BigNumber;
     exchangeAddress: string;
     wethAddress: string;
+    price: BigNumber;
+}
+
+interface DutchAuctionOrderParams extends BuildSellCollectibleOrderParams {
+    endPrice: BigNumber;
+    expirationDate: BigNumber;
+    senderAddress: string;
 }
 
 interface BuildLimitOrderParams {
@@ -28,15 +34,48 @@ interface BuildMarketOrderParams {
     orders: UIOrder[];
 }
 
+export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParams) => {
+    const {
+        account,
+        collectibleId,
+        collectibleAddress,
+        amount,
+        price,
+        exchangeAddress,
+        wethAddress,
+        senderAddress,
+        expirationDate,
+        endPrice,
+    } = params;
+    const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
+    const beginTimeSeconds = new BigNumber(Math.round(Date.now() / 1000));
+    const auctionAssetData = DutchAuctionWrapper.encodeDutchAuctionAssetData(collectibleData, beginTimeSeconds, price);
+    const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
+    return {
+        makerAddress: account,
+        exchangeAddress,
+        takerAddress: ZERO_ADDRESS,
+        senderAddress,
+        feeRecipientAddress: ZERO_ADDRESS,
+        expirationTimeSeconds: expirationDate,
+        salt: generatePseudoRandomSalt(),
+        makerAssetData: auctionAssetData,
+        takerAssetData: wethAssetData,
+        makerAssetAmount: amount,
+        takerAssetAmount: endPrice,
+        makerFee: MAKER_FEE,
+        takerFee: TAKER_FEE,
+    };
+};
+
+// TODO ASD
 export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
     const { account, collectibleId, collectibleAddress, amount, price, exchangeAddress, wethAddress } = params;
-    const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
-
     return {
         exchangeAddress,
-        expirationTimeSeconds: tomorrow,
+        expirationTimeSeconds: TOMORROW,
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
         makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,

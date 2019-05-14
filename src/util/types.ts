@@ -128,8 +128,8 @@ export interface StepSellCollectible {
     kind: StepKind.SellCollectible;
     collectible: Collectible;
     startPrice: BigNumber;
-    endPrice?: BigNumber;
-    expirationDate: string;
+    endPrice: BigNumber | null;
+    expirationDate: BigNumber;
     side: OrderSide;
 }
 
