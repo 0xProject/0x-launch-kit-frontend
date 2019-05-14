@@ -402,11 +402,11 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                 const contractWrappers = await getContractWrappers();
                 const wethAddress = getKnownTokens(networkId).getWethToken().address;
                 const collectibleAddress = getCollectibleContractAddress(networkId);
+                const exchangeAddress = contractWrappers.exchange.address;
                 let order;
                 if (endPrice) {
                     // DutchAuction sell
                     const senderAddress = contractWrappers.dutchAuction.address;
-                    const exchangeAddress = '0x48bacb9266a570d521063ef5dd96e61686dbe788';
                     order = buildDutchAuctionCollectibleOrder({
                         account: ethAccount,
                         amount: new BigNumber('1'),
@@ -426,7 +426,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                             account: ethAccount,
                             amount: new BigNumber('1'),
                             price: startPrice,
-                            exchangeAddress: contractWrappers.exchange.address,
+                            exchangeAddress,
                             collectibleId,
                             collectibleAddress,
                             wethAddress,
