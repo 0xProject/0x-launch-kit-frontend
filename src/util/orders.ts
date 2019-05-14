@@ -1,4 +1,4 @@
-import { assetDataUtils, BigNumber, DutchAuctionWrapper, generatePseudoRandomSalt, Order, SignedOrder } from '0x.js';
+import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } from '0x.js';
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, TOMORROW, ZERO_ADDRESS } from '../common/constants';
 
@@ -58,7 +58,7 @@ export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParam
         senderAddress,
         feeRecipientAddress: ZERO_ADDRESS,
         expirationTimeSeconds: expirationDate,
-        salt: generatePseudoRandomSalt(),
+        salt: new BigNumber(Date.now()),
         makerAssetData: auctionAssetData,
         takerAssetData: wethAssetData,
         makerAssetAmount: amount,
@@ -85,7 +85,7 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
         takerAssetData: wethAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
-        salt: generatePseudoRandomSalt(),
+        salt: new BigNumber(Date.now()),
         senderAddress: ZERO_ADDRESS,
     };
 };
