@@ -84,7 +84,12 @@ const allCollectibles: Collectible[] = [
 ];
 
 export class Mocked implements CollectibleMetadataSource {
-    public fetchAllCollectiblesAsync = (userAddress: string, networkId: number): Promise<Collectible[]> => {
+    public fetchAllUserCollectiblesAsync = (userAddress: string, networkId: number): Promise<Collectible[]> => {
         return Promise.resolve(allCollectibles);
+    };
+
+    public fetchIndividualCollectibleAsync = (tokenId: string, networkId: number): Promise<Collectible | null> => {
+        const collectible = allCollectibles.find(value => value.tokenId === tokenId) || null;
+        return Promise.resolve(collectible);
     };
 }
