@@ -4,6 +4,7 @@ import { getWeb3Wrapper } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 
 import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
+import { getAllCollectibles } from './collectibles/actions';
 import { fetchMarkets, setMarketTokens } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair } from './selectors';
@@ -40,6 +41,8 @@ export const updateStore = () => {
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(getAllCollectibles(ethAccount));
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));

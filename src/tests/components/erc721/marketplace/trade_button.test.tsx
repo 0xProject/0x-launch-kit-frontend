@@ -13,7 +13,7 @@ import { mountWithTheme } from '../../../util/test_with_theme';
 describe('TradeButton', () => {
     describe('the collectible belongs to the current user and it does not have a price', () => {
         const currentUser = addressFactory.build().address;
-        const collectible = collectibleFactory.build({ price: null, currentOwner: currentUser });
+        const collectible = collectibleFactory.build({ currentOwner: currentUser });
 
         it('should display a sell button', () => {
             // when
@@ -59,7 +59,10 @@ describe('TradeButton', () => {
 
     describe('the collectible belongs to the current user and it does not have a price', () => {
         const currentUser = addressFactory.build().address;
-        const collectible = collectibleFactory.build({ price: new BigNumber(5), currentOwner: currentUser });
+        const collectible = collectibleFactory.build({
+            order: { takerAssetAmount: new BigNumber(5) },
+            currentOwner: currentUser,
+        });
 
         it('should display a cancel button', () => {
             // when
@@ -105,7 +108,7 @@ describe('TradeButton', () => {
 
     describe('the collectible does not belong to the current user and it has a price', () => {
         const currentUser = addressFactory.build().address;
-        const collectible = collectibleFactory.build({ price: new BigNumber(5) });
+        const collectible = collectibleFactory.build({ order: { takerAssetAmount: new BigNumber(5) } });
 
         it('should display a buy button', () => {
             // when
@@ -151,7 +154,7 @@ describe('TradeButton', () => {
 
     describe('the collectible does not belong to the current user and it does not have a price', () => {
         const currentUser = addressFactory.build().address;
-        const collectible = collectibleFactory.build({ price: null });
+        const collectible = collectibleFactory.build({ order: null });
 
         it('should return null', () => {
             // when

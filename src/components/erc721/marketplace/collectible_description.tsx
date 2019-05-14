@@ -67,8 +67,11 @@ const CollectibleDescription = (props: Props) => {
     if (!asset) {
         return null;
     }
-    const { currentOwner, description, price, name, assetUrl } = asset;
+    const { currentOwner, description, order, name, assetUrl } = asset;
+
+    const price = order ? order.takerAssetAmount : null;
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
+
     return (
         <>
             <DescriptionCard>
