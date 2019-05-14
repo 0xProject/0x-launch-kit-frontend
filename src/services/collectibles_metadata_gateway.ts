@@ -3,9 +3,12 @@ import { assetDataUtils, SignedOrder } from '0x.js';
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../common/constants';
 import { getRelayer, Relayer } from '../services/relayer';
 import { getKnownTokens } from '../util/known_tokens';
+import { getLogger } from '../util/logger';
 import { Collectible, CollectibleMetadataSource } from '../util/types';
 
 import { getConfiguredSource } from './collectibles_metadata_sources';
+
+const logger = getLogger('Services::Collectibles_metadata_gateway');
 
 export class CollectiblesMetadataGateway {
     private readonly _relayer: Relayer;
@@ -23,7 +26,12 @@ export class CollectiblesMetadataGateway {
         const wethAddress = knownTokens.getWethToken().address;
 
         // Step 1: Get all sell orders in the relayer
-        const orders = await this._relayer.getSellCollectibleOrdersAsync(collectibleAddress, wethAddress);
+        let orders: any[] = [];
+        try {
+            orders = await this._relayer.getSellCollectibleOrdersAsync(collectibleAddress, wethAddress);
+        } catch (err) {
+            logger.log(err);
+        }
 
         const tokenIdToOrder = orders.reduce<{ [tokenId: string]: SignedOrder }>((acc, order) => {
             const { tokenId } = assetDataUtils.decodeERC721AssetData(order.makerAssetData);
