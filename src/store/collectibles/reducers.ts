@@ -18,10 +18,11 @@ export function collectibles(state: CollectiblesState = initialCollectibles, act
             // tslint:disable-next-line:no-shadowed-variable
             const { collectibles, ethAccount } = action.payload;
             collectibles.forEach(collectible => {
-                allCollectibles[collectible.tokenId] = collectible;
-
+                // The all collectibles variable must not contain user collectibles
                 if (collectible.currentOwner.toLowerCase() === ethAccount.toLowerCase()) {
                     userCollectibles[collectible.tokenId] = collectible;
+                } else {
+                    allCollectibles[collectible.tokenId] = collectible;
                 }
             });
             return { ...state, allCollectibles, userCollectibles };
