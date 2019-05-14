@@ -1,7 +1,8 @@
-import { SignedOrder } from '0x.js';
+import { MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
+import { isDutchAuction } from '../../util/orders';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount } from '../selectors';
 
@@ -39,18 +40,28 @@ export const getAllCollectibles: ThunkCreator = () => {
     };
 };
 
-const isDutchAuction = (order: SignedOrder) => {
-    return false;
-};
-
 export const submitBuyCollectible: ThunkCreator = (order: SignedOrder, ethAccount: string) => {
-    return async (dispatch, getState, { getContractWrappers }) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const contractWrappers = await getContractWrappers();
 
         if (isDutchAuction(order)) {
-            throw new Error('not implemented');
+            const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetailsAsync(order);
+            const currentAuctionAmount = auctionDetails.currentAmount;
+            const buyOrder = {
+                ...order,
+                makerAddress: ethAccount,
+                makerAssetData: order.takerAssetData,
+                takerAssetData: order.makerAssetData,
+                makerAssetAmount: currentAuctionAmount,
+                takerAssetAmount: order.makerAssetAmount,
+            };
+
+            const web3 = await getWeb3Wrapper();
+            const provider = new MetamaskSubprovider(web3.getProvider());
+            const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
+            return contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, TX_DEFAULTS);
         } else {
-            contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+            return contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
                 [order],
                 order.makerAssetAmount,
                 ethAccount,
