@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
@@ -39,7 +40,8 @@ const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
         isOrderFillable = order.status === OrderStatus.Fillable;
         status = isOrderFillable ? 'Open' : 'Filled';
     }
-    const price = order.price.toString();
+
+    const price = parseFloat(order.price.toString()).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
 
     return (
         <TR key={index}>
