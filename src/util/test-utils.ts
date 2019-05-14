@@ -109,7 +109,7 @@ export const collectibleFactory = Factory.Sync.makeFactory<Collectible>({
     description: Factory.each(i => `Mocked collectible ${i}`),
     image: '',
     name: Factory.each(i => `NFT ${i}`),
-    price: new BigNumber(1),
+    order: null,
     tokenId: Factory.each(i => i.toString()),
     order: null,
 });

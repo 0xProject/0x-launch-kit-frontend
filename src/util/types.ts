@@ -266,7 +266,6 @@ export enum ModalDisplay {
 export interface Collectible {
     tokenId: string;
     name: string;
-    price: BigNumber | null;
     color: string;
     image: string;
     currentOwner: string;
@@ -277,11 +276,12 @@ export interface Collectible {
 
 export interface CollectiblesState {
     readonly userCollectibles: { [tokenId: string]: Collectible };
-    collectibleSelected: Collectible | null;
+    readonly allCollectibles: { [tokenId: string]: Collectible };
+    readonly collectibleSelected: Collectible | null;
 }
 
 export interface CollectibleMetadataSource {
-    fetchUserCollectiblesAsync(ownerAddress: string, networkId: number | null): Promise<Collectible[]>;
+    fetchAllCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]>;
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
