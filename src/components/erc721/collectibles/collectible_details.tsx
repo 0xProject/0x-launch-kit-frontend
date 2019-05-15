@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { goToIndividualCollectible } from '../../../store/router/actions';
 import { themeDimensions, themeFeatures } from '../../../themes/commons';
 
+import { PriceBadge } from './price_badge';
+
 interface OwnProps extends HTMLAttributes<HTMLDivElement> {
     color: string;
     id: string;
@@ -56,37 +58,6 @@ const Title = styled.h2`
     white-space: nowrap;
 `;
 
-const Badge = styled.div`
-    align-items: center;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
-    display: flex;
-    height: 31px;
-    justify-content: center;
-    padding: 8px 12px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-`;
-
-const BadgeValue = styled.span`
-    color: #000;
-    font-feature-settings: 'tnum' on, 'onum' on;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 14px;
-    margin-right: 6px;
-`;
-
-const BadgeAsset = styled.span`
-    color: #000;
-    font-feature-settings: 'tnum' on, 'onum' on;
-    font-size: 10px;
-    font-weight: 400;
-    line-height: 10px;
-`;
-
 export const CollectibleAsset: React.FC<Props> = (props: Props) => {
     const { id, name, price, image, color, ...restProps } = props;
 
@@ -98,12 +69,7 @@ export const CollectibleAsset: React.FC<Props> = (props: Props) => {
     return (
         <CollectibleAssetWrapper {...restProps} onClick={handleAssetClick}>
             <ImageWrapper color={color} image={image}>
-                {price && (
-                    <Badge>
-                        <BadgeValue>{price.toString()}</BadgeValue>
-                        <BadgeAsset>ETH</BadgeAsset>
-                    </Badge>
-                )}
+                <PriceBadge price={price} />
             </ImageWrapper>
             <Title>{name}</Title>
         </CollectibleAssetWrapper>
