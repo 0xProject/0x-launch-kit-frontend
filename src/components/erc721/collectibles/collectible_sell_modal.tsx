@@ -8,7 +8,7 @@ import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
-import { todayInSeconds, tomorrow } from '../../../util/tomorrow';
+import { todayInSeconds, tomorrow } from '../../../util/time_utils';
 import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { CloseModalButton } from '../../common/icons/close_modal_button';

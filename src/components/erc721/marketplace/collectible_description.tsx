@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { getCollectibleById } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
+import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
 import { Collectible, StoreState } from '../../../util/types';
 import { Card } from '../../common/card';
 import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
@@ -69,7 +70,13 @@ const CollectibleDescription = (props: Props) => {
     }
     const { currentOwner, description, order, name, assetUrl } = collectible;
 
+    const emptyPlaceholder = '----';
     const price = order ? order.takerAssetAmount : null;
+    let timeRemaining = '';
+    if (order && order.expirationTimeSeconds) {
+        const daysAndHours = convertTimeInSecondsToDaysAndHours(order.expirationTimeSeconds);
+        timeRemaining = `${daysAndHours.days} Days ${daysAndHours.hours} Hrs`;
+    }
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
 
     return (
@@ -93,9 +100,9 @@ const CollectibleDescription = (props: Props) => {
             <DescriptionCard>
                 <TitleText>Price Chart</TitleText>
                 <TitleText>Current price</TitleText>
-                {price ? <p>{price.toString()} ETH</p> : '----'}
+                {price ? <p>{price.toString()} ETH</p> : emptyPlaceholder}
                 <TitleText>Time remaining</TitleText>
-                <p>2 Days 8 hrs</p>
+                {timeRemaining ? <p>{timeRemaining}</p> : emptyPlaceholder}
             </DescriptionCard>
             <DescriptionCard>
                 <TitleText>Transaction history</TitleText>

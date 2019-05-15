@@ -2,7 +2,7 @@ import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } fr
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
-import { tomorrow } from './tomorrow';
+import { tomorrow } from './time_utils';
 import { OrderSide, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {
