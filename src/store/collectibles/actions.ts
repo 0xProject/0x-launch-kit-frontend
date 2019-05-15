@@ -1,5 +1,8 @@
+import { MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
+import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
+import { isDutchAuction } from '../../util/orders';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount } from '../selectors';
 
@@ -32,6 +35,41 @@ export const getAllCollectibles: ThunkCreator = () => {
             dispatch(fetchAllCollectiblesAsync.success({ collectibles }));
         } catch (err) {
             dispatch(fetchAllCollectiblesAsync.failure(err));
+        }
+    };
+};
+
+export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: SignedOrder, ethAccount: string) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const contractWrappers = await getContractWrappers();
+
+        if (isDutchAuction(order)) {
+            const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetailsAsync(order);
+            const currentAuctionAmount = auctionDetails.currentAmount;
+            const buyOrder = {
+                ...order,
+                makerAddress: ethAccount,
+                makerAssetData: order.takerAssetData,
+                takerAssetData: order.makerAssetData,
+                makerAssetAmount: currentAuctionAmount,
+                takerAssetAmount: order.makerAssetAmount,
+            };
+
+            const web3 = await getWeb3Wrapper();
+            const provider = new MetamaskSubprovider(web3.getProvider());
+            const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
+            return contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, TX_DEFAULTS);
+        } else {
+            return contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+                [order],
+                order.makerAssetAmount,
+                ethAccount,
+                order.takerAssetAmount,
+                [],
+                0,
+                ZERO_ADDRESS,
+                TX_DEFAULTS,
+            );
         }
     };
 };

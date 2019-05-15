@@ -41,22 +41,21 @@ const CollectibleDescription = styled(CollectibleDescriptionContainer)`
 `;
 
 interface OwnProps {
-    assetId: string;
+    collectibleId: string;
 }
 
 type Props = OwnProps;
 
 export const IndividualCollectible = (props: Props) => {
-    const { assetId } = props;
-
-    if (!assetId) {
+    const { collectibleId } = props;
+    if (!collectibleId) {
         return null;
     }
 
     return (
         <IndividualCollectibleWrapper>
-            <CollectibleBuySell assetId={assetId} />
-            <CollectibleDescription assetId={assetId} />
+            <CollectibleBuySell assetId={collectibleId} />
+            <CollectibleDescription assetId={collectibleId} />
         </IndividualCollectibleWrapper>
     );
 };

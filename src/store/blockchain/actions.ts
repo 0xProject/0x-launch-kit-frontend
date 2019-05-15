@@ -12,7 +12,7 @@ import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { buildSellCollectibleOrder } from '../../util/orders';
+import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
 import {
     BlockchainState,
     Collectible,
@@ -386,8 +386,10 @@ export const lockToken: ThunkCreator = (token: Token) => {
 
 export const createSignedCollectibleOrder: ThunkCreator = (
     collectible: Collectible,
-    price: BigNumber,
     side: OrderSide,
+    startPrice: BigNumber,
+    expirationDate: BigNumber,
+    endPrice: BigNumber | null,
 ) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
@@ -400,18 +402,39 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                 const contractWrappers = await getContractWrappers();
                 const wethAddress = getKnownTokens(networkId).getWethToken().address;
                 const collectibleAddress = getCollectibleContractAddress(networkId);
-                const order = buildSellCollectibleOrder(
-                    {
+                const exchangeAddress = contractWrappers.exchange.address;
+                let order;
+                if (endPrice) {
+                    // DutchAuction sell
+                    const senderAddress = contractWrappers.dutchAuction.address;
+                    order = buildDutchAuctionCollectibleOrder({
                         account: ethAccount,
                         amount: new BigNumber('1'),
-                        price,
-                        exchangeAddress: contractWrappers.exchange.address,
-                        collectibleId,
-                        collectibleAddress,
+                        price: startPrice,
+                        endPrice,
+                        expirationDate,
                         wethAddress,
-                    },
-                    side,
-                );
+                        collectibleAddress,
+                        collectibleId,
+                        exchangeAddress,
+                        senderAddress,
+                    });
+                } else {
+                    // Normal Sell
+                    order = buildSellCollectibleOrder(
+                        {
+                            account: ethAccount,
+                            amount: new BigNumber('1'),
+                            price: startPrice,
+                            exchangeAddress,
+                            collectibleId,
+                            collectibleAddress,
+                            wethAddress,
+                        },
+                        side,
+                    );
+                }
+
                 const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
                 return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
             } catch (error) {

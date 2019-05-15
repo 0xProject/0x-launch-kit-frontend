@@ -87,6 +87,7 @@ export enum StepKind {
     BuySellMarket = 'BuySellMarket',
     UnlockCollectibles = 'UnlockCollectibles',
     SellCollectible = 'SellCollectible',
+    BuyCollectible = 'BuyCollectible',
 }
 
 export interface StepWrapEth {
@@ -128,9 +129,15 @@ export interface StepSellCollectible {
     kind: StepKind.SellCollectible;
     collectible: Collectible;
     startPrice: BigNumber;
-    endPrice?: BigNumber;
-    expirationDate: string;
+    endPrice: BigNumber | null;
+    expirationDate: BigNumber;
     side: OrderSide;
+}
+
+export interface StepBuyCollectible {
+    kind: StepKind.BuyCollectible;
+    order: SignedOrder;
+    collectible: Collectible;
 }
 
 export type Step =
@@ -139,6 +146,7 @@ export type Step =
     | StepBuySellLimitOrder
     | StepBuySellMarket
     | StepSellCollectible
+    | StepBuyCollectible
     | StepUnlockCollectibles;
 
 export interface StepsModalState {

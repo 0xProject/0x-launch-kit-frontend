@@ -4,10 +4,12 @@ import { createAction } from 'typesafe-actions';
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
-import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
+import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
 import {
+    createBasicBuyCollectibleSteps,
     createBuySellLimitSteps,
     createBuySellMarketSteps,
+    createDutchBuyCollectibleSteps,
     createSellCollectibleSteps,
 } from '../../util/steps_modals_generation';
 import {
@@ -87,10 +89,10 @@ export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => 
 
 export const startSellCollectibleSteps: ThunkCreator = (
     collectible: Collectible,
-    expirationDate: string,
     startingPrice: BigNumber,
     side: OrderSide,
-    endingPrice?: BigNumber,
+    expirationDate: BigNumber,
+    endingPrice: BigNumber | null,
 ) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
@@ -103,17 +105,47 @@ export const startSellCollectibleSteps: ThunkCreator = (
         const collectibleAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
 
         const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(collectibleAddress, ethAccount);
-
         const sellCollectibleSteps: Step[] = createSellCollectibleSteps(
             collectible,
-            expirationDate,
             startingPrice,
             side,
             isUnlocked,
+            expirationDate,
             endingPrice,
         );
         dispatch(setStepsModalCurrentStep(sellCollectibleSteps[0]));
         dispatch(setStepsModalPendingSteps(sellCollectibleSteps.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startBuyCollectibleSteps: ThunkCreator = (collectible: Collectible, ethAccount: string) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        if (!collectible.order) {
+            throw new Error('Collectible is not for sale');
+        }
+
+        let buyCollectibleSteps;
+        if (isDutchAuction(collectible.order)) {
+            const state = getState();
+            const contractWrappers = await getContractWrappers();
+
+            const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+
+            const { currentAmount } = await contractWrappers.dutchAuction.getAuctionDetailsAsync(collectible.order);
+
+            buyCollectibleSteps = createDutchBuyCollectibleSteps(
+                collectible.order,
+                collectible,
+                wethTokenBalance,
+                currentAmount,
+            );
+        } else {
+            buyCollectibleSteps = createBasicBuyCollectibleSteps(collectible.order, collectible);
+        }
+
+        dispatch(setStepsModalCurrentStep(buyCollectibleSteps[0]));
+        dispatch(setStepsModalPendingSteps(buyCollectibleSteps.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
     };
 };

@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
+import { startBuyCollectibleSteps } from '../../../store/ui/actions';
+import { getEndDateStringFromTimeInSeconds } from '../../../util/time_utils';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { TitleText } from './marketplace_common';
@@ -38,7 +40,7 @@ const TextWithIcon = styled(CenteredText)`
 `;
 
 interface OwnProps {
-    assetId: string;
+    collectibleId: string;
 }
 
 interface StateProps {
@@ -48,6 +50,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible) => any;
+    startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -61,8 +64,11 @@ const CollectibleBuySell = (props: Props) => {
 
     const price = order ? order.takerAssetAmount : null;
 
-    const onBuy = () => window.alert('buy');
-
+    const onBuy = () => {
+        return props.startBuyCollectibleSteps(collectible, ethAccount);
+    };
+    const expDate =
+        order && order.expirationTimeSeconds ? getEndDateStringFromTimeInSeconds(order.expirationTimeSeconds) : null;
     const onSell = () => {
         props.updateSelectedCollectible(collectible);
     };
@@ -78,7 +84,7 @@ const CollectibleBuySell = (props: Props) => {
                 onSell={onSell}
                 onCancel={onCancel}
             />
-            <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
+            {expDate ? <TextWithIcon>{expDate}</TextWithIcon> : null}
             {price && <CenteredText>Last price: Ξ {price.toString()}</CenteredText>}
         </BuySellWrapper>
     );
@@ -94,6 +100,8 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
+        startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
+            dispatch(startBuyCollectibleSteps(collectible, ethAccount)),
     };
 };
 

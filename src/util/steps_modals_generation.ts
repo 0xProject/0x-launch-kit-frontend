@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, SignedOrder } from '0x.js';
 
 import { MAKER_FEE, TAKER_FEE } from '../common/constants';
 
@@ -7,6 +7,7 @@ import {
     Collectible,
     OrderSide,
     Step,
+    StepBuyCollectible,
     StepKind,
     StepToggleTokenLock,
     StepUnlockCollectibles,
@@ -69,11 +70,11 @@ export const createBuySellLimitSteps = (
 
 export const createSellCollectibleSteps = (
     collectible: Collectible,
-    expirationDate: string,
     startPrice: BigNumber,
     side: OrderSide,
     isUnlocked: boolean,
-    endPrice?: BigNumber,
+    expirationDate: BigNumber,
+    endPrice: BigNumber | null,
 ): Step[] => {
     const sellCollectibleFlow: Step[] = [];
 
@@ -94,6 +95,47 @@ export const createSellCollectibleSteps = (
     });
 
     return sellCollectibleFlow;
+};
+
+export const createBasicBuyCollectibleSteps = (order: SignedOrder, collectible: Collectible): Step[] => {
+    return [getBuyCollectibleStep(order, collectible)];
+};
+
+export const createDutchBuyCollectibleSteps = (
+    order: SignedOrder,
+    collectible: Collectible,
+    wethTokenBalance: TokenBalance,
+    priceInWeth: BigNumber,
+): Step[] => {
+    const steps: Step[] = [];
+
+    // wrap ether
+    const wethBalance = wethTokenBalance.balance;
+    const deltaWeth = wethBalance.sub(priceInWeth);
+    if (deltaWeth.lessThan(0)) {
+        steps.push({
+            kind: StepKind.WrapEth,
+            currentWethBalance: wethBalance,
+            newWethBalance: priceInWeth,
+            context: 'order',
+        });
+    }
+
+    // unlock weth
+    if (!wethTokenBalance.isUnlocked) {
+        const unlockWethStep: StepToggleTokenLock = {
+            kind: StepKind.ToggleTokenLock,
+            token: wethTokenBalance.token,
+            context: 'order',
+            isUnlocked: false,
+        };
+        steps.push(unlockWethStep);
+    }
+
+    // buy collectible
+    steps.push(getBuyCollectibleStep(order, collectible));
+
+    return steps;
 };
 
 export const createBuySellMarketSteps = (
@@ -155,6 +197,14 @@ export const getUnlockCollectibleStep = (collectible: Collectible): StepUnlockCo
         kind: StepKind.UnlockCollectibles,
         collectible,
         isUnlocked: false,
+    };
+};
+
+export const getBuyCollectibleStep = (order: SignedOrder, collectible: Collectible): StepBuyCollectible => {
+    return {
+        kind: StepKind.BuyCollectible,
+        order,
+        collectible,
     };
 };
 
