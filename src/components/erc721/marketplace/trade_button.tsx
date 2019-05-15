@@ -26,21 +26,22 @@ interface Props {
     onBuy: () => void;
     onSell: () => void;
     onCancel: () => void;
+    isDisabled: boolean;
 }
 
-export const TradeButton: React.FC<Props> = ({ ethAccount, asset, onBuy, onSell, onCancel }) => {
+export const TradeButton: React.FC<Props> = ({ ethAccount, asset, onBuy, onSell, onCancel, isDisabled }) => {
     const { currentOwner, name, order } = asset;
     const isOwner = ethAccount.toLowerCase() === currentOwner.toLowerCase();
 
     if (isOwner && order) {
         return (
-            <BtnStyled btnColor={'#ff6534'} onClick={onCancel}>
+            <BtnStyled btnColor={'#ff6534'} onClick={onCancel} disabled={isDisabled}>
                 Cancel Sale
             </BtnStyled>
         );
     } else if (isOwner && !order) {
         return (
-            <BtnStyled btnColor={'#ffffff'} backgroundColor={'#ff6534'} onClick={onSell}>
+            <BtnStyled btnColor={'#ffffff'} backgroundColor={'#ff6534'} onClick={onSell} disabled={isDisabled}>
                 Sell {name}
             </BtnStyled>
         );
@@ -48,7 +49,7 @@ export const TradeButton: React.FC<Props> = ({ ethAccount, asset, onBuy, onSell,
         const price = order.takerAssetAmount;
 
         return (
-            <BtnStyled btnColor={'#ffffff'} backgroundColor={'#00AE99'} onClick={onBuy}>
+            <BtnStyled btnColor={'#ffffff'} backgroundColor={'#00AE99'} onClick={onBuy} disabled={isDisabled}>
                 Buy for {price.toString()} ETH
             </BtnStyled>
         );
