@@ -65,14 +65,11 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 };
 
 export const cancelOrderCollectible: ThunkCreator = (order: any) => {
-    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+    return async (dispatch, getState) => {
         const state = getState();
         const gasPrice = getGasPriceInWei(state);
 
-        const txPromise = cancelSignedOrder(order, gasPrice);
-
-        // tslint:disable-next-line:no-floating-promises no-unsafe-any
-        txPromise.then(transaction => {
+        return cancelSignedOrder(order, gasPrice).then(transaction => {
             // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());
         });
