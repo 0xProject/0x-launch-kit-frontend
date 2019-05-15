@@ -18,3 +18,8 @@ export const convertTimeInSecondsToDaysAndHours = (timeInSeconds: BigNumber) => 
         hours,
     };
 };
+
+export const getEndDateStringFromTimeInSeconds = (timeInSeconds: BigNumber) => {
+    const currentDate = new Date(timeInSeconds.toNumber() * 1000);
+    return currentDate.toLocaleString('en-us');
+};
