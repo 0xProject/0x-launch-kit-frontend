@@ -32,6 +32,7 @@ const darkThemeColors: ThemeProperties = {
     buttonErrorBackgroundColor: '#FF6534',
     buttonPrimaryBackgroundColor: '#002979',
     buttonSecondaryBackgroundColor: '#3CB34F',
+    buttonSellBackgroundColor: '#00AE99',
     buttonTertiaryBackgroundColor: '#F6851B',
     buttonTextColor: '#fff',
     cardBackgroundColor: '#202123',
