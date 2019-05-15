@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getAllCollectibles, getUserCollectibles } from '../../../store/selectors';
+import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { CollectiblesCardList } from './collectibles_card_list';
@@ -17,7 +17,7 @@ export const CollectiblesList = (props: Props) => {
 
 const allMapStateToProps = (state: StoreState): Props => {
     return {
-        collectibles: getAllCollectibles(state),
+        collectibles: getOtherUsersCollectibles(state),
     };
 };
 export const AllCollectiblesListContainer = connect(allMapStateToProps)(CollectiblesList);
