@@ -8,7 +8,7 @@ import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
-import { tomorrow } from '../../../util/tomorrow';
+import { todayInSeconds, tomorrow } from '../../../util/tomorrow';
 import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
@@ -61,7 +61,8 @@ class CollectibleSellModalContainer extends React.Component<Props> {
         const { startPrice, endingPrice, shouldIncludeEndPrice } = this.state;
 
         const dayInSeconds = 60 * 60 * 24;
-        const expirationDates = [dayInSeconds, dayInSeconds * 5, dayInSeconds * 7];
+        const today = todayInSeconds();
+        const expirationDates = [today + dayInSeconds, today + dayInSeconds * 5, today + dayInSeconds * 7];
         const endPriceContent = shouldIncludeEndPrice ? (
             <>
                 <h3>Enter ending price</h3>
