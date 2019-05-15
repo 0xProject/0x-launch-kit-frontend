@@ -2,6 +2,7 @@ import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } fr
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
+import { tomorrow } from './time_utils';
 import { OrderSide, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {
@@ -9,9 +10,15 @@ interface BuildSellCollectibleOrderParams {
     collectibleId: BigNumber;
     account: string;
     amount: BigNumber;
-    price: BigNumber;
     exchangeAddress: string;
     wethAddress: string;
+    price: BigNumber;
+}
+
+interface DutchAuctionOrderParams extends BuildSellCollectibleOrderParams {
+    endPrice: BigNumber;
+    expirationDate: BigNumber;
+    senderAddress: string;
 }
 
 interface BuildLimitOrderParams {
@@ -28,15 +35,47 @@ interface BuildMarketOrderParams {
     orders: UIOrder[];
 }
 
+export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParams) => {
+    const {
+        account,
+        collectibleId,
+        collectibleAddress,
+        amount,
+        price,
+        exchangeAddress,
+        wethAddress,
+        senderAddress,
+        expirationDate,
+        endPrice,
+    } = params;
+    const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
+    const beginTimeSeconds = new BigNumber(Math.round(Date.now() / 1000));
+    const auctionAssetData = DutchAuctionWrapper.encodeDutchAuctionAssetData(collectibleData, beginTimeSeconds, price);
+    const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
+    return {
+        makerAddress: account,
+        exchangeAddress,
+        takerAddress: ZERO_ADDRESS,
+        senderAddress,
+        feeRecipientAddress: FEE_RECIPIENT,
+        expirationTimeSeconds: expirationDate,
+        salt: new BigNumber(Date.now()),
+        makerAssetData: auctionAssetData,
+        takerAssetData: wethAssetData,
+        makerAssetAmount: amount,
+        takerAssetAmount: endPrice,
+        makerFee: MAKER_FEE,
+        takerFee: TAKER_FEE,
+    };
+};
+
 export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
     const { account, collectibleId, collectibleAddress, amount, price, exchangeAddress, wethAddress } = params;
-    const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
-
     return {
         exchangeAddress,
-        expirationTimeSeconds: tomorrow,
+        expirationTimeSeconds: tomorrow(),
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
         makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,
@@ -53,14 +92,13 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
 
 export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide): Order => {
     const { account, baseTokenAddress, exchangeAddress, amount, price, quoteTokenAddress } = params;
-    const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
 
     const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseTokenAddress);
     const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteTokenAddress);
 
     return {
         exchangeAddress,
-        expirationTimeSeconds: tomorrow,
+        expirationTimeSeconds: tomorrow(),
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
         makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,

@@ -29,7 +29,13 @@ interface StateProps {
 interface DispatchProps {
     // refreshOrders: () => any; // TODO: once the integration with openSea is done, this should be uncommented
     // TODO: later this should contain something like 'notifySellCollectible'
-    createSignedCollectibleOrder: (collectible: Collectible, price: BigNumber, side: OrderSide) => Promise<any>;
+    createSignedCollectibleOrder: (
+        collectible: Collectible,
+        side: OrderSide,
+        startPrice: BigNumber,
+        expirationDate: BigNumber,
+        endPrice: BigNumber | null,
+    ) => Promise<any>;
     submitCollectibleOrder: (signedOrder: SignedOrder) => Promise<any>;
     submitBuyCollectible: (order: SignedOrder, ethAccount: string) => Promise<any>;
 }
@@ -85,9 +91,15 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
         const { step } = this.props;
         if (step.kind === StepKind.SellCollectible) {
             const stepSell: StepSellCollectible = step;
-            const { startPrice, side, collectible } = stepSell;
+            const { startPrice, endPrice, expirationDate, side, collectible } = stepSell;
             try {
-                const signedOrder = await this.props.createSignedCollectibleOrder(collectible, startPrice, side);
+                const signedOrder = await this.props.createSignedCollectibleOrder(
+                    collectible,
+                    side,
+                    startPrice,
+                    expirationDate,
+                    endPrice,
+                );
                 onLoading();
                 await this.props.submitCollectibleOrder(signedOrder);
                 onDone();
@@ -128,8 +140,13 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         submitCollectibleOrder: (signedOrder: SignedOrder) => dispatch(submitCollectibleOrder(signedOrder)),
-        createSignedCollectibleOrder: (collectible: Collectible, price: BigNumber, side: OrderSide) =>
-            dispatch(createSignedCollectibleOrder(collectible, price, side)),
+        createSignedCollectibleOrder: (
+            collectible: Collectible,
+            side: OrderSide,
+            startPrice: BigNumber,
+            expirationDate: BigNumber,
+            endPrice: BigNumber | null,
+        ) => dispatch(createSignedCollectibleOrder(collectible, side, startPrice, expirationDate, endPrice)),
         // refreshOrders: () => dispatch(getUserCollectibles()),
         submitBuyCollectible: (order: SignedOrder, ethAccount: string) =>
             dispatch(submitBuyCollectible(order, ethAccount)),

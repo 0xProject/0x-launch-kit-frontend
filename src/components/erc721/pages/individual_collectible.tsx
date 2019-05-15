@@ -30,24 +30,24 @@ const BuySellColumn = styled(ColumnWide)`
 const CollectibleDescriptionColumn = styled(ColumnNarrow)``;
 
 interface OwnProps {
-    assetId: string;
+    collectibleId: string;
 }
 
 type Props = OwnProps;
 
 export const IndividualCollectible = (props: Props) => {
-    const { assetId } = props;
-    if (!assetId) {
+    const { collectibleId } = props;
+    if (!collectibleId) {
         return null;
     }
 
     return (
         <General>
             <BuySellColumn>
-                <CollectibleBuySellContainer assetId={assetId} />
+                <CollectibleBuySellContainer collectibleId={collectibleId} />
             </BuySellColumn>
             <CollectibleDescriptionColumn>
-                <CollectibleDescriptionContainer assetId={assetId} />
+                <CollectibleDescriptionContainer collectibleId={collectibleId} />
             </CollectibleDescriptionColumn>
         </General>
     );

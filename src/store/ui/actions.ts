@@ -89,10 +89,10 @@ export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => 
 
 export const startSellCollectibleSteps: ThunkCreator = (
     collectible: Collectible,
-    expirationDate: string,
     startingPrice: BigNumber,
     side: OrderSide,
-    endingPrice?: BigNumber,
+    expirationDate: BigNumber,
+    endingPrice: BigNumber | null,
 ) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
@@ -105,13 +105,12 @@ export const startSellCollectibleSteps: ThunkCreator = (
         const collectibleAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
 
         const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(collectibleAddress, ethAccount);
-
         const sellCollectibleSteps: Step[] = createSellCollectibleSteps(
             collectible,
-            expirationDate,
             startingPrice,
             side,
             isUnlocked,
+            expirationDate,
             endingPrice,
         );
         dispatch(setStepsModalCurrentStep(sellCollectibleSteps[0]));

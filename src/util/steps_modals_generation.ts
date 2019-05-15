@@ -70,11 +70,11 @@ export const createBuySellLimitSteps = (
 
 export const createSellCollectibleSteps = (
     collectible: Collectible,
-    expirationDate: string,
     startPrice: BigNumber,
     side: OrderSide,
     isUnlocked: boolean,
-    endPrice?: BigNumber,
+    expirationDate: BigNumber,
+    endPrice: BigNumber | null,
 ): Step[] => {
     const sellCollectibleFlow: Step[] = [];
 

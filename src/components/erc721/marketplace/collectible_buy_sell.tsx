@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { cancelOrderCollectible, selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { startBuyCollectibleSteps } from '../../../store/ui/actions';
+import { getEndDateStringFromTimeInSeconds } from '../../../util/time_utils';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { TitleText } from './marketplace_common';
@@ -39,7 +40,7 @@ const TextWithIcon = styled(CenteredText)`
 `;
 
 interface OwnProps {
-    assetId: string;
+    collectibleId: string;
 }
 
 interface StateProps {
@@ -70,6 +71,9 @@ class CollectibleBuySell extends React.Component<Props> {
 
         const price = order ? order.takerAssetAmount : null;
 
+        const expDate =
+            order && order.expirationTimeSeconds ? getEndDateStringFromTimeInSeconds(order.expirationTimeSeconds) : null;
+
         return (
             <BuySellWrapper>
                 <Image imageUrl={image} imageColor={color} />
@@ -81,7 +85,7 @@ class CollectibleBuySell extends React.Component<Props> {
                     onCancel={this._onCancel}
                     isDisabled={isLoading}
                 />
-                <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
+                {expDate ? <TextWithIcon>{expDate}</TextWithIcon> : null}
                 {price && <CenteredText>Last price: Ξ {price.toString()}</CenteredText>}
             </BuySellWrapper>
         );
