@@ -348,30 +348,27 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
     };
 };
 
-export const unlockCollectible: ThunkCreator = (collectible: Collectible) => {
+export const unlockCollectible: ThunkCreator<Promise<string>> = (collectible: Collectible) => {
     return async (dispatch, getState, { getContractWrappers }) => {
         const state = getState();
         const contractWrappers = await getContractWrappers();
         const gasPrice = getGasPriceInWei(state);
-        const networkId = getNetworkId(state);
+        const networkId = getNetworkId(state) as number;
         const ethAccount = getEthAccount(state);
         const defaultParams = {
             ...TX_DEFAULTS,
             gasPrice,
         };
 
-        if (networkId) {
-            const collectibleContractAddress = getCollectibleContractAddress(networkId);
+        const collectibleContractAddress = getCollectibleContractAddress(networkId);
 
-            const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
-                collectibleContractAddress,
-                ethAccount,
-                true,
-                defaultParams,
-            );
-            return tx;
-        }
-        return null;
+        const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
+            collectibleContractAddress,
+            ethAccount,
+            true,
+            defaultParams,
+        );
+        return tx;
     };
 };
 
