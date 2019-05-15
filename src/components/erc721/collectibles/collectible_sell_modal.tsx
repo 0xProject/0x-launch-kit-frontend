@@ -4,11 +4,11 @@ import Modal from 'react-modal';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { TOMORROW } from '../../../common/constants';
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
+import { tomorrow } from '../../../util/tomorrow';
 import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
@@ -53,7 +53,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
         startPrice: new BigNumber(0),
         endingPrice: null,
         shouldIncludeEndPrice: false,
-        expirationDate: TOMORROW,
+        expirationDate: tomorrow(),
     };
 
     public render = () => {

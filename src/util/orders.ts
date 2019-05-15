@@ -1,7 +1,8 @@
 import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } from '0x.js';
 
-import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, TOMORROW, ZERO_ADDRESS } from '../common/constants';
+import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
+import { tomorrow } from './tomorrow';
 import { OrderSide, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {
@@ -75,7 +76,7 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
     return {
         exchangeAddress,
-        expirationTimeSeconds: TOMORROW,
+        expirationTimeSeconds: tomorrow(),
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
         makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,
@@ -92,14 +93,13 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
 
 export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide): Order => {
     const { account, baseTokenAddress, exchangeAddress, amount, price, quoteTokenAddress } = params;
-    const tomorrow = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
 
     const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseTokenAddress);
     const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteTokenAddress);
 
     return {
         exchangeAddress,
-        expirationTimeSeconds: tomorrow,
+        expirationTimeSeconds: tomorrow(),
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
         makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,

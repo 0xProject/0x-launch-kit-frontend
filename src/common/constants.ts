@@ -76,5 +76,3 @@ export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
     4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
     50: '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb',
 };
-
-export const TOMORROW: BigNumber = new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
