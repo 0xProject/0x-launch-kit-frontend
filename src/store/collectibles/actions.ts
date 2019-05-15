@@ -1,5 +1,7 @@
+import { SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
+import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount } from '../selectors';
 
@@ -32,6 +34,31 @@ export const getAllCollectibles: ThunkCreator = () => {
             dispatch(fetchAllCollectiblesAsync.success({ collectibles }));
         } catch (err) {
             dispatch(fetchAllCollectiblesAsync.failure(err));
+        }
+    };
+};
+
+const isDutchAuction = (order: SignedOrder) => {
+    return false;
+};
+
+export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: SignedOrder, ethAccount: string) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const contractWrappers = await getContractWrappers();
+
+        if (isDutchAuction(order)) {
+            throw new Error('not implemented');
+        } else {
+            return contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+                [order],
+                order.makerAssetAmount,
+                ethAccount,
+                order.takerAssetAmount,
+                [],
+                0,
+                ZERO_ADDRESS,
+                TX_DEFAULTS,
+            );
         }
     };
 };

@@ -1,3 +1,7 @@
+import { BigNumber } from '0x.js';
+
+import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { getContractWrappers } from '../../services/contract_wrappers';
 import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
 const allCollectibles: Collectible[] = [
@@ -9,7 +13,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888670/6_w93q19.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '',
     },
     {
         tokenId: '1',
@@ -19,7 +23,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/9_xunbhn.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '',
     },
     {
         tokenId: '2',
@@ -29,7 +33,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888668/10_iqm4un.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '',
     },
     {
         tokenId: '3',
@@ -39,7 +43,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888667/5_sxqrol.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '',
     },
     {
         tokenId: '4',
@@ -49,7 +53,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888664/1_sz6sji.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x5409ED021D9299bf6814279A6A1411A7e866A631',
+        currentOwner: '',
     },
     {
         tokenId: '10',
@@ -59,7 +63,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888661/8_qjebni.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x6Ecbe1DB9EF729CBe972C83Fb886247691Fb6beb',
+        currentOwner: '',
     },
     {
         tokenId: '11',
@@ -69,7 +73,7 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888654/2_yndavu.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x6Ecbe1DB9EF729CBe972C83Fb886247691Fb6beb',
+        currentOwner: '',
     },
     {
         tokenId: '12',
@@ -79,13 +83,30 @@ const allCollectibles: Collectible[] = [
         image: 'https://res.cloudinary.com/ddklsa6jc/image/upload/v1556888653/4_do9hzd.png',
         assetUrl: 'https://www.cryptokitties.co/',
         description: '',
-        currentOwner: '0x6Ecbe1DB9EF729CBe972C83Fb886247691Fb6beb',
+        currentOwner: '',
     },
 ];
 
 export class Mocked implements CollectibleMetadataSource {
-    public fetchAllUserCollectiblesAsync = (userAddress: string, networkId: number): Promise<Collectible[]> => {
-        return Promise.resolve(allCollectibles);
+    public fetchAllUserCollectiblesAsync = async (userAddress: string, networkId: number): Promise<Collectible[]> => {
+        const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
+        const contractWrappers = await getContractWrappers();
+
+        const allCollectiblesWithOwner = await Promise.all(
+            allCollectibles.map(async collectible => {
+                const owner = await contractWrappers.erc721Token.getOwnerOfAsync(
+                    contractAddress,
+                    new BigNumber(collectible.tokenId),
+                );
+
+                return {
+                    ...collectible,
+                    currentOwner: owner,
+                };
+            }),
+        );
+
+        return allCollectiblesWithOwner;
     };
 
     public fetchIndividualCollectibleAsync = (tokenId: string, networkId: number): Promise<Collectible | null> => {
