@@ -1,4 +1,4 @@
-import { assetDataUtils, BigNumber, Order, SignedOrder } from '0x.js';
+import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } from '0x.js';
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
@@ -136,4 +136,13 @@ export const sumTakerAssetFillableOrders = (
         const price = side === OrderSide.Buy ? 1 : order.makerAssetAmount.div(order.takerAssetAmount);
         return sum.add(amounts[index].mul(price));
     }, new BigNumber(0));
+};
+
+export const isDutchAuction = (order: SignedOrder) => {
+    try {
+        DutchAuctionWrapper.decodeDutchAuctionData(order.makerAssetData);
+        return true;
+    } catch (e) {
+        return false;
+    }
 };

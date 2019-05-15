@@ -97,8 +97,45 @@ export const createSellCollectibleSteps = (
     return sellCollectibleFlow;
 };
 
-export const createBuyCollectibleSteps = (order: SignedOrder, collectible: Collectible): Step[] => {
+export const createBasicBuyCollectibleSteps = (order: SignedOrder, collectible: Collectible): Step[] => {
     return [getBuyCollectibleStep(order, collectible)];
+};
+
+export const createDutchBuyCollectibleSteps = (
+    order: SignedOrder,
+    collectible: Collectible,
+    wethTokenBalance: TokenBalance,
+    priceInWeth: BigNumber,
+): Step[] => {
+    const steps: Step[] = [];
+
+    // wrap ether
+    const wethBalance = wethTokenBalance.balance;
+    const deltaWeth = wethBalance.sub(priceInWeth);
+    if (deltaWeth.lessThan(0)) {
+        steps.push({
+            kind: StepKind.WrapEth,
+            currentWethBalance: wethBalance,
+            newWethBalance: priceInWeth,
+            context: 'order',
+        });
+    }
+
+    // unlock weth
+    if (!wethTokenBalance.isUnlocked) {
+        const unlockWethStep: StepToggleTokenLock = {
+            kind: StepKind.ToggleTokenLock,
+            token: wethTokenBalance.token,
+            context: 'order',
+            isUnlocked: false,
+        };
+        steps.push(unlockWethStep);
+    }
+
+    // buy collectible
+    steps.push(getBuyCollectibleStep(order, collectible));
+
+    return steps;
 };
 
 export const createBuySellMarketSteps = (

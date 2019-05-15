@@ -4,11 +4,12 @@ import { createAction } from 'typesafe-actions';
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
-import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
+import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
 import {
-    createBuyCollectibleSteps,
+    createBasicBuyCollectibleSteps,
     createBuySellLimitSteps,
     createBuySellMarketSteps,
+    createDutchBuyCollectibleSteps,
     createSellCollectibleSteps,
 } from '../../util/steps_modals_generation';
 import {
@@ -125,7 +126,25 @@ export const startBuyCollectibleSteps: ThunkCreator = (collectible: Collectible,
             throw new Error('Collectible is not for sale');
         }
 
-        const buyCollectibleSteps: Step[] = createBuyCollectibleSteps(collectible.order, collectible);
+        let buyCollectibleSteps;
+        if (isDutchAuction(collectible.order)) {
+            const state = getState();
+            const contractWrappers = await getContractWrappers();
+
+            const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+
+            const { currentAmount } = await contractWrappers.dutchAuction.getAuctionDetailsAsync(collectible.order);
+
+            buyCollectibleSteps = createDutchBuyCollectibleSteps(
+                collectible.order,
+                collectible,
+                wethTokenBalance,
+                currentAmount,
+            );
+        } else {
+            buyCollectibleSteps = createBasicBuyCollectibleSteps(collectible.order, collectible);
+        }
+
         dispatch(setStepsModalCurrentStep(buyCollectibleSteps[0]));
         dispatch(setStepsModalPendingSteps(buyCollectibleSteps.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
