@@ -19,12 +19,6 @@ const IndividualCollectibleWrapper = styled.div`
         flex-direction: row;
         justify-content: center;
     }
-
-    @media (min-width: ${themeBreakPoints.xl}) {
-    }
-
-    @media (min-width: ${themeBreakPoints.xxl}) {
-    }
 `;
 
 const CollectibleBuySell = styled(CollectibleBuySellContainer)`
@@ -37,7 +31,10 @@ const CollectibleBuySell = styled(CollectibleBuySellContainer)`
 `;
 
 const CollectibleDescription = styled(CollectibleDescriptionContainer)`
-    max-width: ${themeBreakPoints.xxl};
+    display: flex;
+    flex-direction: column;
+    max-width: 586px;
+    width: 100%;
 `;
 
 interface OwnProps {

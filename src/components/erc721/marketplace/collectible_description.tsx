@@ -63,7 +63,7 @@ interface StateProps {
 type Props = OwnProps & StateProps;
 
 const CollectibleDescription = (props: Props) => {
-    const { collectible } = props;
+    const { collectible, ...restProps } = props;
     if (!collectible) {
         return null;
     }
@@ -79,7 +79,7 @@ const CollectibleDescription = (props: Props) => {
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
 
     return (
-        <CollectibleDescriptionWrapper>
+        <CollectibleDescriptionWrapper {...restProps}>
             <DescriptionCard>
                 <CollectibleNameTitleWrapper>
                     <CollectibleNameTitle>{name}</CollectibleNameTitle>

@@ -53,7 +53,7 @@ CollectibleText.defaultProps = {
 };
 
 const CollectibleTradeButton = styled(TradeButton)`
-    margin-bottom: ${themeDimensions.verticalSeparationSm};
+    margin-bottom: 15px;
 `;
 
 const timeSVG = () => {
