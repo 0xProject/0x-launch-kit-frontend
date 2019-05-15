@@ -57,7 +57,7 @@ export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParam
         exchangeAddress,
         takerAddress: ZERO_ADDRESS,
         senderAddress,
-        feeRecipientAddress: ZERO_ADDRESS,
+        feeRecipientAddress: FEE_RECIPIENT,
         expirationTimeSeconds: expirationDate,
         salt: new BigNumber(Date.now()),
         makerAssetData: auctionAssetData,
@@ -69,7 +69,6 @@ export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParam
     };
 };
 
-// TODO ASD
 export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
     const { account, collectibleId, collectibleAddress, amount, price, exchangeAddress, wethAddress } = params;
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
