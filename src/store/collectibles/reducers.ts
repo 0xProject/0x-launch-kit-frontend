@@ -5,6 +5,7 @@ import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
 const initialCollectibles: CollectiblesState = {
+    collectibleSelected: null,
     allCollectibles: {},
 };
 
@@ -16,6 +17,8 @@ export function collectibles(state: CollectiblesState = initialCollectibles, act
                 allCollectibles[collectible.tokenId] = collectible;
             });
             return { ...state, allCollectibles };
+        case getType(actions.selectCollectible):
+            return { ...state, collectibleSelected: action.payload };
         default:
             return state;
     }

@@ -233,10 +233,10 @@ describe('sumTakerAssetFillableOrders', () => {
         expect(sum.toString()).toBe(expectation);
     };
 
-    it('should sum the corresponding maker asset amounts of fillable buy orders', async () => {
+    it('should sum the corresponding maker collectible amounts of fillable buy orders', async () => {
         const orderCreationSide = OrderSide.Buy;
         const sumCheckSide = OrderSide.Sell;
-        // The sum of maker asset is needs to take into consideration the correspondig prices
+        // The sum of maker collectible is needs to take into consideration the correspondig prices
         getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '0.25');
         getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '0.75');
         getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '1.25');
@@ -244,10 +244,10 @@ describe('sumTakerAssetFillableOrders', () => {
         getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 1], '1.55');
     });
 
-    it('should sum the corresponding maker asset amounts of fillable sell orders', async () => {
+    it('should sum the corresponding maker collectible amounts of fillable sell orders', async () => {
         const orderCreationSide = OrderSide.Sell;
         const sumCheckSide = OrderSide.Buy;
-        // The sum of maker asset is the sum of the amounts specified by the given array
+        // The sum of maker collectible is the sum of the amounts specified by the given array
         getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '1');
         getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '2');
         getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '3');

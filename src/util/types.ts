@@ -85,6 +85,8 @@ export enum StepKind {
     ToggleTokenLock = 'ToggleTokenLock',
     BuySellLimit = 'BuySellLimit',
     BuySellMarket = 'BuySellMarket',
+    UnlockCollectibles = 'UnlockCollectibles',
+    SellCollectible = 'SellCollectible',
 }
 
 export interface StepWrapEth {
@@ -99,6 +101,12 @@ export interface StepToggleTokenLock {
     token: Token;
     isUnlocked: boolean;
     context: 'order' | 'standalone';
+}
+
+export interface StepUnlockCollectibles {
+    kind: StepKind.UnlockCollectibles;
+    collectible: Collectible;
+    isUnlocked: boolean;
 }
 
 export interface StepBuySellLimitOrder {
@@ -116,7 +124,22 @@ export interface StepBuySellMarket {
     token: Token;
 }
 
-export type Step = StepWrapEth | StepToggleTokenLock | StepBuySellLimitOrder | StepBuySellMarket;
+export interface StepSellCollectible {
+    kind: StepKind.SellCollectible;
+    collectible: Collectible;
+    startPrice: BigNumber;
+    endPrice?: BigNumber;
+    expirationDate: string;
+    side: OrderSide;
+}
+
+export type Step =
+    | StepWrapEth
+    | StepToggleTokenLock
+    | StepBuySellLimitOrder
+    | StepBuySellMarket
+    | StepSellCollectible
+    | StepUnlockCollectibles;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];
@@ -245,6 +268,7 @@ export interface Collectible {
 
 export interface CollectiblesState {
     readonly allCollectibles: { [tokenId: string]: Collectible };
+    readonly collectibleSelected: Collectible | null;
 }
 
 export interface CollectibleMetadataSource {
