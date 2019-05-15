@@ -14,7 +14,6 @@ export const fetchAllCollectiblesAsync = createAsyncAction(
     void,
     {
         collectibles: Collectible[];
-        ethAccount: string;
     },
     Error
 >();
@@ -33,14 +32,14 @@ export const getAllCollectibles: ThunkCreator = () => {
             const ethAccount = getEthAccount(state);
             const collectiblesMetadataGateway = getCollectiblesMetadataGateway();
             const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(ethAccount, networkId);
-            dispatch(fetchAllCollectiblesAsync.success({ collectibles, ethAccount }));
+            dispatch(fetchAllCollectiblesAsync.success({ collectibles }));
         } catch (err) {
             dispatch(fetchAllCollectiblesAsync.failure(err));
         }
     };
 };
 
-export const submitBuyCollectible: ThunkCreator = (order: SignedOrder, ethAccount: string) => {
+export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: SignedOrder, ethAccount: string) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const contractWrappers = await getContractWrappers();
 
