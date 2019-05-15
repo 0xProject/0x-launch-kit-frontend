@@ -38,9 +38,8 @@ export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
 export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
-export const getUserCollectibles = (state: StoreState) => state.collectibles.userCollectibles;
 export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
-    state.collectibles.userCollectibles[props.collectibleId];
+    state.collectibles.allCollectibles[props.collectibleId];
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
@@ -157,5 +156,33 @@ export const getTokens = createSelector(
             const { token } = tokenBalance;
             return token;
         });
+    },
+);
+
+export const getUserCollectibles = createSelector(
+    getEthAccount,
+    getAllCollectibles,
+    (ethAccount, allCollectibles): { [key: string]: Collectible } => {
+        const userCollectibles: { [key: string]: Collectible } = {};
+        Object.keys(allCollectibles).forEach(tokenId => {
+            if (allCollectibles[tokenId].currentOwner.toLowerCase() === ethAccount.toLowerCase()) {
+                userCollectibles[tokenId] = allCollectibles[tokenId];
+            }
+        });
+        return userCollectibles;
+    },
+);
+
+export const getOtherUsersCollectibles = createSelector(
+    getEthAccount,
+    getAllCollectibles,
+    (ethAccount, allCollectibles): { [key: string]: Collectible } => {
+        const userCollectibles: { [key: string]: Collectible } = {};
+        Object.keys(allCollectibles).forEach(tokenId => {
+            if (allCollectibles[tokenId].currentOwner.toLowerCase() !== ethAccount.toLowerCase()) {
+                userCollectibles[tokenId] = allCollectibles[tokenId];
+            }
+        });
+        return userCollectibles;
     },
 );

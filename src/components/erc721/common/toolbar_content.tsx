@@ -21,7 +21,7 @@ type Props = DispatchProps;
 
 const MyWalletLink = styled.a`
     align-items: center;
-    color: #333333;
+    color: #333;
     display: flex;
     font-size: 16px;
     font-weight: 500;
@@ -60,7 +60,6 @@ const ToolbarContent = (props: Props) => {
     };
     const endContent = (
         <>
-            <Search />
             <MyWalletLink href="/my-collectibles" onClick={handleMyWalletClick}>
                 My Collectibles
             </MyWalletLink>
@@ -68,8 +67,9 @@ const ToolbarContent = (props: Props) => {
             <NotificationsDropdownContainer />
         </>
     );
+    const centerContent = <Search />;
 
-    return <ToolbarContainer startContent={startContent} endContent={endContent} />;
+    return <ToolbarContainer startContent={startContent} centerContent={centerContent} endContent={endContent} />;
 };
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {

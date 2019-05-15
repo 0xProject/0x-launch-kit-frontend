@@ -87,6 +87,7 @@ export enum StepKind {
     BuySellMarket = 'BuySellMarket',
     UnlockCollectibles = 'UnlockCollectibles',
     SellCollectible = 'SellCollectible',
+    BuyCollectible = 'BuyCollectible',
 }
 
 export interface StepWrapEth {
@@ -133,12 +134,19 @@ export interface StepSellCollectible {
     side: OrderSide;
 }
 
+export interface StepBuyCollectible {
+    kind: StepKind.BuyCollectible;
+    order: SignedOrder;
+    collectible: Collectible;
+}
+
 export type Step =
     | StepWrapEth
     | StepToggleTokenLock
     | StepBuySellLimitOrder
     | StepBuySellMarket
     | StepSellCollectible
+    | StepBuyCollectible
     | StepUnlockCollectibles;
 
 export interface StepsModalState {
@@ -267,13 +275,13 @@ export interface Collectible {
 }
 
 export interface CollectiblesState {
-    readonly userCollectibles: { [tokenId: string]: Collectible };
     readonly allCollectibles: { [tokenId: string]: Collectible };
     readonly collectibleSelected: Collectible | null;
 }
 
 export interface CollectibleMetadataSource {
-    fetchAllCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]>;
+    fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]>;
+    fetchIndividualCollectibleAsync(tokenId: string, networkId: number): Promise<Collectible | null>;
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
