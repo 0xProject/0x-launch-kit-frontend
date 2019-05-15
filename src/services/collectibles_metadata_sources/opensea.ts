@@ -27,9 +27,6 @@ export class Opensea implements CollectibleMetadataSource {
     }
 
     public async fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]> {
-        if (!networkId) {
-            return Promise.resolve([]);
-        }
         const metadataSourceUrl = this._endpointsUrls[networkId];
         const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${userAddress}`;
@@ -39,9 +36,6 @@ export class Opensea implements CollectibleMetadataSource {
     }
 
     public async fetchIndividualCollectibleAsync(tokenId: string, networkId: number): Promise<Collectible | null> {
-        if (!networkId) {
-            return Promise.resolve(null);
-        }
         const metadataSourceUrl = this._endpointsUrls[networkId];
         const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&token_id=${tokenId}`;
