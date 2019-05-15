@@ -90,10 +90,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                     <h3>Include ending price</h3>
                     <input type="checkbox" onChange={this._updateIncludeEndPrice} />
                     {endPriceContent}
-                    <select defaultValue={'0'} onChange={this._updateExpDate}>
-                        <option value="0" disabled={true}>
-                            Please select a value
-                        </option>
+                    <select onChange={this._updateExpDate}>
                         <option value={expirationDates[0]}>1 day</option>
                         <option value={expirationDates[1]}>5 days</option>
                         <option value={expirationDates[2]}>7 days</option>
