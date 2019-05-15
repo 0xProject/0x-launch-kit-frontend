@@ -46,7 +46,7 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
         takerAssetData: wethAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
-        salt: generatePseudoRandomSalt(),
+        salt: new BigNumber(Date.now()),
         senderAddress: ZERO_ADDRESS,
     };
 };
