@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { selectCollectible } from '../../../store/collectibles/actions';
+import { cancelOrderCollectible, selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 
@@ -48,41 +48,85 @@ interface StateProps {
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible) => any;
+    onCancelOrderCollectible: (order: any) => any;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const CollectibleBuySell = (props: Props) => {
-    const { collectible, ethAccount } = props;
-    if (!collectible) {
-        return null;
-    }
-    const { color, image, order } = collectible;
-
-    const price = order ? order.takerAssetAmount : null;
-
-    const onBuy = () => window.alert('buy');
-
-    const onSell = () => {
-        props.updateSelectedCollectible(collectible);
+class CollectibleBuySell extends React.Component<Props> {
+    public state = {
+        isLoading: false,
     };
-    const onCancel = () => window.alert('cancel');
 
-    return (
-        <BuySellWrapper>
-            <Image imageUrl={image} imageColor={color} />
-            <TradeButton
-                ethAccount={ethAccount}
-                asset={collectible}
-                onBuy={onBuy}
-                onSell={onSell}
-                onCancel={onCancel}
-            />
-            <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
-            {price && <CenteredText>Last price: Ξ {price.toString()}</CenteredText>}
-        </BuySellWrapper>
-    );
-};
+    public render = () => {
+        const { isLoading } = this.state;
+        const { collectible, ethAccount } = this.props;
+        if (!collectible) {
+            return null;
+        }
+        const { color, image, order } = collectible;
+
+        const price = order ? order.takerAssetAmount : null;
+
+        return (
+            <BuySellWrapper>
+                <Image imageUrl={image} imageColor={color} />
+                <TradeButton
+                    ethAccount={ethAccount}
+                    asset={collectible}
+                    onBuy={this._onBuy}
+                    onSell={this._onSell}
+                    onCancel={this._onCancel}
+                    isDisabled={isLoading}
+                />
+                <TextWithIcon>Ends wednesday, February 27, 2019</TextWithIcon>
+                {price && <CenteredText>Last price: Ξ {price.toString()}</CenteredText>}
+            </BuySellWrapper>
+        );
+    };
+
+    private readonly _onCancel = async () => {
+        this.setState({ isLoading: true });
+
+        try {
+            const { collectible, onCancelOrderCollectible } = this.props;
+            if (collectible && collectible.order) {
+                await onCancelOrderCollectible(collectible.order);
+            }
+        } catch (err) {
+            alert(`Could not cancel the specified order`);
+        } finally {
+            this.setState({ isLoading: false });
+        }
+    };
+
+    private readonly _onSell = async () => {
+        this.setState({ isLoading: true });
+
+        try {
+            const { collectible } = this.props;
+            if (collectible) {
+                this.props.updateSelectedCollectible(collectible);
+            }
+        } catch (err) {
+            alert(`Could not sell the specified order`);
+        } finally {
+            this.setState({ isLoading: false });
+        }
+    };
+
+    private readonly _onBuy = async () => {
+        this.setState({ isLoading: true });
+
+        try {
+            window.alert('buy');
+        } catch (err) {
+            alert(`Could not sell the specified order`);
+        } finally {
+            this.setState({ isLoading: false });
+        }
+    };
+}
 
 const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
     return {
@@ -94,6 +138,7 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
+        onCancelOrderCollectible: (order: any) => dispatch(cancelOrderCollectible(order)),
     };
 };
 
