@@ -1,7 +1,8 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
+import { cancelSignedOrder } from '../../services/orders';
 import { Collectible, ThunkCreator } from '../../util/types';
-import { getEthAccount } from '../selectors';
+import { getEthAccount, getGasPriceInWei } from '../selectors';
 
 export const fetchAllCollectiblesAsync = createAsyncAction(
     'collectibles/ALL_COLLECTIBLES_fetch_request',
@@ -33,5 +34,20 @@ export const getAllCollectibles: ThunkCreator = () => {
         } catch (err) {
             dispatch(fetchAllCollectiblesAsync.failure(err));
         }
+    };
+};
+
+export const cancelOrderCollectible: ThunkCreator = (order: any) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+        const gasPrice = getGasPriceInWei(state);
+
+        const txPromise = cancelSignedOrder(order, gasPrice);
+
+        // tslint:disable-next-line:no-floating-promises no-unsafe-any
+        txPromise.then(transaction => {
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(getAllCollectibles());
+        });
     };
 };
