@@ -96,7 +96,7 @@ class CollectibleBuySell extends React.Component<Props> {
                 await onCancelOrderCollectible(collectible.order);
             }
         } catch (err) {
-            alert(`Could not cancel the specified order`);
+            window.alert(`Could not cancel the specified order`);
         } finally {
             this.setState({ isLoading: false });
         }
@@ -111,7 +111,7 @@ class CollectibleBuySell extends React.Component<Props> {
                 updateSelectedCollectible(collectible);
             }
         } catch (err) {
-            alert(`Could not sell the specified order`);
+            window.alert(`Could not sell the specified order`);
         } finally {
             this.setState({ isLoading: false });
         }
@@ -127,7 +127,7 @@ class CollectibleBuySell extends React.Component<Props> {
                 onStartBuyCollectibleSteps(collectible, ethAccount);
             }
         } catch (err) {
-            alert(`Could not sell the specified order`);
+            window.alert(`Could not sell the specified order`);
         } finally {
             this.setState({ isLoading: false });
         }
