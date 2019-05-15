@@ -151,7 +151,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     public render = () => {
         const { ethBalance, web3State, wethBalance, ethInUsd, theme } = this.props;
         const { isSubmitting } = this.state;
-        const totalEth = ethBalance.add(wethBalance);
+        const totalEth = ethBalance.plus(wethBalance);
 
         const formattedEth = tokenAmountInUnits(ethBalance, 18);
         const formattedWeth = tokenAmountInUnits(wethBalance, 18);

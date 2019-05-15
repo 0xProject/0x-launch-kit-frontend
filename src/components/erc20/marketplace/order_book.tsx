@@ -41,8 +41,8 @@ const orderToRow = (
     const price = order.price.toString();
 
     const mySize = mySizeOrders.reduce((sumSize, mySizeItem) => {
-        if (mySizeItem.price.equals(order.price)) {
-            return sumSize.add(mySizeItem.size);
+        if (mySizeItem.price.eq(order.price)) {
+            return sumSize.plus(mySizeItem.size);
         }
         return sumSize;
     }, new BigNumber(0));

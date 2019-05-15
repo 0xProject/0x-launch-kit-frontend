@@ -154,16 +154,16 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
         const contractWrappers = await getContractWrappers();
 
         let tx: string;
-        if (wethBalance.lessThan(newWethBalance)) {
+        if (wethBalance.isLessThan(newWethBalance)) {
             tx = await contractWrappers.etherToken.depositAsync(
                 wethAddress,
-                newWethBalance.sub(wethBalance),
+                newWethBalance.minus(wethBalance),
                 ethAccount,
             );
-        } else if (wethBalance.greaterThan(newWethBalance)) {
+        } else if (wethBalance.isGreaterThan(newWethBalance)) {
             tx = await contractWrappers.etherToken.withdrawAsync(
                 wethAddress,
-                wethBalance.sub(newWethBalance),
+                wethBalance.minus(newWethBalance),
                 ethAccount,
                 {
                     ...TX_DEFAULTS,
