@@ -38,9 +38,8 @@ export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
 export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
-export const getUserCollectibles = (state: StoreState) => state.collectibles.userCollectibles;
 export const getCollectibleById = (state: StoreState, props: { assetId: string }): Collectible | undefined =>
-    state.collectibles.userCollectibles[props.assetId];
+    state.collectibles.allCollectibles[props.assetId];
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {
@@ -156,5 +155,19 @@ export const getTokens = createSelector(
             const { token } = tokenBalance;
             return token;
         });
+    },
+);
+
+export const getUserCollectibles = createSelector(
+    getEthAccount,
+    getAllCollectibles,
+    (ethAccount, allCollectibles): { [key: string]: Collectible } => {
+        const userCollectibles: { [key: string]: Collectible } = {};
+        Object.keys(allCollectibles).forEach(tokenId => {
+            if (allCollectibles[tokenId].currentOwner === ethAccount) {
+                userCollectibles[tokenId] = allCollectibles[tokenId];
+            }
+        });
+        return userCollectibles;
     },
 );

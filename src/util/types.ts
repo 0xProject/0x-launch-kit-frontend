@@ -244,7 +244,6 @@ export interface Collectible {
 }
 
 export interface CollectiblesState {
-    readonly userCollectibles: { [tokenId: string]: Collectible };
     readonly allCollectibles: { [tokenId: string]: Collectible };
 }
 
