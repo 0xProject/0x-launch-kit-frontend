@@ -72,7 +72,9 @@ class CollectibleBuySell extends React.Component<Props> {
         const price = order ? order.takerAssetAmount : null;
 
         const expDate =
-            order && order.expirationTimeSeconds ? getEndDateStringFromTimeInSeconds(order.expirationTimeSeconds) : null;
+            order && order.expirationTimeSeconds
+                ? getEndDateStringFromTimeInSeconds(order.expirationTimeSeconds)
+                : null;
 
         return (
             <BuySellWrapper>
