@@ -54,8 +54,8 @@ export const IndividualCollectible = (props: Props) => {
 
     return (
         <IndividualCollectibleWrapper>
-            <CollectibleBuySell assetId={collectibleId} />
-            <CollectibleDescription assetId={collectibleId} />
+            <CollectibleBuySell collectibleId={collectibleId} />
+            <CollectibleDescription collectibleId={collectibleId} />
         </IndividualCollectibleWrapper>
     );
 };
