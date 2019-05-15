@@ -164,7 +164,21 @@ export const getUserCollectibles = createSelector(
     (ethAccount, allCollectibles): { [key: string]: Collectible } => {
         const userCollectibles: { [key: string]: Collectible } = {};
         Object.keys(allCollectibles).forEach(tokenId => {
-            if (allCollectibles[tokenId].currentOwner === ethAccount) {
+            if (allCollectibles[tokenId].currentOwner.toLowerCase() === ethAccount.toLowerCase()) {
+                userCollectibles[tokenId] = allCollectibles[tokenId];
+            }
+        });
+        return userCollectibles;
+    },
+);
+
+export const getOtherUsersCollectibles = createSelector(
+    getEthAccount,
+    getAllCollectibles,
+    (ethAccount, allCollectibles): { [key: string]: Collectible } => {
+        const userCollectibles: { [key: string]: Collectible } = {};
+        Object.keys(allCollectibles).forEach(tokenId => {
+            if (allCollectibles[tokenId].currentOwner.toLowerCase() !== ethAccount.toLowerCase()) {
                 userCollectibles[tokenId] = allCollectibles[tokenId];
             }
         });
