@@ -1,6 +1,8 @@
+import { SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { cancelSignedOrder } from '../../services/orders';
+import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount, getGasPriceInWei } from '../selectors';
 
@@ -37,6 +39,31 @@ export const getAllCollectibles: ThunkCreator = () => {
     };
 };
 
+const isDutchAuction = (order: SignedOrder) => {
+    return false;
+};
+
+export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: SignedOrder, ethAccount: string) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const contractWrappers = await getContractWrappers();
+
+        if (isDutchAuction(order)) {
+            throw new Error('not implemented');
+        } else {
+            return contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+                [order],
+                order.makerAssetAmount,
+                ethAccount,
+                order.takerAssetAmount,
+                [],
+                0,
+                ZERO_ADDRESS,
+                TX_DEFAULTS,
+            );
+        }
+    };
+};
+
 export const cancelOrderCollectible: ThunkCreator = (order: any) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
@@ -51,3 +78,4 @@ export const cancelOrderCollectible: ThunkCreator = (order: any) => {
         });
     };
 };
+

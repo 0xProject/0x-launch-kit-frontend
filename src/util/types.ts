@@ -87,6 +87,7 @@ export enum StepKind {
     BuySellMarket = 'BuySellMarket',
     UnlockCollectibles = 'UnlockCollectibles',
     SellCollectible = 'SellCollectible',
+    BuyCollectible = 'BuyCollectible',
 }
 
 export interface StepWrapEth {
@@ -133,12 +134,19 @@ export interface StepSellCollectible {
     side: OrderSide;
 }
 
+export interface StepBuyCollectible {
+    kind: StepKind.BuyCollectible;
+    order: SignedOrder;
+    collectible: Collectible;
+}
+
 export type Step =
     | StepWrapEth
     | StepToggleTokenLock
     | StepBuySellLimitOrder
     | StepBuySellMarket
     | StepSellCollectible
+    | StepBuyCollectible
     | StepUnlockCollectibles;
 
 export interface StepsModalState {

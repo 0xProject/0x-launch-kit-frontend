@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, SignedOrder } from '0x.js';
 
 import { MAKER_FEE, TAKER_FEE } from '../common/constants';
 
@@ -7,6 +7,7 @@ import {
     Collectible,
     OrderSide,
     Step,
+    StepBuyCollectible,
     StepKind,
     StepToggleTokenLock,
     StepUnlockCollectibles,
@@ -96,6 +97,10 @@ export const createSellCollectibleSteps = (
     return sellCollectibleFlow;
 };
 
+export const createBuyCollectibleSteps = (order: SignedOrder, collectible: Collectible): Step[] => {
+    return [getBuyCollectibleStep(order, collectible)];
+};
+
 export const createBuySellMarketSteps = (
     baseToken: Token,
     quoteToken: Token,
@@ -155,6 +160,14 @@ export const getUnlockCollectibleStep = (collectible: Collectible): StepUnlockCo
         kind: StepKind.UnlockCollectibles,
         collectible,
         isUnlocked: false,
+    };
+};
+
+export const getBuyCollectibleStep = (order: SignedOrder, collectible: Collectible): StepBuyCollectible => {
+    return {
+        kind: StepKind.BuyCollectible,
+        order,
+        collectible,
     };
 };
 

@@ -2,9 +2,17 @@ import { BigNumber, SignedOrder } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { createSignedCollectibleOrder, submitCollectibleOrder } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
-import { Collectible, OrderSide, StepSellCollectible, StoreState } from '../../../util/types';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
+import { createSignedCollectibleOrder, submitBuyCollectible, submitCollectibleOrder } from '../../../store/actions';
+import { getEstimatedTxTimeMs, getEthAccount, getStepsModalCurrentStep } from '../../../store/selectors';
+import {
+    Collectible,
+    OrderSide,
+    StepBuyCollectible,
+    StepKind,
+    StepSellCollectible,
+    StoreState,
+} from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -14,7 +22,8 @@ interface OwnProps {
 }
 interface StateProps {
     estimatedTxTimeMs: number;
-    step: StepSellCollectible;
+    step: StepSellCollectible | StepBuyCollectible;
+    ethAccount: string;
 }
 
 interface DispatchProps {
@@ -22,6 +31,7 @@ interface DispatchProps {
     // TODO: later this should contain something like 'notifySellCollectible'
     createSignedCollectibleOrder: (collectible: Collectible, price: BigNumber, side: OrderSide) => Promise<any>;
     submitCollectibleOrder: (signedOrder: SignedOrder) => Promise<any>;
+    submitBuyCollectible: (order: SignedOrder, ethAccount: string) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -30,7 +40,7 @@ interface State {
     amountInReturn: BigNumber | null;
 }
 
-class SellCollectibleStep extends React.Component<Props, State> {
+class BuySellCollectibleStep extends React.Component<Props, State> {
     public state = {
         amountInReturn: null,
     };
@@ -40,7 +50,7 @@ class SellCollectibleStep extends React.Component<Props, State> {
         const { collectible } = step;
         const collectibleName = collectible.name;
 
-        const isBuy = step.side === OrderSide.Buy;
+        const isBuy = step.kind === StepKind.BuyCollectible;
 
         const title = `${isBuy ? 'Buying' : 'Selling'} ${collectibleName}`;
 
@@ -65,21 +75,44 @@ class SellCollectibleStep extends React.Component<Props, State> {
                 doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
                 estimatedTxTimeMs={estimatedTxTimeMs}
-                runAction={this._confirmOnMetamaskBuyOrSell}
+                runAction={isBuy ? this._confirmOnMetamaskBuy : this._confirmOnMetamaskSell}
                 showPartialProgress={true}
             />
         );
     };
 
-    private readonly _confirmOnMetamaskBuyOrSell = async ({ onLoading, onDone, onError }: any) => {
-        const { startPrice, side, collectible } = this.props.step;
-        try {
-            const signedOrder = await this.props.createSignedCollectibleOrder(collectible, startPrice, side);
-            onLoading();
-            await this.props.submitCollectibleOrder(signedOrder);
-            onDone();
-        } catch (error) {
-            onError(error);
+    private readonly _confirmOnMetamaskSell = async ({ onLoading, onDone, onError }: any) => {
+        const { step } = this.props;
+        if (step.kind === StepKind.SellCollectible) {
+            const stepSell: StepSellCollectible = step;
+            const { startPrice, side, collectible } = stepSell;
+            try {
+                const signedOrder = await this.props.createSignedCollectibleOrder(collectible, startPrice, side);
+                onLoading();
+                await this.props.submitCollectibleOrder(signedOrder);
+                onDone();
+            } catch (error) {
+                onError(error);
+            }
+        }
+    };
+
+    private readonly _confirmOnMetamaskBuy = async ({ onLoading, onDone, onError }: any) => {
+        const { ethAccount, step } = this.props;
+        if (step.kind === StepKind.BuyCollectible) {
+            const stepBuy: StepBuyCollectible = step;
+            const { order } = stepBuy;
+            try {
+                const web3Wrapper = await getWeb3Wrapper();
+                const txHash = await this.props.submitBuyCollectible(order, ethAccount);
+                onLoading();
+
+                await web3Wrapper.awaitTransactionSuccessAsync(txHash);
+
+                onDone();
+            } catch (err) {
+                onError(err);
+            }
         }
     };
 }
@@ -87,7 +120,8 @@ class SellCollectibleStep extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
-        step: getStepsModalCurrentStep(state) as StepSellCollectible,
+        ethAccount: getEthAccount(state),
+        step: getStepsModalCurrentStep(state) as StepSellCollectible | StepBuyCollectible,
     };
 };
 
@@ -97,12 +131,14 @@ const mapDispatchToProps = (dispatch: any) => {
         createSignedCollectibleOrder: (collectible: Collectible, price: BigNumber, side: OrderSide) =>
             dispatch(createSignedCollectibleOrder(collectible, price, side)),
         // refreshOrders: () => dispatch(getUserCollectibles()),
+        submitBuyCollectible: (order: SignedOrder, ethAccount: string) =>
+            dispatch(submitBuyCollectible(order, ethAccount)),
     };
 };
 
-const SellCollectibleStepContainer = connect(
+const BuySellCollectibleStepContainer = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(SellCollectibleStep);
+)(BuySellCollectibleStep);
 
-export { SellCollectibleStep, SellCollectibleStepContainer };
+export { BuySellCollectibleStep, BuySellCollectibleStepContainer };

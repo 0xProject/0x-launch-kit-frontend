@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { cancelOrderCollectible, selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
+import { startBuyCollectibleSteps } from '../../../store/ui/actions';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { TitleText } from './marketplace_common';
@@ -48,6 +49,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible) => any;
+    startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
     onCancelOrderCollectible: (order: any) => any;
 }
 
@@ -104,9 +106,9 @@ class CollectibleBuySell extends React.Component<Props> {
         this.setState({ isLoading: true });
 
         try {
-            const { collectible } = this.props;
+            const { collectible, updateSelectedCollectible } = this.props;
             if (collectible) {
-                this.props.updateSelectedCollectible(collectible);
+                updateSelectedCollectible(collectible);
             }
         } catch (err) {
             alert(`Could not sell the specified order`);
@@ -119,7 +121,10 @@ class CollectibleBuySell extends React.Component<Props> {
         this.setState({ isLoading: true });
 
         try {
-            window.alert('buy');
+            const { collectible, ethAccount, startBuyCollectibleSteps } = this.props;
+            if (collectible) {
+                startBuyCollectibleSteps(collectible, ethAccount);
+            }
         } catch (err) {
             alert(`Could not sell the specified order`);
         } finally {
@@ -138,6 +143,8 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
+        startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
+            dispatch(startBuyCollectibleSteps(collectible, ethAccount)),
         onCancelOrderCollectible: (order: any) => dispatch(cancelOrderCollectible(order)),
     };
 };
