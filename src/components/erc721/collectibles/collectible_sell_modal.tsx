@@ -103,7 +103,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
     };
 
     private readonly _updateIncludeEndPrice = (event: any) => {
-        this.setState({ includeEndPrice: event.target.checked });
+        this.setState({ shouldIncludeEndPrice: event.target.checked });
     };
 
     private readonly _updateExpDate = (event: any) => {

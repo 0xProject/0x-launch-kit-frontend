@@ -38,7 +38,7 @@ const TextWithIcon = styled(CenteredText)`
 `;
 
 interface OwnProps {
-    assetId: string;
+    collectibleId: string;
 }
 
 interface StateProps {

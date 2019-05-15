@@ -53,21 +53,21 @@ const IconWrapper = styled.a`
 `;
 
 interface OwnProps {
-    assetId: string;
+    collectibleId: string;
 }
 
 interface StateProps {
-    asset: Collectible | undefined;
+    collectible: Collectible | undefined;
 }
 
 type Props = OwnProps & StateProps;
 
 const CollectibleDescription = (props: Props) => {
-    const { asset } = props;
-    if (!asset) {
+    const { collectible } = props;
+    if (!collectible) {
         return null;
     }
-    const { currentOwner, description, order, name, assetUrl } = asset;
+    const { currentOwner, description, order, name, assetUrl } = collectible;
 
     const price = order ? order.takerAssetAmount : null;
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
@@ -138,7 +138,7 @@ const CollectibleDescription = (props: Props) => {
 
 const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
     return {
-        asset: getCollectibleById(state, props),
+        collectible: getCollectibleById(state, props),
     };
 };
 
