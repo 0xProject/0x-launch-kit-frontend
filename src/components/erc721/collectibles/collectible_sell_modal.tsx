@@ -8,6 +8,7 @@ import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
+import { todayInSeconds, tomorrow } from '../../../util/time_utils';
 import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
@@ -19,10 +20,10 @@ interface StateProps {
 interface DispatchProps {
     onSubmitCollectibleOrder: (
         collectible: Collectible,
-        expirationDate: string,
         startingPrice: BigNumber,
         side: OrderSide,
-        endingPrice?: BigNumber,
+        expirationDate: BigNumber,
+        endingPrice: BigNumber | null,
     ) => Promise<any>;
     updateSelectedCollectible: (collectible: Collectible | null) => any;
 }
@@ -35,9 +36,9 @@ type Props = OwnProps & DispatchProps & StateProps;
 
 interface State {
     startPrice: BigNumber;
-    endingPrice: BigNumber;
-    includeEndPrice: boolean;
-    expirationDate: string;
+    shouldIncludeEndPrice: boolean;
+    endingPrice: BigNumber | null;
+    expirationDate: BigNumber;
 }
 
 const ModalContent = styled.div`
@@ -50,14 +51,30 @@ const ModalContent = styled.div`
 class CollectibleSellModalContainer extends React.Component<Props> {
     public state: State = {
         startPrice: new BigNumber(0),
-        endingPrice: new BigNumber(0),
-        includeEndPrice: false,
-        expirationDate: '',
+        endingPrice: null,
+        shouldIncludeEndPrice: false,
+        expirationDate: tomorrow(),
     };
 
     public render = () => {
         const { theme, currentCollectible } = this.props;
-        const { startPrice, endingPrice } = this.state;
+        const { startPrice, endingPrice, shouldIncludeEndPrice } = this.state;
+
+        const dayInSeconds = 60 * 60 * 24;
+        const today = todayInSeconds();
+        const expirationDates = [today + dayInSeconds, today + dayInSeconds * 5, today + dayInSeconds * 7];
+        const endPriceContent = shouldIncludeEndPrice ? (
+            <>
+                <h3>Enter ending price</h3>
+                <BigNumberInput
+                    decimals={18}
+                    min={new BigNumber(0)}
+                    onChange={this._updateEndingPrice}
+                    value={endingPrice}
+                    placeholder={'0.00'}
+                />
+            </>
+        ) : null;
 
         return (
             <Modal isOpen={currentCollectible ? true : false} style={theme.modalTheme}>
@@ -72,20 +89,26 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                         placeholder={'0.00'}
                     />
                     <h3>Include ending price</h3>
-                    <h3>Placeholder for toggle switch</h3>
-                    <h3>Enter ending price</h3>
-                    <BigNumberInput
-                        decimals={18}
-                        min={new BigNumber(0)}
-                        onChange={this._updateEndingPrice}
-                        value={endingPrice}
-                        placeholder={'0.00'}
-                    />
-                    <h3>Placeholder for expiration date dropdown</h3>
+                    <input type="checkbox" onChange={this._updateIncludeEndPrice} />
+                    {endPriceContent}
+                    <select onChange={this._updateExpDate}>
+                        <option value={expirationDates[0]}>1 day</option>
+                        <option value={expirationDates[1]}>5 days</option>
+                        <option value={expirationDates[2]}>7 days</option>
+                    </select>
                     <button onClick={this._openStepsModals}>Sell</button>
                 </ModalContent>
             </Modal>
         );
+    };
+
+    private readonly _updateIncludeEndPrice = (event: any) => {
+        this.setState({ shouldIncludeEndPrice: event.target.checked });
+    };
+
+    private readonly _updateExpDate = (event: any) => {
+        const expirationDate = new BigNumber(event.target.value);
+        this.setState({ expirationDate });
     };
 
     private readonly _updateStartingPrice = (startPrice: BigNumber) => {
@@ -104,18 +127,16 @@ class CollectibleSellModalContainer extends React.Component<Props> {
 
     private readonly _openStepsModals = async () => {
         const { currentCollectible } = this.props;
-        const { startPrice, endingPrice } = this.state;
+        const { startPrice, endingPrice, expirationDate } = this.state;
         if (!currentCollectible) {
             return;
         }
-        // TODO Get this info from the modal
-        const expirationDate = '123';
         this._closeModal();
         await this.props.onSubmitCollectibleOrder(
             currentCollectible,
-            expirationDate,
             startPrice,
             OrderSide.Sell,
+            expirationDate,
             endingPrice,
         );
     };
@@ -131,11 +152,11 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         onSubmitCollectibleOrder: (
             collectible: Collectible,
-            expirationDate: string,
             startingPrice: BigNumber,
             side: OrderSide,
-            endingPrice?: BigNumber,
-        ) => dispatch(startSellCollectibleSteps(collectible, expirationDate, startingPrice, side, endingPrice)),
+            expirationDate: BigNumber,
+            endingPrice: BigNumber | null,
+        ) => dispatch(startSellCollectibleSteps(collectible, startingPrice, side, expirationDate, endingPrice)),
         updateSelectedCollectible: (collectible: Collectible | null) => dispatch(selectCollectible(collectible)),
     };
 };
