@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { goToIndividualCollectible } from '../../../store/router/actions';
+import { themeDimensions, themeFeatures } from '../../../themes/commons';
 
 interface OwnProps extends HTMLAttributes<HTMLDivElement> {
+    color: string;
     id: string;
+    image: string;
     name: string;
     price: BigNumber | null;
-    image: string;
-    color: string;
 }
 
 interface DispatchProps {
@@ -20,98 +21,70 @@ interface DispatchProps {
 type Props = DispatchProps & OwnProps;
 
 const CollectibleAssetWrapper = styled.div`
-    display: inline-block;
-    position: relative;
-    background: #ffffff;
-    border: 1px solid #ededed;
+    background: ${props => props.theme.componentsTheme.cardBackgroundColor};
+    border-radius: ${themeDimensions.borderRadius};
+    border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     box-sizing: border-box;
-    border-radius: 4px;
-    width: 256px;
-    height: 313px;
-    margin-bottom: 8px;
     cursor: pointer;
+    position: relative;
+    transition: box-shadow 0.15s linear;
+
+    &:hover {
+        box-shadow: ${props => themeFeatures.boxShadow};
+    }
 `;
 
-const ImageWrapper = styled.div<{ color: string }>`
-    position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 0%;
-    bottom: 13.1%;
-    background: ${props => props.color};
-    border-radius: 4px;
+const ImageWrapper = styled.div<{ color: string; image: string }>`
+    background-color: ${props => props.color};
+    background-image: url('${props => props.image}');
+    background-position: 50% 50%;
+    background-size: contain;
+    border-top-left-radius: ${themeDimensions.borderRadius};
+    border-top-right-radius: ${themeDimensions.borderRadius};
+    height: 272px;
 `;
 
-const Image = styled.div<{ image: string }>`
-    position: absolute;
-    width: 216px;
-    height: 221px;
-    left: calc(50% - 216px / 2);
-    top: calc(50% - 221px / 2);
-    background-size: 100% 100%;
-    background-image: url(${props => props.image});
-`;
-
-const Title = styled.label`
-    position: absolute;
-    width: 154px;
-    height: 17px;
-    left: 10px;
-    bottom: 12px;
-
-    font-family: Inter UI;
-    font-style: normal;
-    font-weight: 500;
+const Title = styled.h2`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 14px;
-    line-height: 17px;
-
-    color: #000000;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0;
+    overflow: hidden;
+    padding: 10px 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `;
 
 const Badge = styled.div`
-    position: absolute;
-    width: 84px;
+    align-items: center;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
+    display: flex;
     height: 31px;
+    justify-content: center;
+    padding: 8px 12px;
+    position: absolute;
     right: 10px;
     top: 10px;
-
-    background: #ffffff;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
-    border-radius: 16px;
 `;
 
-const BadgeImport = styled.span`
-    position: absolute;
-    width: 42px;
-    height: 23px;
-    right: 30px;
-    top: 6px;
-
-    font-family: Inter UI;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 21px;
+const BadgeValue = styled.span`
+    color: #000;
     font-feature-settings: 'tnum' on, 'onum' on;
-
-    color: #000000;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14px;
+    margin-right: 6px;
 `;
 
 const BadgeAsset = styled.span`
-    position: absolute;
-    width: 20px;
-    height: 15px;
-    right: 9px;
-    top: 11px;
-
-    font-family: Inter UI;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 10px;
-    line-height: 15px; /* identical to box height */
+    color: #000;
     font-feature-settings: 'tnum' on, 'onum' on;
-
-    color: #000000;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 10px;
 `;
 
 export const CollectibleAsset: React.FC<Props> = (props: Props) => {
@@ -124,14 +97,13 @@ export const CollectibleAsset: React.FC<Props> = (props: Props) => {
 
     return (
         <CollectibleAssetWrapper {...restProps} onClick={handleAssetClick}>
-            <ImageWrapper color={color}>
+            <ImageWrapper color={color} image={image}>
                 {price && (
                     <Badge>
-                        <BadgeImport>{price.toString()}</BadgeImport>
+                        <BadgeValue>{price.toString()}</BadgeValue>
                         <BadgeAsset>ETH</BadgeAsset>
                     </Badge>
                 )}
-                <Image image={image} />
             </ImageWrapper>
             <Title>{name}</Title>
         </CollectibleAssetWrapper>
