@@ -46,7 +46,7 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
         takerAssetData: wethAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
-        salt: generatePseudoRandomSalt(),
+        salt: new BigNumber(Date.now()),
         senderAddress: ZERO_ADDRESS,
     };
 };
@@ -70,7 +70,7 @@ export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide):
         takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
-        salt: generatePseudoRandomSalt(),
+        salt: new BigNumber(Date.now()),
         senderAddress: '0x0000000000000000000000000000000000000000',
     };
 };

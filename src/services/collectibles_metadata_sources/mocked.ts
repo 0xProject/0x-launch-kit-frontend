@@ -88,7 +88,7 @@ const allCollectibles: Collectible[] = [
 ];
 
 export class Mocked implements CollectibleMetadataSource {
-    public fetchAllCollectiblesAsync = async (userAddress: string, networkId: number): Promise<Collectible[]> => {
+    public fetchAllUserCollectiblesAsync = async (userAddress: string, networkId: number): Promise<Collectible[]> => {
         const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
         const contractWrappers = await getContractWrappers();
 
@@ -107,5 +107,10 @@ export class Mocked implements CollectibleMetadataSource {
         );
 
         return allCollectiblesWithOwner;
+    };
+
+    public fetchIndividualCollectibleAsync = (tokenId: string, networkId: number): Promise<Collectible | null> => {
+        const collectible = allCollectibles.find(value => value.tokenId === tokenId) || null;
+        return Promise.resolve(collectible);
     };
 }
