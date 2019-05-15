@@ -8,7 +8,7 @@ import { Collectible, CollectibleMetadataSource } from '../util/types';
 
 import { getConfiguredSource } from './collectibles_metadata_sources';
 
-const logger = getLogger('Services::Collectibles_metadata_gateway');
+const logger = getLogger('CollectiblesMetadataGateway');
 
 export class CollectiblesMetadataGateway {
     private readonly _relayer: Relayer;
@@ -30,7 +30,8 @@ export class CollectiblesMetadataGateway {
         try {
             orders = await this._relayer.getSellCollectibleOrdersAsync(collectibleAddress, wethAddress);
         } catch (err) {
-            logger.log(err);
+            logger.error(err);
+            throw err;
         }
 
         const tokenIdToOrder = orders.reduce<{ [tokenId: string]: SignedOrder }>((acc, order) => {
@@ -41,7 +42,7 @@ export class CollectiblesMetadataGateway {
 
         // Step 2: Get all the user's collectibles and add the order
         const collectibles = await source.fetchAllUserCollectiblesAsync(userAddress, networkId);
-        const collectiblesWithOrders: any[] = collectibles.map(collectible => {
+        const collectiblesWithOrders: Collectible[] = collectibles.map(collectible => {
             if (tokenIdToOrder[collectible.tokenId]) {
                 return {
                     ...collectible,

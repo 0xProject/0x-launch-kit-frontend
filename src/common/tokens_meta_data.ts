@@ -16,7 +16,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         primaryColor: '#3333ff',
         addresses: {
             1: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-            4: '0x1b45d86492d098b10fdbf382c537359f776f8dad',
+            4: '0xc778417e063141139fce010982780140aa0cd5ab',
             42: '0xd0a1e359811322d97991e03f863a0c30c2cf029c',
             50: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
         },
