@@ -22,7 +22,7 @@ interface StateProps {
 
 interface DispatchProps {
     advanceStep: () => void;
-    onUnlockCollectible: (collectible: Collectible) => Promise<any>;
+    onUnlockCollectible: (collectible: Collectible) => Promise<string>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
