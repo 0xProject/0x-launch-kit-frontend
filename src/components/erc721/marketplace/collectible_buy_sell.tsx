@@ -49,7 +49,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible) => any;
-    startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
+    onStartBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
     onCancelOrderCollectible: (order: any) => any;
 }
 
@@ -121,9 +121,10 @@ class CollectibleBuySell extends React.Component<Props> {
         this.setState({ isLoading: true });
 
         try {
-            const { collectible, ethAccount, startBuyCollectibleSteps } = this.props;
+            const { collectible, ethAccount, onStartBuyCollectibleSteps } = this.props;
             if (collectible) {
-                startBuyCollectibleSteps(collectible, ethAccount);
+                // tslint:disable-next-line:no-floating-promises
+                onStartBuyCollectibleSteps(collectible, ethAccount);
             }
         } catch (err) {
             alert(`Could not sell the specified order`);
@@ -143,7 +144,7 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
-        startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
+        onStartBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
             dispatch(startBuyCollectibleSteps(collectible, ethAccount)),
         onCancelOrderCollectible: (order: any) => dispatch(cancelOrderCollectible(order)),
     };

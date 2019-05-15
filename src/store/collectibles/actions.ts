@@ -1,8 +1,8 @@
 import { SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
-import { cancelSignedOrder } from '../../services/orders';
 import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
+import { cancelSignedOrder } from '../../services/orders';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount, getGasPriceInWei } from '../selectors';
 
@@ -78,4 +78,3 @@ export const cancelOrderCollectible: ThunkCreator = (order: any) => {
         });
     };
 };
-
