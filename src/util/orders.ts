@@ -1,4 +1,4 @@
-import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order, SignedOrder } from '0x.js';
+import { assetDataUtils, BigNumber, Order, SignedOrder } from '0x.js';
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
