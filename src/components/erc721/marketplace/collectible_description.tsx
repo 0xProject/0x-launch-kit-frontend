@@ -11,10 +11,9 @@ import { CustomTD, TR } from '../../common/table';
 
 import { TitleText } from './marketplace_common';
 
-const DescriptionCard = styled(Card)`
-    width: 586px;
-    height: 218px;
-`;
+const CollectibleDescriptionWrapper = styled.div``;
+
+const DescriptionCard = styled(Card)``;
 
 const DescriptionText = styled.p`
     color: #000;
@@ -26,18 +25,18 @@ const DescriptionText = styled.p`
 const CollectibleNameTitleWrapper = styled.div`
     align-items: center;
     display: flex;
-    justify-content: space-between;
     flex-shrink: 0;
-    padding: 0 0 8px 0;
     height: 22px;
+    justify-content: space-between;
     margin-top: 16px;
+    padding: 0 0 8px 0;
 `;
 
 const CollectibleNameTitle = styled.h3`
-    font-size: 18px;
-    line-height: 22px;
-    font-weight: 600;
     color: #333333;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 22px;
 `;
 
 const CollectibleTypeTitle = styled(TitleText)`
@@ -47,9 +46,9 @@ const CollectibleTypeTitle = styled(TitleText)`
 `;
 
 const IconWrapper = styled.a`
+    height: 12px;
     margin-left: 6px;
     width: 12px;
-    height: 12px;
 `;
 
 interface OwnProps {
@@ -73,7 +72,7 @@ const CollectibleDescription = (props: Props) => {
     const tableTitlesStyling = { color: '#0036f4', fontWeight: '500', lineWeight: '17px' };
 
     return (
-        <>
+        <CollectibleDescriptionWrapper>
             <DescriptionCard>
                 <CollectibleNameTitleWrapper>
                     <CollectibleNameTitle>{name}</CollectibleNameTitle>
@@ -132,7 +131,7 @@ const CollectibleDescription = (props: Props) => {
                     </tbody>
                 </table>
             </DescriptionCard>
-        </>
+        </CollectibleDescriptionWrapper>
     );
 };
 

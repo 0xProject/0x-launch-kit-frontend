@@ -53,7 +53,7 @@ interface DispatchProps {
 type Props = OwnProps & StateProps & DispatchProps;
 
 const CollectibleBuySell = (props: Props) => {
-    const { collectible, ethAccount } = props;
+    const { collectible, ethAccount, ...restProps } = props;
     if (!collectible) {
         return null;
     }
@@ -69,7 +69,7 @@ const CollectibleBuySell = (props: Props) => {
     const onCancel = () => window.alert('cancel');
 
     return (
-        <BuySellWrapper>
+        <BuySellWrapper {...restProps}>
             <Image imageUrl={image} imageColor={color} />
             <TradeButton
                 ethAccount={ethAccount}

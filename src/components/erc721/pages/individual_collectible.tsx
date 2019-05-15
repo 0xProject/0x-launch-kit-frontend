@@ -2,32 +2,43 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
-import { ColumnNarrow } from '../../common/column_narrow';
-import { ColumnWide } from '../../common/column_wide';
 import { CollectibleBuySellContainer } from '../marketplace/collectible_buy_sell';
 import { CollectibleDescriptionContainer } from '../marketplace/collectible_description';
 
-const General = styled.div`
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+const IndividualCollectibleWrapper = styled.div`
+    align-items: center;
     display: flex;
-`;
-
-const BuySellColumn = styled(ColumnWide)`
-    flex-shrink: 0;
-    max-width: 100%;
+    flex-direction: column;
+    flex-grow: 1;
+    margin: 0 auto;
+    max-width: ${themeBreakPoints.xxl};
     width: 100%;
+
+    @media (min-width: ${themeBreakPoints.md}) {
+        align-items: flex-start;
+        flex-direction: row;
+        justify-content: center;
+    }
+
     @media (min-width: ${themeBreakPoints.xl}) {
-        min-width: 256px;
-        width: 256px;
-        margin-right: 12px;
-        margin-left: 6px;
+    }
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
     }
 `;
 
-const CollectibleDescriptionColumn = styled(ColumnNarrow)``;
+const CollectibleBuySell = styled(CollectibleBuySellContainer)`
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    @media (min-width: ${themeBreakPoints.md}) {
+        margin-right: 12px;
+    }
+`;
+
+const CollectibleDescription = styled(CollectibleDescriptionContainer)`
+    max-width: ${themeBreakPoints.xxl};
+`;
 
 interface OwnProps {
     assetId: string;
@@ -37,18 +48,15 @@ type Props = OwnProps;
 
 export const IndividualCollectible = (props: Props) => {
     const { assetId } = props;
+
     if (!assetId) {
         return null;
     }
 
     return (
-        <General>
-            <BuySellColumn>
-                <CollectibleBuySellContainer assetId={assetId} />
-            </BuySellColumn>
-            <CollectibleDescriptionColumn>
-                <CollectibleDescriptionContainer assetId={assetId} />
-            </CollectibleDescriptionColumn>
-        </General>
+        <IndividualCollectibleWrapper>
+            <CollectibleBuySell assetId={assetId} />
+            <CollectibleDescription assetId={assetId} />
+        </IndividualCollectibleWrapper>
     );
 };
