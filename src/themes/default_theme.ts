@@ -22,7 +22,7 @@ const modalThemeStyle: ThemeModalStyle = {
 };
 
 const whiteThemeColors: ThemeProperties = {
-    background: '#f5f5f5',
+    background: '#f4f3f4',
     borderColor: '#dedede',
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
     buttonConvertBackgroundColor: '#fff',
@@ -31,6 +31,7 @@ const whiteThemeColors: ThemeProperties = {
     buttonErrorBackgroundColor: '#FF6534',
     buttonPrimaryBackgroundColor: '#002979',
     buttonSecondaryBackgroundColor: '#474747',
+    buttonSellBackgroundColor: '#00AE99',
     buttonTertiaryBackgroundColor: '#F6851B',
     buttonTextColor: '#fff',
     cardBackgroundColor: '#fff',

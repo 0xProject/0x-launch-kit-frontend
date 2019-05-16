@@ -23,6 +23,8 @@ export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS
 export const MAKER_FEE = new BigNumber(process.env.REACT_APP_MAKER_FEE || '1000000000000000000');
 export const TAKER_FEE = new BigNumber(process.env.REACT_APP_TAKER_FEE || '100000000000000000');
 
+export const ETH_DECIMALS = 18;
+
 export const ETH_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
 
 export const ZEROX_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/0x/';
@@ -69,6 +71,8 @@ export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_E
     : process.env.NODE_ENV === 'development';
 
 export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || 'mocked';
+
+export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
 
 // CryptoKitties addresses
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {

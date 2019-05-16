@@ -2,9 +2,8 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import styled from 'styled-components';
 
+import { ETH_DECIMALS } from '../../../common/constants';
 import { tokenAmountInUnits } from '../../../util/tokens';
-
-const ETH_DECIMALS = 18;
 
 interface Props {
     price: BigNumber | null;
@@ -12,7 +11,7 @@ interface Props {
 
 const Badge = styled.div`
     align-items: center;
-    background: #fff;
+    background: ${props => props.theme.componentsTheme.cardBackgroundColor};
     border-radius: 16px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
     display: flex;
@@ -25,7 +24,7 @@ const Badge = styled.div`
 `;
 
 const BadgeValue = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 14px;
     font-weight: 400;
@@ -34,7 +33,7 @@ const BadgeValue = styled.span`
 `;
 
 const BadgeAsset = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 10px;
     font-weight: 400;
