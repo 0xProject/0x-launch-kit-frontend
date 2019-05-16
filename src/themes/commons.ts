@@ -13,7 +13,9 @@ export interface ThemeProperties {
     buttonErrorBackgroundColor: string;
     buttonPrimaryBackgroundColor: string;
     buttonSecondaryBackgroundColor: string;
+    buttonSellBackgroundColor: string;
     buttonTertiaryBackgroundColor: string;
+    buttonTextColor: string;
     cardBackgroundColor: string;
     cardBorderColor: string;
     cardTitleColor: string;
@@ -30,8 +32,8 @@ export interface ThemeProperties {
     ethBoxActiveColor: string;
     ethBoxBorderColor: string;
     ethSetMinEthButtonBorderColor: string;
-    ethSliderThumbColor: string;
     ethSliderThumbBorderColor: string;
+    ethSliderThumbColor: string;
     gray: string;
     green: string;
     iconLockedColor: string;
@@ -49,6 +51,12 @@ export interface ThemeProperties {
     numberDecimalsColor: string;
     orange: string;
     rowActive: string;
+    stepsProgressCheckMarkColor: string;
+    stepsProgressStartingDotColor: string;
+    stepsProgressStepLineColor: string;
+    stepsProgressStepLineProgressColor: string;
+    stepsProgressStepTitleColor: string;
+    stepsProgressStepTitleColorActive: string;
     tableBorderColor: string;
     tdColor: string;
     textColorCommon: string;
@@ -62,13 +70,6 @@ export interface ThemeProperties {
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
-    stepsProgressStartingDotColor: string;
-    stepsProgressStepTitleColor: string;
-    stepsProgressStepTitleColorActive: string;
-    stepsProgressStepLineColor: string;
-    stepsProgressStepLineProgressColor: string;
-    stepsProgressCheckMarkColor: string;
-    buttonTextColor: string;
 }
 
 export interface ThemeModalStyle {
@@ -104,6 +105,7 @@ export const themeDimensions = {
     sidebarWidth: '350px',
     verticalPadding: '10px',
     verticalSeparation: '30px',
+    verticalSeparationSm: '10px',
 };
 
 export const themeBreakPoints = {

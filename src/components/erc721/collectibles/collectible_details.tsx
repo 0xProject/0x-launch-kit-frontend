@@ -30,7 +30,7 @@ const CollectibleAssetWrapper = styled.div`
     transition: box-shadow 0.15s linear;
 
     &:hover {
-        box-shadow: ${props => themeFeatures.boxShadow};
+        box-shadow: ${themeFeatures.boxShadow};
     }
 `;
 
@@ -45,7 +45,7 @@ const ImageWrapper = styled.div<{ color: string; image: string }>`
 `;
 
 const Title = styled.h2`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -58,7 +58,7 @@ const Title = styled.h2`
 
 const Badge = styled.div`
     align-items: center;
-    background: #fff;
+    background: ${props => props.theme.componentsTheme.cardBackgroundColor};
     border-radius: 16px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
     display: flex;
@@ -71,7 +71,7 @@ const Badge = styled.div`
 `;
 
 const BadgeValue = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 14px;
     font-weight: 400;
@@ -80,7 +80,7 @@ const BadgeValue = styled.span`
 `;
 
 const BadgeAsset = styled.span`
-    color: #000;
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 10px;
     font-weight: 400;
