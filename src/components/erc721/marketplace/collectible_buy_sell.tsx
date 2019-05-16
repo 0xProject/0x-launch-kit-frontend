@@ -1,4 +1,3 @@
-import { SignedOrder } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -6,7 +5,6 @@ import styled from 'styled-components';
 import { cancelOrderCollectible, selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { startBuyCollectibleSteps } from '../../../store/ui/actions';
-import { isDutchAuction } from '../../../util/orders';
 import { getEndDateStringFromTimeInSeconds } from '../../../util/time_utils';
 import { Collectible, StoreState } from '../../../util/types';
 
@@ -81,16 +79,14 @@ class CollectibleBuySell extends React.Component<Props> {
         return (
             <BuySellWrapper>
                 <Image imageUrl={image} imageColor={color} />
-                {!isDutchAuction(order as SignedOrder) ? (
-                    <TradeButton
-                        ethAccount={ethAccount}
-                        asset={collectible}
-                        onBuy={this._onBuy}
-                        onSell={this._onSell}
-                        onCancel={this._onCancel}
-                        isDisabled={isLoading}
-                    />
-                ) : null}
+                <TradeButton
+                    ethAccount={ethAccount}
+                    asset={collectible}
+                    onBuy={this._onBuy}
+                    onSell={this._onSell}
+                    onCancel={this._onCancel}
+                    isDisabled={isLoading}
+                />
                 {expDate ? <TextWithIcon>{expDate}</TextWithIcon> : null}
                 {price && <CenteredText>Last price: Ξ {price.toString()}</CenteredText>}
             </BuySellWrapper>

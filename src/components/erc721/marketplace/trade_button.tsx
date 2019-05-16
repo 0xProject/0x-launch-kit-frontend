@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { getLogger } from '../../../util/logger';
+import { isDutchAuction } from '../../../util/orders';
 import { Collectible } from '../../../util/types';
 import { Button as ButtonBase } from '../../common/button';
 
@@ -33,7 +34,7 @@ export const TradeButton: React.FC<Props> = ({ ethAccount, asset, onBuy, onSell,
     const { currentOwner, name, order } = asset;
     const isOwner = ethAccount.toLowerCase() === currentOwner.toLowerCase();
 
-    if (isOwner && order) {
+    if (isOwner && order && !isDutchAuction(order)) {
         return (
             <BtnStyled btnColor={'#ff6534'} onClick={onCancel} disabled={isDisabled}>
                 Cancel Sale
