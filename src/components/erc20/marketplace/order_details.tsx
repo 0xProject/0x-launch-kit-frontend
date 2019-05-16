@@ -141,7 +141,7 @@ class OrderDetails extends React.Component<Props, State> {
 
         if (orderType === OrderType.Limit) {
             const { tokenAmount, tokenPrice } = this.props;
-            const quoteTokenAmount = tokenAmount.mul(tokenPrice);
+            const quoteTokenAmount = tokenAmount.multipliedBy(tokenPrice);
             this.setState({
                 feeInZrx: MAKER_FEE,
                 quoteTokenAmount,
@@ -156,7 +156,7 @@ class OrderDetails extends React.Component<Props, State> {
                 },
                 orderSide,
             );
-            const feeInZrx = ordersToFill.reduce((sum, order) => sum.add(order.takerFee), new BigNumber(0));
+            const feeInZrx = ordersToFill.reduce((sum, order) => sum.plus(order.takerFee), new BigNumber(0));
             const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, ordersToFill, amountToPayForEachOrder);
             logger.info('quoteTokenAmount', quoteTokenAmount.toString());
             this.setState({

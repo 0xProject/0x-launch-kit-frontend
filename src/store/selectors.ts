@@ -129,7 +129,7 @@ export const getSpread = createSelector(
         const lowestPriceSell = sellOrders[sellOrders.length - 1].price;
         const highestPriceBuy = buyOrders[0].price;
 
-        return lowestPriceSell.sub(highestPriceBuy);
+        return lowestPriceSell.minus(highestPriceBuy);
     },
 );
 

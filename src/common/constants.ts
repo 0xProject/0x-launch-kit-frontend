@@ -52,7 +52,7 @@ export const GWEI_IN_WEI = new BigNumber(1000000000);
 
 export const ONE_MINUTE_MS = 1000 * 60;
 
-export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.mul(6);
+export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.multipliedBy(6);
 
 export const DEFAULT_ESTIMATED_TRANSACTION_TIME_MS = ONE_MINUTE_MS * 2;
 

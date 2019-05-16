@@ -42,7 +42,7 @@ export const createBuySellLimitSteps = (
     }
 
     // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
-    if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.greaterThan(0)) {
+    if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.isGreaterThan(0)) {
         const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
         if (unlockZrxStep) {
             buySellLimitFlow.push(unlockZrxStep);
@@ -111,8 +111,8 @@ export const createDutchBuyCollectibleSteps = (
 
     // wrap ether
     const wethBalance = wethTokenBalance.balance;
-    const deltaWeth = wethBalance.sub(priceInWeth);
-    if (deltaWeth.lessThan(0)) {
+    const deltaWeth = wethBalance.minus(priceInWeth);
+    if (deltaWeth.isLessThan(0)) {
         steps.push({
             kind: StepKind.WrapEth,
             currentWethBalance: wethBalance,
@@ -154,7 +154,7 @@ export const createBuySellMarketSteps = (
     }
 
     // unlock zrx (for fees) if the taker fee is positive
-    if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.greaterThan(0)) {
+    if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.isGreaterThan(0)) {
         const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
         if (unlockZrxStep) {
             buySellMarketFlow.push(unlockZrxStep);
@@ -219,11 +219,11 @@ export const getWrapEthStepIfNeeded = (
         return null;
     }
 
-    const wethAmount = amount.mul(price);
+    const wethAmount = amount.multipliedBy(price);
     const wethBalance = wethTokenBalance.balance;
-    const deltaWeth = wethBalance.sub(wethAmount);
+    const deltaWeth = wethBalance.minus(wethAmount);
     // Need to wrap eth only if weth balance is not enough
-    if (deltaWeth.lessThan(0)) {
+    if (deltaWeth.isLessThan(0)) {
         return {
             kind: StepKind.WrapEth,
             currentWethBalance: wethBalance,
