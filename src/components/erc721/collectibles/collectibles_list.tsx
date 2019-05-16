@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { ERC721_APP_BASE_PATH } from '../../../common/constants';
+import { COLLECTIBLE_NAME, ERC721_APP_BASE_PATH } from '../../../common/constants';
 import { getCurrentRoutePath, getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 import { Dropdown } from '../../common/dropdown';
@@ -55,7 +55,7 @@ export const CollectiblesList = (props: Props) => {
             <ChevronDownIcon />
         </>
     );
-    const title = props.routePath === `${ERC721_APP_BASE_PATH}/my-collectibles` ? 'My Collectibles' : 'Cryptokitties';
+    const title = props.routePath === `${ERC721_APP_BASE_PATH}/my-collectibles` ? 'My Collectibles' : COLLECTIBLE_NAME;
     return (
         <MainContainer>
             <FiltersMenu>
