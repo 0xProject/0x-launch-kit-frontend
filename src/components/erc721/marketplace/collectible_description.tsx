@@ -254,9 +254,13 @@ const CollectibleDescription = (props: Props) => {
                 <PriceChartContainer>
                     <PriceChartPriceAndTime>
                         <PriceChartTitle>Current Price</PriceChartTitle>
-                        <PriceChartValue>{price ? <p>{price.toString()} ETH</p> : emptyPlaceholder}</PriceChartValue>
+                        <PriceChartValue>
+                            {price ? <span>{price.toString()} ETH</span> : emptyPlaceholder}
+                        </PriceChartValue>
                         <PriceChartTitle>Time Remaining</PriceChartTitle>
-                        <PriceChartValue>{timeRemaining ? <p>{timeRemaining}</p> : emptyPlaceholder}</PriceChartValue>
+                        <PriceChartValue>
+                            {timeRemaining ? <span>{timeRemaining}</span> : emptyPlaceholder}
+                        </PriceChartValue>
                     </PriceChartPriceAndTime>
                     <PriceChartGraphWrapper>
                         <PriceChartGraph />
