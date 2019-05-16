@@ -95,7 +95,13 @@ class CollectibleBuySell extends React.Component<Props> {
 
     public render = () => {
         const { isLoading } = this.state;
-        const { collectible, ethAccount, ...restProps } = this.props;
+        const {
+            collectible,
+            ethAccount,
+            onCancelOrderCollectible,
+            onStartBuyCollectibleSteps,
+            ...restProps
+        } = this.props;
         if (!collectible) {
             return null;
         }
