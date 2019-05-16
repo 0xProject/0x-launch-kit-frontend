@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { COLLECTIBLE_NAME } from '../../../common/constants';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
 import { Collectible, StoreState } from '../../../util/types';
@@ -151,7 +152,7 @@ const CollectibleDescription = (props: Props) => {
                     <CollectibleDescriptionTitle>{name}</CollectibleDescriptionTitle>
                     <CollectibleDescriptionType href={assetUrl} target="_blank">
                         <CollectibleDescriptionTypeImage backgroundImage={typeImage} />
-                        <CollectibleDescriptionTypeText>CryptoKitties</CollectibleDescriptionTypeText>
+                        <CollectibleDescriptionTypeText>{COLLECTIBLE_NAME}</CollectibleDescriptionTypeText>
                         {OutsideUrlIcon()}
                     </CollectibleDescriptionType>
                 </CollectibleDescriptionTitleWrapper>
