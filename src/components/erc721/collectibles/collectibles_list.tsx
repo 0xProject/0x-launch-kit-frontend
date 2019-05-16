@@ -5,8 +5,6 @@ import styled from 'styled-components';
 import { COLLECTIBLE_NAME, ERC721_APP_BASE_PATH } from '../../../common/constants';
 import { getCurrentRoutePath, getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
-import { Dropdown } from '../../common/dropdown';
-import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
 
 import { CollectiblesCardList } from './collectibles_card_list';
 
@@ -25,6 +23,7 @@ const MainContainer = styled.div`
 const FiltersMenu = styled.div`
     display: flex;
     flex-direction: row;
+    padding: 0 48px;
 `;
 
 const Title = styled.div`
@@ -33,35 +32,13 @@ const Title = styled.div`
     font-weight: 600;
 `;
 
-const FilterHeaderText = styled.span`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
-    font-feature-settings: 'calt' 0;
-    font-size: 16px;
-    font-weight: 500;
-    margin-right: 10px;
-`;
-
 export const CollectiblesList = (props: Props) => {
     const collectibles = Object.keys(props.collectibles).map(key => props.collectibles[key]);
-    const newestAddedHeader = (
-        <>
-            <FilterHeaderText>Newest added</FilterHeaderText>
-            <ChevronDownIcon />
-        </>
-    );
-    const auctionsHeader = (
-        <>
-            <FilterHeaderText>Auctions, Fixed Price</FilterHeaderText>
-            <ChevronDownIcon />
-        </>
-    );
     const title = props.routePath === `${ERC721_APP_BASE_PATH}/my-collectibles` ? 'My Collectibles' : COLLECTIBLE_NAME;
     return (
         <MainContainer>
             <FiltersMenu>
                 <Title>{title}</Title>
-                <Dropdown body={null} header={newestAddedHeader} />
-                <Dropdown body={null} header={auctionsHeader} />
             </FiltersMenu>
             <CollectiblesCardList collectibles={collectibles} />
         </MainContainer>
