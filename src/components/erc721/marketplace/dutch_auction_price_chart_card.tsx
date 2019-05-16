@@ -100,13 +100,9 @@ export const DutchAuctionPriceChartCard = (props: Props) => {
             <PriceChartContainer>
                 <PriceChartPriceAndTime>
                     <PriceChartTitle>Current Price</PriceChartTitle>
-                    <PriceChartValue>
-                        {tokenAmountInUnits(price, ETH_DECIMALS)} ETH
-                    </PriceChartValue>
+                    <PriceChartValue>{tokenAmountInUnits(price, ETH_DECIMALS)} ETH</PriceChartValue>
                     <PriceChartTitle>Time Remaining</PriceChartTitle>
-                    <PriceChartValue>
-                        {`${days} Days ${hours} Hrs`}
-                    </PriceChartValue>
+                    <PriceChartValue>{`${days} Days ${hours} Hrs`}</PriceChartValue>
                 </PriceChartPriceAndTime>
                 <PriceChartGraphWrapper>
                     <PriceChartGraph />

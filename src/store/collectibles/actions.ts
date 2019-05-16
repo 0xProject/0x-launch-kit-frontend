@@ -2,9 +2,10 @@ import { MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
+import { cancelSignedOrder } from '../../services/orders';
 import { isDutchAuction } from '../../util/orders';
 import { Collectible, ThunkCreator } from '../../util/types';
-import { getEthAccount } from '../selectors';
+import { getEthAccount, getGasPriceInWei } from '../selectors';
 
 export const fetchAllCollectiblesAsync = createAsyncAction(
     'collectibles/ALL_COLLECTIBLES_fetch_request',
@@ -71,5 +72,17 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
                 TX_DEFAULTS,
             );
         }
+    };
+};
+
+export const cancelOrderCollectible: ThunkCreator = (order: any) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const gasPrice = getGasPriceInWei(state);
+
+        return cancelSignedOrder(order, gasPrice).then(transaction => {
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(getAllCollectibles());
+        });
     };
 };
