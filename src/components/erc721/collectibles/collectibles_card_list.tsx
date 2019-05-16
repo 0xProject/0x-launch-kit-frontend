@@ -16,7 +16,7 @@ const CollectiblesList = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     margin: 0 auto;
-    max-width: 1280px;
+    max-width: ${themeBreakPoints.xxl};
     row-gap: 24px;
     width: 100%;
 

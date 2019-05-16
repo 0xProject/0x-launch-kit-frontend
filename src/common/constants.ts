@@ -52,7 +52,7 @@ export const GWEI_IN_WEI = new BigNumber(1000000000);
 
 export const ONE_MINUTE_MS = 1000 * 60;
 
-export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.mul(6);
+export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.multipliedBy(6);
 
 export const DEFAULT_ESTIMATED_TRANSACTION_TIME_MS = ONE_MINUTE_MS * 2;
 
@@ -69,6 +69,8 @@ export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_E
     : process.env.NODE_ENV === 'development';
 
 export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || 'mocked';
+
+export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
 
 // CryptoKitties addresses
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {

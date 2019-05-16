@@ -41,6 +41,7 @@ export const getAllCollectibles = (state: StoreState) => state.collectibles.allC
 export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
     state.collectibles.allCollectibles[props.collectibleId];
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
+export const getCurrentRoutePath = (state: StoreState) => state.router.location.pathname;
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {
@@ -129,7 +130,7 @@ export const getSpread = createSelector(
         const lowestPriceSell = sellOrders[sellOrders.length - 1].price;
         const highestPriceBuy = buyOrders[0].price;
 
-        return lowestPriceSell.sub(highestPriceBuy);
+        return lowestPriceSell.minus(highestPriceBuy);
     },
 );
 

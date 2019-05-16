@@ -249,12 +249,12 @@ class WethModal extends React.Component<Props, State> {
     public render = () => {
         const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
-        const selectedEth = totalEth.sub(this.state.selectedWeth);
+        const selectedEth = totalEth.minus(this.state.selectedWeth);
         const initialWethStr = tokenAmountInUnits(this.props.wethBalance, 18);
         const selectedWethStr = tokenAmountInUnits(this.state.selectedWeth, 18);
         const selectedEthStr = tokenAmountInUnits(selectedEth, 18);
         const totalEthStr = tokenAmountInUnits(totalEth, 18);
-        const isInsufficientEth = selectedEth.lessThan(minEth);
+        const isInsufficientEth = selectedEth.isLessThan(minEth);
         const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
 
         return (
@@ -351,7 +351,7 @@ class WethModal extends React.Component<Props, State> {
         const { totalEth } = this.props;
 
         this.setState({
-            selectedWeth: totalEth.sub(newEth),
+            selectedWeth: totalEth.minus(newEth),
         });
     };
 
@@ -379,7 +379,7 @@ class WethModal extends React.Component<Props, State> {
         e.preventDefault();
 
         this.setState({
-            selectedWeth: this.props.totalEth.sub(minEth),
+            selectedWeth: this.props.totalEth.minus(minEth),
         });
     };
 

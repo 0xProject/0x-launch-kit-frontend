@@ -61,7 +61,7 @@ const ordersToUIOrdersWithOrdersInfo = (
         const size = side === OrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
         const filled =
             side === OrderSide.Sell
-                ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).mul(order.makerAssetAmount)
+                ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).multipliedBy(order.makerAssetAmount)
                 : orderInfo.orderTakerAssetFilledAmount;
         const price =
             side === OrderSide.Sell
@@ -95,7 +95,7 @@ export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
             return ordersByPrice[price].reduce((acc, order) => {
                 return {
                     ...acc,
-                    size: acc.size.add(order.size),
+                    size: acc.size.plus(order.size),
                 };
             });
         })
