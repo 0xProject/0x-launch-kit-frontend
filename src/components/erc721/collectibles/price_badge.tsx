@@ -2,9 +2,8 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import styled from 'styled-components';
 
+import { ETH_DECIMALS } from '../../../common/constants';
 import { tokenAmountInUnits } from '../../../util/tokens';
-
-const ETH_DECIMALS = 18;
 
 interface Props {
     price: BigNumber | null;
