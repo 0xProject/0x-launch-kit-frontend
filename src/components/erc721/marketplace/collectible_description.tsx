@@ -170,6 +170,10 @@ const TransactionContainerTableWrapper = styled.div`
     width: 100%;
 `;
 
+const ValuePlaceholder = styled.span`
+    color: #d1d1d1;
+`;
+
 const arrowSVG = () => {
     return (
         <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -286,7 +290,9 @@ const CollectibleDescription = (props: Props) => {
                             </TR>
                             <TR>
                                 <CustomTDStyled styles={tableTitlesStyling}>Transfer</CustomTDStyled>
-                                <CustomTDStyled>--</CustomTDStyled>
+                                <CustomTDStyled>
+                                    <ValuePlaceholder>--</ValuePlaceholder>
+                                </CustomTDStyled>
                                 <CustomTDStyled>Cryptokitties...</CustomTDStyled>
                                 <CustomTDStyled>{arrowSVG()}</CustomTDStyled>
                                 <CustomTDStyled>0xa49...322</CustomTDStyled>
@@ -294,7 +300,11 @@ const CollectibleDescription = (props: Props) => {
                             </TR>
                             <TR>
                                 <CustomTDStyled styles={tableTitlesStyling}>Created</CustomTDStyled>
-                                <CustomTDStyled>--</CustomTDStyled>
+                                <CustomTDStyled>
+                                    <ValuePlaceholder>
+                                        <ValuePlaceholder>--</ValuePlaceholder>
+                                    </ValuePlaceholder>
+                                </CustomTDStyled>
                                 <CustomTDStyled>Cryptokitties...</CustomTDStyled>
                                 <CustomTDStyled>{arrowSVG()}</CustomTDStyled>
                                 <CustomTDStyled>Cryptokitties</CustomTDStyled>
