@@ -70,6 +70,8 @@ export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_E
 
 export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || 'mocked';
 
+export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
+
 // CryptoKitties addresses
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
     1: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
