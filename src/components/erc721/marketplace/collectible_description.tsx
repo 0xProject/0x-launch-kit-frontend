@@ -4,13 +4,12 @@ import styled from 'styled-components';
 
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
-import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
 import { Collectible, StoreState } from '../../../util/types';
 import { Card } from '../../common/card';
 import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
 import { CustomTD, Table, TBody, TR } from '../../common/table';
 
-import { CollectiblePriceChartCard } from './collectible_price_chart_card';
+import { DutchAuctionPriceChartCard } from './dutch_auction_price_chart_card';
 
 const CollectibleDescriptionWrapper = styled.div``;
 
@@ -175,7 +174,7 @@ const CollectibleDescription = (props: Props) => {
                     </>
                 ) : null}
             </Card>
-            <CollectiblePriceChartCard collectible={collectible} />
+            <DutchAuctionPriceChartCard collectible={collectible} />
             <Card>
                 <CollectibleDescriptionInnerTitle>Transaction history</CollectibleDescriptionInnerTitle>
                 <TransactionContainerTableWrapper>

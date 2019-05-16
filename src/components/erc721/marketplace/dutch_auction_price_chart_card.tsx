@@ -1,9 +1,11 @@
+import { BigNumber } from '0x.js';
 import React from 'react';
 import styled from 'styled-components';
 
 import { ETH_DECIMALS } from '../../../common/constants';
 import { themeBreakPoints } from '../../../themes/commons';
 import { getCollectiblePrice } from '../../../util/collectibles';
+import { getDutchAuctionData, isDutchAuction } from '../../../util/orders';
 import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible } from '../../../util/types';
@@ -32,7 +34,7 @@ const PriceChartPriceAndTime = styled.div`
     }
 `;
 
-const PriceChartTitle = styled.h5`
+export const PriceChartTitle = styled.h5`
     color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-size: 14px;
     font-weight: 400;
@@ -40,7 +42,7 @@ const PriceChartTitle = styled.h5`
     margin: 0 0 6px;
 `;
 
-const PriceChartValue = styled.p`
+export const PriceChartValue = styled.p`
     color: #00ae99;
     font-size: 14px;
     line-height: 1.2;
@@ -81,16 +83,17 @@ interface Props {
     collectible: Collectible;
 }
 
-export const CollectiblePriceChartCard = (props: Props) => {
+export const DutchAuctionPriceChartCard = (props: Props) => {
     const { collectible } = props;
-    const price = getCollectiblePrice(collectible);
-    const emptyPlaceholder = '----';
-    let timeRemaining = '';
     const { order } = collectible;
-    if (order && order.expirationTimeSeconds) {
-        const daysAndHours = convertTimeInSecondsToDaysAndHours(order.expirationTimeSeconds);
-        timeRemaining = `${daysAndHours.days} Days ${daysAndHours.hours} Hrs`;
+    if (order === null || !isDutchAuction(order)) {
+        return null;
     }
+
+    const { makerAssetData, expirationTimeSeconds } = order;
+    const { beginAmount, beginTimeSeconds } = getDutchAuctionData(makerAssetData);
+    const price = getCollectiblePrice(collectible) as BigNumber;
+    const { days, hours } = convertTimeInSecondsToDaysAndHours(expirationTimeSeconds.minus(beginTimeSeconds));
     return (
         <Card>
             <CollectibleDescriptionInnerTitle>Price Chart</CollectibleDescriptionInnerTitle>
@@ -98,21 +101,27 @@ export const CollectiblePriceChartCard = (props: Props) => {
                 <PriceChartPriceAndTime>
                     <PriceChartTitle>Current Price</PriceChartTitle>
                     <PriceChartValue>
-                        {price ? <p>{tokenAmountInUnits(price, ETH_DECIMALS)} ETH</p> : emptyPlaceholder}
+                        {tokenAmountInUnits(price, ETH_DECIMALS)} ETH
                     </PriceChartValue>
                     <PriceChartTitle>Time Remaining</PriceChartTitle>
-                    <PriceChartValue>{timeRemaining ? <p>{timeRemaining}</p> : emptyPlaceholder}</PriceChartValue>
+                    <PriceChartValue>
+                        {`${days} Days ${hours} Hrs`}
+                    </PriceChartValue>
                 </PriceChartPriceAndTime>
                 <PriceChartGraphWrapper>
                     <PriceChartGraph />
                     <PriceChartGraphValues>
                         <div>
                             <PriceChartTitle>Start Price</PriceChartTitle>
-                            <PriceChartValueNeutral>5.00 ETH</PriceChartValueNeutral>
+                            <PriceChartValueNeutral>
+                                {tokenAmountInUnits(beginAmount, ETH_DECIMALS)} ETH
+                            </PriceChartValueNeutral>
                         </div>
                         <div>
                             <PriceChartTitle>End Price</PriceChartTitle>
-                            <PriceChartValueNeutral>3.00 ETH</PriceChartValueNeutral>
+                            <PriceChartValueNeutral>
+                                {tokenAmountInUnits(order.takerAssetAmount, ETH_DECIMALS)} ETH
+                            </PriceChartValueNeutral>
                         </div>
                     </PriceChartGraphValues>
                 </PriceChartGraphWrapper>
