@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
-import { themeBreakPoints } from '../../../themes/commons';
 import { truncateAddress } from '../../../util/number_utils';
 import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
 import { Collectible, StoreState } from '../../../util/types';
 import { Card } from '../../common/card';
 import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
 import { CustomTD, Table, TBody, TR } from '../../common/table';
+
+import { CollectiblePriceChartCard } from './collectible_price_chart_card';
 
 const CollectibleDescriptionWrapper = styled.div``;
 
@@ -57,7 +58,7 @@ const CollectibleDescriptionTypeImage = styled.span<{ backgroundImage: string }>
     width: 16px;
 `;
 
-const CollectibleDescriptionInnerTitle = styled.h4`
+export const CollectibleDescriptionInnerTitle = styled.h4`
     color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
@@ -99,72 +100,6 @@ const CollectibleOwnerText = styled.p`
     margin: 0;
 `;
 
-const PriceChartContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-
-    @media (min-width: ${themeBreakPoints.xl}) {
-        flex-direction: row;
-    }
-`;
-
-const PriceChartPriceAndTime = styled.div`
-    margin-bottom: 25px;
-    max-width: 150px;
-    padding-right: 15px;
-    padding-top: 25px;
-
-    @media (min-width: ${themeBreakPoints.xl}) {
-        margin-bottom: 0;
-    }
-`;
-
-const PriceChartTitle = styled.h5`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.2;
-    margin: 0 0 6px;
-`;
-
-const PriceChartValue = styled.p`
-    color: #00ae99;
-    font-size: 14px;
-    line-height: 1.2;
-    margin: 0 0 35px;
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-`;
-
-const PriceChartValueNeutral = styled(PriceChartValue)`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
-`;
-
-const PriceChartGraphWrapper = styled.div`
-    flex-grow: 1;
-    padding-bottom: 15px;
-
-    @media (min-width: ${themeBreakPoints.xl}) {
-        max-width: 365px;
-    }
-`;
-
-const PriceChartGraph = styled.div`
-    background-color: #f5f5f5;
-    height: 148px;
-    margin: 0 0 15px;
-    width: 100%;
-`;
-
-const PriceChartGraphValues = styled.div`
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-`;
-
 const TransactionContainerTableWrapper = styled.div`
     overflow-x: auto;
     width: 100%;
@@ -203,19 +138,10 @@ const CollectibleDescription = (props: Props) => {
         return null;
     }
 
-    const { currentOwner, description, order, name, assetUrl } = collectible;
-    const emptyPlaceholder = '----';
-    const price = order ? order.takerAssetAmount : null;
+    const { currentOwner, description, name, assetUrl } = collectible;
     const tableTitlesStyling = { fontWeight: '500', color: '#0036f4' };
     const typeImage = 'https://placeimg.com/32/32/any';
     const ownerImage = 'https://placeimg.com/50/50/any';
-
-    let timeRemaining = '';
-
-    if (order && order.expirationTimeSeconds) {
-        const daysAndHours = convertTimeInSecondsToDaysAndHours(order.expirationTimeSeconds);
-        timeRemaining = `${daysAndHours.days} Days ${daysAndHours.hours} Hrs`;
-    }
 
     const doesBelongToCurrentUser = currentOwner.toLowerCase() === ethAccount.toLowerCase();
 
@@ -249,30 +175,7 @@ const CollectibleDescription = (props: Props) => {
                     </>
                 ) : null}
             </Card>
-            <Card>
-                <CollectibleDescriptionInnerTitle>Price Chart</CollectibleDescriptionInnerTitle>
-                <PriceChartContainer>
-                    <PriceChartPriceAndTime>
-                        <PriceChartTitle>Current Price</PriceChartTitle>
-                        <PriceChartValue>{price ? <p>{price.toString()} ETH</p> : emptyPlaceholder}</PriceChartValue>
-                        <PriceChartTitle>Time Remaining</PriceChartTitle>
-                        <PriceChartValue>{timeRemaining ? <p>{timeRemaining}</p> : emptyPlaceholder}</PriceChartValue>
-                    </PriceChartPriceAndTime>
-                    <PriceChartGraphWrapper>
-                        <PriceChartGraph />
-                        <PriceChartGraphValues>
-                            <div>
-                                <PriceChartTitle>Start Price</PriceChartTitle>
-                                <PriceChartValueNeutral>5.00 ETH</PriceChartValueNeutral>
-                            </div>
-                            <div>
-                                <PriceChartTitle>End Price</PriceChartTitle>
-                                <PriceChartValueNeutral>3.00 ETH</PriceChartValueNeutral>
-                            </div>
-                        </PriceChartGraphValues>
-                    </PriceChartGraphWrapper>
-                </PriceChartContainer>
-            </Card>
+            <CollectiblePriceChartCard collectible={collectible} />
             <Card>
                 <CollectibleDescriptionInnerTitle>Transaction history</CollectibleDescriptionInnerTitle>
                 <TransactionContainerTableWrapper>
