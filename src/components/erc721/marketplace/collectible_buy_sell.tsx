@@ -116,7 +116,11 @@ const CollectibleBuySell = (props: Props) => {
                 onCancel={onCancel}
                 onSell={onSell}
             />
-            {expDate ? <CollectibleText>{timeSVG()} {expDate}</CollectibleText> : null}
+            {expDate ? (
+                <CollectibleText>
+                    {timeSVG()} {expDate}
+                </CollectibleText>
+            ) : null}
             {price && <CollectibleText textAlign="center">Last price: Ξ {price.toString()}</CollectibleText>}
         </BuySellWrapper>
     );

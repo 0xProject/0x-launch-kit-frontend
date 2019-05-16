@@ -36,7 +36,15 @@ interface Props {
     theme: Theme;
 }
 
-export const TradeButtonContainer: React.FC<Props> = ({ ethAccount, asset, onBuy, onSell, onCancel, theme, ...restProps }) => {
+export const TradeButtonContainer: React.FC<Props> = ({
+    ethAccount,
+    asset,
+    onBuy,
+    onSell,
+    onCancel,
+    theme,
+    ...restProps
+}) => {
     const { currentOwner, name, order } = asset;
     const isOwner = ethAccount.toLowerCase() === currentOwner.toLowerCase();
 
@@ -72,12 +80,17 @@ export const TradeButtonContainer: React.FC<Props> = ({ ethAccount, asset, onBuy
     }
 
     return (
-        <BtnStyled borderColor={borderColor} textColor={textColor} backgroundColor={backgroundColor} onClick={onClick} {...restProps}>
+        <BtnStyled
+            borderColor={borderColor}
+            textColor={textColor}
+            backgroundColor={backgroundColor}
+            onClick={onClick}
+            {...restProps}
+        >
             {buttonText}
         </BtnStyled>
     );
 };
-
 
 const TradeButton = withTheme(TradeButtonContainer);
 

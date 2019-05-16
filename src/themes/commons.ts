@@ -13,7 +13,7 @@ export interface ThemeProperties {
     buttonErrorBackgroundColor: string;
     buttonPrimaryBackgroundColor: string;
     buttonSecondaryBackgroundColor: string;
-    buttonSellBackgroundColor: string,
+    buttonSellBackgroundColor: string;
     buttonTertiaryBackgroundColor: string;
     buttonTextColor: string;
     cardBackgroundColor: string;

@@ -34,6 +34,7 @@ const CollectibleDescription = styled(CollectibleDescriptionContainer)`
     display: flex;
     flex-direction: column;
     max-width: 586px;
+    min-width: 0;
     width: 100%;
 `;
 
