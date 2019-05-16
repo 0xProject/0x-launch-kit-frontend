@@ -78,10 +78,10 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
         expirationTimeSeconds: tomorrow(),
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
-        makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,
+        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
         makerAssetData: collectibleData,
         takerAddress: ZERO_ADDRESS,
-        takerAssetAmount: side === OrderSide.Buy ? amount : amount.mul(price),
+        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
         takerAssetData: wethAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
@@ -101,10 +101,10 @@ export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide):
         expirationTimeSeconds: tomorrow(),
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
-        makerAssetAmount: side === OrderSide.Buy ? amount.mul(price) : amount,
+        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
         makerAssetData: side === OrderSide.Buy ? quoteTokenAssetData : baseTokenAssetData,
         takerAddress: ZERO_ADDRESS,
-        takerAssetAmount: side === OrderSide.Buy ? amount : amount.mul(price),
+        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
         takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
@@ -131,16 +131,16 @@ export const buildMarketOrders = (
     const ordersToFill: SignedOrder[] = [];
     const amounts: BigNumber[] = [];
     let filledAmount = new BigNumber(0);
-    for (let i = 0; i < sortedOrders.length && filledAmount.lessThan(amount); i++) {
+    for (let i = 0; i < sortedOrders.length && filledAmount.isLessThan(amount); i++) {
         const order = sortedOrders[i];
         ordersToFill.push(order.rawOrder);
 
         let available = order.size;
         if (order.filled) {
-            available = order.size.sub(order.filled);
+            available = order.size.minus(order.filled);
         }
-        if (filledAmount.plus(available).greaterThan(amount)) {
-            amounts.push(amount.sub(filledAmount));
+        if (filledAmount.plus(available).isGreaterThan(amount)) {
+            amounts.push(amount.minus(filledAmount));
             filledAmount = amount;
         } else {
             amounts.push(available);
@@ -148,12 +148,12 @@ export const buildMarketOrders = (
         }
 
         if (side === OrderSide.Buy) {
-            amounts[i] = amounts[i].mul(order.price);
+            amounts[i] = amounts[i].multipliedBy(order.price);
         }
     }
     const canBeFilled = filledAmount.eq(amount);
 
-    const roundedAmounts = amounts.map(a => a.ceil());
+    const roundedAmounts = amounts.map(a => a.integerValue(BigNumber.ROUND_CEIL));
 
     return [ordersToFill, roundedAmounts, canBeFilled];
 };
@@ -172,7 +172,7 @@ export const sumTakerAssetFillableOrders = (
     return ordersToFill.reduce((sum, order, index) => {
         // Check buildMarketOrders for more details
         const price = side === OrderSide.Buy ? 1 : order.makerAssetAmount.div(order.takerAssetAmount);
-        return sum.add(amounts[index].mul(price));
+        return sum.plus(amounts[index].multipliedBy(price));
     }, new BigNumber(0));
 };
 

@@ -32,7 +32,7 @@ const CollectibleAssetWrapper = styled.div`
     transition: box-shadow 0.15s linear;
 
     &:hover {
-        box-shadow: ${props => themeFeatures.boxShadow};
+        box-shadow: ${themeFeatures.boxShadow};
     }
 `;
 
@@ -47,7 +47,7 @@ const ImageWrapper = styled.div<{ color: string; image: string }>`
 `;
 
 const Title = styled.h2`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
