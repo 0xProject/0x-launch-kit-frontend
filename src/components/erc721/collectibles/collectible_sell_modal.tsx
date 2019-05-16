@@ -7,11 +7,12 @@ import styled, { withTheme } from 'styled-components';
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
-import { Theme } from '../../../themes/commons';
+import { Theme, themeDimensions } from '../../../themes/commons';
 import { todayInSeconds, tomorrow } from '../../../util/time_utils';
 import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
+import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
 
 interface StateProps {
     currentCollectible: Collectible | null;
@@ -35,31 +36,122 @@ interface OwnProps {
 type Props = OwnProps & DispatchProps & StateProps;
 
 interface State {
-    startPrice: BigNumber;
-    shouldIncludeEndPrice: boolean;
     endingPrice: BigNumber | null;
     expirationDate: BigNumber;
+    shouldIncludeEndPrice: boolean;
+    startPrice: BigNumber;
+}
+
+interface ImageProps {
+    imageUrl: string;
+    imageColor: string;
 }
 
 const ModalContent = styled.div`
+    width: 350px;
+`;
+
+const ModalTitleWrapper = styled.div`
     align-items: center;
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.borderColor};
+    display: flex;
+    justify-content: space-between;
+    margin: -3px -16px 15px;
+    padding: 0 16px 13px;
+`;
+
+const ModalTitle = styled.h2`
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0 15px 0 0;
+`;
+
+const CloseModalButtonStyle = styled(CloseModalButton)`
+    margin: 0;
+`;
+
+const CollectibleMainInfoWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
+
+const CollectibleImage = styled.div<ImageProps>`
+    background-color: ${props => props.imageColor};
+    background-image: url('${props => props.imageUrl}');
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border-radius: ${themeDimensions.borderRadius};
+    border: 1px solid ${props => props.theme.componentsTheme.borderColor};
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 120px;
+    margin: 0 16px 0 0;
+    width: 120px;
+`;
+
+const CollectibleMainInfo = styled.div`
     display: flex;
     flex-direction: column;
-    width: 310px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    justify-content: space-between;
+    padding: 4px 0;
+`;
+
+const CollectibleMainInfoTitle = styled.h3`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 8px;
+`;
+
+const CollectibleLink = styled.a`
+    align-items: center;
+    display: flex;
+    margin: 0 0 15px;
+    text-decoration: none;
+`;
+
+const CollectibleLinkText = styled.span`
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 6px 0 0;
+`;
+
+const CollectibleMainInfoSubtitle = styled.h4`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 0 10px;
+`;
+
+const CollectibleMainInfoValue = styled.p`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0;
 `;
 
 class CollectibleSellModalContainer extends React.Component<Props> {
     public state: State = {
-        startPrice: new BigNumber(0),
         endingPrice: null,
-        shouldIncludeEndPrice: false,
         expirationDate: tomorrow(),
+        shouldIncludeEndPrice: false,
+        startPrice: new BigNumber(0),
     };
 
     public render = () => {
         const { theme, currentCollectible } = this.props;
         const { startPrice, endingPrice, shouldIncludeEndPrice } = this.state;
-
         const dayInSeconds = 60 * 60 * 24;
         const today = todayInSeconds();
         const expirationDates = [today + dayInSeconds, today + dayInSeconds * 5, today + dayInSeconds * 7];
@@ -78,15 +170,42 @@ class CollectibleSellModalContainer extends React.Component<Props> {
 
         return (
             <Modal isOpen={currentCollectible ? true : false} style={theme.modalTheme}>
-                <CloseModalButton onClick={this._closeModal} />
+                <ModalTitleWrapper>
+                    <ModalTitle>Selling Item</ModalTitle>
+                    <CloseModalButtonStyle onClick={this._closeModal} />
+                </ModalTitleWrapper>
                 <ModalContent>
+                    <CollectibleMainInfoWrapper>
+                        <CollectibleImage
+                            imageUrl={currentCollectible ? currentCollectible.image : ''}
+                            imageColor={currentCollectible ? currentCollectible.color : ''}
+                        />
+                        <CollectibleMainInfo>
+                            <div>
+                                <CollectibleMainInfoTitle>
+                                    {currentCollectible ? currentCollectible.name : ''}
+                                </CollectibleMainInfoTitle>
+                                <CollectibleLink
+                                    href={currentCollectible ? currentCollectible.assetUrl : ''}
+                                    target="_blakn"
+                                >
+                                    <CollectibleLinkText>CryptoKitties</CollectibleLinkText>
+                                    {OutsideUrlIcon()}
+                                </CollectibleLink>
+                            </div>
+                            <div>
+                                <CollectibleMainInfoSubtitle>Last Sale Price</CollectibleMainInfoSubtitle>
+                                <CollectibleMainInfoValue>2.0624 ETH</CollectibleMainInfoValue>
+                            </div>
+                        </CollectibleMainInfo>
+                    </CollectibleMainInfoWrapper>
                     <h3>Enter a starting price</h3>
                     <BigNumberInput
                         decimals={18}
                         min={new BigNumber(0)}
                         onChange={this._updateStartingPrice}
-                        value={startPrice}
                         placeholder={'0.00'}
+                        value={startPrice}
                     />
                     <h3>Include ending price</h3>
                     <input type="checkbox" onChange={this._updateIncludeEndPrice} />
