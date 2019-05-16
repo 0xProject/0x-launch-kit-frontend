@@ -70,7 +70,7 @@ export const TradeButtonContainer: React.FC<Props> = ({
         const price = order.takerAssetAmount;
 
         backgroundColor = theme.componentsTheme.buttonSellBackgroundColor;
-        borderColor = theme.componentsTheme.buttonErrorBackgroundColor;
+        borderColor = theme.componentsTheme.buttonSellBackgroundColor;
         buttonText = `Buy for ${price.toString()} ETH`;
         onClick = onBuy;
         textColor = theme.componentsTheme.buttonTextColor;
