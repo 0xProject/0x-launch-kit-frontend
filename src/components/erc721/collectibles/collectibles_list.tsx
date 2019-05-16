@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
+import { ERC721_APP_BASE_PATH } from '../../../common/constants';
+import { getCurrentRoutePath, getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
 import { Collectible, StoreState } from '../../../util/types';
 import { Dropdown } from '../../common/dropdown';
 import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
@@ -11,6 +12,7 @@ import { CollectiblesCardList } from './collectibles_card_list';
 
 interface Props {
     collectibles: { [key: string]: Collectible };
+    routePath: string;
 }
 
 const MainContainer = styled.div`
@@ -23,10 +25,9 @@ const MainContainer = styled.div`
 const FiltersMenu = styled.div`
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
 `;
 
-const CollectibleName = styled.div`
+const Title = styled.div`
     font-size: 18px;
     line-height: 22px;
     font-weight: 600;
@@ -54,10 +55,11 @@ export const CollectiblesList = (props: Props) => {
             <ChevronDownIcon />
         </>
     );
+    const title = props.routePath === `${ERC721_APP_BASE_PATH}/my-collectibles` ? 'My Collectibles' : 'Cryptokitties';
     return (
         <MainContainer>
             <FiltersMenu>
-                <CollectibleName>CryptoKitties</CollectibleName>
+                <Title>{title}</Title>
                 <Dropdown body={null} header={newestAddedHeader} />
                 <Dropdown body={null} header={auctionsHeader} />
             </FiltersMenu>
@@ -69,6 +71,7 @@ export const CollectiblesList = (props: Props) => {
 const allMapStateToProps = (state: StoreState): Props => {
     return {
         collectibles: getOtherUsersCollectibles(state),
+        routePath: getCurrentRoutePath(state),
     };
 };
 export const AllCollectiblesListContainer = connect(allMapStateToProps)(CollectiblesList);
@@ -76,6 +79,7 @@ export const AllCollectiblesListContainer = connect(allMapStateToProps)(Collecti
 const myMapStateToProps = (state: StoreState): Props => {
     return {
         collectibles: getUserCollectibles(state),
+        routePath: getCurrentRoutePath(state),
     };
 };
 export const MyCollectiblesListContainer = connect(myMapStateToProps)(CollectiblesList);
