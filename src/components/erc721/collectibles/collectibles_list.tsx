@@ -27,7 +27,7 @@ const MainContainer = styled.div`
 const FiltersMenu = styled.div`
     display: flex;
     flex-direction: row;
-    padding: 0 48px;
+    padding: 0 48px 10px;
 `;
 
 const Title = styled.div`
