@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getCollectibleById } from '../../../store/selectors';
+import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { truncateAddress } from '../../../util/number_utils';
 import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
@@ -191,12 +191,13 @@ interface OwnProps {
 
 interface StateProps {
     collectible: Collectible | undefined;
+    ethAccount: string;
 }
 
 type Props = OwnProps & StateProps;
 
 const CollectibleDescription = (props: Props) => {
-    const { collectible, ...restProps } = props;
+    const { collectible, ethAccount, ...restProps } = props;
 
     if (!collectible) {
         return null;
@@ -215,6 +216,8 @@ const CollectibleDescription = (props: Props) => {
         const daysAndHours = convertTimeInSecondsToDaysAndHours(order.expirationTimeSeconds);
         timeRemaining = `${daysAndHours.days} Days ${daysAndHours.hours} Hrs`;
     }
+
+    const doesBelongToCurrentUser = currentOwner.toLowerCase() === ethAccount.toLowerCase();
 
     return (
         <CollectibleDescriptionWrapper {...restProps}>
@@ -238,7 +241,10 @@ const CollectibleDescription = (props: Props) => {
                         <CollectibleDescriptionInnerTitle>Current owner</CollectibleDescriptionInnerTitle>
                         <CollectibleOwnerWrapper>
                             <CollectibleOwnerImage backgroundImage={ownerImage} />
-                            <CollectibleOwnerText>${truncateAddress(currentOwner)}</CollectibleOwnerText>
+                            <CollectibleOwnerText>
+                                ${truncateAddress(currentOwner)}
+                                {doesBelongToCurrentUser && ' (you)'}
+                            </CollectibleOwnerText>
                         </CollectibleOwnerWrapper>
                     </>
                 ) : null}
@@ -248,9 +254,13 @@ const CollectibleDescription = (props: Props) => {
                 <PriceChartContainer>
                     <PriceChartPriceAndTime>
                         <PriceChartTitle>Current Price</PriceChartTitle>
-                        <PriceChartValue>{price ? <p>{price.toString()} ETH</p> : emptyPlaceholder}</PriceChartValue>
+                        <PriceChartValue>
+                            {price ? <span>{price.toString()} ETH</span> : emptyPlaceholder}
+                        </PriceChartValue>
                         <PriceChartTitle>Time Remaining</PriceChartTitle>
-                        <PriceChartValue>{timeRemaining ? <p>{timeRemaining}</p> : emptyPlaceholder}</PriceChartValue>
+                        <PriceChartValue>
+                            {timeRemaining ? <span>{timeRemaining}</span> : emptyPlaceholder}
+                        </PriceChartValue>
                     </PriceChartPriceAndTime>
                     <PriceChartGraphWrapper>
                         <PriceChartGraph />
@@ -321,6 +331,7 @@ const CollectibleDescription = (props: Props) => {
 const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
     return {
         collectible: getCollectibleById(state, props),
+        ethAccount: getEthAccount(state),
     };
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { selectCollectible } from '../../../store/collectibles/actions';
+import { cancelOrderCollectible, selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { startBuyCollectibleSteps } from '../../../store/ui/actions';
 import { themeDimensions } from '../../../themes/commons';
@@ -82,49 +82,105 @@ interface StateProps {
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible) => any;
-    startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
+    onStartBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
+    onCancelOrderCollectible: (order: any) => any;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const CollectibleBuySell = (props: Props) => {
-    const { collectible, ethAccount, ...restProps } = props;
-    if (!collectible) {
-        return null;
-    }
-    const { color, image, order } = collectible;
-
-    const price = order ? order.takerAssetAmount : null;
-
-    const onBuy = () => {
-        return props.startBuyCollectibleSteps(collectible, ethAccount);
+class CollectibleBuySell extends React.Component<Props> {
+    public state = {
+        isLoading: false,
     };
-    const expDate =
-        order && order.expirationTimeSeconds ? getEndDateStringFromTimeInSeconds(order.expirationTimeSeconds) : null;
-    const onSell = () => {
-        props.updateSelectedCollectible(collectible);
-    };
-    const onCancel = () => window.alert('cancel');
 
-    return (
-        <BuySellWrapper {...restProps}>
-            <Image imageUrl={image} imageColor={color} />
-            <CollectibleTradeButton
-                asset={collectible}
-                ethAccount={ethAccount}
-                onBuy={onBuy}
-                onCancel={onCancel}
-                onSell={onSell}
-            />
-            {expDate ? (
-                <CollectibleText>
-                    {timeSVG()} {expDate}
-                </CollectibleText>
-            ) : null}
-            {price && <CollectibleText textAlign="center">Last price: Ξ {price.toString()}</CollectibleText>}
-        </BuySellWrapper>
-    );
-};
+    public render = () => {
+        const { isLoading } = this.state;
+        const {
+            collectible,
+            ethAccount,
+            onCancelOrderCollectible,
+            onStartBuyCollectibleSteps,
+            ...restProps
+        } = this.props;
+        if (!collectible) {
+            return null;
+        }
+        const { color, image, order } = collectible;
+
+        const price = order ? order.takerAssetAmount : null;
+
+        const expDate =
+            order && order.expirationTimeSeconds
+                ? getEndDateStringFromTimeInSeconds(order.expirationTimeSeconds)
+                : null;
+
+        return (
+            <BuySellWrapper {...restProps}>
+                <Image imageUrl={image} imageColor={color} />
+                <CollectibleTradeButton
+                    asset={collectible}
+                    ethAccount={ethAccount}
+                    onBuy={this._onBuy}
+                    onCancel={this._onCancel}
+                    onSell={this._onSell}
+                    isDisabled={isLoading}
+                />
+                {expDate ? (
+                    <CollectibleText>
+                        {timeSVG()} {expDate}
+                    </CollectibleText>
+                ) : null}
+                {price && <CollectibleText textAlign="center">Last price: Ξ {price.toString()}</CollectibleText>}
+            </BuySellWrapper>
+        );
+    };
+
+    private readonly _onCancel = async () => {
+        this.setState({ isLoading: true });
+
+        try {
+            const { collectible, onCancelOrderCollectible } = this.props;
+            if (collectible && collectible.order) {
+                await onCancelOrderCollectible(collectible.order);
+            }
+        } catch (err) {
+            window.alert(`Could not cancel the specified order`);
+        } finally {
+            this.setState({ isLoading: false });
+        }
+    };
+
+    private readonly _onSell = async () => {
+        this.setState({ isLoading: true });
+
+        try {
+            const { collectible, updateSelectedCollectible } = this.props;
+            if (collectible) {
+                updateSelectedCollectible(collectible);
+            }
+        } catch (err) {
+            window.alert(`Could not sell the specified order`);
+        } finally {
+            this.setState({ isLoading: false });
+        }
+    };
+
+    private readonly _onBuy = async () => {
+        this.setState({ isLoading: true });
+
+        try {
+            const { collectible, ethAccount, onStartBuyCollectibleSteps } = this.props;
+            if (collectible) {
+                // tslint:disable-next-line:no-floating-promises
+                onStartBuyCollectibleSteps(collectible, ethAccount);
+            }
+        } catch (err) {
+            window.alert(`Could not sell the specified order`);
+        } finally {
+            this.setState({ isLoading: false });
+        }
+    };
+}
 
 const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
     return {
@@ -136,8 +192,9 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
-        startBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
+        onStartBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
             dispatch(startBuyCollectibleSteps(collectible, ethAccount)),
+        onCancelOrderCollectible: (order: any) => dispatch(cancelOrderCollectible(order)),
     };
 };
 

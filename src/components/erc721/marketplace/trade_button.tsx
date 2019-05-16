@@ -3,6 +3,7 @@ import styled, { withTheme } from 'styled-components';
 
 import { Theme } from '../../../themes/commons';
 import { getLogger } from '../../../util/logger';
+import { isDutchAuction } from '../../../util/orders';
 import { Collectible } from '../../../util/types';
 import { Button as ButtonBase } from '../../common/button';
 
@@ -30,6 +31,7 @@ BtnStyled.defaultProps = {
 interface Props {
     asset: Collectible;
     ethAccount: string;
+    isDisabled: boolean;
     onBuy: () => void;
     onCancel: () => void;
     onSell: () => void;
@@ -54,7 +56,7 @@ export const TradeButtonContainer: React.FC<Props> = ({
     let buttonText: string;
     let onClick: any;
 
-    if (isOwner && order) {
+    if (isOwner && order && !isDutchAuction(order)) {
         backgroundColor = 'transparent';
         borderColor = theme.componentsTheme.buttonErrorBackgroundColor;
         buttonText = 'Cancel Sale';
