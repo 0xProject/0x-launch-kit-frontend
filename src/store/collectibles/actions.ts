@@ -3,9 +3,12 @@ import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
 import { cancelSignedOrder } from '../../services/orders';
+import { getLogger } from '../../util/logger';
 import { isDutchAuction } from '../../util/orders';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount, getGasPriceInWei } from '../selectors';
+
+const logger = getLogger('Collectibles::Actions');
 
 export const fetchAllCollectiblesAsync = createAsyncAction(
     'collectibles/ALL_COLLECTIBLES_fetch_request',
@@ -35,6 +38,7 @@ export const getAllCollectibles: ThunkCreator = () => {
             const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(ethAccount, networkId);
             dispatch(fetchAllCollectiblesAsync.success({ collectibles }));
         } catch (err) {
+            logger.error('There was a problem fetching the collectibles', err);
             dispatch(fetchAllCollectiblesAsync.failure(err));
         }
     };
