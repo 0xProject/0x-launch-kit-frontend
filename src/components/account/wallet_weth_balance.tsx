@@ -21,6 +21,7 @@ interface StateProps {
     web3State: Web3State;
     ethInUsd: BigNumber | null;
 }
+
 interface DispatchProps {
     onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
 }
