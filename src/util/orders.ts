@@ -11,13 +11,13 @@ interface BuildSellCollectibleOrderParams {
     account: string;
     amount: BigNumber;
     exchangeAddress: string;
+    expirationDate: BigNumber;
     wethAddress: string;
     price: BigNumber;
 }
 
 interface DutchAuctionOrderParams extends BuildSellCollectibleOrderParams {
     endPrice: BigNumber;
-    expirationDate: BigNumber;
     senderAddress: string;
 }
 
@@ -70,12 +70,21 @@ export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParam
 };
 
 export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
-    const { account, collectibleId, collectibleAddress, amount, price, exchangeAddress, wethAddress } = params;
+    const {
+        account,
+        collectibleId,
+        collectibleAddress,
+        amount,
+        price,
+        exchangeAddress,
+        expirationDate,
+        wethAddress,
+    } = params;
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
     return {
         exchangeAddress,
-        expirationTimeSeconds: tomorrow(),
+        expirationTimeSeconds: expirationDate,
         feeRecipientAddress: FEE_RECIPIENT,
         makerAddress: account,
         makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
