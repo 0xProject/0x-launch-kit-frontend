@@ -37,7 +37,7 @@ const CollectibleAssetWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div<{ color: string; image: string }>`
-    background-color: ${props => props.color};
+    background-color: ${props => props.color || props.theme.componentsTheme.cardBackgroundColor};
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;

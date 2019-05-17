@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
+import { themeBreakPoints } from '../../../themes/commons';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { CollectiblesCardList } from './collectibles_card_list';
@@ -27,13 +28,18 @@ const MainContainer = styled.div`
 const FiltersMenu = styled.div`
     display: flex;
     flex-direction: row;
-    padding: 0 48px;
+    margin: 0 auto 22px;
+    max-width: ${themeBreakPoints.xxl};
+    padding: 24px 0 0;
+    width: 100%;
 `;
 
-const Title = styled.div`
+const Title = styled.h1`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-size: 18px;
-    line-height: 22px;
     font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
 `;
 
 export const CollectiblesList = (props: Props) => {
