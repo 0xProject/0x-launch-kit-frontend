@@ -40,8 +40,8 @@ export interface ThemeProperties {
     iconUnlockedColor: string;
     inactiveTabBackgroundColor: string;
     lightGray: string;
-    logoColor: string;
-    logoTextColor: string;
+    logoERC20Color: string;
+    logoERC20TextColor: string;
     logoERC721Color: string;
     logoERC721TextColor: string;
     marketsSearchFieldBackgroundColor: string;

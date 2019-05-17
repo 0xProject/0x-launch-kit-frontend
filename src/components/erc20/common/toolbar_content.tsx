@@ -44,7 +44,7 @@ const LogoHeader = styled(Logo)`
 
 const LogoSVGStyled = styled(LogoSvg)`
     path {
-        fill: ${props => props.theme.componentsTheme.logoColor};
+        fill: ${props => props.theme.componentsTheme.logoERC20Color};
     }
 `;
 
@@ -77,7 +77,7 @@ const ToolbarContent = (props: Props) => {
                 image={<LogoSVGStyled />}
                 onClick={handleLogoClick}
                 text="Launch Kit"
-                textColor={props.theme.componentsTheme.logoTextColor}
+                textColor={props.theme.componentsTheme.logoERC20TextColor}
             />
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
         </>
