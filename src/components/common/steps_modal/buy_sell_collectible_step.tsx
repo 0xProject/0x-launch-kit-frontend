@@ -27,8 +27,6 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    // refreshOrders: () => any; // TODO: once the integration with openSea is done, this should be uncommented
-    // TODO: later this should contain something like 'notifySellCollectible'
     createSignedCollectibleOrder: (
         collectible: Collectible,
         side: OrderSide,
@@ -147,7 +145,6 @@ const mapDispatchToProps = (dispatch: any) => {
             expirationDate: BigNumber,
             endPrice: BigNumber | null,
         ) => dispatch(createSignedCollectibleOrder(collectible, side, startPrice, expirationDate, endPrice)),
-        // refreshOrders: () => dispatch(getUserCollectibles()),
         submitBuyCollectible: (order: SignedOrder, ethAccount: string) =>
             dispatch(submitBuyCollectible(order, ethAccount)),
     };
