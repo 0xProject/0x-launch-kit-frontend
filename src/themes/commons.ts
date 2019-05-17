@@ -42,6 +42,8 @@ export interface ThemeProperties {
     lightGray: string;
     logoColor: string;
     logoTextColor: string;
+    logoERC721Color: string;
+    logoERC721TextColor: string;
     marketsSearchFieldBackgroundColor: string;
     marketsSearchFieldBorderColor: string;
     marketsSearchFieldTextColor: string;

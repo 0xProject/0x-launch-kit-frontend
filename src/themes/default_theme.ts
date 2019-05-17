@@ -60,6 +60,8 @@ const whiteThemeColors: ThemeProperties = {
     lightGray: '#B9B9B9',
     logoColor: '#0029FF',
     logoTextColor: '#000',
+    logoERC721Color: '#00AE99',
+    logoERC721TextColor: '#000',
     marketsSearchFieldBackgroundColor: '#eaeaea',
     marketsSearchFieldBorderColor: '#dedede',
     marketsSearchFieldTextColor: '#333',

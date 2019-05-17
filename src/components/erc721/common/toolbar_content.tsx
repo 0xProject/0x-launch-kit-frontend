@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as LogoSvg } from '../../../assets/icons/erc721_logo.svg';
 import { goToHomeErc721, goToMyCollectibles } from '../../../store/router/actions';
-import { themeBreakPoints } from '../../../themes/commons';
+import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { Logo } from '../../common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../common/toolbar';
 import { NotificationsDropdownContainer } from '../../notifications/notifications_dropdown';
@@ -17,7 +17,11 @@ interface DispatchProps {
     goToMyCollectibles: () => any;
 }
 
-type Props = DispatchProps;
+interface OwnProps {
+    theme: Theme;
+}
+
+type Props = DispatchProps & OwnProps;
 
 const MyWalletLink = styled.a`
     align-items: center;
@@ -38,6 +42,12 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
+const LogoSVGStyled = styled(LogoSvg)`
+    path {
+        fill: ${props => props.theme.componentsTheme.logoERC721Color};
+    }
+`;
+
 const WalletDropdown = styled(WalletConnectionContentContainer)`
     display: none;
     @media (min-width: ${themeBreakPoints.sm}) {
@@ -52,7 +62,14 @@ const ToolbarContent = (props: Props) => {
         e.preventDefault();
         props.onGoToHome();
     };
-    const startContent = <LogoHeader text="0x Collectibles" image={<LogoSvg />} onClick={handleLogoClick} />;
+    const startContent = (
+        <LogoHeader
+            image={<LogoSVGStyled />}
+            onClick={handleLogoClick}
+            text="0x Collectibles"
+            textColor={props.theme.componentsTheme.logoERC721TextColor}
+        />
+    );
 
     const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -79,9 +96,11 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const ToolbarContentContainer = connect(
-    null,
-    mapDispatchToProps,
-)(ToolbarContent);
+const ToolbarContentContainer = withTheme(
+    connect(
+        null,
+        mapDispatchToProps,
+    )(ToolbarContent),
+);
 
 export { ToolbarContent, ToolbarContentContainer };

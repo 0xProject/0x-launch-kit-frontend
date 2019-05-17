@@ -6,6 +6,7 @@ import { themeBreakPoints } from '../../themes/commons';
 interface Props {
     image: React.ReactNode;
     text: string;
+    textColor?: string;
     onClick: (event: MouseEvent) => void;
 }
 
@@ -16,14 +17,10 @@ const LogoLink = styled.a<any>`
     height: 33px;
     font-family: 'Inter var', sans-serif;
     text-decoration: none;
-
-    path {
-        fill: ${props => props.theme.componentsTheme.logoColor};
-    }
 `;
 
-const LogoText = styled.h1`
-    color: ${props => props.theme.componentsTheme.logoTextColor};
+const LogoText = styled.h1<{ textColor?: string }>`
+    color: ${props => props.textColor};
     display: none;
     font-size: 18px;
     font-weight: 500;
@@ -35,12 +32,16 @@ const LogoText = styled.h1`
     }
 `;
 
+LogoText.defaultProps = {
+    textColor: '#000',
+};
+
 export const Logo: React.FC<Props> = props => {
-    const { image, text, onClick, ...restProps } = props;
+    const { image, text, textColor, onClick, ...restProps } = props;
     return (
         <LogoLink onClick={onClick} {...restProps}>
             {image}
-            <LogoText>{text}</LogoText>
+            <LogoText textColor={textColor}>{text}</LogoText>
         </LogoLink>
     );
 };

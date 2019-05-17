@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as LogoSvg } from '../../../assets/icons/erc20_logo.svg';
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
 import { goToHomeErc20, goToWallet } from '../../../store/actions';
-import { themeBreakPoints } from '../../../themes/commons';
+import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
 import { MarketsDropdownContainer } from './markets_dropdown';
@@ -17,7 +17,11 @@ interface DispatchProps {
     onGoToWallet: () => any;
 }
 
-type Props = DispatchProps;
+interface OwnProps {
+    theme: Theme;
+}
+
+type Props = DispatchProps & OwnProps;
 
 const MyWalletLink = styled.a`
     align-items: center;
@@ -36,6 +40,12 @@ const MyWalletLink = styled.a`
 
 const LogoHeader = styled(Logo)`
     ${separatorTopbar}
+`;
+
+const LogoSVGStyled = styled(LogoSvg)`
+    path {
+        fill: ${props => props.theme.componentsTheme.logoColor};
+    }
 `;
 
 const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
@@ -63,7 +73,12 @@ const ToolbarContent = (props: Props) => {
     };
     const startContent = (
         <>
-            <LogoHeader text="Launch Kit" image={<LogoSvg />} onClick={handleLogoClick} />
+            <LogoHeader
+                image={<LogoSVGStyled />}
+                onClick={handleLogoClick}
+                text="Launch Kit"
+                textColor={props.theme.componentsTheme.logoTextColor}
+            />
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
         </>
     );
@@ -92,9 +107,11 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const ToolbarContentContainer = connect(
-    null,
-    mapDispatchToProps,
-)(ToolbarContent);
+const ToolbarContentContainer = withTheme(
+    connect(
+        null,
+        mapDispatchToProps,
+    )(ToolbarContent),
+);
 
 export { ToolbarContent, ToolbarContentContainer };

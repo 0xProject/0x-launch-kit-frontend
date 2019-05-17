@@ -61,6 +61,8 @@ const darkThemeColors: ThemeProperties = {
     lightGray: '#B9B9B9',
     logoColor: '#fff',
     logoTextColor: '#fff',
+    logoERC721Color: '#00AE99',
+    logoERC721TextColor: '#fff',
     marketsSearchFieldBackgroundColor: '#404041',
     marketsSearchFieldBorderColor: '#404041',
     marketsSearchFieldTextColor: '#BFBFBF',
