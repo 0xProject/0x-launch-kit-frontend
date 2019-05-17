@@ -128,7 +128,7 @@ class CollectibleBuySell extends React.Component<Props> {
                 />
                 {expDate ? (
                     <CollectibleText>
-                        {timeSVG()} {expDate}
+                        {timeSVG()} Ends {expDate}
                     </CollectibleText>
                 ) : null}
                 {price && (

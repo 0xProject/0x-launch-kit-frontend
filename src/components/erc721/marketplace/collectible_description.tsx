@@ -168,7 +168,7 @@ const CollectibleDescription = (props: Props) => {
                         <CollectibleOwnerWrapper>
                             <CollectibleOwnerImage backgroundImage={ownerImage} />
                             <CollectibleOwnerText>
-                                ${truncateAddress(currentOwner)}
+                                {truncateAddress(currentOwner)}
                                 {doesBelongToCurrentUser && ' (you)'}
                             </CollectibleOwnerText>
                         </CollectibleOwnerWrapper>
