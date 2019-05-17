@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import {
     SHOULD_ENABLE_NO_METAMASK_PROMPT,
@@ -109,9 +110,9 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const AppContainer = connect(
+const AppContainer = withRouter(connect(
     mapStateToProps,
     mapDispatchToProps,
-)(App);
+)(App) as any);
 
 export { App, AppContainer };
