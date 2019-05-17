@@ -38,7 +38,7 @@ export class Opensea implements CollectibleMetadataSource {
     public async fetchIndividualCollectibleAsync(tokenId: string, networkId: number): Promise<Collectible | null> {
         const metadataSourceUrl = this._endpointsUrls[networkId];
         const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
-        const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&token_id=${tokenId}`;
+        const url = `${metadataSourceUrl}/asset/${contractAddress}/${tokenId}`;
         const assetsResponse = await fetch(url);
         const assetsResponseJson = await assetsResponse.json();
         return Opensea.getAssetAsCollectible(assetsResponseJson);
