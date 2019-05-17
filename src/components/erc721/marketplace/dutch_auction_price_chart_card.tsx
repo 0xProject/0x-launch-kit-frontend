@@ -44,6 +44,7 @@ export const PriceChartTitle = styled.h5`
 
 export const PriceChartValue = styled.p`
     color: #00ae99;
+    font-feature-settings: 'calt' 0;
     font-size: 14px;
     line-height: 1.2;
     margin: 0 0 35px;
