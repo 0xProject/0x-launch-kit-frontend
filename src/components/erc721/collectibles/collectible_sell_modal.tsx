@@ -214,11 +214,12 @@ const ButtonStyled = styled(Button)`
     width: 100%;
 `;
 
-const SwitchWrapper = styled.div`
-    background: #00ae99;
+const SwitchWrapper = styled.div<{ isActive?: boolean }>`
+    background: ${props => (props.isActive ? '#00ae99' : '#ccc')};
     border-radius: 9px;
     cursor: pointer;
     height: 17px;
+    overflow: hidden;
     position: relative;
     width: 31px;
 `;
@@ -332,7 +333,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                     </FormRow>
                     <FormRow>
                         <CollectibleLabel>Include ending price</CollectibleLabel>
-                        <SwitchWrapper>
+                        <SwitchWrapper isActive={this.state.shouldIncludeEndPrice}>
                             <SwitchInput
                                 checked={this.state.shouldIncludeEndPrice}
                                 onChange={this._updateIncludeEndPrice}
