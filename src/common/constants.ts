@@ -74,9 +74,8 @@ export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SO
 
 export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
 
-// CryptoKitties addresses
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
-    1: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
-    4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
-    50: '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb',
+    1: '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d', // mainnet axie
+    4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf', // rinkeby cryptokitties
+    50: '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb', // ganache mock erc721
 };
