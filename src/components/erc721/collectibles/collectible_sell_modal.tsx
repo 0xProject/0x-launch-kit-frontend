@@ -368,12 +368,34 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                             <option value={expirationDates[2]}>7 days</option>
                         </SelectStyled>
                     </FormRow>
-                    <ButtonStyled onClick={this._openStepsModals} variant="error">
+                    <ButtonStyled onClick={this._openStepsModals} disabled={this._isFormInvalid()} variant="error">
                         Sell
                     </ButtonStyled>
                 </ModalContent>
             </Modal>
         );
+    };
+
+    private readonly _isFormInvalid = (): boolean => {
+        const { shouldIncludeEndPrice, startPrice, endingPrice } = this.state;
+
+        // Start price empty => invalid
+        if (startPrice == null || startPrice.isZero()) {
+            return true;
+        }
+
+        if (shouldIncludeEndPrice) {
+            // End price empty => invalid
+            if (endingPrice === null || endingPrice.isZero()) {
+                return true;
+            }
+            // End price greater than start price => invalid
+            if (endingPrice.isGreaterThan(startPrice) || endingPrice.isEqualTo(startPrice)) {
+                return true;
+            }
+        }
+
+        return false;
     };
 
     private readonly _updateIncludeEndPrice = (event: any) => {
