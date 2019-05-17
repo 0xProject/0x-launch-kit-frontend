@@ -9,8 +9,4 @@ export const availableMarkets: CurrencyPair[] = [
         base: TokenSymbol.Mkr,
         quote: TokenSymbol.Weth,
     },
-    {
-        base: TokenSymbol.Zrx,
-        quote: TokenSymbol.Mkr,
-    },
 ];
