@@ -4,6 +4,7 @@ import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../common/constants';
 import { getRelayer, Relayer } from '../services/relayer';
 import { getKnownTokens } from '../util/known_tokens';
 import { getLogger } from '../util/logger';
+import { sleep } from '../util/sleep';
 import { Collectible, CollectibleMetadataSource } from '../util/types';
 
 import { getConfiguredSource } from './collectibles_metadata_sources';
@@ -42,6 +43,8 @@ export class CollectiblesMetadataGateway {
 
         // Step 2: Get all the user's collectibles and add the order
         const collectibles = await source.fetchAllUserCollectiblesAsync(userAddress, networkId);
+        // TODO remove this when we get OpenSea API key
+        await sleep(1000);
         const collectiblesWithOrders: Collectible[] = collectibles.map(collectible => {
             if (tokenIdToOrder[collectible.tokenId]) {
                 return {
@@ -54,15 +57,20 @@ export class CollectiblesMetadataGateway {
         });
 
         // Step 3: Get collectibles that are not from the user
-        const collectiblesToFetch: any[] = [];
+        const collectiblesFetched: any[] = [];
         for (const tokenId of Object.keys(tokenIdToOrder)) {
             const collectibleSearch = collectiblesWithOrders.find(collectible => collectible.tokenId === tokenId);
             if (!collectibleSearch) {
-                collectiblesToFetch.push(source.fetchIndividualCollectibleAsync(tokenId, networkId));
+                const collectibleFetched = await source.fetchIndividualCollectibleAsync(tokenId, networkId);
+                collectiblesFetched.push({
+                    ...collectibleFetched,
+                    order: tokenIdToOrder[tokenId],
+                });
+                // TODO remove this when we get OpenSea API key
+                await sleep(1000);
             }
         }
-        const collectiblesToFetchResolved = await Promise.all(collectiblesToFetch);
-        collectiblesWithOrders.push(...collectiblesToFetchResolved);
+        collectiblesWithOrders.push(...collectiblesFetched);
 
         return collectiblesWithOrders;
     };
