@@ -68,6 +68,7 @@ export const CollectibleDescriptionInnerTitle = styled.h4`
 
 const CollectibleDescriptionText = styled.p`
     color: ${props => props.theme.componentsTheme.cardTitleColor};
+    font-feature-settings: 'calt' 0;
     font-size: 14px;
     line-height: 1.6;
     margin: 0 0 20px;
@@ -95,6 +96,7 @@ const CollectibleOwnerImage = styled.span<{ backgroundImage: string }>`
 
 const CollectibleOwnerText = styled.p`
     color: ${props => props.theme.componentsTheme.cardTitleColor};
+    font-feature-settings: 'calt' 0;
     font-size: 14px;
     line-height: 1.2;
     margin: 0;
@@ -107,6 +109,12 @@ const TransactionContainerTableWrapper = styled.div`
 
 const ValuePlaceholder = styled.span`
     color: #d1d1d1;
+`;
+
+const CollectibleCard = styled(Card)`
+    > div {
+        min-height: 0;
+    }
 `;
 
 const arrowSVG = () => {
@@ -147,7 +155,7 @@ const CollectibleDescription = (props: Props) => {
 
     return (
         <CollectibleDescriptionWrapper {...restProps}>
-            <Card>
+            <CollectibleCard>
                 <CollectibleDescriptionTitleWrapper>
                     <CollectibleDescriptionTitle>{name}</CollectibleDescriptionTitle>
                     <CollectibleDescriptionType href={assetUrl} target="_blank">
@@ -174,9 +182,9 @@ const CollectibleDescription = (props: Props) => {
                         </CollectibleOwnerWrapper>
                     </>
                 ) : null}
-            </Card>
+            </CollectibleCard>
             <DutchAuctionPriceChartCard collectible={collectible} />
-            <Card>
+            <CollectibleCard>
                 <CollectibleDescriptionInnerTitle>Transaction history</CollectibleDescriptionInnerTitle>
                 <TransactionContainerTableWrapper>
                     <Table>
@@ -222,7 +230,7 @@ const CollectibleDescription = (props: Props) => {
                         </TBody>
                     </Table>
                 </TransactionContainerTableWrapper>
-            </Card>
+            </CollectibleCard>
         </CollectibleDescriptionWrapper>
     );
 };
