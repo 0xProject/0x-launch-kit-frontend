@@ -44,7 +44,7 @@ export const getAllCollectibles: ThunkCreator = () => {
     };
 };
 
-export const submitBuyCollectible: ThunkCreator<Promise<any>> = (order: SignedOrder, ethAccount: string) => {
+export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: SignedOrder, ethAccount: string) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const contractWrappers = await getContractWrappers();
         const web3Wrapper = await getWeb3Wrapper();
@@ -80,7 +80,8 @@ export const submitBuyCollectible: ThunkCreator<Promise<any>> = (order: SignedOr
         await web3Wrapper.awaitTransactionSuccessAsync(tx);
 
         // tslint:disable-next-line:no-floating-promises
-        return dispatch(getAllCollectibles());
+        dispatch(getAllCollectibles());
+        return tx;
     };
 };
 
