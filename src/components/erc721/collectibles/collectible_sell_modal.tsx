@@ -269,12 +269,16 @@ const iconETH = () => {
     );
 };
 
+const initialState = {
+    endingPrice: null,
+    expirationDate: tomorrow(),
+    shouldIncludeEndPrice: false,
+    startPrice: new BigNumber(0),
+};
+
 class CollectibleSellModalContainer extends React.Component<Props> {
     public state: State = {
-        endingPrice: null,
-        expirationDate: tomorrow(),
-        shouldIncludeEndPrice: false,
-        startPrice: new BigNumber(0),
+        ...initialState,
     };
 
     public render = () => {
@@ -418,6 +422,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
     };
 
     private readonly _closeModal = () => {
+        this.setState({ ...initialState });
         this.props.updateSelectedCollectible(null);
     };
 
