@@ -44,10 +44,12 @@ export const getAllCollectibles: ThunkCreator = () => {
     };
 };
 
-export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: SignedOrder, ethAccount: string) => {
+export const submitBuyCollectible: ThunkCreator<Promise<any>> = (order: SignedOrder, ethAccount: string) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const contractWrappers = await getContractWrappers();
+        const web3Wrapper = await getWeb3Wrapper();
 
+        let tx;
         if (isDutchAuction(order)) {
             const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetailsAsync(order);
             const currentAuctionAmount = auctionDetails.currentAmount;
@@ -60,12 +62,11 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
                 takerAssetAmount: order.makerAssetAmount,
             };
 
-            const web3 = await getWeb3Wrapper();
-            const provider = new MetamaskSubprovider(web3.getProvider());
+            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
             const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
-            return contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, TX_DEFAULTS);
+            tx = await contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, TX_DEFAULTS);
         } else {
-            return contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+            tx = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
                 [order],
                 order.makerAssetAmount,
                 ethAccount,
@@ -76,6 +77,10 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
                 TX_DEFAULTS,
             );
         }
+        await web3Wrapper.awaitTransactionSuccessAsync(tx);
+
+        // tslint:disable-next-line:no-floating-promises
+        return dispatch(getAllCollectibles());
     };
 };
 
