@@ -37,7 +37,7 @@ export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide):
         takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
-        salt: new BigNumber(Date.now()),
+        salt: new BigNumber(new Date().valueOf()),
         senderAddress: '0x0000000000000000000000000000000000000000',
     };
 };

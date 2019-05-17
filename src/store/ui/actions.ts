@@ -3,6 +3,7 @@ import { createAction } from 'typesafe-actions';
 
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { getContractWrappers } from '../../services/contract_wrappers';
+import { getRelayer } from '../../services/relayer';
 import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders } from '../../util/orders';
@@ -168,7 +169,7 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
             const web3Wrapper = await getWeb3Wrapper();
             const contractWrappers = await getContractWrappers();
 
-            const order = buildLimitOrder(
+            let order = buildLimitOrder(
                 {
                     account: ethAccount,
                     amount,
@@ -179,7 +180,11 @@ export const createSignedOrder = (amount: BigNumber, price: BigNumber, side: Ord
                 },
                 side,
             );
-
+            const orderResult = await getRelayer().client.getOrderConfigAsync(order);
+            order = {
+                ...order,
+                ...orderResult,
+            };
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
             return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
         } catch (error) {
