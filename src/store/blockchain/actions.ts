@@ -427,6 +427,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                             amount: new BigNumber('1'),
                             price: startPrice,
                             exchangeAddress,
+                            expirationDate,
                             collectibleId,
                             collectibleAddress,
                             wethAddress,
