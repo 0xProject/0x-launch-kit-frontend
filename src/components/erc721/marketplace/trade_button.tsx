@@ -1,9 +1,13 @@
+import { BigNumber } from '0x.js';
 import React from 'react';
 import styled, { withTheme } from 'styled-components';
 
+import { ETH_DECIMALS } from '../../../common/constants';
 import { Theme } from '../../../themes/commons';
+import { getCollectiblePrice } from '../../../util/collectibles';
 import { getLogger } from '../../../util/logger';
 import { isDutchAuction } from '../../../util/orders';
+import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible } from '../../../util/types';
 import { Button as ButtonBase } from '../../common/button';
 
@@ -69,11 +73,10 @@ export const TradeButtonContainer: React.FC<Props> = ({
         onClick = onSell;
         textColor = theme.componentsTheme.buttonTextColor;
     } else if (!isOwner && order) {
-        const price = order.takerAssetAmount;
-
+        const price = getCollectiblePrice(asset) as BigNumber;
         backgroundColor = theme.componentsTheme.buttonSellBackgroundColor;
         borderColor = theme.componentsTheme.buttonSellBackgroundColor;
-        buttonText = `Buy for ${price.toString()} ETH`;
+        buttonText = `Buy for ${tokenAmountInUnits(price, ETH_DECIMALS)} ETH`;
         onClick = onBuy;
         textColor = theme.componentsTheme.buttonTextColor;
     } else {

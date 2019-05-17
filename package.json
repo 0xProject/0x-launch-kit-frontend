@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "0x.js": "^6.0.8",
+        "0x.js": "^6.0.9",
         "@0x/connect": "^5.0.8",
         "@0x/web3-wrapper": "^6.0.6",
         "connected-react-router": "^6.2.2",

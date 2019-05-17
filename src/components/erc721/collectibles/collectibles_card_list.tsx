@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
+import { getCollectiblePrice } from '../../../util/collectibles';
 import { Collectible } from '../../../util/types';
 
 import { CollectibleAssetContainer } from './collectible_details';
@@ -43,8 +44,8 @@ export const CollectiblesCardList = (props: Props) => {
         <CollectiblesListOverflow>
             <CollectiblesList>
                 {collectibles.map((item, index) => {
-                    const { name, image, color, order, tokenId } = item;
-                    const price = order ? order.takerAssetAmount : null;
+                    const { name, image, color, tokenId } = item;
+                    const price = getCollectiblePrice(item);
                     return (
                         <CollectibleAssetContainer
                             color={color}
