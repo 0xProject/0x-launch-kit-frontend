@@ -8,6 +8,7 @@ const modalThemeStyle: ThemeModalStyle = {
         flexGrow: '0',
         left: 'auto',
         minWidth: '350px',
+        padding: '16px',
         position: 'relative',
         right: 'auto',
         top: 'auto',

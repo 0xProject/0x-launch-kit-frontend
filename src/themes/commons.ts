@@ -82,6 +82,7 @@ export interface ThemeModalStyle {
         flexGrow: string;
         left: string;
         minWidth: string;
+        padding: string;
         position: string;
         right: string;
         top: string;

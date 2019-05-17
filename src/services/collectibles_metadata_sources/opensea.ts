@@ -17,7 +17,7 @@ export class Opensea implements CollectibleMetadataSource {
         return {
             tokenId: asset.token_id,
             name: asset.name,
-            color: `#${asset.background_color}`,
+            color: asset.background_color ? `#${asset.background_color}` : '',
             image: asset.image_url,
             currentOwner: asset.owner.address,
             assetUrl: asset.external_link,

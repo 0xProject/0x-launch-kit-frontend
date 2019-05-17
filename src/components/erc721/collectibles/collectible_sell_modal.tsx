@@ -2,16 +2,18 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components';
+import styled, { css, withTheme } from 'styled-components';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
-import { Theme } from '../../../themes/commons';
+import { Theme, themeDimensions } from '../../../themes/commons';
 import { todayInSeconds, tomorrow } from '../../../util/time_utils';
 import { Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
+import { Button } from '../../common/button';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
+import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
 
 interface StateProps {
     currentCollectible: Collectible | null;
@@ -35,68 +37,340 @@ interface OwnProps {
 type Props = OwnProps & DispatchProps & StateProps;
 
 interface State {
-    startPrice: BigNumber;
-    shouldIncludeEndPrice: boolean;
     endingPrice: BigNumber | null;
     expirationDate: BigNumber;
+    shouldIncludeEndPrice: boolean;
+    startPrice: BigNumber;
+}
+
+interface ImageProps {
+    imageUrl: string;
+    imageColor: string;
 }
 
 const ModalContent = styled.div`
+    width: 350px;
+`;
+
+const ModalTitleWrapper = styled.div`
     align-items: center;
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.borderColor};
+    display: flex;
+    justify-content: space-between;
+    margin: -3px -16px 15px;
+    padding: 0 16px 13px;
+`;
+
+const ModalTitle = styled.h2`
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0 15px 0 0;
+`;
+
+const CloseModalButtonStyle = styled(CloseModalButton)`
+    margin: 0;
+`;
+
+const CollectibleMainInfoWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 20px;
+`;
+
+const CollectibleImage = styled.div<ImageProps>`
+    background-color: ${props => props.imageColor};
+    background-image: url('${props => props.imageUrl}');
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border-radius: ${themeDimensions.borderRadius};
+    border: 1px solid ${props => props.theme.componentsTheme.borderColor};
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 120px;
+    margin: 0 16px 0 0;
+    width: 120px;
+`;
+
+const CollectibleMainInfo = styled.div`
     display: flex;
     flex-direction: column;
-    width: 310px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    justify-content: space-between;
+    padding: 4px 0;
 `;
+
+const CollectibleMainInfoTitle = styled.h3`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 8px;
+`;
+
+const CollectibleLink = styled.a`
+    align-items: center;
+    display: flex;
+    margin: 0 0 15px;
+    text-decoration: none;
+`;
+
+const CollectibleLinkText = styled.span`
+    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 6px 0 0;
+`;
+
+const CollectibleMainInfoSubtitle = styled.h4`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 0 10px;
+`;
+
+const CollectibleMainInfoValue = styled.p`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0;
+`;
+
+const CollectibleLabel = styled.label`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 0 10px;
+`;
+
+const FormRow = styled.div`
+    margin: 0 0 20px;
+`;
+
+const FieldContainer = styled.div`
+    height: ${themeDimensions.fieldHeight};
+    margin-bottom: 25px;
+    position: relative;
+`;
+
+const InputStyle = css`
+    background-color: ${props => props.theme.componentsTheme.textInputBackgroundColor};
+    border-radius: ${themeDimensions.borderRadius};
+    border: 1px solid ${props => props.theme.componentsTheme.textInputBorderColor};
+    color: ${props => props.theme.componentsTheme.textInputTextColor};
+    font-feature-settings: 'tnum' 1;
+    font-size: 16px;
+    padding-left: 14px;
+    width: 100%;
+`;
+
+const BigInputNumberStyled = styled<any>(BigNumberInput)`
+    ${InputStyle}
+    height: 100%;
+    padding-right: 60px;
+    position: absolute;
+    z-index: 1;
+`;
+
+const SelectStyled = styled.select`
+    ${InputStyle}
+    height: ${themeDimensions.fieldHeight};
+    padding-right: 14px;
+`;
+
+const TokenContainer = styled.div`
+    align-items: center;
+    display: flex;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 12;
+
+    svg {
+        margin: 0 10px 0 0;
+    }
+`;
+
+const TokenText = styled.span`
+    color: ${props => props.theme.componentsTheme.textInputTextColor};
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 21px;
+    text-align: right;
+`;
+
+const ButtonStyled = styled(Button)`
+    margin-top: 6px;
+    width: 100%;
+`;
+
+const SwitchWrapper = styled.div<{ isActive?: boolean }>`
+    background: ${props => (props.isActive ? '#00ae99' : '#ccc')};
+    border-radius: 9px;
+    cursor: pointer;
+    height: 17px;
+    overflow: hidden;
+    position: relative;
+    width: 31px;
+`;
+
+const Switch = styled.div`
+    background: #fff;
+    border-radius: 50%;
+    height: 13px;
+    left: 2px;
+    position: absolute;
+    top: 2px;
+    transition: all 0.15s linear;
+    width: 13px;
+    z-index: 1;
+`;
+
+const SwitchInput = styled.input`
+    border-radius: 50%;
+    cursor: pointer;
+    display: block;
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 5;
+
+    &:checked + div {
+        left: 16px;
+    }
+`;
+
+const iconETH = () => {
+    return (
+        <svg width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.08799 0L5.9585 0.383135V11.3664L6.08799 11.4941L11.2675 8.47155L6.08799 0Z" fill="#38393A" />
+            <path d="M6.08874 0L0.90918 8.47155L6.08874 11.4941V6.17274V0Z" fill="#38393A" />
+            <path
+                d="M6.08877 12.4737L6.00244 12.5163V16.4753L6.08877 16.6456L11.2683 9.45117L6.08877 12.4737Z"
+                fill="#38393A"
+            />
+            <path d="M6.08874 16.6447V12.4728L0.90918 9.45026L6.08874 16.6447Z" fill="#38393A" />
+            <path d="M6.08887 11.4932L11.2684 8.47069L6.08887 6.17188V11.4932Z" fill="#38393A" />
+            <path d="M0.90918 8.47111L6.08874 11.4936V6.1723L0.90918 8.47111Z" fill="#38393A" />
+        </svg>
+    );
+};
 
 class CollectibleSellModalContainer extends React.Component<Props> {
     public state: State = {
-        startPrice: new BigNumber(0),
         endingPrice: null,
-        shouldIncludeEndPrice: false,
         expirationDate: tomorrow(),
+        shouldIncludeEndPrice: false,
+        startPrice: new BigNumber(0),
     };
 
     public render = () => {
         const { theme, currentCollectible } = this.props;
         const { startPrice, endingPrice, shouldIncludeEndPrice } = this.state;
-
         const dayInSeconds = 60 * 60 * 24;
         const today = todayInSeconds();
         const expirationDates = [today + dayInSeconds, today + dayInSeconds * 5, today + dayInSeconds * 7];
-        const endPriceContent = shouldIncludeEndPrice ? (
-            <>
-                <h3>Enter ending price</h3>
-                <BigNumberInput
-                    decimals={18}
-                    min={new BigNumber(0)}
-                    onChange={this._updateEndingPrice}
-                    value={endingPrice}
-                    placeholder={'0.00'}
-                />
-            </>
-        ) : null;
 
         return (
             <Modal isOpen={currentCollectible ? true : false} style={theme.modalTheme}>
-                <CloseModalButton onClick={this._closeModal} />
+                <ModalTitleWrapper>
+                    <ModalTitle>Selling Item</ModalTitle>
+                    <CloseModalButtonStyle onClick={this._closeModal} />
+                </ModalTitleWrapper>
                 <ModalContent>
-                    <h3>Enter a starting price</h3>
-                    <BigNumberInput
-                        decimals={18}
-                        min={new BigNumber(0)}
-                        onChange={this._updateStartingPrice}
-                        value={startPrice}
-                        placeholder={'0.00'}
-                    />
-                    <h3>Include ending price</h3>
-                    <input type="checkbox" onChange={this._updateIncludeEndPrice} />
-                    {endPriceContent}
-                    <select onChange={this._updateExpDate}>
-                        <option value={expirationDates[0]}>1 day</option>
-                        <option value={expirationDates[1]}>5 days</option>
-                        <option value={expirationDates[2]}>7 days</option>
-                    </select>
-                    <button onClick={this._openStepsModals}>Sell</button>
+                    <CollectibleMainInfoWrapper>
+                        <CollectibleImage
+                            imageColor={currentCollectible ? currentCollectible.color : ''}
+                            imageUrl={currentCollectible ? currentCollectible.image : ''}
+                        />
+                        <CollectibleMainInfo>
+                            <div>
+                                <CollectibleMainInfoTitle>
+                                    {currentCollectible ? currentCollectible.name : ''}
+                                </CollectibleMainInfoTitle>
+                                <CollectibleLink
+                                    href={currentCollectible ? currentCollectible.assetUrl : ''}
+                                    target="_blakn"
+                                >
+                                    <CollectibleLinkText>CryptoKitties</CollectibleLinkText>
+                                    {OutsideUrlIcon()}
+                                </CollectibleLink>
+                            </div>
+                            <div>
+                                <CollectibleMainInfoSubtitle>Last Sale Price</CollectibleMainInfoSubtitle>
+                                <CollectibleMainInfoValue>2.0624 ETH</CollectibleMainInfoValue>
+                            </div>
+                        </CollectibleMainInfo>
+                    </CollectibleMainInfoWrapper>
+                    <FormRow>
+                        <CollectibleLabel>Enter a starting price</CollectibleLabel>
+                        <FieldContainer>
+                            <BigInputNumberStyled
+                                decimals={18}
+                                min={new BigNumber(0)}
+                                onChange={this._updateStartingPrice}
+                                placeholder={'0.00'}
+                                value={startPrice}
+                            />
+                            <TokenContainer>
+                                {iconETH()}
+                                <TokenText>ETH</TokenText>
+                            </TokenContainer>
+                        </FieldContainer>
+                    </FormRow>
+                    <FormRow>
+                        <CollectibleLabel>Include ending price</CollectibleLabel>
+                        <SwitchWrapper isActive={this.state.shouldIncludeEndPrice}>
+                            <SwitchInput
+                                checked={this.state.shouldIncludeEndPrice}
+                                onChange={this._updateIncludeEndPrice}
+                                type="checkbox"
+                            />
+                            <Switch />
+                        </SwitchWrapper>
+                    </FormRow>
+                    {shouldIncludeEndPrice ? (
+                        <FormRow>
+                            <CollectibleLabel>Enter ending price</CollectibleLabel>
+                            <FieldContainer>
+                                <BigInputNumberStyled
+                                    decimals={18}
+                                    min={new BigNumber(0)}
+                                    onChange={this._updateEndingPrice}
+                                    value={endingPrice}
+                                    placeholder={'0.00'}
+                                />
+                                <TokenContainer>
+                                    {iconETH()}
+                                    <TokenText>ETH</TokenText>
+                                </TokenContainer>
+                            </FieldContainer>
+                        </FormRow>
+                    ) : null}
+                    <FormRow>
+                        <CollectibleLabel>Set Expiration Date</CollectibleLabel>
+                        <SelectStyled onChange={this._updateExpDate}>
+                            <option value={expirationDates[0]}>1 day</option>
+                            <option value={expirationDates[1]}>5 days</option>
+                            <option value={expirationDates[2]}>7 days</option>
+                        </SelectStyled>
+                    </FormRow>
+                    <ButtonStyled onClick={this._openStepsModals} variant="error">
+                        Sell
+                    </ButtonStyled>
                 </ModalContent>
             </Modal>
         );

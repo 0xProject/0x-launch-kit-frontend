@@ -2,11 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { ETH_DECIMALS } from '../../../common/constants';
 import { cancelOrderCollectible, selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { startBuyCollectibleSteps } from '../../../store/ui/actions';
 import { themeDimensions } from '../../../themes/commons';
+import { getCollectiblePrice } from '../../../util/collectibles';
 import { getEndDateStringFromTimeInSeconds } from '../../../util/time_utils';
+import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { TradeButton } from './trade_button';
@@ -106,9 +109,7 @@ class CollectibleBuySell extends React.Component<Props> {
             return null;
         }
         const { color, image, order } = collectible;
-
-        const price = order ? order.takerAssetAmount : null;
-
+        const price = getCollectiblePrice(collectible);
         const expDate =
             order && order.expirationTimeSeconds
                 ? getEndDateStringFromTimeInSeconds(order.expirationTimeSeconds)
@@ -127,10 +128,14 @@ class CollectibleBuySell extends React.Component<Props> {
                 />
                 {expDate ? (
                     <CollectibleText>
-                        {timeSVG()} {expDate}
+                        {timeSVG()} Ends {expDate}
                     </CollectibleText>
                 ) : null}
-                {price && <CollectibleText textAlign="center">Last price: Ξ {price.toString()}</CollectibleText>}
+                {price && (
+                    <CollectibleText textAlign="center">
+                        Last price: Ξ {tokenAmountInUnits(price, ETH_DECIMALS)}
+                    </CollectibleText>
+                )}
             </BuySellWrapper>
         );
     };

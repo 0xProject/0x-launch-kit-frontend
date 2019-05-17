@@ -176,9 +176,13 @@ export const sumTakerAssetFillableOrders = (
     }, new BigNumber(0));
 };
 
+export const getDutchAuctionData = (assetData: string) => {
+    return DutchAuctionWrapper.decodeDutchAuctionData(assetData);
+};
+
 export const isDutchAuction = (order: SignedOrder) => {
     try {
-        DutchAuctionWrapper.decodeDutchAuctionData(order.makerAssetData);
+        getDutchAuctionData(order.makerAssetData);
         return true;
     } catch (e) {
         return false;
