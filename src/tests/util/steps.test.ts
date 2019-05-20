@@ -54,7 +54,7 @@ describe('makeGetProgress', () => {
         const progress = getProgress(now);
 
         // then
-        expect(progress).toEqual(100);
+        expect(progress).toEqual(95);
     });
 
     it('returns 100 if the elapsed time is greater than the estimated time', async () => {
@@ -68,7 +68,7 @@ describe('makeGetProgress', () => {
         const progress = getProgress(now);
 
         // then
-        expect(progress).toEqual(100);
+        expect(progress).toEqual(95);
     });
 
     it('does not depend on the length of the estimated time', async () => {
