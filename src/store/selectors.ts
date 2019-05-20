@@ -144,8 +144,8 @@ export const getSpreadInPercentage = createSelector(
 
         const lowestPriceSell = sellOrders[sellOrders.length - 1].price;
         const highestPriceBuy = buyOrders[0].price;
-        const spread = lowestPriceSell.sub(highestPriceBuy);
-        return spread.dividedBy(lowestPriceSell).mul(100);
+        const spread = lowestPriceSell.minus(highestPriceBuy);
+        return spread.dividedBy(lowestPriceSell).multipliedBy(100);
     },
 );
 
