@@ -13,7 +13,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CardWrapper = styled(CardBase)`
-    margin-bottom: 10px;
+    margin-bottom: ${themeDimensions.verticalSeparationSm};
 `;
 
 const CardHeader = styled.div`

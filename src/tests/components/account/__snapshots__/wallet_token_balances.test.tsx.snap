@@ -2,70 +2,70 @@
 
 exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`] = `
 <div
-  className="sc-dnqmqq gSaoM sc-bdVaJa fJeBhq"
+  className="sc-bwzfXH igYdVz sc-bdVaJa fJeBhq"
 >
   <div
-    className="sc-iwsKbI eQrCRq"
+    className="sc-htpNat hlBXBJ"
   >
     <h1
-      className="sc-gZMcBi bGMOPW"
+      className="sc-bxivhb DvYdZ"
     >
       Token Balances
     </h1>
   </div>
   <div
-    className="sc-gqjmRU eptite"
+    className="sc-ifAKCX jlvJWy"
   >
     <table
-      className="sc-kAzzGY guYYtw"
+      className="sc-iwsKbI fpIGxU"
     >
       <thead
-        className="sc-chPdSV cBMkGM"
+        className="sc-gZMcBi bfoAHF"
       >
         <tr
-          className="sc-kGXeez eIIwaK"
+          className="sc-VigVT fIhGog"
         >
           <th
-            className="sc-kpOJdX sc-kkGfuU cIBRCA"
+            className="sc-jTzLTM sc-kGXeez bWGQEj"
           >
             Token
           </th>
           <th
-            className="sc-kpOJdX sc-kkGfuU cIBRCA"
+            className="sc-jTzLTM sc-kGXeez bWGQEj"
           />
           <th
-            className="sc-kpOJdX sc-kkGfuU dTIWig"
+            className="sc-jTzLTM sc-kGXeez gLdvqw"
           >
             Available Qty.
           </th>
           <th
-            className="sc-kpOJdX sc-kkGfuU dTIWig"
+            className="sc-jTzLTM sc-kGXeez gLdvqw"
           >
             Price (USD)
           </th>
           <th
-            className="sc-kpOJdX sc-kkGfuU dTIWig"
+            className="sc-jTzLTM sc-kGXeez gLdvqw"
           >
             % Change
           </th>
           <th
-            className="sc-kpOJdX sc-kEYyzF fkWbcp"
+            className="sc-jTzLTM sc-kgoBCf bLDfeg"
           >
             Locked?
           </th>
         </tr>
       </thead>
       <tbody
-        className="sc-brqgnP bPUEUp"
+        className="sc-hMqMXs eaTBaG"
       >
         <tr
-          className="sc-kGXeez eIIwaK"
+          className="sc-VigVT fIhGog"
         >
           <td
-            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+            className="sc-fjdhpX sc-kpOJdX cMhLVX"
           >
             <div
-              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              className="sc-dxgOiQ kjzMiM sc-EHOje dcpbFX"
               color="white"
             >
               <svg>
@@ -74,30 +74,30 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             </div>
           </td>
           <td
-            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+            className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
             ETH Total (ETH + wETH)
           </td>
           <td
-            className="sc-dxgOiQ ghISBd"
+            className="sc-fjdhpX jsMPdn"
           >
             0.00
           </td>
           <td
-            className="sc-dxgOiQ ghISBd"
+            className="sc-fjdhpX jsMPdn"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ ghISBd"
+            className="sc-fjdhpX jsMPdn"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+            className="sc-fjdhpX sc-jKJlTe gXnDqt"
           >
             <span
-              className="sc-cMljjf dawIni"
+              className="sc-kEYyzF gCLQrS"
               onClick={[Function]}
             >
               <svg
@@ -118,27 +118,27 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           </td>
         </tr>
         <tr
-          className="sc-kGXeez eIIwaK"
+          className="sc-VigVT fIhGog"
         >
           <td
-            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+            className="sc-fjdhpX sc-kpOJdX cMhLVX"
           >
             <div
-              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              className="sc-dxgOiQ kjzMiM sc-EHOje dcpbFX"
               color="white"
             >
               <label
-                className="sc-jTzLTM eGLEac"
+                className="sc-bZQynM dstZeq"
               >
                 MOCK1
               </label>
             </div>
           </td>
           <td
-            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+            className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
             <span
-              className="sc-jWBwVP iYUHzL"
+              className="sc-eNQAEJ cOvcCf"
             >
               MOCK1
             </span>
@@ -146,25 +146,25 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             - MOCK1
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             0.00
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+            className="sc-fjdhpX sc-jKJlTe gXnDqt"
           >
             <span
-              className="sc-cMljjf dawIni"
+              className="sc-kEYyzF gCLQrS"
               onClick={[Function]}
             >
               <svg
@@ -185,27 +185,27 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           </td>
         </tr>
         <tr
-          className="sc-kGXeez eIIwaK"
+          className="sc-VigVT fIhGog"
         >
           <td
-            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+            className="sc-fjdhpX sc-kpOJdX cMhLVX"
           >
             <div
-              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              className="sc-dxgOiQ kjzMiM sc-EHOje dcpbFX"
               color="white"
             >
               <label
-                className="sc-jTzLTM eGLEac"
+                className="sc-bZQynM dstZeq"
               >
                 MOCK2
               </label>
             </div>
           </td>
           <td
-            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+            className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
             <span
-              className="sc-jWBwVP iYUHzL"
+              className="sc-eNQAEJ cOvcCf"
             >
               MOCK2
             </span>
@@ -213,25 +213,25 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             - MOCK2
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             0.00
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+            className="sc-fjdhpX sc-jKJlTe gXnDqt"
           >
             <span
-              className="sc-cMljjf dawIni"
+              className="sc-kEYyzF gCLQrS"
               onClick={[Function]}
             >
               <svg
@@ -252,27 +252,27 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           </td>
         </tr>
         <tr
-          className="sc-kGXeez eIIwaK"
+          className="sc-VigVT fIhGog"
         >
           <td
-            className="sc-dxgOiQ sc-iAyFgw hufHaD"
+            className="sc-fjdhpX sc-kpOJdX cMhLVX"
           >
             <div
-              className="sc-hSdWYo cREogQ sc-VigVT gmXFIk"
+              className="sc-dxgOiQ kjzMiM sc-EHOje dcpbFX"
               color="white"
             >
               <label
-                className="sc-jTzLTM eGLEac"
+                className="sc-bZQynM dstZeq"
               >
                 MOCK3
               </label>
             </div>
           </td>
           <td
-            className="sc-dxgOiQ sc-eHgmQL hCulzm"
+            className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
             <span
-              className="sc-jWBwVP iYUHzL"
+              className="sc-eNQAEJ cOvcCf"
             >
               MOCK3
             </span>
@@ -280,25 +280,25 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             - MOCK3
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             0.00
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ gYurgZ"
+            className="sc-fjdhpX iVqJl"
           >
             -
           </td>
           <td
-            className="sc-dxgOiQ sc-cvbbAY cjTuJw"
+            className="sc-fjdhpX sc-jKJlTe gXnDqt"
           >
             <span
-              className="sc-cMljjf dawIni"
+              className="sc-kEYyzF gCLQrS"
               onClick={[Function]}
             >
               <svg

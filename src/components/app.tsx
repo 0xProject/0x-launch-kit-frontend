@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { withRouter } from 'react-router-dom';
 
 import {
     SHOULD_ENABLE_NO_METAMASK_PROMPT,
@@ -102,7 +101,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
         onInitMetamaskState: () => dispatch(initializeAppNoMetamaskOrLocked()),
         onUpdateStore: () => dispatch(updateStore()),
@@ -111,9 +110,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     };
 };
 
-const AppContainer = connect(
+const AppContainer = withRouter(connect(
     mapStateToProps,
     mapDispatchToProps,
-)(App);
+)(App) as any);
 
 export { App, AppContainer };
