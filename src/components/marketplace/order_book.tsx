@@ -50,9 +50,9 @@ const orderToRow = (
     const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
+            <CustomTDLast styles={{ tabular: true, textAlign: 'right' }}>
                 {mySizeConverted !== '0.00' ? mySizeConverted : '-'}
-            </CustomTD>
+            </CustomTDLast>
         ) : null;
 
     return (
@@ -60,10 +60,10 @@ const orderToRow = (
             <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
-            {mySizeRow}
-            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-            </CustomTDLast>
+            </CustomTD>
+            {mySizeRow}
         </TR>
     );
 };
@@ -94,17 +94,15 @@ class OrderBookTable extends React.Component<Props> {
         } else {
             const mySizeHeader =
                 web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-                    <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
+                    <THLast styles={{ textAlign: 'right', borderBottom: true }}>My Size</THLast>
                 ) : null;
             content = (
                 <Table fitInCard={true}>
                     <THead>
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price ({quoteToken.symbol})</TH>
                             {mySizeHeader}
-                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>
-                                Price ({quoteToken.symbol})
-                            </THLast>
                         </TR>
                     </THead>
                     <tbody>
