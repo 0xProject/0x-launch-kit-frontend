@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
-import { getCollectiblePrice } from '../../../util/collectibles';
+import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
 import { Collectible } from '../../../util/types';
 
 import { CollectibleAssetContainer } from './collectible_details';
@@ -34,30 +34,34 @@ const CollectiblesList = styled.div`
     }
 `;
 
+const getCollectibleCards = (collectibles: Collectible[], sortType: CollectibleSortType) => {
+    const sortedItems = getSortedCollectibles(collectibles, sortType);
+    return sortedItems.map((sortableCollectible, index) => {
+        const { name, image, color, tokenId } = sortableCollectible.collectible;
+        return (
+            <CollectibleAssetContainer
+                color={color}
+                id={tokenId}
+                image={image}
+                key={index}
+                name={name}
+                price={sortableCollectible.price}
+            />
+        );
+    });
+};
+
 interface Props {
     collectibles: Collectible[];
 }
 
 export const CollectiblesCardList = (props: Props) => {
     const { collectibles } = props;
+    const sortType = CollectibleSortType.NewestAdded;
+    const collectibleCards = getCollectibleCards(collectibles, sortType);
     return (
         <CollectiblesListOverflow>
-            <CollectiblesList>
-                {collectibles.map((item, index) => {
-                    const { name, image, color, tokenId } = item;
-                    const price = getCollectiblePrice(item);
-                    return (
-                        <CollectibleAssetContainer
-                            color={color}
-                            id={tokenId}
-                            image={image}
-                            key={index}
-                            name={name}
-                            price={price}
-                        />
-                    );
-                })}
-            </CollectiblesList>
+            <CollectiblesList>{collectibleCards}</CollectiblesList>
         </CollectiblesListOverflow>
     );
 };
