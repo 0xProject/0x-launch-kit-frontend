@@ -39,11 +39,11 @@ class WrapEthStep extends React.Component<Props> {
         }
 
         const { context, currentWethBalance, newWethBalance } = step;
-        const amount = newWethBalance.sub(currentWethBalance);
+        const amount = newWethBalance.minus(currentWethBalance);
         const wethToken = getKnownTokens(networkId).getWethToken();
         const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toString();
 
-        const ethToWeth = amount.greaterThan(0);
+        const ethToWeth = amount.isGreaterThan(0);
         const convertingFrom = ethToWeth ? 'ETH' : 'wETH';
         const convertingTo = ethToWeth ? 'wETH' : 'ETH';
 

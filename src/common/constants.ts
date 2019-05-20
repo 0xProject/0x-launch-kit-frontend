@@ -1,5 +1,9 @@
 import { BigNumber } from '0x.js';
 
+export const ERC20_APP_BASE_PATH = '/erc20';
+export const ERC721_APP_BASE_PATH = '/erc721';
+export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
+
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
 
 export const MAINNET_ID = 1;
@@ -18,6 +22,8 @@ export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS
 // these constants should be in wei
 export const MAKER_FEE = new BigNumber(process.env.REACT_APP_MAKER_FEE || '1000000000000000000');
 export const TAKER_FEE = new BigNumber(process.env.REACT_APP_TAKER_FEE || '100000000000000000');
+
+export const ETH_DECIMALS = 18;
 
 export const ETH_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
 
@@ -48,7 +54,7 @@ export const GWEI_IN_WEI = new BigNumber(1000000000);
 
 export const ONE_MINUTE_MS = 1000 * 60;
 
-export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.mul(6);
+export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.multipliedBy(6);
 
 export const DEFAULT_ESTIMATED_TRANSACTION_TIME_MS = ONE_MINUTE_MS * 2;
 
@@ -63,6 +69,16 @@ export const THEME_NAME: string = process.env.REACT_APP_THEME_NAME || 'DEFAULT_T
 export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT
     ? process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT === 'true'
     : process.env.NODE_ENV === 'development';
+
+export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || 'mocked';
+
+export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
+
+export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
+    1: '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d', // mainnet axie
+    4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf', // rinkeby cryptokitties
+    50: '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb', // ganache mock erc721
+};
 
 export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
     Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;

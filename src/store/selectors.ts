@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 
 import { isWeth } from '../util/known_tokens';
 import {
+    Collectible,
     OrderBook,
     OrderSide,
     SearchTokenBalanceObject,
@@ -36,6 +37,11 @@ export const getEthInUsd = (state: StoreState) => state.market.ethInUsd;
 export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.gasPriceInWei;
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
 export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
+export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
+export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
+    state.collectibles.allCollectibles[props.collectibleId];
+export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
+export const getCurrentRoutePath = (state: StoreState) => state.router.location.pathname;
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {
@@ -124,7 +130,7 @@ export const getSpread = createSelector(
         const lowestPriceSell = sellOrders[sellOrders.length - 1].price;
         const highestPriceBuy = buyOrders[0].price;
 
-        return lowestPriceSell.sub(highestPriceBuy);
+        return lowestPriceSell.minus(highestPriceBuy);
     },
 );
 
@@ -151,5 +157,33 @@ export const getTokens = createSelector(
             const { token } = tokenBalance;
             return token;
         });
+    },
+);
+
+export const getUserCollectibles = createSelector(
+    getEthAccount,
+    getAllCollectibles,
+    (ethAccount, allCollectibles): { [key: string]: Collectible } => {
+        const userCollectibles: { [key: string]: Collectible } = {};
+        Object.keys(allCollectibles).forEach(tokenId => {
+            if (allCollectibles[tokenId].currentOwner.toLowerCase() === ethAccount.toLowerCase()) {
+                userCollectibles[tokenId] = allCollectibles[tokenId];
+            }
+        });
+        return userCollectibles;
+    },
+);
+
+export const getOtherUsersCollectibles = createSelector(
+    getEthAccount,
+    getAllCollectibles,
+    (ethAccount, allCollectibles): { [key: string]: Collectible } => {
+        const userCollectibles: { [key: string]: Collectible } = {};
+        Object.keys(allCollectibles).forEach(tokenId => {
+            if (allCollectibles[tokenId].currentOwner.toLowerCase() !== ethAccount.toLowerCase()) {
+                userCollectibles[tokenId] = allCollectibles[tokenId];
+            }
+        });
+        return userCollectibles;
     },
 );

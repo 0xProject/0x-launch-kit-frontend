@@ -13,7 +13,9 @@ export interface ThemeProperties {
     buttonErrorBackgroundColor: string;
     buttonPrimaryBackgroundColor: string;
     buttonSecondaryBackgroundColor: string;
+    buttonSellBackgroundColor: string;
     buttonTertiaryBackgroundColor: string;
+    buttonTextColor: string;
     cardBackgroundColor: string;
     cardBorderColor: string;
     cardTitleColor: string;
@@ -30,16 +32,18 @@ export interface ThemeProperties {
     ethBoxActiveColor: string;
     ethBoxBorderColor: string;
     ethSetMinEthButtonBorderColor: string;
-    ethSliderThumbColor: string;
     ethSliderThumbBorderColor: string;
+    ethSliderThumbColor: string;
     gray: string;
     green: string;
     iconLockedColor: string;
     iconUnlockedColor: string;
     inactiveTabBackgroundColor: string;
     lightGray: string;
-    logoColor: string;
-    logoTextColor: string;
+    logoERC20Color: string;
+    logoERC20TextColor: string;
+    logoERC721Color: string;
+    logoERC721TextColor: string;
     marketsSearchFieldBackgroundColor: string;
     marketsSearchFieldBorderColor: string;
     marketsSearchFieldTextColor: string;
@@ -49,6 +53,12 @@ export interface ThemeProperties {
     numberDecimalsColor: string;
     orange: string;
     rowActive: string;
+    stepsProgressCheckMarkColor: string;
+    stepsProgressStartingDotColor: string;
+    stepsProgressStepLineColor: string;
+    stepsProgressStepLineProgressColor: string;
+    stepsProgressStepTitleColor: string;
+    stepsProgressStepTitleColorActive: string;
     tableBorderColor: string;
     tdColor: string;
     textColorCommon: string;
@@ -62,13 +72,6 @@ export interface ThemeProperties {
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
-    stepsProgressStartingDotColor: string;
-    stepsProgressStepTitleColor: string;
-    stepsProgressStepTitleColorActive: string;
-    stepsProgressStepLineColor: string;
-    stepsProgressStepLineProgressColor: string;
-    stepsProgressCheckMarkColor: string;
-    buttonTextColor: string;
 }
 
 export interface ThemeModalStyle {
@@ -79,6 +82,7 @@ export interface ThemeModalStyle {
         flexGrow: string;
         left: string;
         minWidth: string;
+        padding: string;
         position: string;
         right: string;
         top: string;
@@ -104,6 +108,7 @@ export const themeDimensions = {
     sidebarWidth: '350px',
     verticalPadding: '10px',
     verticalSeparation: '30px',
+    verticalSeparationSm: '10px',
 };
 
 export const themeBreakPoints = {

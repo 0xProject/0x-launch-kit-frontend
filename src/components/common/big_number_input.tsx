@@ -93,7 +93,7 @@ export class BigNumberInput extends React.Component<Props, State> {
         const newValueStr = e.currentTarget.value;
 
         const newValue = unitsInTokenAmount(newValueStr || '0', decimals);
-        const invalidValue = (min && newValue.lessThan(min)) || (max && newValue.greaterThan(max));
+        const invalidValue = (min && newValue.isLessThan(min)) || (max && newValue.isGreaterThan(max));
         if (invalidValue) {
             return;
         }

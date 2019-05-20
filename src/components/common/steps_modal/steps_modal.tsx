@@ -10,11 +10,13 @@ import { getStepTitle, isLongStep } from '../../../util/steps';
 import { Step, StepKind, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../icons/close_modal_button';
 
+import { BuySellCollectibleStepContainer } from './buy_sell_collectible_step';
 import { BuySellTokenStepContainer } from './buy_sell_token_step';
 import { SignOrderStepContainer } from './sign_order_step';
 import { ModalContent } from './steps_common';
 import { StepItem } from './steps_progress';
 import { ToggleTokenLockStepContainer } from './toggle_token_lock_step';
+import { UnlockCollectiblesStepContainer } from './unlock_collectibles_step';
 import { WrapEthStepContainer } from './wrap_eth_step';
 
 interface StateProps {
@@ -64,12 +66,20 @@ class StepsModal extends React.Component<Props> {
                     {currentStep && currentStep.kind === StepKind.ToggleTokenLock && (
                         <ToggleTokenLockStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
+                    {currentStep && currentStep.kind === StepKind.UnlockCollectibles && (
+                        <UnlockCollectiblesStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
+                    )}
                     {currentStep && currentStep.kind === StepKind.BuySellLimit && (
                         <SignOrderStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                     {currentStep && currentStep.kind === StepKind.BuySellMarket && (
                         <BuySellTokenStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
+                    {currentStep &&
+                        (currentStep.kind === StepKind.SellCollectible ||
+                            currentStep.kind === StepKind.BuyCollectible) && (
+                            <BuySellCollectibleStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
+                        )}
                     {currentStep && currentStep.kind === StepKind.WrapEth && (
                         <WrapEthStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
