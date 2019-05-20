@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withTheme } from 'styled-components';
 
-import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
+import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import {
     getBaseToken,
     getOrderBook,
@@ -12,15 +12,15 @@ import {
     getSpreadInPercentage,
     getUserOrders,
     getWeb3State,
-} from '../../store/selectors';
-import { Theme } from '../../themes/commons';
-import { tokenAmountInUnits } from '../../util/tokens';
-import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
-import { Card } from '../common/card';
-import { EmptyContent } from '../common/empty_content';
-import { CardLoading } from '../common/loading';
-import { ShowNumberWithColors } from '../common/show_number_with_colors';
-import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../common/table';
+} from '../../../store/selectors';
+import { Theme } from '../../../themes/commons';
+import { tokenAmountInUnits } from '../../../util/tokens';
+import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
+import { Card } from '../../common/card';
+import { EmptyContent } from '../../common/empty_content';
+import { CardLoading } from '../../common/loading';
+import { ShowNumberWithColors } from '../../common/show_number_with_colors';
+import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../../common/table';
 
 interface StateProps {
     orderBook: OrderBook;
@@ -51,8 +51,8 @@ const orderToRow = (
     const price = order.price.toString();
 
     const mySize = mySizeOrders.reduce((sumSize, mySizeItem) => {
-        if (mySizeItem.price.equals(order.price)) {
-            return sumSize.add(mySizeItem.size);
+        if (mySizeItem.price.eq(order.price)) {
+            return sumSize.plus(mySizeItem.size);
         }
         return sumSize;
     }, new BigNumber(0));

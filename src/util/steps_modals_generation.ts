@@ -1,9 +1,20 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, SignedOrder } from '0x.js';
 
 import { MAKER_FEE, TAKER_FEE } from '../common/constants';
 
 import { isWeth, isZrx } from './known_tokens';
-import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, Token, TokenBalance } from './types';
+import {
+    Collectible,
+    OrderSide,
+    Step,
+    StepBuyCollectible,
+    StepKind,
+    StepToggleTokenLock,
+    StepUnlockCollectibles,
+    StepWrapEth,
+    Token,
+    TokenBalance,
+} from './types';
 
 export const createBuySellLimitSteps = (
     baseToken: Token,
@@ -31,7 +42,7 @@ export const createBuySellLimitSteps = (
     }
 
     // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
-    if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.greaterThan(0)) {
+    if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.isGreaterThan(0)) {
         const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
         if (unlockZrxStep) {
             buySellLimitFlow.push(unlockZrxStep);
@@ -57,6 +68,76 @@ export const createBuySellLimitSteps = (
     return buySellLimitFlow;
 };
 
+export const createSellCollectibleSteps = (
+    collectible: Collectible,
+    startPrice: BigNumber,
+    side: OrderSide,
+    isUnlocked: boolean,
+    expirationDate: BigNumber,
+    endPrice: BigNumber | null,
+): Step[] => {
+    const sellCollectibleFlow: Step[] = [];
+
+    // Unlock collectible
+    if (!isUnlocked) {
+        const unlockCollectibleStep = getUnlockCollectibleStep(collectible);
+        sellCollectibleFlow.push(unlockCollectibleStep);
+    }
+
+    // Sign order step
+    sellCollectibleFlow.push({
+        kind: StepKind.SellCollectible,
+        collectible,
+        startPrice,
+        endPrice,
+        expirationDate,
+        side,
+    });
+
+    return sellCollectibleFlow;
+};
+
+export const createBasicBuyCollectibleSteps = (order: SignedOrder, collectible: Collectible): Step[] => {
+    return [getBuyCollectibleStep(order, collectible)];
+};
+
+export const createDutchBuyCollectibleSteps = (
+    order: SignedOrder,
+    collectible: Collectible,
+    wethTokenBalance: TokenBalance,
+    priceInWeth: BigNumber,
+): Step[] => {
+    const steps: Step[] = [];
+
+    // wrap ether
+    const wethBalance = wethTokenBalance.balance;
+    const deltaWeth = wethBalance.minus(priceInWeth);
+    if (deltaWeth.isLessThan(0)) {
+        steps.push({
+            kind: StepKind.WrapEth,
+            currentWethBalance: wethBalance,
+            newWethBalance: priceInWeth,
+            context: 'order',
+        });
+    }
+
+    // unlock weth
+    if (!wethTokenBalance.isUnlocked) {
+        const unlockWethStep: StepToggleTokenLock = {
+            kind: StepKind.ToggleTokenLock,
+            token: wethTokenBalance.token,
+            context: 'order',
+            isUnlocked: false,
+        };
+        steps.push(unlockWethStep);
+    }
+
+    // buy collectible
+    steps.push(getBuyCollectibleStep(order, collectible));
+
+    return steps;
+};
+
 export const createBuySellMarketSteps = (
     baseToken: Token,
     quoteToken: Token,
@@ -73,7 +154,7 @@ export const createBuySellMarketSteps = (
     }
 
     // unlock zrx (for fees) if the taker fee is positive
-    if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.greaterThan(0)) {
+    if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.isGreaterThan(0)) {
         const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
         if (unlockZrxStep) {
             buySellMarketFlow.push(unlockZrxStep);
@@ -111,6 +192,22 @@ export const getUnlockTokenStepIfNeeded = (
     }
 };
 
+export const getUnlockCollectibleStep = (collectible: Collectible): StepUnlockCollectibles => {
+    return {
+        kind: StepKind.UnlockCollectibles,
+        collectible,
+        isUnlocked: false,
+    };
+};
+
+export const getBuyCollectibleStep = (order: SignedOrder, collectible: Collectible): StepBuyCollectible => {
+    return {
+        kind: StepKind.BuyCollectible,
+        order,
+        collectible,
+    };
+};
+
 export const getWrapEthStepIfNeeded = (
     amount: BigNumber,
     price: BigNumber,
@@ -122,11 +219,11 @@ export const getWrapEthStepIfNeeded = (
         return null;
     }
 
-    const wethAmount = amount.mul(price);
+    const wethAmount = amount.multipliedBy(price);
     const wethBalance = wethTokenBalance.balance;
-    const deltaWeth = wethBalance.sub(wethAmount);
+    const deltaWeth = wethBalance.minus(wethAmount);
     // Need to wrap eth only if weth balance is not enough
-    if (deltaWeth.lessThan(0)) {
+    if (deltaWeth.isLessThan(0)) {
         return {
             kind: StepKind.WrapEth,
             currentWethBalance: wethBalance,

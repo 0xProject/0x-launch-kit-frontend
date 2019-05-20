@@ -37,10 +37,10 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const CloseModalButton: React.FC<Props> = props => {
-    const { onClick } = props;
+    const { onClick, ...restProps } = props;
 
     return (
-        <CloseButtonContainer>
+        <CloseButtonContainer {...restProps}>
             <CloseButton onClick={onClick}>
                 <CloseButtonSVG />
             </CloseButton>

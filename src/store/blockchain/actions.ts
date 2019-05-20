@@ -1,17 +1,29 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
-import { getContractWrappers } from '../../services/contract_wrappers';
+import { SignedOrderException } from '../../exceptions/signed_order_exception';
+import { getCollectibleContractAddress } from '../../services/collectibles_metadata_sources';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokenToTokenBalance } from '../../services/tokens';
-import { getWeb3Wrapper, initializeWeb3Wrapper, isMetamaskInstalled } from '../../services/web3_wrapper';
+import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { BlockchainState, GasInfo, Token, TokenBalance, Web3State } from '../../util/types';
+import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
+import {
+    BlockchainState,
+    Collectible,
+    GasInfo,
+    OrderSide,
+    ThunkCreator,
+    Token,
+    TokenBalance,
+    Web3State,
+} from '../../util/types';
+import { getAllCollectibles } from '../collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
@@ -19,6 +31,7 @@ import {
     getEthAccount,
     getGasPriceInWei,
     getMarkets,
+    getNetworkId,
     getTokenBalances,
     getWethBalance,
     getWethTokenBalance,
@@ -63,8 +76,8 @@ export const setNetworkId = createAction('blockchain/NETWORK_ID_set', resolve =>
     return (networkId: number) => resolve(networkId);
 });
 
-export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
-    return async (dispatch: any, getState: any) => {
+export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlocked: boolean) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -88,6 +101,7 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
         }
 
         web3Wrapper.awaitTransactionSuccessAsync(tx).then(() => {
+            // tslint:disable-next-line:no-floating-promises
             dispatch(updateTokenBalancesOnToggleTokenLock(token, isUnlocked));
         });
 
@@ -95,8 +109,8 @@ export const toggleTokenLock = (token: Token, isUnlocked: boolean) => {
     };
 };
 
-export const updateTokenBalancesOnToggleTokenLock = (token: Token, isUnlocked: boolean) => {
-    return async (dispatch: any, getState: any) => {
+export const updateTokenBalancesOnToggleTokenLock: ThunkCreator = (token: Token, isUnlocked: boolean) => {
+    return async (dispatch, getState) => {
         const state = getState();
 
         if (isWeth(token.symbol)) {
@@ -125,8 +139,8 @@ export const updateTokenBalancesOnToggleTokenLock = (token: Token, isUnlocked: b
     };
 };
 
-export const updateWethBalance = (newWethBalance: BigNumber) => {
-    return async (dispatch: any, getState: any) => {
+export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: BigNumber) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -140,16 +154,16 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
         const contractWrappers = await getContractWrappers();
 
         let tx: string;
-        if (wethBalance.lessThan(newWethBalance)) {
+        if (wethBalance.isLessThan(newWethBalance)) {
             tx = await contractWrappers.etherToken.depositAsync(
                 wethAddress,
-                newWethBalance.sub(wethBalance),
+                newWethBalance.minus(wethBalance),
                 ethAccount,
             );
-        } else if (wethBalance.greaterThan(newWethBalance)) {
+        } else if (wethBalance.isGreaterThan(newWethBalance)) {
             tx = await contractWrappers.etherToken.withdrawAsync(
                 wethAddress,
-                wethBalance.sub(newWethBalance),
+                wethBalance.minus(newWethBalance),
                 ethAccount,
                 {
                     ...TX_DEFAULTS,
@@ -178,16 +192,16 @@ export const updateWethBalance = (newWethBalance: BigNumber) => {
     };
 };
 
-export const updateGasInfo = () => {
-    return async (dispatch: any) => {
+export const updateGasInfo: ThunkCreator = () => {
+    return async dispatch => {
         const fetchedGasInfo = await getGasEstimationInfoAsync();
         dispatch(setGasInfo(fetchedGasInfo));
     };
 };
 
 let fillEventsSubscription: string | null = null;
-export const setConnectedUserNotifications = (ethAccount: string, networkId: number) => {
-    return async (dispatch: any, getState: any) => {
+export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAccount: string, networkId: number) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const knownTokens = getKnownTokens(networkId);
         const localStorage = new LocalStorage(window.localStorage);
 
@@ -262,8 +276,8 @@ export const setConnectedUserNotifications = (ethAccount: string, networkId: num
     };
 };
 
-export const initWallet = () => {
-    return async (dispatch: any, getState: any) => {
+export const initWallet: ThunkCreator<Promise<any>> = () => {
+    return async (dispatch, getState, { initializeWeb3Wrapper }) => {
         dispatch(setWeb3State(Web3State.Loading));
         const web3Wrapper = await initializeWeb3Wrapper();
         if (!web3Wrapper) {
@@ -307,11 +321,19 @@ export const initWallet = () => {
                     }),
                 );
                 dispatch(setMarketTokens({ baseToken, quoteToken }));
+
+                // tslint:disable-next-line:no-floating-promises
                 dispatch(getOrderbookAndUserOrders());
+
+                // tslint:disable-next-line:no-floating-promises
+                dispatch(getAllCollectibles(ethAccount));
+
                 try {
                     await dispatch(fetchMarkets());
                     // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+                    // tslint:disable-next-line:no-floating-promises
                     dispatch(setConnectedUserNotifications(ethAccount, networkId));
+                    // tslint:disable-next-line:no-floating-promises
                     dispatch(updateMarketPriceEther());
                 } catch (error) {
                     // Relayer error
@@ -326,24 +348,108 @@ export const initWallet = () => {
     };
 };
 
-export const unlockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+export const unlockCollectible: ThunkCreator<Promise<string>> = (collectible: Collectible) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const state = getState();
+        const contractWrappers = await getContractWrappers();
+        const gasPrice = getGasPriceInWei(state);
+        const networkId = getNetworkId(state) as number;
+        const ethAccount = getEthAccount(state);
+        const defaultParams = {
+            ...TX_DEFAULTS,
+            gasPrice,
+        };
+
+        const collectibleContractAddress = getCollectibleContractAddress(networkId);
+
+        const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
+            collectibleContractAddress,
+            ethAccount,
+            true,
+            defaultParams,
+        );
+        return tx;
+    };
+};
+
+export const unlockToken: ThunkCreator = (token: Token) => {
+    return async dispatch => {
         return dispatch(toggleTokenLock(token, false));
     };
 };
 
-export const lockToken = (token: Token) => {
-    return async (dispatch: any, getState: any): Promise<any> => {
+export const lockToken: ThunkCreator = (token: Token) => {
+    return async dispatch => {
         return dispatch(toggleTokenLock(token, true));
     };
 };
 
+export const createSignedCollectibleOrder: ThunkCreator = (
+    collectible: Collectible,
+    side: OrderSide,
+    startPrice: BigNumber,
+    expirationDate: BigNumber,
+    endPrice: BigNumber | null,
+) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const networkId = getNetworkId(state);
+        const collectibleId = new BigNumber(collectible.tokenId);
+        if (networkId) {
+            try {
+                const web3Wrapper = await getWeb3Wrapper();
+                const contractWrappers = await getContractWrappers();
+                const wethAddress = getKnownTokens(networkId).getWethToken().address;
+                const collectibleAddress = getCollectibleContractAddress(networkId);
+                const exchangeAddress = contractWrappers.exchange.address;
+                let order;
+                if (endPrice) {
+                    // DutchAuction sell
+                    const senderAddress = contractWrappers.dutchAuction.address;
+                    order = buildDutchAuctionCollectibleOrder({
+                        account: ethAccount,
+                        amount: new BigNumber('1'),
+                        price: startPrice,
+                        endPrice,
+                        expirationDate,
+                        wethAddress,
+                        collectibleAddress,
+                        collectibleId,
+                        exchangeAddress,
+                        senderAddress,
+                    });
+                } else {
+                    // Normal Sell
+                    order = buildSellCollectibleOrder(
+                        {
+                            account: ethAccount,
+                            amount: new BigNumber('1'),
+                            price: startPrice,
+                            exchangeAddress,
+                            expirationDate,
+                            collectibleId,
+                            collectibleAddress,
+                            wethAddress,
+                        },
+                        side,
+                    );
+                }
+
+                const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+                return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            } catch (error) {
+                throw new SignedOrderException(error.message);
+            }
+        }
+    };
+};
 /**
  *  Initializes the app with a default state if the user does not have metamask, with permissions rejected
  *  or if the user did not connected metamask to the dApp. Takes the info from MAINNET
  */
-export const initializeAppNoMetamaskOrLocked = () => {
-    return async (dispatch: any, getState: any) => {
+export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         if (isMetamaskInstalled()) {
             dispatch(setWeb3State(Web3State.Locked));
         } else {
@@ -364,8 +470,10 @@ export const initializeAppNoMetamaskOrLocked = () => {
 
         dispatch(setMarketTokens({ baseToken, quoteToken }));
 
+        // tslint:disable-next-line:no-floating-promises
         dispatch(getOrderBook());
 
+        // tslint:disable-next-line:no-floating-promises
         dispatch(updateMarketPriceEther());
     };
 };

@@ -1,7 +1,10 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import { RouterState } from 'connected-react-router';
+import { ActionCreator, AnyAction } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 
+import { ExtraArgument } from '../store/index';
 import { Theme } from '../themes/commons';
 
 export interface TabItem {
@@ -74,6 +77,7 @@ export interface StoreState {
     readonly relayer: RelayerState;
     readonly ui: UIState;
     readonly market: MarketState;
+    readonly collectibles: CollectiblesState;
 }
 
 export enum StepKind {
@@ -81,6 +85,9 @@ export enum StepKind {
     ToggleTokenLock = 'ToggleTokenLock',
     BuySellLimit = 'BuySellLimit',
     BuySellMarket = 'BuySellMarket',
+    UnlockCollectibles = 'UnlockCollectibles',
+    SellCollectible = 'SellCollectible',
+    BuyCollectible = 'BuyCollectible',
 }
 
 export interface StepWrapEth {
@@ -95,6 +102,12 @@ export interface StepToggleTokenLock {
     token: Token;
     isUnlocked: boolean;
     context: 'order' | 'standalone';
+}
+
+export interface StepUnlockCollectibles {
+    kind: StepKind.UnlockCollectibles;
+    collectible: Collectible;
+    isUnlocked: boolean;
 }
 
 export interface StepBuySellLimitOrder {
@@ -112,7 +125,29 @@ export interface StepBuySellMarket {
     token: Token;
 }
 
-export type Step = StepWrapEth | StepToggleTokenLock | StepBuySellLimitOrder | StepBuySellMarket;
+export interface StepSellCollectible {
+    kind: StepKind.SellCollectible;
+    collectible: Collectible;
+    startPrice: BigNumber;
+    endPrice: BigNumber | null;
+    expirationDate: BigNumber;
+    side: OrderSide;
+}
+
+export interface StepBuyCollectible {
+    kind: StepKind.BuyCollectible;
+    order: SignedOrder;
+    collectible: Collectible;
+}
+
+export type Step =
+    | StepWrapEth
+    | StepToggleTokenLock
+    | StepBuySellLimitOrder
+    | StepBuySellMarket
+    | StepSellCollectible
+    | StepBuyCollectible
+    | StepUnlockCollectibles;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];
@@ -231,3 +266,26 @@ export enum ModalDisplay {
     InstallMetamask = 'INSTALL_METAMASK',
     EnablePermissions = 'ACCEPT_PERMISSIONS',
 }
+
+export interface Collectible {
+    tokenId: string;
+    name: string;
+    color: string;
+    image: string;
+    currentOwner: string;
+    assetUrl: string;
+    description: string;
+    order: SignedOrder | null;
+}
+
+export interface CollectiblesState {
+    readonly allCollectibles: { [tokenId: string]: Collectible };
+    readonly collectibleSelected: Collectible | null;
+}
+
+export interface CollectibleMetadataSource {
+    fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]>;
+    fetchIndividualCollectibleAsync(tokenId: string, networkId: number): Promise<Collectible | null>;
+}
+
+export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;

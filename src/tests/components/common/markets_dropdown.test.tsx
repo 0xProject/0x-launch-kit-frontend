@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
-import { MarketsDropdownContainer } from '../../../components/common/markets_dropdown';
+import { MarketsDropdownContainer } from '../../../components/erc20/common/markets_dropdown';
 
 describe('Markets Dropdown', () => {
     let wrapper;
