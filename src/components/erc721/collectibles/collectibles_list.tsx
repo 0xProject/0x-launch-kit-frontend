@@ -4,9 +4,11 @@ import styled from 'styled-components';
 
 import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
+import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { CollectiblesCardList } from './collectibles_card_list';
+import { CollectiblesListFilters } from './collectibles_list_filters';
 
 interface OwnProps {
     title: string;
@@ -17,6 +19,10 @@ interface StateProps {
 }
 
 type Props = StateProps & OwnProps;
+
+interface State {
+    sortType: CollectibleSortType;
+}
 
 const MainContainer = styled.div`
     display: flex;
@@ -42,17 +48,31 @@ const Title = styled.h1`
     margin: 0;
 `;
 
-export const CollectiblesList = (props: Props) => {
-    const collectibles = Object.keys(props.collectibles).map(key => props.collectibles[key]);
-    return (
-        <MainContainer>
-            <FiltersMenu>
-                <Title>{props.title}</Title>
-            </FiltersMenu>
-            <CollectiblesCardList collectibles={collectibles} />
-        </MainContainer>
-    );
-};
+export class CollectiblesList extends React.Component<Props, State> {
+    public state = {
+        sortType: CollectibleSortType.NewestAdded,
+    };
+
+    public render = () => {
+        const { title } = this.props;
+        const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
+        const { sortType } = this.state;
+        return (
+            <MainContainer>
+                <FiltersMenu>
+                    <Title>{title}</Title>
+                    <CollectiblesListFilters currentValue={sortType} onChange={this._onChange} />
+                </FiltersMenu>
+                <CollectiblesCardList collectibles={collectibles} sortType={sortType} />
+            </MainContainer>
+        );
+    };
+
+    private _onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        const sortType = evt.target.value as CollectibleSortType;
+        this.setState({ sortType });
+    };
+}
 
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {

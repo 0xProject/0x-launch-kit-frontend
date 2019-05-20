@@ -10,9 +10,9 @@ export interface SortableCollectible {
 }
 
 export enum CollectibleSortType {
-    PriceLowToHigh = 'PriceLowToHigh',
-    PriceHighToLow = 'PriceHighToLow',
-    NewestAdded = 'NewestAdded',
+    PriceLowToHigh = 'Newest Added',
+    PriceHighToLow = 'Price: low to high',
+    NewestAdded = 'Price: hight to low',
 }
 
 export const getCompareFunctionForSort = (sortType: CollectibleSortType) => {

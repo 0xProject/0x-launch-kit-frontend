@@ -53,11 +53,11 @@ const getCollectibleCards = (collectibles: Collectible[], sortType: CollectibleS
 
 interface Props {
     collectibles: Collectible[];
+    sortType: CollectibleSortType;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles } = props;
-    const sortType = CollectibleSortType.NewestAdded;
+    const { collectibles, sortType } = props;
     const collectibleCards = getCollectibleCards(collectibles, sortType);
     return (
         <CollectiblesListOverflow>
