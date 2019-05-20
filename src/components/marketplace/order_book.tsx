@@ -48,13 +48,11 @@ const orderToRow = (
     }, new BigNumber(0));
 
     const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
-    const zeroDecimals = '0'.repeat(UI_DECIMALS_DISPLAYED_ORDER_SIZE);
-    const mySizeStrDisplay = '0.'.concat(zeroDecimals);
-    const displayColor = mySizeConverted !== mySizeStrDisplay ? undefined : '#dedede';
+    const displayColor = !mySize.eq(new BigNumber(0)) ? undefined : '#dedede';
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
             <CustomTD styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
-                {mySizeConverted !== mySizeStrDisplay ? mySizeConverted : '-'}
+                {!mySize.eq(new BigNumber(0)) ? mySizeConverted : '-'}
             </CustomTD>
         ) : null;
 
