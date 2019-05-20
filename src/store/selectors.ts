@@ -135,17 +135,15 @@ export const getSpread = createSelector(
 );
 
 export const getSpreadInPercentage = createSelector(
-    getOpenBuyOrders,
+    getSpread,
     getOpenSellOrders,
-    (buyOrders, sellOrders) => {
-        if (!buyOrders.length || !sellOrders.length) {
+    (absSpread, sellOrders) => {
+        if (!sellOrders.length) {
             return new BigNumber(0);
         }
 
         const lowestPriceSell = sellOrders[sellOrders.length - 1].price;
-        const highestPriceBuy = buyOrders[0].price;
-        const spread = lowestPriceSell.minus(highestPriceBuy);
-        return spread.dividedBy(lowestPriceSell).multipliedBy(100);
+        return absSpread.dividedBy(lowestPriceSell).multipliedBy(100);
     },
 );
 
