@@ -153,8 +153,6 @@ export const getOrderBook = createSelector(
     getOpenSellOrders,
     getOpenBuyOrders,
     getMySizeOrders,
-    getSpread,
-    getSpreadInPercentage,
     (sellOrders, buyOrders, mySizeOrders): OrderBook => {
         const orderBook = {
             sellOrders: mergeByPrice(sellOrders),
