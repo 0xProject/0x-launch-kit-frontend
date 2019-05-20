@@ -123,7 +123,11 @@ class OrderBookTable extends React.Component<Props> {
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 Spread
                             </CustomTDTitle>
-                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
+                            <CustomTD
+                                styles={{ textAlign: 'right', borderBottom: true, borderTop: true, tabular: true }}
+                            >
+                                {spread.absolute.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                            </CustomTD>
                             <CustomTDLast
                                 styles={{
                                     tabular: true,
@@ -132,7 +136,7 @@ class OrderBookTable extends React.Component<Props> {
                                     borderTop: true,
                                 }}
                             >
-                                {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                                {spread.percentage.toFixed(0)}%
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
