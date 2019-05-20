@@ -63,3 +63,6 @@ export const THEME_NAME: string = process.env.REACT_APP_THEME_NAME || 'DEFAULT_T
 export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT
     ? process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT === 'true'
     : process.env.NODE_ENV === 'development';
+
+export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
+    Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;
