@@ -6,18 +6,17 @@ import { Provider } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
 import 'sanitize.css';
 
-import { LOGGER_ID } from './common/constants';
+import { DEFAULT_BASE_PATH, ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH, LOGGER_ID } from './common/constants';
 import { AppContainer } from './components/app';
-import { AdBlockDetector } from './components/common/adblock_detector';
-import { GeneralLayoutContainer } from './components/general_layout';
+import { Erc20App } from './components/erc20/erc20_app';
+import { Erc721App } from './components/erc721/erc721_app';
 import './index.css';
-import { Marketplace } from './pages/marketplace';
-import { MyWallet } from './pages/my_wallet';
 import * as serviceWorker from './serviceWorker';
 import { history, store } from './store';
 
 ReactModal.setAppElement('#root');
-const RedirectToHome = () => <Redirect to="/" />;
+
+const RedirectToHome = () => <Redirect to={DEFAULT_BASE_PATH} />;
 
 if (['development', 'production'].includes(process.env.NODE_ENV) && !window.localStorage.debug) {
     // Log only the app constant id to the console
@@ -28,14 +27,11 @@ const Web3WrappedApp = (
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <AppContainer>
-                <GeneralLayoutContainer>
-                    <AdBlockDetector />
-                    <Switch>
-                        <Route exact={true} path="/" component={Marketplace} />
-                        <Route exact={true} path="/my-wallet" component={MyWallet} />
-                        <Route component={RedirectToHome} />
-                    </Switch>
-                </GeneralLayoutContainer>
+                <Switch>
+                    <Route path={ERC20_APP_BASE_PATH} component={Erc20App} />
+                    <Route path={ERC721_APP_BASE_PATH} component={Erc721App} />
+                    <Route component={RedirectToHome} />
+                </Switch>
             </AppContainer>
         </ConnectedRouter>
     </Provider>

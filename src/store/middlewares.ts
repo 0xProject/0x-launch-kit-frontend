@@ -37,7 +37,7 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
 
             break;
         }
+        default:
+            return result;
     }
-
-    return result;
 };

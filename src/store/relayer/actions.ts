@@ -3,12 +3,11 @@ import { createAction } from 'typesafe-actions';
 
 import { TX_DEFAULTS } from '../../common/constants';
 import { RelayerException } from '../../exceptions/relayer_exception';
-import { getContractWrappers } from '../../services/contract_wrappers';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
-import { getWeb3Wrapper } from '../../services/web3_wrapper';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
-import { NotificationKind, OrderSide, RelayerState, Token, UIOrder } from '../../util/types';
+import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder } from '../../util/types';
+import { getAllCollectibles } from '../collectibles/actions';
 import {
     getBaseToken,
     getEthAccount,
@@ -31,8 +30,8 @@ export const setUserOrders = createAction('relayer/USER_ORDERS_set', resolve => 
     return (orders: UIOrder[]) => resolve(orders);
 });
 
-export const getAllOrders = () => {
-    return async (dispatch: any, getState: any) => {
+export const getAllOrders: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         const quoteToken = getQuoteToken(state) as Token;
@@ -42,8 +41,8 @@ export const getAllOrders = () => {
     };
 };
 
-export const getUserOrders = () => {
-    return async (dispatch: any, getState: any) => {
+export const getUserOrders: ThunkCreator = () => {
+    return async (dispatch, getState) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         const quoteToken = getQuoteToken(state) as Token;
@@ -54,8 +53,8 @@ export const getUserOrders = () => {
     };
 };
 
-export const cancelOrder = (order: UIOrder) => {
-    return async (dispatch: any, getState: any) => {
+export const cancelOrder: ThunkCreator = (order: UIOrder) => {
+    return async (dispatch, getState) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         const gasPrice = getGasPriceInWei(state);
@@ -64,6 +63,7 @@ export const cancelOrder = (order: UIOrder) => {
 
         // tslint:disable-next-line:no-floating-promises no-unsafe-any
         tx.then(transaction => {
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderbookAndUserOrders());
 
             dispatch(
@@ -82,13 +82,28 @@ export const cancelOrder = (order: UIOrder) => {
     };
 };
 
-export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any) => {
+export const submitCollectibleOrder: ThunkCreator = (signedOrder: SignedOrder) => {
+    return async dispatch => {
+        try {
+            const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(getAllCollectibles());
+            // TODO: Dispatch notification
+            return submitResult;
+        } catch (error) {
+            throw new RelayerException(error.message);
+        }
+    };
+};
+
+export const submitLimitOrder: ThunkCreator = (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => {
+    return async (dispatch, getState) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         try {
             const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
 
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderbookAndUserOrders());
             dispatch(
                 addNotifications([
@@ -110,8 +125,11 @@ export const submitLimitOrder = (signedOrder: SignedOrder, amount: BigNumber, si
     };
 };
 
-export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
-    return async (dispatch: any, getState: any): Promise<{ txHash: string; amountInReturn: BigNumber }> => {
+export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInReturn: BigNumber }>> = (
+    amount: BigNumber,
+    side: OrderSide,
+) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -137,6 +155,7 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
 
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderbookAndUserOrders());
             dispatch(
                 addNotifications([
@@ -163,15 +182,17 @@ export const submitMarketOrder = (amount: BigNumber, side: OrderSide) => {
     };
 };
 
-export const getOrderbookAndUserOrders = () => {
-    return async (dispatch: any) => {
+export const getOrderbookAndUserOrders: ThunkCreator = () => {
+    return async dispatch => {
+        // tslint:disable-next-line:no-floating-promises
         dispatch(getAllOrders());
+        // tslint:disable-next-line:no-floating-promises
         dispatch(getUserOrders());
     };
 };
 
-export const getOrderBook = () => {
-    return async (dispatch: any) => {
-        dispatch(getAllOrders());
+export const getOrderBook: ThunkCreator = () => {
+    return async dispatch => {
+        return dispatch(getAllOrders());
     };
 };

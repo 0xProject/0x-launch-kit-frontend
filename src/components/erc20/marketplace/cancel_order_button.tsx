@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { cancelOrder } from '../../store/actions';
-import { UIOrder } from '../../util/types';
-import { CloseIcon } from '../common/icons/close_icon';
+import { cancelOrder } from '../../../store/actions';
+import { UIOrder } from '../../../util/types';
+import { CloseIcon } from '../../common/icons/close_icon';
 
 interface OwnProps {
     order: UIOrder;
