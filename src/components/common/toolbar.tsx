@@ -2,30 +2,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import { goToHome, goToWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
 import { StoreState, Web3State } from '../../util/types';
-import { WalletConnectionStatusContainer } from '../account';
-import { NotificationsDropdownContainer } from '../notifications/notifications_dropdown';
 
 import { ErrorCard, ErrorIcons, FontSize } from './error_card';
-import { Logo } from './logo';
-import { MarketsDropdownContainer } from './markets_dropdown';
+
+interface OwnProps {
+    centerContent?: React.ReactNode;
+    endContent: React.ReactNode;
+    startContent: React.ReactNode;
+}
 
 interface StateProps {
     web3State?: Web3State;
 }
 
-interface DispatchProps {
-    onGoToHome: () => any;
-    onGoToWallet: () => any;
-}
+type Props = OwnProps & StateProps;
 
-type Props = StateProps & DispatchProps;
-
-const separatorTopbar = css`
+export const separatorTopbar = css`
     &:after {
         background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
         content: '';
@@ -54,52 +50,34 @@ const ToolbarWrapper = styled.div`
     z-index: 123;
 `;
 
-const MyWalletLink = styled.a`
-    align-items: center;
-    color: ${props => props.theme.componentsTheme.textColorCommon};
-    display: flex;
-    font-size: 16px;
-    font-weight: 500;
-    text-decoration: none;
-
-    &:hover {
-        text-decoration: underline;
-    }
-
-    ${separatorTopbar}
-`;
-
 const ToolbarStart = styled.div`
     align-items: center;
     display: flex;
     justify-content: flex-start;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
+    }
+`;
+
+const ToolbarCenter = styled.div`
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
+    }
 `;
 
 const ToolbarEnd = styled.div`
     align-items: center;
     display: flex;
     justify-content: flex-end;
-`;
 
-const LogoHeader = styled(Logo)`
-    ${separatorTopbar}
-`;
-
-const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
-    align-items: center;
-    display: flex;
-
-    ${separatorTopbar}
-`;
-
-const WalletDropdown = styled(WalletConnectionStatusContainer)`
-    display: none;
-
-    @media (min-width: ${themeBreakPoints.sm}) {
-        align-items: center;
-        display: flex;
-
-        ${separatorTopbar}
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
     }
 `;
 
@@ -107,23 +85,11 @@ const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
     const isMmLoading = props.web3State === Web3State.Loading;
-
-    const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
-        e.preventDefault();
-        props.onGoToHome();
-    };
-
-    const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
-        e.preventDefault();
-        props.onGoToWallet();
-    };
+    const { startContent, endContent, centerContent } = props;
 
     return (
         <ToolbarWrapper>
-            <ToolbarStart>
-                <LogoHeader onClick={handleLogoClick} />
-                <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-            </ToolbarStart>
+            <ToolbarStart>{startContent}</ToolbarStart>
             {isMmLocked ? (
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
             ) : null}
@@ -133,15 +99,8 @@ const Toolbar = (props: Props) => {
             {isMmLoading ? (
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
             ) : null}
-            {!isMmLocked && !isMmNotInstalled && !isMmLoading ? (
-                <ToolbarEnd>
-                    <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
-                        My Wallet
-                    </MyWalletLink>
-                    <WalletDropdown />
-                    <NotificationsDropdownContainer />
-                </ToolbarEnd>
-            ) : null}
+            {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarCenter>{centerContent}</ToolbarCenter> : null}
+            {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarEnd>{endContent}</ToolbarEnd> : null}
         </ToolbarWrapper>
     );
 };
@@ -152,16 +111,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        onGoToHome: () => dispatch(goToHome()),
-        onGoToWallet: () => dispatch(goToWallet()),
-    };
-};
-
-const ToolbarContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(Toolbar);
+const ToolbarContainer = connect(mapStateToProps)(Toolbar);
 
 export { Toolbar, ToolbarContainer };

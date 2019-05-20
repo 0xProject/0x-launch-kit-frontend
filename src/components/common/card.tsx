@@ -13,18 +13,13 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CardWrapper = styled(CardBase)`
-    display: flex;
-    flex-direction: column;
     margin-bottom: ${themeDimensions.verticalSeparationSm};
-    max-height: 100%;
 `;
 
 const CardHeader = styled.div`
     align-items: center;
     border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     display: flex;
-    flex-grow: 0;
-    flex-shrink: 0;
     justify-content: space-between;
     padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
 `;
@@ -42,7 +37,7 @@ const CardTitle = styled.h1`
 const CardBody = styled.div<{ minHeightBody?: string }>`
     margin: 0;
     min-height: ${props => props.minHeightBody};
-    overflow: auto;
+    overflow-x: auto;
     padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
     position: relative;
 `;

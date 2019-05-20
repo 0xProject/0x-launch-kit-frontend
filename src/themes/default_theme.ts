@@ -12,6 +12,7 @@ const modalThemeStyle: ThemeModalStyle = {
         maxHeight: '90%',
         minWidth: '350px',
         overflow: 'hidden',
+        padding: '16px',
         position: 'relative',
         right: 'auto',
         top: 'auto',
@@ -26,7 +27,7 @@ const modalThemeStyle: ThemeModalStyle = {
 };
 
 const whiteThemeColors: ThemeProperties = {
-    background: '#f5f5f5',
+    background: '#f4f3f4',
     borderColor: '#dedede',
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
     buttonConvertBackgroundColor: '#fff',
@@ -35,6 +36,7 @@ const whiteThemeColors: ThemeProperties = {
     buttonErrorBackgroundColor: '#FF6534',
     buttonPrimaryBackgroundColor: '#002979',
     buttonSecondaryBackgroundColor: '#474747',
+    buttonSellBackgroundColor: '#00AE99',
     buttonTertiaryBackgroundColor: '#F6851B',
     buttonTextColor: '#fff',
     cardBackgroundColor: '#fff',
@@ -61,8 +63,10 @@ const whiteThemeColors: ThemeProperties = {
     iconUnlockedColor: '#C4C4C4',
     inactiveTabBackgroundColor: '#f9f9f9',
     lightGray: '#B9B9B9',
-    logoColor: '#0029FF',
-    logoTextColor: '#000',
+    logoERC20Color: '#0029FF',
+    logoERC20TextColor: '#000',
+    logoERC721Color: '#00AE99',
+    logoERC721TextColor: '#000',
     marketsSearchFieldBackgroundColor: '#eaeaea',
     marketsSearchFieldBorderColor: '#dedede',
     marketsSearchFieldTextColor: '#333',

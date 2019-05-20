@@ -10,7 +10,7 @@ const FooterWrapper = styled.div`
     align-items: center;
     display: flex;
     justify-content: center;
-    height: ${themeDimensions.footerHeight};
+    min-height: 38px;
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
 `;
 
@@ -83,8 +83,8 @@ const poweredBySVG = () => {
 
 export const Footer: React.FC<Props> = props => {
     return (
-        <FooterWrapper title={GIT_COMMIT ? GIT_COMMIT : ''} {...props}>
-            <a href="https://0x.org/" target="_blank">
+        <FooterWrapper title={GIT_COMMIT} {...props}>
+            <a href="https://0x.org/" target="_blank" rel="noopener noreferrer">
                 {poweredBySVG()}
             </a>
         </FooterWrapper>
