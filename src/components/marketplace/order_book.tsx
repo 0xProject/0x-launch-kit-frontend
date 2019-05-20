@@ -14,6 +14,15 @@ import { CardLoading } from '../common/loading';
 import { ShowNumberWithColors } from '../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, TH, THLast } from '../common/table';
 
+import {
+    customTDLastStyles,
+    customTDStyles,
+    customTDTitleStyles,
+    GridRowSpread,
+    GridRowSpreadContainer,
+    StickySpreadState,
+} from './grid_row_spread';
+
 interface StateProps {
     orderBook: OrderBook;
     baseToken: Token | null;
@@ -27,18 +36,6 @@ interface OwnProps {
 }
 
 type Props = OwnProps & StateProps;
-
-type StickySpreadPosition = 'top' | 'bottom' | 'normal';
-
-interface State {
-    stickySpreadPosition: StickySpreadPosition;
-    stickySpreadWidth: string;
-}
-
-interface GridRowSpreadProps {
-    stickySpreadPosition: StickySpreadPosition;
-    stickySpreadWidth?: string;
-}
 
 const OrderbookCard = styled(Card)`
     display: flex;
@@ -73,23 +70,6 @@ const GridRowTop = styled(GridRow)`
     position: relative;
     z-index: 1;
 `;
-
-const GridRowSpread = styled(GridRow)<GridRowSpreadProps>`
-    ${props => (props.stickySpreadPosition === 'top' ? 'top: 29px;' : '')}
-    ${props => (props.stickySpreadPosition === 'bottom' ? 'bottom: 0;' : '')}
-
-    background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
-    flex-grow: 0;
-    flex-shrink: 0;
-    display: grid;
-    position: ${props => (props.stickySpreadPosition === 'normal' ? 'relative' : 'absolute')};
-    width: ${props => props.stickySpreadWidth};
-    z-index: 12;
-`;
-
-GridRowSpread.defaultProps = {
-    stickySpreadWidth: 'auto',
-};
 
 const CenteredLoading = styled(CardLoading)`
     align-self: center;
@@ -172,43 +152,9 @@ const orderToRow = (
     );
 };
 
-const getSpreadRow = (
-    ref: React.RefObject<HTMLDivElement>,
-    spread: string,
-    stickySpreadPosition: StickySpreadPosition = 'normal',
-    stickySpreadWidth: string = '',
-): React.ReactNode => {
-    return (
-        <GridRowSpread ref={ref} stickySpreadPosition={stickySpreadPosition} stickySpreadWidth={stickySpreadWidth}>
-            <CustomTDTitle as="div" styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                Spread
-            </CustomTDTitle>
-            <CustomTD as="div" styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                {}
-            </CustomTD>
-            <CustomTDLast
-                as="div"
-                styles={{
-                    tabular: true,
-                    textAlign: 'right',
-                    borderBottom: true,
-                    borderTop: true,
-                }}
-            >
-                {spread}
-            </CustomTDLast>
-        </GridRowSpread>
-    );
-};
-
-class OrderBookTable extends React.Component<Props, State> {
-    public readonly state: State = {
-        stickySpreadPosition: 'normal',
-        stickySpreadWidth: '100%',
-    };
-
+class OrderBookTable extends React.Component<Props> {
     private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
-    private readonly _spreadRowFixed: React.RefObject<HTMLDivElement>;
+    private readonly _spreadRowFixed: any;
     private readonly _itemsScroll: React.RefObject<HTMLDivElement>;
     private _hasScrolled = false;
 
@@ -223,19 +169,16 @@ class OrderBookTable extends React.Component<Props, State> {
     public render = () => {
         const { orderBook, baseToken, quoteToken, web3State, theme } = this.props;
         const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
-        const spreadToFixed = spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
-
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
         });
-
         const mySizeBuyArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Buy;
         });
-
         const getColor = (order: OrderBookItem): string => {
             return order.side === OrderSide.Buy ? theme.componentsTheme.green : theme.componentsTheme.orange;
         };
+        const spreadToFixed = spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
 
         let content: React.ReactNode;
 
@@ -261,15 +204,12 @@ class OrderBookTable extends React.Component<Props, State> {
                             Price ({quoteToken.symbol})
                         </THLast>
                     </GridRowTop>
-                    <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpread}>
-                        {this.state.stickySpreadPosition !== 'normal'
-                            ? getSpreadRow(
-                                  this._spreadRowFixed,
-                                  spreadToFixed,
-                                  this.state.stickySpreadPosition,
-                                  this.state.stickySpreadWidth,
-                              )
-                            : null}
+                    <ItemsScroll ref={this._itemsScroll} onScroll={this._getStickySpreadState}>
+                        <GridRowSpread
+                            ref={this._spreadRowFixed}
+                            spreadValue={spreadToFixed}
+                            stickySpreadWidth={this._getSpreadWidth()}
+                        />
                         <ItemsMainContainer>
                             <TopItems>
                                 {sellOrders.map((order, index) =>
@@ -284,7 +224,20 @@ class OrderBookTable extends React.Component<Props, State> {
                                     ),
                                 )}
                             </TopItems>
-                            {getSpreadRow(this._spreadRowScrollable, spreadToFixed)}
+                            <GridRowSpreadContainer
+                                stickySpreadWidth={this._getSpreadWidth()}
+                                ref={this._spreadRowScrollable}
+                            >
+                                <CustomTDTitle as="div" styles={customTDTitleStyles}>
+                                    Spread
+                                </CustomTDTitle>
+                                <CustomTD as="div" styles={customTDStyles}>
+                                    {}
+                                </CustomTD>
+                                <CustomTDLast as="div" styles={customTDLastStyles}>
+                                    {spreadToFixed}
+                                </CustomTDLast>
+                            </GridRowSpreadContainer>
                             <BottomItems>
                                 {buyOrders.map((order, index) =>
                                     orderToRow(
@@ -315,30 +268,50 @@ class OrderBookTable extends React.Component<Props, State> {
         this._scrollToSpread();
     };
 
-    private readonly _updateStickySpread = (event: any) => {
-        const spreadOffsetTop = this._spreadRowScrollable.current ? this._spreadRowScrollable.current.offsetTop : 0;
-        const spreadHeight = this._spreadRowScrollable.current ? this._spreadRowScrollable.current.clientHeight : 0;
-        const itemsListScroll = this._itemsScroll.current ? this._itemsScroll.current.scrollTop : 0;
-        const itemsListHeight = this._itemsScroll.current ? this._itemsScroll.current.clientHeight : 0;
+    private readonly _getSpreadWidth = (): string => {
+        return this._itemsScroll.current ? `${this._itemsScroll.current.clientWidth}px` : '';
+    };
+
+    private readonly _getSpreadOffsetTop = (): number => {
+        return this._spreadRowScrollable.current ? this._spreadRowScrollable.current.offsetTop : 0;
+    };
+
+    private readonly _getSpreadHeight = (): number => {
+        return this._spreadRowScrollable.current ? this._spreadRowScrollable.current.clientHeight : 0;
+    };
+
+    private readonly _getItemsListScroll = (): number => {
+        return this._itemsScroll.current ? this._itemsScroll.current.scrollTop : 0;
+    };
+
+    private readonly _getItemsListHeight = (): number => {
+        return this._itemsScroll.current ? this._itemsScroll.current.clientHeight : 0;
+    };
+
+    private readonly _getStickySpreadState = (event: any) => {
+        const spreadOffsetTop = this._getSpreadOffsetTop();
+        const itemsListScroll = this._getItemsListScroll();
         const topLimit = 0;
 
-        // Note: it's necessary to set the sticky spread's width to be the same
-        // as the items list to account for the scrollbar's width.
-        this.setState({
-            stickySpreadWidth: this._itemsScroll.current ? `${this._itemsScroll.current.clientWidth}px` : '',
-        });
+        let stickySpreadState: StickySpreadState;
 
         if (spreadOffsetTop - itemsListScroll <= topLimit) {
-            this.setState({ stickySpreadPosition: 'top' });
-        } else if (itemsListScroll + itemsListHeight - spreadHeight <= spreadOffsetTop) {
-            this.setState({ stickySpreadPosition: 'bottom' });
+            stickySpreadState = 'top';
+        } else if (itemsListScroll + this._getItemsListHeight() - this._getSpreadHeight() <= spreadOffsetTop) {
+            stickySpreadState = 'bottom';
         } else {
-            this.setState({ stickySpreadPosition: 'normal' });
+            stickySpreadState = 'hidden';
+        }
+
+        if (this._spreadRowFixed) {
+            this._spreadRowFixed.current.updateStickSpreadState(stickySpreadState);
         }
     };
 
     private readonly _scrollToSpread = () => {
         const { current } = this._spreadRowScrollable;
+
+        // avoid scrolling for tablet sized screens and below
         if (window.outerWidth < parseInt(themeBreakPoints.xl, 10)) {
             return;
         }
