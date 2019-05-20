@@ -9,7 +9,7 @@ import { Spinner } from '../spinner';
 
 import { StepsProgress } from './steps_progress';
 
-const DONE_STATUS_VISIBILITY_TIME: number = 4000;
+const DONE_STATUS_VISIBILITY_TIME: number = 3500;
 
 enum StepStatus {
     ConfirmOnMetamask,
