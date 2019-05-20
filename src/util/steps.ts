@@ -35,5 +35,5 @@ export const makeGetProgress = (beginning: number, estimatedTxTimeMs: number) =>
 
     const progress = Math.round((elapsedMs / estimatedTxTimeMs) * 100);
 
-    return Math.max(0, Math.min(progress, 100));
+    return Math.max(0, Math.min(progress, 95));
 };
