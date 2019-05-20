@@ -3,6 +3,7 @@ import React from 'react';
 import { getStepTitle, isLongStep, makeGetProgress } from '../../../util/steps';
 import { Step } from '../../../util/types';
 
+import { BaseStepModalUnmountedException } from './exceptions/unmounted_exception';
 import { StepPendingTime } from './step_pending_time';
 import {
     ModalStatusTextLight,
@@ -16,14 +17,6 @@ import {
     Title,
 } from './steps_common';
 import { GetProgress, StepItem, StepsProgress } from './steps_progress';
-
-export class BaseStepModalUnmountedException extends Error {
-    constructor() {
-        super('BaseStepModal unmounted');
-        // see: typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
-        Object.setPrototypeOf(this, new.target.prototype);
-    }
-}
 
 type RunAction = ({
     onLoading,

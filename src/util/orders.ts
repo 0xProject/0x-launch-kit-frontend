@@ -1,4 +1,4 @@
-import { assetDataUtils, BigNumber, generatePseudoRandomSalt, Order, SignedOrder } from '0x.js';
+import { assetDataUtils, BigNumber, Order, SignedOrder } from '0x.js';
 
 import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
 
@@ -37,7 +37,7 @@ export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide):
         takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
         makerFee: MAKER_FEE,
         takerFee: TAKER_FEE,
-        salt: generatePseudoRandomSalt(),
+        salt: new BigNumber(Date.now()),
         senderAddress: '0x0000000000000000000000000000000000000000',
     };
 };

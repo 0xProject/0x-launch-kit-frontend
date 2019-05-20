@@ -8,6 +8,7 @@ import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
+import { SignatureFailedException } from './exceptions/signature_failed_exception';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
@@ -73,11 +74,12 @@ class SignOrderStep extends React.Component<Props, State> {
             await this.props.submitLimitOrder(signedOrder, amount, side);
             onDone();
         } catch (error) {
+            const signError = new SignatureFailedException(error);
             this.setState(
                 {
-                    errorMsg: error.message,
+                    errorMsg: signError.message,
                 },
-                () => onError(error),
+                () => onError(signError),
             );
         }
     };

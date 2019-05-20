@@ -237,7 +237,7 @@ const InputEth = styled<any>(BigNumberInput)`
     }
 `;
 
-const minEth = unitsInTokenAmount('0.5', 18);
+const minEth = unitsInTokenAmount('0.05', 18);
 const minSlidervalue = '0.00';
 
 class WethModal extends React.Component<Props, State> {
@@ -333,7 +333,7 @@ class WethModal extends React.Component<Props, State> {
                 <SetMinEthWrapper hideWarning={isInsufficientEth ? false : true}>
                     ETH required for fees.&nbsp;
                     <SetMinEthButton href="" onClick={this._setMinEth}>
-                        0.5 ETH Recommended
+                        0.05 ETH Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>
                 <Button onClick={this.submit} disabled={isDisabled} variant="balance">
