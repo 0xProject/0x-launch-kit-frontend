@@ -72,7 +72,7 @@ const GridRowTop = styled(GridRow)`
 `;
 
 const CenteredLoading = styled(CardLoading)`
-    align-self: center;
+    height: 100%;
 `;
 
 const ItemsScroll = styled.div`

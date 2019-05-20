@@ -33,7 +33,7 @@ export const GridRowSpreadContainer = styled(GridRow)<GridRowSpreadProps>`
     flex-grow: 0;
     flex-shrink: 0;
     display: grid;
-    position: absolute;
+    position: ${props => (props.stickySpreadState === 'hidden' ? 'relative' : 'absolute')};
     width: ${props => props.stickySpreadWidth};
     z-index: 12;
 `;
