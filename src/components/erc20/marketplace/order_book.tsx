@@ -49,11 +49,11 @@ const orderToRow = (
 
     const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const isMySizeEmpty = mySize.eq(new BigNumber(0));
-    const displayColor = isMySizeEmpty ? undefined : '#dedede';
+    const displayColor = isMySizeEmpty ? '#dedede' : undefined;
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
             <CustomTD styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
-                {isMySizeEmpty ? mySizeConverted : '-'}
+                {isMySizeEmpty ? '-' : mySizeConverted}
             </CustomTD>
         ) : null;
 
