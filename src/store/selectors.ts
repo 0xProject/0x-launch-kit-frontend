@@ -149,15 +149,11 @@ export const getOrderBook = createSelector(
     getMySizeOrders,
     getSpread,
     getSpreadInPercentage,
-    (sellOrders, buyOrders, mySizeOrders, spreadAbs, spreadPercent): OrderBook => {
+    (sellOrders, buyOrders, mySizeOrders): OrderBook => {
         const orderBook = {
             sellOrders: mergeByPrice(sellOrders),
             buyOrders: mergeByPrice(buyOrders),
             mySizeOrders,
-            spread: {
-                absolute: spreadAbs,
-                percentage: spreadPercent,
-            },
         };
         return orderBook;
     },

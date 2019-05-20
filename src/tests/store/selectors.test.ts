@@ -238,10 +238,6 @@ describe('selectors', () => {
                 },
             ],
             mySizeOrders: [],
-            spread: {
-                absolute: new BigNumber('0.5'),
-                percentage: new BigNumber('6.25'),
-            },
         });
     });
 

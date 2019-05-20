@@ -11,6 +11,8 @@ import { OrderSide, TokenSymbol, Web3State } from '../../util/types';
 import { mountWithTheme } from '../util/test_with_theme';
 
 describe('OrderBookTable', () => {
+    const absoluteSpread = new BigNumber('0.03');
+    const percentageSpread = new BigNumber('3');
     it('Renders my size column with value', () => {
         const orderBook = {
             sellOrders: [
@@ -44,10 +46,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: {
-                absolute: new BigNumber('0.03'),
-                percentage: new BigNumber('3'),
-            },
         };
 
         const baseToken = tokenFactory.build();
@@ -68,6 +66,8 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 
@@ -117,10 +117,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: {
-                absolute: new BigNumber('0.03'),
-                percentage: new BigNumber('3'),
-            },
         };
 
         const baseToken = tokenFactory.build();
@@ -141,6 +137,8 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                percentageSpread={percentageSpread}
+                absoluteSpread={absoluteSpread}
             />,
         );
 
@@ -200,10 +198,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: {
-                absolute: new BigNumber('0.03'),
-                percentage: new BigNumber('3'),
-            },
         };
 
         const baseToken = tokenFactory.build();
@@ -231,6 +225,8 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 
@@ -329,10 +325,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: {
-                absolute: new BigNumber('0.03'),
-                percentage: new BigNumber('3'),
-            },
         };
 
         const token = {
@@ -359,6 +351,8 @@ describe('OrderBookTable', () => {
                 quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.NotInstalled}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 
@@ -403,10 +397,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: {
-                absolute: new BigNumber('0.03'),
-                percentage: new BigNumber('3'),
-            },
         };
 
         const token = {
@@ -433,6 +423,8 @@ describe('OrderBookTable', () => {
                 quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.Locked}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 

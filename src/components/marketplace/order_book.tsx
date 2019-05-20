@@ -4,7 +4,15 @@ import { connect } from 'react-redux';
 import { withTheme } from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../common/constants';
-import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../store/selectors';
+import {
+    getBaseToken,
+    getOrderBook,
+    getQuoteToken,
+    getSpread,
+    getSpreadInPercentage,
+    getUserOrders,
+    getWeb3State,
+} from '../../store/selectors';
 import { Theme } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../util/types';
@@ -20,6 +28,8 @@ interface StateProps {
     quoteToken: Token | null;
     userOrders: UIOrder[];
     web3State?: Web3State;
+    absoluteSpread: BigNumber;
+    percentageSpread: BigNumber;
 }
 
 interface OwnProps {
@@ -70,8 +80,8 @@ const orderToRow = (
 
 class OrderBookTable extends React.Component<Props> {
     public render = () => {
-        const { orderBook, baseToken, quoteToken, web3State, theme } = this.props;
-        const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
+        const { orderBook, baseToken, quoteToken, web3State, theme, absoluteSpread, percentageSpread } = this.props;
+        const { sellOrders, buyOrders, mySizeOrders } = orderBook;
 
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
@@ -124,7 +134,7 @@ class OrderBookTable extends React.Component<Props> {
                             <CustomTD
                                 styles={{ textAlign: 'right', borderBottom: true, borderTop: true, tabular: true }}
                             >
-                                {spread.absolute.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                                {absoluteSpread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
                             </CustomTD>
                             <CustomTDLast
                                 styles={{
@@ -134,7 +144,7 @@ class OrderBookTable extends React.Component<Props> {
                                     borderTop: true,
                                 }}
                             >
-                                {spread.percentage.toFixed(0)}%
+                                {percentageSpread.toFixed(0)}%
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
@@ -164,6 +174,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
         userOrders: getUserOrders(state),
         quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
+        absoluteSpread: getSpread(state),
+        percentageSpread: getSpreadInPercentage(state),
     };
 };
 

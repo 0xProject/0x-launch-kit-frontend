@@ -149,7 +149,6 @@ export interface OrderBook {
     buyOrders: OrderBookItem[];
     sellOrders: OrderBookItem[];
     mySizeOrders: OrderBookItem[];
-    spread: Spread;
 }
 
 export interface CurrencyPair {
