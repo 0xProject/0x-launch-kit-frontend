@@ -3,7 +3,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withTheme } from 'styled-components';
 
-import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
+import {
+    UI_DECIMALS_DISPLAYED_ORDER_SIZE,
+    UI_DECIMALS_DISPLAYED_PRICE_ETH,
+    UI_DECIMALS_DISPLAYED_SPREAD_PERCENT,
+} from '../../../common/constants';
 import {
     getBaseToken,
     getOrderBook,
@@ -144,7 +148,7 @@ class OrderBookTable extends React.Component<Props> {
                                     borderTop: true,
                                 }}
                             >
-                                {percentageSpread.toFixed(0)}%
+                                {percentageSpread.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT)}%
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
