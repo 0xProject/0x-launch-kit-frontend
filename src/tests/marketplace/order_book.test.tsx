@@ -44,7 +44,10 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
+            spread: {
+                absolute: new BigNumber('0.03'),
+                percentage: new BigNumber('3'),
+            },
         };
 
         const baseToken = tokenFactory.build();
@@ -71,9 +74,9 @@ describe('OrderBookTable', () => {
         // then
         const mySizeRowValue = wrapper
             .find('tbody tr')
-            .at(0)
+            .at(1)
             .find('td')
-            .at(1);
+            .at(0);
         expect(mySizeRowValue.text()).toEqual('1.0000');
     });
     it('Should render a row of mySize with the total amount for one order', () => {
@@ -114,7 +117,10 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
+            spread: {
+                absolute: new BigNumber('0.03'),
+                percentage: new BigNumber('3'),
+            },
         };
 
         const baseToken = tokenFactory.build();
@@ -143,7 +149,7 @@ describe('OrderBookTable', () => {
             .find('tbody tr')
             .at(0)
             .find('td')
-            .at(1);
+            .at(2);
         expect(mySizeRowValue.text()).toEqual('2.0000');
     });
     it('Check if my size renders an item with more than two decimals', () => {
@@ -194,7 +200,10 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
+            spread: {
+                absolute: new BigNumber('0.03'),
+                percentage: new BigNumber('3'),
+            },
         };
 
         const baseToken = tokenFactory.build();
@@ -320,7 +329,10 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
+            spread: {
+                absolute: new BigNumber('0.03'),
+                percentage: new BigNumber('3'),
+            },
         };
 
         const token = {
@@ -391,7 +403,10 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
+            spread: {
+                absolute: new BigNumber('0.03'),
+                percentage: new BigNumber('3'),
+            },
         };
 
         const token = {
