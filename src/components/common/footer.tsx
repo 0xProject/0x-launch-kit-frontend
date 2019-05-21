@@ -9,8 +9,8 @@ interface Props extends HTMLAttributes<HTMLDivElement> {}
 const FooterWrapper = styled.div`
     align-items: center;
     display: flex;
+    height: ${themeDimensions.footerHeight};
     justify-content: center;
-    min-height: 38px;
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
 `;
 
