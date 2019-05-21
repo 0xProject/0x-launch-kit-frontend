@@ -2,10 +2,10 @@
 
 exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`] = `
 <div
-  className="sc-bwzfXH igYdVz sc-bdVaJa fJeBhq"
+  className="sc-bwzfXH jVeXi sc-bdVaJa fJeBhq"
 >
   <div
-    className="sc-htpNat hlBXBJ"
+    className="sc-htpNat fMPtTX"
   >
     <h1
       className="sc-bxivhb DvYdZ"
