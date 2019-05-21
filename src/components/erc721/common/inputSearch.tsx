@@ -45,6 +45,12 @@ const SearchInput = styled.input`
 export class Search extends React.Component<Props> {
     public render = () => {
         const { placeHolder, onChange, ...restProps } = this.props;
-        return <SearchInput {...restProps} placeholder={placeHolder ? placeHolder : 'Search Cryptocards'} onChange={onChange ? onChange : null}/>;
+        return (
+            <SearchInput
+                {...restProps}
+                placeholder={placeHolder ? placeHolder : 'Search Cryptocards'}
+                onChange={onChange ? onChange : null}
+            />
+        );
     };
 }

@@ -7,7 +7,6 @@ import { CheckMetamaskStateModalContainer } from '../common/check_metamask_state
 import { GeneralLayoutContainer } from '../general_layout';
 
 import { CollectibleListModal } from './collectibles/collectible_list_modal';
-import { CollectibleListModalPure } from './collectibles/collectible_list_modal_pure';
 import { CollectibleSellModal } from './collectibles/collectible_sell_modal';
 import { ToolbarContentContainer } from './common/toolbar_content';
 import { AllCollectibles } from './pages/all_collectibles';
@@ -20,7 +19,7 @@ export const Erc721App = () => (
     <GeneralLayoutContainer toolbar={toolbar}>
         <AdBlockDetector />
         <CollectibleSellModal />
-        <CollectibleListModalPure />
+        <CollectibleListModal />
         <CheckMetamaskStateModalContainer />
         <Switch>
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={AllCollectibles} />
