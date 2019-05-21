@@ -4,10 +4,12 @@ import styled from 'styled-components';
 
 import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
+import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { CollectiblesCardList } from './collectibles_card_list';
+import { CollectiblesListFilter } from './collectibles_list_filter';
 import { CollectiblesListSort } from './collectibles_list_sort';
 
 interface OwnProps {
@@ -22,6 +24,7 @@ type Props = StateProps & OwnProps;
 
 interface State {
     sortType: CollectibleSortType;
+    filterType: CollectibleFilterType;
 }
 
 const MainContainer = styled.div`
@@ -51,19 +54,21 @@ const Title = styled.h1`
 export class CollectiblesList extends React.Component<Props, State> {
     public state = {
         sortType: CollectibleSortType.NewestAdded,
+        filterType: CollectibleFilterType.ShowAll,
     };
 
     public render = () => {
         const { title } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
-        const { sortType } = this.state;
+        const { sortType, filterType } = this.state;
         return (
             <MainContainer>
                 <FiltersMenu>
                     <Title>{title}</Title>
                     <CollectiblesListSort currentValue={sortType} onChange={this._onChange} />
+                    <CollectiblesListFilter currentValue={filterType} onChange={this._onChangeFilter} />
                 </FiltersMenu>
-                <CollectiblesCardList collectibles={collectibles} sortType={sortType} />
+                <CollectiblesCardList collectibles={collectibles} sortType={sortType} filterType={filterType} />
             </MainContainer>
         );
     };
@@ -71,6 +76,11 @@ export class CollectiblesList extends React.Component<Props, State> {
     private _onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
         const sortType = evt.target.value as CollectibleSortType;
         this.setState({ sortType });
+    };
+
+    private _onChangeFilter = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        const filterType = evt.target.value as CollectibleFilterType;
+        this.setState({ filterType });
     };
 }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
+import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
 import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
 import { Collectible } from '../../../util/types';
 
@@ -34,9 +35,14 @@ const CollectiblesList = styled.div`
     }
 `;
 
-const getCollectibleCards = (collectibles: Collectible[], sortType: CollectibleSortType) => {
+const getCollectibleCards = (
+    collectibles: Collectible[],
+    sortType: CollectibleSortType,
+    filterType: CollectibleFilterType,
+) => {
     const sortedItems = getSortedCollectibles(collectibles, sortType);
-    return sortedItems.map((sortableCollectible, index) => {
+    const filteredItems = sortedItems.filter(getFilterFunction(filterType));
+    return filteredItems.map((sortableCollectible, index) => {
         const { name, image, color, tokenId } = sortableCollectible.collectible;
         return (
             <CollectibleAssetContainer
@@ -54,11 +60,12 @@ const getCollectibleCards = (collectibles: Collectible[], sortType: CollectibleS
 interface Props {
     collectibles: Collectible[];
     sortType: CollectibleSortType;
+    filterType: CollectibleFilterType;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType } = props;
-    const collectibleCards = getCollectibleCards(collectibles, sortType);
+    const { collectibles, sortType, filterType } = props;
+    const collectibleCards = getCollectibleCards(collectibles, sortType, filterType);
     return (
         <CollectiblesListOverflow>
             <CollectiblesList>{collectibleCards}</CollectiblesList>
