@@ -109,22 +109,20 @@ export class CollectiblesList extends React.Component<Props, State> {
             <MainContainer>
                 <FiltersMenu>
                     <Title>{title}</Title>
-                    <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChange} />
-                    <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilter} />
+                    <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
+                    <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
                 </FiltersMenu>
                 <CollectiblesCardList collectibles={collectibles} sortType={sortType} filterType={filterType} />
             </MainContainer>
         );
     };
 
-    private readonly _onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        const sortType = evt.target.value as CollectibleSortType;
-        this.setState({ sortType });
+    private readonly _onChangeSortType = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ sortType: evt.target.value as CollectibleSortType });
     };
 
-    private readonly _onChangeFilter = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        const filterType = evt.target.value as CollectibleFilterType;
-        this.setState({ filterType });
+    private readonly _onChangeFilterType = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ filterType: evt.target.value as CollectibleFilterType });
     };
 }
 
