@@ -31,7 +31,6 @@ type Props = OwnProps & DispatchProps & StateProps;
 
 interface State {
     currentCollectible: Collectible | null;
-    filteredCollectibles: Collectible[];
     filterText: string;
 }
 
@@ -63,34 +62,22 @@ const CloseModalButtonStyle = styled(CloseModalButton)`
 
 const initialState = {
     currentCollectible: null,
-    filteredCollectibles: [],
     filterText: '',
 };
 
-class CollectibleListModalContainer extends React.Component<Props, State> {
+class CollectibleListModalPureContainer extends React.PureComponent<Props, State> {
     public state: State = {
         ...initialState,
     };
 
-    public static getDerivedStateFromProps = (nextProps: Props, prevState: State) => {
-        const { userCollectibles } = nextProps;
-        const newUserCollectiblesArray = Object.keys(userCollectibles).map(key => userCollectibles[key]);
-        if (prevState.filteredCollectibles !== newUserCollectiblesArray) {
-            return {
-                filteredCollectibles: newUserCollectiblesArray,
-                prevFilterText: prevState.filterText,
-            };
-        }
-        // Return null to indicate no change to state.
-        return null;
-    };
-
     public render = () => {
-        const { theme, isCollectibleModalOpen } = this.props;
-        const { filteredCollectibles } = this.state;
+        const { theme, isCollectibleModalOpen, userCollectibles } = this.props;
+        const { filterText } = this.state;
+        const newUserCollectiblesArray = Object.keys(userCollectibles).map(key => userCollectibles[key]);
+        const filteredCollectibles = this._filterCollectiblesByName(newUserCollectiblesArray, filterText);
 
         let content = null;
-        if (filteredCollectibles && filteredCollectibles.length > 1) {
+        if (filteredCollectibles && filteredCollectibles.length > 0) {
             const testCollectibles = [filteredCollectibles[0], filteredCollectibles[1]];
             content = testCollectibles.map((item, index) => {
                 return <CollectibleOnListContainer collectible={item} onClick={this._closeModal} key={index} />;
@@ -116,16 +103,20 @@ class CollectibleListModalContainer extends React.Component<Props, State> {
 
     private readonly _handleSearchInputChanged = (event: any) => {
         const newInputValue = event && event.target ? event.target.value : '';
-        const { filteredCollectibles } = this.state;
-        const newFilteredCollectibles = this._filterCollectiblesByName(filteredCollectibles, newInputValue);
+
         this.setState({
-            filteredCollectibles: newFilteredCollectibles,
             filterText: newInputValue,
         });
     };
 
     private readonly _filterCollectiblesByName = (collectibles: Collectible[], name: string): Collectible[] => {
-        return [];
+        return collectibles.filter((collectible: Collectible) => this._filterCollectibleByNameFn(collectible, name));
+    };
+
+    private readonly _filterCollectibleByNameFn = (collectible: Collectible, name: string): boolean => {
+        const collectibleName = collectible.name.toLowerCase();
+        const filterName = name.toLowerCase();
+        return collectibleName.startsWith(filterName);
     };
 }
 
@@ -143,11 +134,11 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const CollectibleListModal = withTheme(
+const CollectibleListModalPure = withTheme(
     connect(
         mapStateToProps,
         mapDispatchToProps,
-    )(CollectibleListModalContainer),
+    )(CollectibleListModalPureContainer),
 );
 
-export { CollectibleListModal };
+export { CollectibleListModalPure };
