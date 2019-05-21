@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
+import { toggleCollectibleListModal } from '../../../store/ui/actions';
 import { themeBreakPoints } from '../../../themes/commons';
 import { Collectible, StoreState } from '../../../util/types';
+import { Button } from '../../common/button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
 
@@ -16,7 +18,10 @@ interface StateProps {
     collectibles: { [key: string]: Collectible };
 }
 
-type Props = StateProps & OwnProps;
+interface DispatchProps {
+    toggleCollectibleListModal: () => any;
+}
+type Props = StateProps & DispatchProps & OwnProps;
 
 const MainContainer = styled.div`
     display: flex;
@@ -48,6 +53,7 @@ export const CollectiblesList = (props: Props) => {
         <MainContainer>
             <FiltersMenu>
                 <Title>{props.title}</Title>
+                <Button onClick={props.toggleCollectibleListModal}>Sell collectibles</Button>
             </FiltersMenu>
             <CollectiblesCardList collectibles={collectibles} />
         </MainContainer>
@@ -59,11 +65,24 @@ const allMapStateToProps = (state: StoreState): StateProps => {
         collectibles: getOtherUsersCollectibles(state),
     };
 };
-export const AllCollectiblesListContainer = connect(allMapStateToProps)(CollectiblesList);
+
+const allDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        toggleCollectibleListModal: () => dispatch(toggleCollectibleListModal()),
+    };
+};
+
+export const AllCollectiblesListContainer = connect(
+    allMapStateToProps,
+    allDispatchToProps,
+)(CollectiblesList);
 
 const myMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getUserCollectibles(state),
     };
 };
-export const MyCollectiblesListContainer = connect(myMapStateToProps)(CollectiblesList);
+export const MyCollectiblesListContainer = connect(
+    myMapStateToProps,
+    allDispatchToProps,
+)(CollectiblesList);

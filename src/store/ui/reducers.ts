@@ -17,6 +17,7 @@ const initialUIState: UIState = {
     hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
     theme: getThemeByName(THEME_NAME),
+    isCollectibleListModalOpen: false,
 };
 
 export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
@@ -80,6 +81,11 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
                 return state;
             }
         }
+        case getType(actions.toggleCollectibleListModal):
+            return {
+                ...state,
+                isCollectibleListModalOpen: !state.isCollectibleListModalOpen,
+            };
         default:
             return {
                 ...state,
