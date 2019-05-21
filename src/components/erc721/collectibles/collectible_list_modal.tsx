@@ -121,7 +121,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
             <Modal isOpen={isCollectibleModalOpen} style={theme.modalTheme} onRequestClose={this._closeModal}>
                 <ModalTitleWrapper>
                     <ModalTitleTop>
-                        <ModalTitle>Selling Item</ModalTitle>
+                        <ModalTitle>Select an item to sell</ModalTitle>
                         <CloseModalButtonStyle onClick={this._closeModal} />
                     </ModalTitleTop>
                     <SearchStyled placeHolder={'Search Wallet'} onChange={this._handleSearchInputChanged} />
@@ -133,6 +133,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
 
     private readonly _closeModal = () => {
         this.props.toggleCollectibleListModal();
+        this.setState(initialState);
     };
 
     private readonly _handleSearchInputChanged = (event: any) => {
