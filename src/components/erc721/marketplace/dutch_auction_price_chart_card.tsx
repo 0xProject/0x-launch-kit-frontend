@@ -172,6 +172,7 @@ export const DutchAuctionPriceChartCard = (props: Props) => {
         subtitle: {
             text: '',
         },
+        // tslint:disable
         series: [
             {
                 data: dataNumbers,
@@ -179,6 +180,7 @@ export const DutchAuctionPriceChartCard = (props: Props) => {
                 turboThreshold: dataNumbers.length,
             } as Highcharts.SeriesColumnOptions,
         ],
+        // tslint:enable
         credits: {
             enabled: false,
         },
@@ -208,11 +210,13 @@ export const DutchAuctionPriceChartCard = (props: Props) => {
             endOnTick: false,
         },
         tooltip: {
+            // tslint:disable
             // prettier-ignore
             formatter() {
                 const self: any = this;
                 return `Price: <b>${self.y} ETH</b>`;
             }
+            // tslint:enable
         },
     };
 
