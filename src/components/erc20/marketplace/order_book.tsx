@@ -156,7 +156,7 @@ const orderToRow = (
 
 class OrderBookTable extends React.Component<Props> {
     private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
-    private readonly _spreadRowFixed: any;
+    private readonly _spreadRowFixed: React.RefObject<GridRowSpread>;
     private readonly _itemsScroll: React.RefObject<HTMLDivElement>;
     private _hasScrolled = false;
 
@@ -265,9 +265,7 @@ class OrderBookTable extends React.Component<Props> {
     };
 
     private readonly _refreshStickySpreadOnItemsListUpdate = () => {
-        const { current } = this._spreadRowFixed;
-
-        if (current && this._hasScrolled) {
+        if (this._spreadRowFixed.current && this._hasScrolled) {
             this._spreadRowFixed.current.updateStickSpreadState(this._getStickySpreadState(), this._getSpreadWidth());
         }
     };
@@ -306,8 +304,8 @@ class OrderBookTable extends React.Component<Props> {
         }
     };
 
-    private readonly _updateStickySpreadState = (event: any = undefined) => {
-        if (this._spreadRowFixed) {
+    private readonly _updateStickySpreadState = () => {
+        if (this._spreadRowFixed.current) {
             this._spreadRowFixed.current.updateStickSpreadState(this._getStickySpreadState(), this._getSpreadWidth());
         }
     };
