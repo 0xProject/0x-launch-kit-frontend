@@ -16,13 +16,13 @@ const options: CollectibleSortType[] = [
 export const CollectiblesListSort = (props: Props) => {
     const { currentValue, onChange } = props;
     return (
-        <>
+        <div>
             {options.map(option => (
                 <label key={option}>
                     <input type="radio" value={option} checked={currentValue === option} onChange={onChange} />
                     {option}
                 </label>
             ))}
-        </>
+        </div>
     );
 };

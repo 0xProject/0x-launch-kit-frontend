@@ -58,7 +58,6 @@ export const getSortedCollectibles = (
     collectibles: Collectible[],
     sortType: CollectibleSortType,
 ): SortableCollectible[] => {
-    const comparePriceAscending = getCompareFunctionForSort(sortType);
     return collectibles
         .map(collectible => {
             const price = getCollectiblePrice(collectible);
@@ -69,5 +68,5 @@ export const getSortedCollectibles = (
                 collectible,
             };
         })
-        .sort(comparePriceAscending);
+        .sort(getCompareFunctionForSort(sortType));
 };
