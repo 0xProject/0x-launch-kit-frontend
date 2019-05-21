@@ -136,7 +136,7 @@ const orderToRow = (
     const displayColor = isMySizeEmpty ? '#dedede' : undefined;
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTD styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
                 {isMySizeEmpty ? '-' : mySizeConverted}
             </CustomTD>
         ) : null;
