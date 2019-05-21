@@ -204,11 +204,10 @@ class OrderBookTable extends React.Component<Props> {
                             Price ({quoteToken.symbol})
                         </THLast>
                     </GridRowTop>
-                    <ItemsScroll ref={this._itemsScroll} onScroll={this._getStickySpreadState}>
+                    <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpreadState}>
                         <GridRowSpread
                             ref={this._spreadRowFixed}
                             spreadValue={spreadToFixed}
-                            stickySpreadWidth={this._getSpreadWidth()}
                         />
                         <ItemsMainContainer>
                             <TopItems>
@@ -225,7 +224,6 @@ class OrderBookTable extends React.Component<Props> {
                                 )}
                             </TopItems>
                             <GridRowSpreadContainer
-                                stickySpreadWidth={this._getSpreadWidth()}
                                 ref={this._spreadRowScrollable}
                             >
                                 <CustomTDTitle as="div" styles={customTDTitleStyles}>
@@ -265,7 +263,16 @@ class OrderBookTable extends React.Component<Props> {
     };
 
     public componentDidUpdate = () => {
+        this._refreshStickySpreadOnItemsListUpdate();
         this._scrollToSpread();
+    };
+
+    private readonly _refreshStickySpreadOnItemsListUpdate = () => {
+        const { current } = this._spreadRowFixed;
+
+        if (current && this._hasScrolled) {
+            this._spreadRowFixed.current.updateStickSpreadState(this._getStickySpreadState(), this._getSpreadWidth());
+        }
     };
 
     private readonly _getSpreadWidth = (): string => {
@@ -288,23 +295,23 @@ class OrderBookTable extends React.Component<Props> {
         return this._itemsScroll.current ? this._itemsScroll.current.clientHeight : 0;
     };
 
-    private readonly _getStickySpreadState = (event: any) => {
+    private readonly _getStickySpreadState = (): StickySpreadState => {
         const spreadOffsetTop = this._getSpreadOffsetTop();
         const itemsListScroll = this._getItemsListScroll();
         const topLimit = 0;
 
-        let stickySpreadState: StickySpreadState;
-
         if (spreadOffsetTop - itemsListScroll <= topLimit) {
-            stickySpreadState = 'top';
+            return 'top';
         } else if (itemsListScroll + this._getItemsListHeight() - this._getSpreadHeight() <= spreadOffsetTop) {
-            stickySpreadState = 'bottom';
+            return 'bottom';
         } else {
-            stickySpreadState = 'hidden';
+            return 'hidden';
         }
+    };
 
+    private readonly _updateStickySpreadState = (event: any = undefined) => {
         if (this._spreadRowFixed) {
-            this._spreadRowFixed.current.updateStickSpreadState(stickySpreadState);
+            this._spreadRowFixed.current.updateStickSpreadState(this._getStickySpreadState(), this._getSpreadWidth());
         }
     };
 

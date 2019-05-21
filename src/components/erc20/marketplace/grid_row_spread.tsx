@@ -7,12 +7,11 @@ export type StickySpreadState = 'top' | 'bottom' | 'hidden';
 
 interface State {
     stickySpreadState: StickySpreadState;
+    stickySpreadWidth: string;
 }
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     spreadValue?: string;
-    stickySpreadWidth?: string;
-    scrolled?: any;
 }
 
 interface GridRowSpreadProps {
@@ -32,7 +31,6 @@ export const GridRowSpreadContainer = styled(GridRow)<GridRowSpreadProps>`
     background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
     flex-grow: 0;
     flex-shrink: 0;
-    display: grid;
     position: ${props => (props.stickySpreadState === 'hidden' ? 'relative' : 'absolute')};
     width: ${props => props.stickySpreadWidth};
     z-index: 12;
@@ -55,15 +53,16 @@ export const customTDLastStyles = {
 export class GridRowSpread extends React.Component<Props> {
     public state: State = {
         stickySpreadState: 'hidden',
+        stickySpreadWidth: 'auto',
     };
 
     public render = () => {
-        const { spreadValue, stickySpreadWidth = '' } = this.props;
+        const { spreadValue } = this.props;
 
         return this.state.stickySpreadState === 'hidden' ? null : (
             <GridRowSpreadContainer
                 stickySpreadState={this.state.stickySpreadState}
-                stickySpreadWidth={stickySpreadWidth}
+                stickySpreadWidth={this.state.stickySpreadWidth}
             >
                 <CustomTDTitle as="div" styles={customTDTitleStyles}>
                     Spread
@@ -78,9 +77,12 @@ export class GridRowSpread extends React.Component<Props> {
         );
     };
 
-    public updateStickSpreadState = (stickySpreadState: StickySpreadState) => {
+    public updateStickSpreadState = (stickySpreadState: StickySpreadState, stickySpreadWidth: string) => {
         if (stickySpreadState !== this.state.stickySpreadState) {
             this.setState({ stickySpreadState });
+        }
+        if (stickySpreadWidth !== this.state.stickySpreadWidth) {
+            this.setState({ stickySpreadWidth });
         }
     };
 }
