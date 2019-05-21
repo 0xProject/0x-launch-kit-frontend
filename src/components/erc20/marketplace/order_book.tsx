@@ -205,10 +205,7 @@ class OrderBookTable extends React.Component<Props> {
                         </THLast>
                     </GridRowTop>
                     <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpreadState}>
-                        <GridRowSpread
-                            ref={this._spreadRowFixed}
-                            spreadValue={spreadToFixed}
-                        />
+                        <GridRowSpread ref={this._spreadRowFixed} spreadValue={spreadToFixed} />
                         <ItemsMainContainer>
                             <TopItems>
                                 {sellOrders.map((order, index) =>
@@ -223,9 +220,7 @@ class OrderBookTable extends React.Component<Props> {
                                     ),
                                 )}
                             </TopItems>
-                            <GridRowSpreadContainer
-                                ref={this._spreadRowScrollable}
-                            >
+                            <GridRowSpreadContainer ref={this._spreadRowScrollable}>
                                 <CustomTDTitle as="div" styles={customTDTitleStyles}>
                                     Spread
                                 </CustomTDTitle>
