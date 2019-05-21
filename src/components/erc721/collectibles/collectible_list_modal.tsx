@@ -81,7 +81,7 @@ class CollectibleListModalContainer extends React.Component<Props> {
         }
 
         return (
-            <Modal isOpen={isCollectibleModalOpen} style={theme.modalTheme}>
+            <Modal isOpen={isCollectibleModalOpen} style={theme.modalTheme} onRequestClose={this._closeModal}>
                 <ModalTitleWrapper>
                     <ModalTitle>Selling Item</ModalTitle>
                     <CloseModalButtonStyle onClick={this._closeModal} />
