@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { unlockCollectible } from '../../../store/blockchain/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
@@ -9,7 +10,6 @@ import { sleep } from '../../../util/sleep';
 import { Collectible, StepUnlockCollectibles, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
-import { DONE_STATUS_VISIBILITY_TIME } from './steps_common';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
@@ -73,7 +73,7 @@ class UnlockCollectiblesStep extends React.Component<Props> {
             onLoading();
             await web3Wrapper.awaitTransactionSuccessAsync(txHash);
             onDone();
-            await sleep(DONE_STATUS_VISIBILITY_TIME);
+            await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
         } catch (error) {
             onError(error);

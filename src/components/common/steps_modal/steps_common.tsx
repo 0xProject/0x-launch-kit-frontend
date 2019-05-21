@@ -9,8 +9,6 @@ import { Spinner } from '../spinner';
 
 import { StepsProgress } from './steps_progress';
 
-const DONE_STATUS_VISIBILITY_TIME: number = 4000;
-
 enum StepStatus {
     ConfirmOnMetamask,
     Loading,
@@ -133,7 +131,6 @@ const IconContainer = styled.div`
 `;
 
 export {
-    DONE_STATUS_VISIBILITY_TIME,
     ModalContent,
     ModalStatusText,
     ModalStatusTextLight,

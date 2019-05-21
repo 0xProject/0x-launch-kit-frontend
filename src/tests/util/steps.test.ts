@@ -43,7 +43,7 @@ describe('makeGetProgress', () => {
         expect(progress).toEqual(50);
     });
 
-    it('returns 100 if the elapsed time is equal to the estimated time', async () => {
+    it('returns 95 if the elapsed time is equal to the estimated time', async () => {
         // given
         const beginning = new Date(2019, 1, 1, 12, 0, 0).valueOf();
         const now = new Date(2019, 1, 1, 12, 2, 0).valueOf();
@@ -54,10 +54,10 @@ describe('makeGetProgress', () => {
         const progress = getProgress(now);
 
         // then
-        expect(progress).toEqual(100);
+        expect(progress).toEqual(95);
     });
 
-    it('returns 100 if the elapsed time is greater than the estimated time', async () => {
+    it('returns 95 if the elapsed time is greater than the estimated time', async () => {
         // given
         const beginning = new Date(2019, 1, 1, 12, 0, 0).valueOf();
         const now = new Date(2019, 1, 1, 12, 3, 0).valueOf();
@@ -68,7 +68,7 @@ describe('makeGetProgress', () => {
         const progress = getProgress(now);
 
         // then
-        expect(progress).toEqual(100);
+        expect(progress).toEqual(95);
     });
 
     it('does not depend on the length of the estimated time', async () => {
