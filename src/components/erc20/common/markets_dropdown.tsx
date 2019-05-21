@@ -249,7 +249,7 @@ class MarketsDropdown extends React.Component<Props, State> {
         search: '',
     };
 
-    private _dropdown = React.createRef<Dropdown>();
+    private readonly _dropdown = React.createRef<Dropdown>();
 
     public render = () => {
         const { currencyPair, baseToken, ...restProps } = this.props;
