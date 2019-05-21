@@ -1,6 +1,13 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
+import { Dropdown } from '../../common/dropdown';
+import { DropdownTextItemWrapper } from '../../common/dropdown_text_item';
+import { SortIcon } from '../../common/icons/sort_icon';
+
+import { DropdownButton } from './collectibles_dropdown_button';
+import { DropdownContainer } from './collectibles_dropdown_container';
 
 interface Props {
     currentValue: CollectibleSortType;
@@ -13,16 +20,51 @@ const options: CollectibleSortType[] = [
     CollectibleSortType.PriceHighToLow,
 ];
 
+const DropdownItemFilter = styled(DropdownTextItemWrapper)`
+    ${props => (props.active ? 'cursor: default;' : '')}
+    position: relative;
+
+    input[type='radio'] {
+        cursor: pointer;
+        height: 100%;
+        left: 0;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 5;
+
+        &:checked {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        &:checked + span {
+            font-weight: 500;
+        }
+    }
+`;
+
+const Text = styled.span`
+    position: relative;
+    z-index: 1;
+`;
+
 export const CollectiblesListSort = (props: Props) => {
-    const { currentValue, onChange } = props;
-    return (
-        <div>
+    const { currentValue, onChange, ...restProps } = props;
+
+    const header = <DropdownButton text={currentValue} extraIcon={<SortIcon />} />;
+
+    const body = (
+        <DropdownContainer>
             {options.map(option => (
-                <label key={option}>
+                <DropdownItemFilter key={option} active={currentValue === option}>
                     <input type="radio" value={option} checked={currentValue === option} onChange={onChange} />
-                    {option}
-                </label>
+                    <Text>{option}</Text>
+                </DropdownItemFilter>
             ))}
-        </div>
+        </DropdownContainer>
     );
+
+    return <Dropdown body={body} header={header} {...restProps} />;
 };

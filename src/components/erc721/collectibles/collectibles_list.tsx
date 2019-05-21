@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
@@ -23,8 +23,8 @@ interface StateProps {
 type Props = StateProps & OwnProps;
 
 interface State {
-    sortType: CollectibleSortType;
     filterType: CollectibleFilterType;
+    sortType: CollectibleSortType;
 }
 
 const MainContainer = styled.div`
@@ -36,11 +36,49 @@ const MainContainer = styled.div`
 
 const FiltersMenu = styled.div`
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     margin: 0 auto 22px;
     max-width: ${themeBreakPoints.xxl};
-    padding: 24px 0 0;
+    position: relative;
     width: 100%;
+    z-index: 1;
+
+    @media (min-width: ${themeBreakPoints.md}) {
+        align-items: center;
+        flex-direction: row;
+        padding-top: 24px;
+    }
+`;
+
+const CollectiblesFilterDropdown = css`
+    margin-bottom: 25px;
+    margin-right: auto;
+    position: relative;
+
+    @media (min-width: ${themeBreakPoints.md}) {
+        margin-bottom: 0;
+        margin-right: 25px;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+
+        @media (min-width: ${themeBreakPoints.md}) {
+            margin-right: 0;
+        }
+    }
+`;
+
+const CollectiblesListSortStyled = styled(CollectiblesListSort)`
+    ${CollectiblesFilterDropdown}
+
+    z-index: 5;
+`;
+
+const CollectiblesListFilterStyled = styled(CollectiblesListFilter)`
+    ${CollectiblesFilterDropdown}
+
+    z-index: 1;
 `;
 
 const Title = styled.h1`
@@ -48,7 +86,12 @@ const Title = styled.h1`
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;
-    margin: 0;
+    margin: 0 0 25px;
+
+    @media (min-width: ${themeBreakPoints.md}) {
+        margin-bottom: 0;
+        margin-right: 30px;
+    }
 `;
 
 export class CollectiblesList extends React.Component<Props, State> {
@@ -61,24 +104,25 @@ export class CollectiblesList extends React.Component<Props, State> {
         const { title } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
         const { sortType, filterType } = this.state;
+
         return (
             <MainContainer>
                 <FiltersMenu>
                     <Title>{title}</Title>
-                    <CollectiblesListSort currentValue={sortType} onChange={this._onChange} />
-                    <CollectiblesListFilter currentValue={filterType} onChange={this._onChangeFilter} />
+                    <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChange} />
+                    <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilter} />
                 </FiltersMenu>
                 <CollectiblesCardList collectibles={collectibles} sortType={sortType} filterType={filterType} />
             </MainContainer>
         );
     };
 
-    private _onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    private readonly _onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
         const sortType = evt.target.value as CollectibleSortType;
         this.setState({ sortType });
     };
 
-    private _onChangeFilter = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    private readonly _onChangeFilter = (evt: React.ChangeEvent<HTMLInputElement>) => {
         const filterType = evt.target.value as CollectibleFilterType;
         this.setState({ filterType });
     };
