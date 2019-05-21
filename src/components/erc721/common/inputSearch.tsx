@@ -1,7 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
+
+interface OwnProps {
+    placeHolder?: string;
+}
+
+type Props = OwnProps;
 
 const SearchInput = styled.input`
     background-color: #f9fafc;
@@ -35,9 +41,9 @@ const SearchInput = styled.input`
     }
 `;
 
-export class Search extends Component {
+export class Search extends React.Component<Props> {
     public render = () => {
-        const { ...restProps } = this.props;
-        return <SearchInput {...restProps} placeholder={'Search Cryptocards'} />;
+        const { placeHolder, ...restProps } = this.props;
+        return <SearchInput {...restProps} placeholder={placeHolder ? placeHolder : 'Search Cryptocards'} />;
     };
 }

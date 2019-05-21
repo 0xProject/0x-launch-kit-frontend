@@ -9,6 +9,9 @@ import { toggleCollectibleListModal } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
 import { Collectible, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
+import { Search } from '../common/inputSearch';
+
+import { CollectibleOnListContainer } from './collectible_details_list';
 
 interface StateProps {
     userCollectibles: { [key: string]: Collectible };
@@ -67,7 +70,14 @@ class CollectibleListModalContainer extends React.Component<Props> {
 
     public render = () => {
         const { theme, userCollectibles, isCollectibleModalOpen } = this.props;
-        const { currentCollectible } = this.state;
+        // const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
+
+        let content = null;
+        // TODO replace to use the list of collectibles
+        const collectible = userCollectibles[0];
+        if (collectible) {
+            content = <CollectibleOnListContainer collectible={collectible} onClick={this._closeModal} />;
+        }
 
         return (
             <Modal isOpen={isCollectibleModalOpen} style={theme.modalTheme}>
@@ -76,7 +86,8 @@ class CollectibleListModalContainer extends React.Component<Props> {
                     <CloseModalButtonStyle onClick={this._closeModal} />
                 </ModalTitleWrapper>
                 <ModalContent>
-                    <h1>Example</h1>
+                    <Search placeHolder={'Search Wallet'} />
+                    {content}
                 </ModalContent>
             </Modal>
         );
