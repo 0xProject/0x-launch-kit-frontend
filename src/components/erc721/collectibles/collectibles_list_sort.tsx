@@ -13,7 +13,7 @@ const options: CollectibleSortType[] = [
     CollectibleSortType.PriceHighToLow,
 ];
 
-export const CollectiblesListFilters = (props: Props) => {
+export const CollectiblesListSort = (props: Props) => {
     const { currentValue, onChange } = props;
     return (
         <>

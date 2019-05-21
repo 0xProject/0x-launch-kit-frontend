@@ -8,7 +8,7 @@ import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { CollectiblesCardList } from './collectibles_card_list';
-import { CollectiblesListFilters } from './collectibles_list_filters';
+import { CollectiblesListSort } from './collectibles_list_sort';
 
 interface OwnProps {
     title: string;
@@ -61,7 +61,7 @@ export class CollectiblesList extends React.Component<Props, State> {
             <MainContainer>
                 <FiltersMenu>
                     <Title>{title}</Title>
-                    <CollectiblesListFilters currentValue={sortType} onChange={this._onChange} />
+                    <CollectiblesListSort currentValue={sortType} onChange={this._onChange} />
                 </FiltersMenu>
                 <CollectiblesCardList collectibles={collectibles} sortType={sortType} />
             </MainContainer>
