@@ -70,13 +70,14 @@ class CollectibleListModalContainer extends React.Component<Props> {
 
     public render = () => {
         const { theme, userCollectibles, isCollectibleModalOpen } = this.props;
-        // const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
+        const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
 
         let content = null;
-        // TODO replace to use the list of collectibles
         const collectible = userCollectibles[0];
         if (collectible) {
-            content = <CollectibleOnListContainer collectible={collectible} onClick={this._closeModal} />;
+            content = collectibles.map((item, index) => {
+                return <CollectibleOnListContainer collectible={item} onClick={this._closeModal} key={index} />;
+            });
         }
 
         return (
