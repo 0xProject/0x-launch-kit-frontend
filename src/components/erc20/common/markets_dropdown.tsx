@@ -249,7 +249,7 @@ class MarketsDropdown extends React.Component<Props, State> {
         search: '',
     };
 
-    private _closeDropdown: any;
+    private _dropdown = React.createRef<Dropdown>();
 
     public render = () => {
         const { currencyPair, baseToken, ...restProps } = this.props;
@@ -281,11 +281,7 @@ class MarketsDropdown extends React.Component<Props, State> {
             </MarketsDropdownBody>
         );
 
-        return <MarketsDropdownWrapper body={body} header={header} ref={this._setRef} {...restProps} />;
-    };
-
-    private readonly _setRef = (node: any) => {
-        this._closeDropdown = node ? node.closeDropdown : null;
+        return <MarketsDropdownWrapper body={body} header={header} ref={this._dropdown} {...restProps} />;
     };
 
     private readonly _getTokensFilterTabs = () => {
@@ -383,7 +379,9 @@ class MarketsDropdown extends React.Component<Props, State> {
     private readonly _setSelectedMarket: any = (currencyPair: CurrencyPair) => {
         this.props.changeMarket(currencyPair);
         this.props.goToHome();
-        this._closeDropdown();
+        if (this._dropdown.current) {
+            this._dropdown.current.closeDropdown();
+        }
     };
 
     private readonly _getPrice: any = (market: Market) => {
