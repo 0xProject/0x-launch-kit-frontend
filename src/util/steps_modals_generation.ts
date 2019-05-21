@@ -161,7 +161,13 @@ export const createBuySellMarketSteps = (
         }
     }
 
-    // todo: wrap ether if necessary
+    // wrap the necessary ether if necessary
+    if (isWeth(quoteToken.symbol) && wethTokenBalance.balance.isLessThan(amount)) {
+        const wrapEthStep = getWrapEthStepIfNeeded(amount, new BigNumber(1), side, wethTokenBalance);
+        if (wrapEthStep) {
+            buySellMarketFlow.push(wrapEthStep);
+        }
+    }
 
     buySellMarketFlow.push({
         kind: StepKind.BuySellMarket,
