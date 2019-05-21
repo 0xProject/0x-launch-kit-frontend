@@ -80,3 +80,6 @@ export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
     4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf', // rinkeby cryptokitties
     50: '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb', // ganache mock erc721
 };
+
+export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
+    Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;
