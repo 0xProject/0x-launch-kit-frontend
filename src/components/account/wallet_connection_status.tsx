@@ -9,9 +9,7 @@ import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { ChevronDownIcon } from '../common/icons/chevron_down_icon';
 
-interface WrapperProps {
-    status?: string;
-}
+import { WalletConnectionStatusDot } from './wallet_connections_status_dot';
 
 const WalletConnectionStatusWrapper = styled.div`
     align-items: center;
@@ -19,12 +17,8 @@ const WalletConnectionStatusWrapper = styled.div`
     display: flex;
 `;
 
-const WalletConnectionStatusDot = styled.div<WrapperProps>`
-    background-color: ${props => (props.status ? '#55BC65' : '#ccc')};
-    border-radius: 50%;
-    height: 10px;
+const WalletConnectionStatusDotStyled = styled(WalletConnectionStatusDot)`
     margin-right: 10px;
-    width: 10px;
 `;
 
 const WalletConnectionStatusText = styled.span`
@@ -58,7 +52,7 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
         const header = (
             <WalletConnectionStatusWrapper>
-                <WalletConnectionStatusDot status={status} />
+                <WalletConnectionStatusDotStyled status={status} />
                 <WalletConnectionStatusText>{ethAccountText}</WalletConnectionStatusText>
                 <ChevronDownIcon />
             </WalletConnectionStatusWrapper>

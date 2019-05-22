@@ -17,9 +17,9 @@ import { WethModal } from './wallet_weth_modal';
 
 interface StateProps {
     ethBalance: BigNumber;
-    wethBalance: BigNumber;
-    web3State: Web3State;
     ethInUsd: BigNumber | null;
+    web3State: Web3State;
+    wethBalance: BigNumber;
 }
 
 interface DispatchProps {
@@ -27,15 +27,16 @@ interface DispatchProps {
 }
 
 interface OwnProps {
+    inDropdown?: boolean;
     theme: Theme;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
+    isSubmitting: boolean;
     modalIsOpen: boolean;
     selectedWeth: string;
-    isSubmitting: boolean;
 }
 
 const Content = styled.div`
@@ -150,10 +151,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd, theme } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd, theme, inDropdown, ...restProps } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.plus(wethBalance);
-
         const formattedEth = tokenAmountInUnits(ethBalance, 18);
         const formattedWeth = tokenAmountInUnits(wethBalance, 18);
         const formattedTotalEth = tokenAmountInUnits(totalEth, 18);
@@ -203,13 +203,15 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Card title="ETH / wETH Balances">
+                <Card title={inDropdown ? '' : 'ETH / wETH Balances'} {...restProps}>
                     <Content>{content}</Content>
                 </Card>
-                <Note>
-                    wETH is used for trades on 0x
-                    <br />1 wETH = 1 ETH
-                </Note>
+                {inDropdown ? null : (
+                    <Note>
+                        wETH is used for trades on 0x
+                        <br />1 wETH = 1 ETH
+                    </Note>
+                )}
             </>
         );
     };
