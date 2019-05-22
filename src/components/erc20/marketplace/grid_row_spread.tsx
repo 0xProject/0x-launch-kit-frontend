@@ -79,11 +79,7 @@ export class GridRowSpread extends React.Component<Props> {
     };
 
     public updateStickSpreadState = (stickySpreadState: StickySpreadState, stickySpreadWidth: string) => {
-        if (stickySpreadState !== this.state.stickySpreadState) {
-            this.setState({ stickySpreadState });
-        }
-        if (stickySpreadWidth !== this.state.stickySpreadWidth) {
-            this.setState({ stickySpreadWidth });
-        }
+        this.setState({ stickySpreadState });
+        this.setState({ stickySpreadWidth });
     };
 }
