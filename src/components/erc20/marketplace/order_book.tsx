@@ -136,9 +136,9 @@ const orderToRow = (
     const displayColor = isMySizeEmpty ? '#dedede' : undefined;
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
+            <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
                 {isMySizeEmpty ? '-' : mySizeConverted}
-            </CustomTD>
+            </CustomTDLast>
         ) : null;
 
     return (
@@ -146,10 +146,10 @@ const orderToRow = (
             <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
-            {mySizeRow}
-            <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-            </CustomTDLast>
+            </CustomTD>
+            {mySizeRow}
         </GridRow>
     );
 };
@@ -191,9 +191,9 @@ class OrderBookTable extends React.Component<Props> {
         } else {
             const mySizeHeader =
                 web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-                    <TH as="div" styles={{ textAlign: 'right', borderBottom: true }}>
+                    <THLast as="div" styles={{ textAlign: 'right', borderBottom: true }}>
                         My Size
-                    </TH>
+                    </THLast>
                 ) : null;
             content = (
                 <>
@@ -201,10 +201,10 @@ class OrderBookTable extends React.Component<Props> {
                         <TH as="div" styles={{ textAlign: 'right', borderBottom: true }}>
                             Trade size
                         </TH>
-                        {mySizeHeader}
-                        <THLast as="div" styles={{ textAlign: 'right', borderBottom: true }}>
+                        <TH as="div" styles={{ textAlign: 'right', borderBottom: true }}>
                             Price ({quoteToken.symbol})
-                        </THLast>
+                        </TH>
+                        {mySizeHeader}
                     </GridRowTop>
                     <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpreadState}>
                         <GridRowSpread ref={this._spreadRowFixed} spreadValue={spreadToFixed} />
@@ -227,10 +227,10 @@ class OrderBookTable extends React.Component<Props> {
                                     Spread
                                 </CustomTDTitle>
                                 <CustomTD as="div" styles={customTDStyles}>
-                                    {}
+                                    {spreadToFixed}
                                 </CustomTD>
                                 <CustomTDLast as="div" styles={customTDLastStyles}>
-                                    {spreadToFixed}
+                                    5%
                                 </CustomTDLast>
                             </GridRowSpreadContainer>
                             <BottomItems>
