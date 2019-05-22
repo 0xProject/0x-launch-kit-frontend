@@ -289,11 +289,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
         const expirationDates = [today + dayInSeconds, today + dayInSeconds * 5, today + dayInSeconds * 7];
 
         return (
-            <Modal
-                isOpen={currentCollectible ? true : false}
-                style={theme.modalTheme}
-                onRequestClose={this._closeModal}
-            >
+            <Modal isOpen={currentCollectible !== null} style={theme.modalTheme} onRequestClose={this._closeModal}>
                 <ModalTitleWrapper>
                     <ModalTitle>Selling Item</ModalTitle>
                     <CloseModalButtonStyle onClick={this._closeModal} />
