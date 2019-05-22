@@ -27,7 +27,7 @@ interface DispatchProps {
 }
 
 interface OwnProps {
-    className: string;
+    className?: string;
     inDropdown?: boolean;
     theme: Theme;
 }
