@@ -19,16 +19,16 @@ import { CollectibleOnListContainer } from './collectible_details_list';
 
 interface StateProps {
     userCollectibles: { [key: string]: Collectible };
-    isCollectibleModalOpen: boolean;
 }
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible | null) => any;
-    toggleCollectibleListModal: () => any;
 }
 
 interface OwnProps {
     theme: Theme;
+    isOpen: boolean;
+    onModalCloseRequest: () => any;
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -99,7 +99,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
 
     // The render method on this PureComponent is called only if props or state.filterText has changed.
     public render = () => {
-        const { theme, userCollectibles, isCollectibleModalOpen } = this.props;
+        const { theme, userCollectibles, isOpen } = this.props;
         const { filterText } = this.state;
         const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
         const filteredCollectibles = this._filterCollectiblesByName(collectibles, filterText);
@@ -122,7 +122,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
             }
         }
         return (
-            <Modal isOpen={isCollectibleModalOpen} style={theme.modalTheme} onRequestClose={this._closeModal}>
+            <Modal isOpen={isOpen} style={theme.modalTheme} onRequestClose={this._closeModal}>
                 <ModalTitleWrapper>
                     <ModalTitleTop>
                         <ModalTitle>Select an item to sell</ModalTitle>
@@ -136,7 +136,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
     };
 
     private readonly _closeModal = () => {
-        this.props.toggleCollectibleListModal();
+        this.props.onModalCloseRequest();
         this.setState(initialState);
     };
 
@@ -165,14 +165,12 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         userCollectibles: getUserCollectiblesAvailableToSell(state),
-        isCollectibleModalOpen: getIsCollectibleListModalOpen(state),
     };
 };
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible | null) => dispatch(selectCollectible(collectible)),
-        toggleCollectibleListModal: () => dispatch(toggleCollectibleListModal()),
     };
 };
 

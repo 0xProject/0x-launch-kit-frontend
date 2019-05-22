@@ -59,8 +59,6 @@ export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
     return (themeColor: DefaultTheme) => resolve(themeColor);
 });
 
-export const toggleCollectibleListModal = createAction('ui/collectibleListModal');
-
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {
     return async dispatch => {
         const toggleTokenLockStep = isUnlocked ? getLockTokenStep(token) : getUnlockTokenStep(token);

@@ -61,7 +61,6 @@ export interface UIState {
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
     readonly theme: Theme;
-    readonly isCollectibleListModalOpen: boolean;
 }
 
 export interface MarketState {
