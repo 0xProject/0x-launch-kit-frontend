@@ -186,6 +186,20 @@ export const getUserCollectibles = createSelector(
     },
 );
 
+export const getUserCollectiblesAvailableToSell = createSelector(
+    getUserCollectibles,
+    (userCollectibles): { [key: string]: Collectible } => {
+        const userCollectiblesAvailableToSell: { [key: string]: Collectible } = {};
+        Object.keys(userCollectibles).forEach(tokenId => {
+            const collectibleIterator = userCollectibles[tokenId];
+            if (collectibleIterator.order === null) {
+                userCollectiblesAvailableToSell[tokenId] = collectibleIterator;
+            }
+        });
+        return userCollectiblesAvailableToSell;
+    },
+);
+
 export const getOtherUsersCollectibles = createSelector(
     getEthAccount,
     getAllCollectibles,

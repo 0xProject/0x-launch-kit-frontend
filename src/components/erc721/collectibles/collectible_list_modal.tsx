@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
-import { getIsCollectibleListModalOpen, getUserCollectibles } from '../../../store/selectors';
+import { getIsCollectibleListModalOpen, getUserCollectiblesAvailableToSell } from '../../../store/selectors';
 import { toggleCollectibleListModal } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
 import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
@@ -120,7 +120,6 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
                     );
                 });
             } else {
-                // No results found
                 content = <EmptyContent text={'No results found'} />;
             }
         }
@@ -167,7 +166,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        userCollectibles: getUserCollectibles(state),
+        userCollectibles: getUserCollectiblesAvailableToSell(state),
         isCollectibleModalOpen: getIsCollectibleListModalOpen(state),
     };
 };
