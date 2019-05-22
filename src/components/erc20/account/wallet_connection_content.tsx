@@ -44,7 +44,13 @@ class WalletConnectionContent extends React.PureComponent<Props> {
             </DropdownItems>
         );
 
-        return <WalletConnectionStatusContainer walletConnectionContent={content} {...restProps} />;
+        return (
+            <WalletConnectionStatusContainer
+                walletConnectionContent={content}
+                shouldShowEthAccountInHeader={true}
+                {...restProps}
+            />
+        );
     };
 }
 

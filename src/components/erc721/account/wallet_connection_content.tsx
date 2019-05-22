@@ -101,7 +101,13 @@ class WalletConnectionContent extends React.PureComponent<Props> {
             </WalletConnectionWrapper>
         );
 
-        return <WalletConnectionStatusContainer walletConnectionContent={content} {...restProps} />;
+        return (
+            <WalletConnectionStatusContainer
+                walletConnectionContent={content}
+                shouldShowEthAccountInHeader={false}
+                {...restProps}
+            />
+        );
     };
 }
 
