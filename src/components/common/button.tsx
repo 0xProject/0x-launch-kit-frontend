@@ -24,6 +24,10 @@ const StyledButton = styled.button<{ variant?: string }>`
             ? `background-color: ${props.theme.componentsTheme.buttonTertiaryBackgroundColor};`
             : ''}
     ${props =>
+        props.variant && props.variant === 'quaternary'
+            ? `background-color: ${props.theme.componentsTheme.buttonQuaternaryBackgroundColor};`
+            : ''}
+    ${props =>
         props.variant && props.variant === 'error'
             ? `background-color: ${props.theme.componentsTheme.buttonErrorBackgroundColor};`
             : ''}
