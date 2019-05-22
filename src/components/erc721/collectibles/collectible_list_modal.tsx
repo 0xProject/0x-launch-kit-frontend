@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
-import { getIsCollectibleListModalOpen, getUserCollectiblesAvailableToSell } from '../../../store/selectors';
-import { toggleCollectibleListModal } from '../../../store/ui/actions';
+import { getUserCollectiblesAvailableToSell } from '../../../store/selectors';
 import { Theme } from '../../../themes/commons';
 import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
 import { SortableCollectible } from '../../../util/sortable_collectibles';

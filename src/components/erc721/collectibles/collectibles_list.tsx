@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
 import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
-import { toggleCollectibleListModal } from '../../../store/ui/actions';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
@@ -138,23 +137,11 @@ const allMapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const allDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        toggleCollectibleListModal: () => dispatch(toggleCollectibleListModal()),
-    };
-};
-
-export const AllCollectiblesListContainer = connect(
-    allMapStateToProps,
-    allDispatchToProps,
-)(CollectiblesList);
+export const AllCollectiblesListContainer = connect(allMapStateToProps)(CollectiblesList);
 
 const myMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getUserCollectibles(state),
     };
 };
-export const MyCollectiblesListContainer = connect(
-    myMapStateToProps,
-    allDispatchToProps,
-)(CollectiblesList);
+export const MyCollectiblesListContainer = connect(myMapStateToProps)(CollectiblesList);

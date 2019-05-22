@@ -26,7 +26,7 @@ export class SellCollectiblesButton extends React.Component {
         );
     };
 
-    private _handleModalToggle = () => {
+    private readonly _handleModalToggle = () => {
         this.setState({
             isModalOpen: !this.state.isModalOpen,
         });
