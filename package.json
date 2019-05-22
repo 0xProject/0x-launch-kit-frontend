@@ -42,12 +42,7 @@
     "eslintConfig": {
         "extends": "react-app"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "npm run prettier-check",
-            "pre-push": "npm run lint && npm run test-once"
-        }
-    },
+
     "jest": {
         "collectCoverageFrom": [
             "src/**/*.{js,jsx,ts,tsx}",
