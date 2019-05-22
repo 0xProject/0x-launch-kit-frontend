@@ -7,6 +7,8 @@ import { selectCollectible } from '../../../store/collectibles/actions';
 import { getIsCollectibleListModalOpen, getUserCollectibles } from '../../../store/selectors';
 import { toggleCollectibleListModal } from '../../../store/ui/actions';
 import { Theme } from '../../../themes/commons';
+import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
+import { SortableCollectible } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
 import { CardLoading } from '../../common/loading';
@@ -147,13 +149,16 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
     };
 
     private readonly _filterCollectiblesByName = (collectibles: Collectible[], name: string): Collectible[] => {
-        return collectibles.filter((collectible: Collectible) => this._filterCollectibleByNameFn(collectible, name));
-    };
-
-    private readonly _filterCollectibleByNameFn = (collectible: Collectible, name: string): boolean => {
-        const collectibleName = collectible.name.toLowerCase();
-        const filterName = name.toLowerCase();
-        return collectibleName.startsWith(filterName);
+        const filterFn = getFilterFunction(CollectibleFilterType.Name);
+        return collectibles.filter((collectible: Collectible) => {
+            const sortableCollectible: SortableCollectible = {
+                collectible,
+                name,
+                price: null,
+                creationDate: null,
+            };
+            return filterFn(sortableCollectible);
+        });
     };
 }
 

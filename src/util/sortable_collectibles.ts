@@ -6,6 +6,7 @@ import { Collectible } from './types';
 export interface SortableCollectible {
     price: BigNumber | null;
     creationDate: BigNumber | null;
+    name: string;
     collectible: Collectible;
 }
 
@@ -66,6 +67,7 @@ export const getSortedCollectibles = (
                 price,
                 creationDate,
                 collectible,
+                name: collectible.name,
             };
         })
         .sort(getCompareFunctionForSort(sortType));
