@@ -11,6 +11,8 @@ import { OrderSide, TokenSymbol, Web3State } from '../../../../util/types';
 import { mountWithTheme } from '../../../util/test_with_theme';
 
 describe('OrderBookTable', () => {
+    const absoluteSpread = new BigNumber('0.03');
+    const percentageSpread = new BigNumber('3');
     it('Renders my size column with value', () => {
         const orderBook = {
             sellOrders: [
@@ -44,7 +46,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
         };
 
         const baseToken = tokenFactory.build();
@@ -65,15 +66,17 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 
         // then
         const mySizeRowValue = wrapper
             .find('tbody tr')
-            .at(0)
+            .at(1)
             .find('td')
-            .at(1);
+            .at(0);
         expect(mySizeRowValue.text()).toEqual('1.0000');
     });
     it('Should render a row of mySize with the total amount for one order', () => {
@@ -114,7 +117,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
         };
 
         const baseToken = tokenFactory.build();
@@ -135,6 +137,8 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                percentageSpread={percentageSpread}
+                absoluteSpread={absoluteSpread}
             />,
         );
 
@@ -143,7 +147,7 @@ describe('OrderBookTable', () => {
             .find('tbody tr')
             .at(0)
             .find('td')
-            .at(1);
+            .at(2);
         expect(mySizeRowValue.text()).toEqual('2.0000');
     });
     it('Check if my size renders an item with more than two decimals', () => {
@@ -194,7 +198,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
         };
 
         const baseToken = tokenFactory.build();
@@ -222,6 +225,8 @@ describe('OrderBookTable', () => {
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 userOrders={userOrders}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 
@@ -320,7 +325,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
         };
 
         const token = {
@@ -347,6 +351,8 @@ describe('OrderBookTable', () => {
                 quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.NotInstalled}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 
@@ -391,7 +397,6 @@ describe('OrderBookTable', () => {
                     price: new BigNumber('1.5'),
                 },
             ],
-            spread: new BigNumber('0.03'),
         };
 
         const token = {
@@ -418,6 +423,8 @@ describe('OrderBookTable', () => {
                 quoteToken={token}
                 userOrders={userOrders}
                 web3State={Web3State.Locked}
+                absoluteSpread={absoluteSpread}
+                percentageSpread={percentageSpread}
             />,
         );
 

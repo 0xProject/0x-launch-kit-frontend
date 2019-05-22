@@ -3,8 +3,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withTheme } from 'styled-components';
 
-import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
-import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
+import {
+    UI_DECIMALS_DISPLAYED_ORDER_SIZE,
+    UI_DECIMALS_DISPLAYED_PRICE_ETH,
+    UI_DECIMALS_DISPLAYED_SPREAD_PERCENT,
+} from '../../../common/constants';
+import {
+    getBaseToken,
+    getOrderBook,
+    getQuoteToken,
+    getSpread,
+    getSpreadInPercentage,
+    getUserOrders,
+    getWeb3State,
+} from '../../../store/selectors';
 import { Theme } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
@@ -20,6 +32,8 @@ interface StateProps {
     quoteToken: Token | null;
     userOrders: UIOrder[];
     web3State?: Web3State;
+    absoluteSpread: BigNumber;
+    percentageSpread: BigNumber;
 }
 
 interface OwnProps {
@@ -52,9 +66,9 @@ const orderToRow = (
     const displayColor = isMySizeEmpty ? '#dedede' : undefined;
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTD styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
+            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
                 {isMySizeEmpty ? '-' : mySizeConverted}
-            </CustomTD>
+            </CustomTDLast>
         ) : null;
 
     return (
@@ -62,18 +76,18 @@ const orderToRow = (
             <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
-            {mySizeRow}
-            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-            </CustomTDLast>
+            </CustomTD>
+            {mySizeRow}
         </TR>
     );
 };
 
 class OrderBookTable extends React.Component<Props> {
     public render = () => {
-        const { orderBook, baseToken, quoteToken, web3State, theme } = this.props;
-        const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
+        const { orderBook, baseToken, quoteToken, web3State, theme, absoluteSpread, percentageSpread } = this.props;
+        const { sellOrders, buyOrders, mySizeOrders } = orderBook;
 
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
@@ -96,17 +110,15 @@ class OrderBookTable extends React.Component<Props> {
         } else {
             const mySizeHeader =
                 web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-                    <TH styles={{ textAlign: 'right', borderBottom: true }}>My Size</TH>
+                    <THLast styles={{ textAlign: 'right', borderBottom: true }}>My Size</THLast>
                 ) : null;
             content = (
                 <Table fitInCard={true}>
                     <THead>
                         <TR>
                             <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
+                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price ({quoteToken.symbol})</TH>
                             {mySizeHeader}
-                            <THLast styles={{ textAlign: 'right', borderBottom: true }}>
-                                Price ({quoteToken.symbol})
-                            </THLast>
                         </TR>
                     </THead>
                     <tbody>
@@ -125,7 +137,11 @@ class OrderBookTable extends React.Component<Props> {
                             <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
                                 Spread
                             </CustomTDTitle>
-                            <CustomTD styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>{}</CustomTD>
+                            <CustomTD
+                                styles={{ textAlign: 'right', borderBottom: true, borderTop: true, tabular: true }}
+                            >
+                                {absoluteSpread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                            </CustomTD>
                             <CustomTDLast
                                 styles={{
                                     tabular: true,
@@ -134,7 +150,7 @@ class OrderBookTable extends React.Component<Props> {
                                     borderTop: true,
                                 }}
                             >
-                                {spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                                {percentageSpread.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT)}%
                             </CustomTDLast>
                         </TR>
                         {buyOrders.map((order, index) =>
@@ -164,6 +180,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
         userOrders: getUserOrders(state),
         quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
+        absoluteSpread: getSpread(state),
+        percentageSpread: getSpreadInPercentage(state),
     };
 };
 

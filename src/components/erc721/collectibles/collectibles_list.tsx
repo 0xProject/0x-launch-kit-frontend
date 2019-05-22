@@ -9,6 +9,7 @@ import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
+import { Button } from '../../common/button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
 import { CollectiblesListFilter } from './collectibles_list_filter';
@@ -97,6 +98,12 @@ const Title = styled.h1`
     }
 `;
 
+const ButtonStyled = styled(Button)`
+    @media (min-width: ${themeBreakPoints.md}) {
+        margin-left: auto;
+    }
+`;
+
 export class CollectiblesList extends React.Component<Props, {}> {
     public componentWillUnmount = () => {
         this.props.setSortType(null);
@@ -114,6 +121,7 @@ export class CollectiblesList extends React.Component<Props, {}> {
                     <Title>{title}</Title>
                     <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
                     <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
+                    <ButtonStyled variant="quaternary">Sell collectibles</ButtonStyled>
                 </FiltersMenu>
                 <CollectiblesCardList collectibles={collectibles} sortType={sortType} filterType={filterType} />
             </MainContainer>

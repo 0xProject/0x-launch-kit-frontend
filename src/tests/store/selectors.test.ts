@@ -238,7 +238,6 @@ describe('selectors', () => {
                 },
             ],
             mySizeOrders: [],
-            spread: new BigNumber('0.5'),
         });
     });
 

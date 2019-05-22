@@ -12,6 +12,7 @@ export interface ThemeProperties {
     buttonConvertTextColor: string;
     buttonErrorBackgroundColor: string;
     buttonPrimaryBackgroundColor: string;
+    buttonQuaternaryBackgroundColor: string;
     buttonSecondaryBackgroundColor: string;
     buttonSellBackgroundColor: string;
     buttonTertiaryBackgroundColor: string;
