@@ -10,6 +10,7 @@ import { Theme } from '../../../themes/commons';
 import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
 import { SortableCollectible } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
+import { EmptyContent } from '../../common/empty_content';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
 import { CardLoading } from '../../common/loading';
 import { Search } from '../common/inputSearch';
@@ -105,20 +106,24 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
         const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
         const filteredCollectibles = this._filterCollectiblesByName(collectibles, filterText);
 
-        let content: any;
+        let content: any = <CardLoading minHeight={modalContentHeight} />;
         if (filteredCollectibles) {
-            content = filteredCollectibles.map((item, index) => {
-                return (
-                    <CollectibleOnListContainer
-                        collectible={item}
-                        isListItem={true}
-                        key={index}
-                        onClick={this._closeModal}
-                    />
-                );
-            });
+            if (filteredCollectibles.length > 0) {
+                content = filteredCollectibles.map((item, index) => {
+                    return (
+                        <CollectibleOnListContainer
+                            collectible={item}
+                            isListItem={true}
+                            key={index}
+                            onClick={this._closeModal}
+                        />
+                    );
+                });
+            } else {
+                // No results found
+                content = <EmptyContent text={'No results found'} />;
+            }
         }
-
         return (
             <Modal isOpen={isCollectibleModalOpen} style={theme.modalTheme} onRequestClose={this._closeModal}>
                 <ModalTitleWrapper>
@@ -128,9 +133,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
                     </ModalTitleTop>
                     <SearchStyled placeHolder={'Search Wallet'} onChange={this._handleSearchInputChanged} />
                 </ModalTitleWrapper>
-                <ModalContent>
-                    {content && content.length > 0 ? content : <CardLoading minHeight={modalContentHeight} />}
-                </ModalContent>
+                <ModalContent>{content ? content : null}</ModalContent>
             </Modal>
         );
     };
