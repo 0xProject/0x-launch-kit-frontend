@@ -9,6 +9,7 @@ import { StoreState } from '../../../util/types';
 import { WalletWethBalanceContainer } from '../../account';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { WalletConnectionStatusDot } from '../../account/wallet_connections_status_dot';
+import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
@@ -26,6 +27,13 @@ const truncateAddress = (address: string) => {
 const connectToWallet = () => {
     alert('connect to another wallet');
 };
+
+const WalletConnectionWrapper = styled(CardBase)`
+    border-radius: ${themeDimensions.borderRadius};
+    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
+    overflow: hidden;
+    width: 350px;
+`;
 
 const DropdownHeader = styled.div`
     align-items: center;
@@ -56,12 +64,6 @@ const WalletAddress = styled.div`
 
 const WalletConnectionStatusDotStyled = styled(WalletConnectionStatusDot)`
     margin-right: 8px;
-`;
-
-const WalletConnectionWrapper = styled.div`
-    border-radius: ${themeDimensions.borderRadius};
-    overflow: hidden;
-    width: 350px;
 `;
 
 const WalletWethBalanceContainerStyled = styled(WalletWethBalanceContainer)`

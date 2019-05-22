@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { getEthAccount } from '../../store/selectors';
 import { truncateAddress } from '../../util/number_utils';
 import { StoreState } from '../../util/types';
-import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { ChevronDownIcon } from '../common/icons/chevron_down_icon';
 
@@ -27,11 +26,6 @@ const WalletConnectionStatusText = styled.span`
     font-size: 16px;
     font-weight: 500;
     margin-right: 10px;
-`;
-
-const DropdownItems = styled(CardBase)`
-    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
-    min-width: 240px;
 `;
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> {
@@ -58,7 +52,7 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
             </WalletConnectionStatusWrapper>
         );
 
-        const body = <DropdownItems>{walletConnectionContent}</DropdownItems>;
+        const body = <>{walletConnectionContent}</>;
 
         return <Dropdown body={body} header={header} horizontalPosition={DropdownPositions.Right} {...restProps} />;
     };

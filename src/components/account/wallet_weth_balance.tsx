@@ -132,6 +132,7 @@ const ButtonLabel = styled.span`
     font-weight: 700;
     line-height: 1.2;
     margin-right: 10px;
+    user-select: none;
 `;
 
 const Note = styled.p`
@@ -189,6 +190,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <Value>{formattedTotalEth} ETH</Value>
                     </Row>
                     <WethModal
+                        ethInUsd={ethInUsd}
                         isOpen={this.state.modalIsOpen}
                         isSubmitting={isSubmitting}
                         onRequestClose={this.closeModal}
@@ -196,7 +198,6 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
-                        ethInUsd={ethInUsd}
                     />
                 </>
             );
@@ -221,6 +222,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         this.setState({
             isSubmitting: true,
         });
+
         try {
             await this.props.onStartWrapEtherSteps(newWeth);
         } finally {
