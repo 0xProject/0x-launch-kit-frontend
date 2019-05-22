@@ -230,7 +230,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         }
     };
 
-    public openModal = () => {
+    public openModal = (e: any) => {
+        e.stopPropagation(); // avoids dropdown closing when used inside one
+
         this.setState({
             modalIsOpen: true,
         });
@@ -251,6 +253,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethInUsd: getEthInUsd(state),
     };
 };
+
 const mapDispatchToProps = {
     onStartWrapEtherSteps: startWrapEtherSteps,
 };
