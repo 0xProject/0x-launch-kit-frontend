@@ -27,6 +27,7 @@ interface DispatchProps {
 }
 
 interface OwnProps {
+    className: string;
     inDropdown?: boolean;
     theme: Theme;
 }
@@ -151,7 +152,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd, theme, inDropdown, ...restProps } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd, theme, inDropdown, className } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.plus(wethBalance);
         const formattedEth = tokenAmountInUnits(ethBalance, 18);
@@ -203,7 +204,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Card title={inDropdown ? '' : 'ETH / wETH Balances'} {...restProps}>
+                <Card title={inDropdown ? '' : 'ETH / wETH Balances'} className={className}>
                     <Content>{content}</Content>
                 </Card>
                 {inDropdown ? null : (
