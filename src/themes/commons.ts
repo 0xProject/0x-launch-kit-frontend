@@ -78,11 +78,15 @@ export interface ThemeProperties {
 export interface ThemeModalStyle {
     content: {
         backgroundColor: string;
-        bottom: string;
         borderColor: string;
+        bottom: string;
+        display: string;
+        flexDirection: string;
         flexGrow: string;
         left: string;
+        maxHeight: string;
         minWidth: string;
+        overflow: string;
         padding: string;
         position: string;
         right: string;
@@ -105,8 +109,10 @@ export interface ThemeMetaData {
 export const themeDimensions = {
     borderRadius: '4px',
     fieldHeight: '46px',
+    footerHeight: '38px',
     horizontalPadding: '16px',
     sidebarWidth: '350px',
+    toolbarHeight: '64px',
     verticalPadding: '10px',
     verticalSeparation: '30px',
     verticalSeparationSm: '10px',
