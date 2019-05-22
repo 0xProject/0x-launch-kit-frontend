@@ -1,9 +1,10 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { COLLECTIBLE_CONTRACT_ADDRESSES, MARKETPLACES } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { DefaultTheme } from '../../themes/default_theme';
+import { getThemeByMarketplace } from '../../themes/theme_meta_data_utils';
 import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
 import {
     createBasicBuyCollectibleSteps,
@@ -55,7 +56,14 @@ export const stepsModalAdvanceStep = createAction('ui/steps_modal/advance_step')
 
 export const stepsModalReset = createAction('ui/steps_modal/reset');
 
-export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
+export const setThemeByMarketplace = (marketplace: MARKETPLACES) => {
+    return (dispatch: any) => {
+        const themeColor = getThemeByMarketplace(marketplace);
+        dispatch(setThemeColor(themeColor));
+    };
+};
+
+export const setThemeColor = createAction('ui/THEMES/SET_THEME_COLOR', resolve => {
     return (themeColor: DefaultTheme) => resolve(themeColor);
 });
 

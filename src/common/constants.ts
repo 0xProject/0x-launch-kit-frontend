@@ -1,5 +1,10 @@
 import { BigNumber } from '0x.js';
 
+export enum MARKETPLACES {
+    ERC20 = 'ERC20',
+    ERC721 = 'ERC721',
+}
+
 export const ERC20_APP_BASE_PATH = '/erc20';
 export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
@@ -65,7 +70,9 @@ export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_S
 
 export const LOGGER_ID: string = process.env.REACT_APP_LOGGER_ID || '0x-launch-kit-frontend';
 
-export const THEME_NAME: string = process.env.REACT_APP_THEME_NAME || 'DEFAULT_THEME';
+export const ERC20_THEME_NAME: string = process.env.REACT_APP_ERC20_THEME_NAME || 'DARK_THEME';
+
+export const ERC721_THEME_NAME: string = process.env.REACT_APP_ERC721_THEME_NAME || 'WHITE_THEME';
 
 export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT
     ? process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT === 'true'

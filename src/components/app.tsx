@@ -1,16 +1,29 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 
 import {
+    DEFAULT_BASE_PATH,
+    ERC20_APP_BASE_PATH,
+    ERC721_APP_BASE_PATH,
+    MARKETPLACES,
     SHOULD_ENABLE_NO_METAMASK_PROMPT,
     UI_UPDATE_CHECK_INTERVAL,
     UPDATE_ETHER_PRICE_INTERVAL,
 } from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
-import { initializeAppNoMetamaskOrLocked, initWallet, updateMarketPriceEther, updateStore } from '../store/actions';
+import {
+    initializeAppNoMetamaskOrLocked,
+    initWallet,
+    setThemeByMarketplace,
+    updateMarketPriceEther,
+    updateStore,
+} from '../store/actions';
 import { getWeb3State } from '../store/selectors';
 import { StoreState, Web3State } from '../util/types';
+
+import { Erc20App } from './erc20/erc20_app';
+import { Erc721App } from './erc721/erc721_app';
 
 interface OwnProps {
     children: React.ReactNode;
@@ -25,6 +38,7 @@ interface DispatchProps {
     onInitMetamaskState: () => any;
     onUpdateStore: () => any;
     onUpdateMarketPriceEther: () => any;
+    setThemeByMarketplace: (marketPlace: MARKETPLACES) => any;
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -61,7 +75,29 @@ class App extends React.Component<Props> {
         clearInterval(this._updatePriceEtherInterval);
     };
 
-    public render = () => this.props.children;
+    public render = () => (
+        <Switch>
+            <Route
+                path={ERC20_APP_BASE_PATH}
+                /* tslint:disable-next-line:jsx-no-lambda */
+                render={() => {
+                    this.props.setThemeByMarketplace(MARKETPLACES.ERC20);
+                    return <Erc20App />;
+                }}
+            />
+            <Route
+                path={ERC721_APP_BASE_PATH}
+                /* tslint:disable-next-line:jsx-no-lambda */
+                render={() => {
+                    this.props.setThemeByMarketplace(MARKETPLACES.ERC721);
+                    return <Erc721App />;
+                }}
+            />
+            <Route component={this._RedirectToHome} />
+        </Switch>
+    );
+
+    private readonly _RedirectToHome = () => <Redirect to={DEFAULT_BASE_PATH} />;
 
     private readonly _activatePollingUpdates = () => {
         // Enables realtime updates of the store using polling
@@ -107,6 +143,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onUpdateStore: () => dispatch(updateStore()),
         onUpdateMarketPriceEther: () => dispatch(updateMarketPriceEther()),
         onConnectWallet: () => dispatch(initWallet()),
+        setThemeByMarketplace: (marketplace: MARKETPLACES) => dispatch(setThemeByMarketplace(marketplace)),
     };
 };
 

@@ -4,7 +4,7 @@ import { DefaultTheme } from './default_theme';
 
 export const KNOWN_THEMES_META_DATA: ThemeMetaData[] = [
     {
-        name: 'DEFAULT_THEME',
+        name: 'WHITE_THEME',
         theme: new DefaultTheme(),
     },
     {

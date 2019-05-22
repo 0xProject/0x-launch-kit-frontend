@@ -1,7 +1,7 @@
 import { getType } from 'typesafe-actions';
 
-import { THEME_NAME } from '../../common/constants';
-import { getThemeByName } from '../../themes/theme_meta_data_utils';
+import { DEFAULT_BASE_PATH } from '../../common/constants';
+import { getThemeByRoute } from '../../themes/theme_meta_data_utils';
 import { Step, StepsModalState, UIState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -16,7 +16,7 @@ const initialUIState: UIState = {
     notifications: [],
     hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
-    theme: getThemeByName(THEME_NAME),
+    theme: getThemeByRoute(DEFAULT_BASE_PATH),
 };
 
 export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
