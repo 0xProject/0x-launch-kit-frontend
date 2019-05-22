@@ -17,7 +17,7 @@ interface Props {
 const options: { [key: string]: string } = {
     [CollectibleSortType.NewestAdded]: 'Newest Added',
     [CollectibleSortType.PriceLowToHigh]: 'Price: low to high',
-    [CollectibleSortType.PriceHighToLow]: 'Pirce: high to low',
+    [CollectibleSortType.PriceHighToLow]: 'Price: high to low',
 };
 
 const DropdownItemFilter = styled(DropdownTextItemWrapper)`
