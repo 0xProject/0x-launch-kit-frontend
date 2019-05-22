@@ -307,7 +307,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                                 </CollectibleMainInfoTitle>
                                 <CollectibleLink
                                     href={currentCollectible ? currentCollectible.assetUrl : ''}
-                                    target="_blakn"
+                                    target="_blank"
                                 >
                                     <CollectibleLinkText>CryptoKitties</CollectibleLinkText>
                                     {OutsideUrlIcon()}
