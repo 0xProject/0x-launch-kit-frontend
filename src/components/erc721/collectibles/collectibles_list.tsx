@@ -4,11 +4,16 @@ import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
 import { setCollectiblesListFilterType, setCollectiblesListSortType } from '../../../store/actions';
-import { getOtherUsersCollectibles, getRouterLocationSearch, getUserCollectibles } from '../../../store/selectors';
+import {
+    getAllCollectiblesFetchStatus,
+    getOtherUsersCollectibles,
+    getRouterLocationSearch,
+    getUserCollectibles,
+} from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
-import { Collectible, StoreState } from '../../../util/types';
+import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
 import { Button } from '../../common/button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
@@ -22,6 +27,7 @@ interface OwnProps {
 interface StateProps {
     collectibles: { [key: string]: Collectible };
     search: string;
+    fetchStatus: AllCollectiblesFetchStatus;
 }
 
 interface DispatchProps {
@@ -111,9 +117,10 @@ export class CollectiblesList extends React.Component<Props, {}> {
     };
 
     public render = () => {
-        const { title, search } = this.props;
+        const { title, search, fetchStatus } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
         const { sortType, filterType } = this._getSortTypeAndFilterTypeFromLocationSearch(search);
+        const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
         return (
             <MainContainer>
@@ -123,7 +130,12 @@ export class CollectiblesList extends React.Component<Props, {}> {
                     <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
                     <ButtonStyled variant="quaternary">Sell collectibles</ButtonStyled>
                 </FiltersMenu>
-                <CollectiblesCardList collectibles={collectibles} sortType={sortType} filterType={filterType} />
+                <CollectiblesCardList
+                    collectibles={collectibles}
+                    sortType={sortType}
+                    filterType={filterType}
+                    isLoading={isLoading}
+                />
             </MainContainer>
         );
     };
@@ -150,6 +162,7 @@ const allMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getOtherUsersCollectibles(state),
         search: getRouterLocationSearch(state),
+        fetchStatus: getAllCollectiblesFetchStatus(state),
     };
 };
 
@@ -157,6 +170,7 @@ const myMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getUserCollectibles(state),
         search: getRouterLocationSearch(state),
+        fetchStatus: getAllCollectiblesFetchStatus(state),
     };
 };
 

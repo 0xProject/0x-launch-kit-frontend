@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { Spinner } from '../../../components/common/spinner';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
 import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
@@ -61,11 +62,19 @@ interface Props {
     collectibles: Collectible[];
     sortType: CollectibleSortType;
     filterType: CollectibleFilterType;
+    isLoading: boolean;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType, filterType } = props;
+    const { collectibles, sortType, filterType, isLoading } = props;
     const collectibleCards = getCollectibleCards(collectibles, sortType, filterType);
+
+    if (isLoading) {
+        return <Spinner />;
+    }
+    if (collectibleCards.length === 0) {
+        return <p>No results.</p>;
+    }
     return (
         <CollectiblesListOverflow>
             <CollectiblesList>{collectibleCards}</CollectiblesList>
