@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withTheme } from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
 import {
     UI_DECIMALS_DISPLAYED_ORDER_SIZE,
@@ -17,14 +17,23 @@ import {
     getUserOrders,
     getWeb3State,
 } from '../../../store/selectors';
-import { Theme } from '../../../themes/commons';
+import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { CardLoading } from '../../common/loading';
 import { ShowNumberWithColors } from '../../common/show_number_with_colors';
-import { CustomTD, CustomTDLast, CustomTDTitle, Table, TH, THead, THLast, TR } from '../../common/table';
+import { CustomTD, CustomTDLast, CustomTDTitle, TH, THLast } from '../../common/table';
+
+import {
+    customTDLastStyles,
+    customTDStyles,
+    customTDTitleStyles,
+    GridRowSpread,
+    GridRowSpreadContainer,
+    StickySpreadState,
+} from './grid_row_spread';
 
 interface StateProps {
     orderBook: OrderBook;
@@ -41,6 +50,81 @@ interface OwnProps {
 }
 
 type Props = OwnProps & StateProps;
+
+const OrderbookCard = styled(Card)`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-height: 100%;
+
+    > div:first-child {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    > div:nth-child(2) {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: hidden;
+        padding-bottom: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+`;
+
+const GridRow = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+`;
+
+const GridRowTop = styled(GridRow)`
+    flex-grow: 0;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+`;
+
+const CenteredLoading = styled(CardLoading)`
+    height: 100%;
+`;
+
+const ItemsScroll = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-height: 500px;
+    overflow: auto;
+
+    @media (min-width: ${themeBreakPoints.xl}) {
+        max-height: none;
+    }
+`;
+
+const ItemsMainContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    min-height: fit-content;
+    position: relative;
+    z-index: 1;
+`;
+
+const ItemsInnerContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+`;
+
+const TopItems = styled(ItemsInnerContainer)`
+    justify-content: flex-end;
+`;
+
+const BottomItems = styled(ItemsInnerContainer)`
+    justify-content: flex-start;
+`;
 
 const orderToRow = (
     order: OrderBookItem,
@@ -66,37 +150,47 @@ const orderToRow = (
     const displayColor = isMySizeEmpty ? '#dedede' : undefined;
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTDLast styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
+            <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }} id="mySize">
                 {isMySizeEmpty ? '-' : mySizeConverted}
             </CustomTDLast>
         ) : null;
 
     return (
-        <TR key={index}>
-            <CustomTD styles={{ tabular: true, textAlign: 'right' }}>
+        <GridRow key={index}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors num={new BigNumber(size)} />
             </CustomTD>
-            <CustomTD styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
             </CustomTD>
             {mySizeRow}
-        </TR>
+        </GridRow>
     );
 };
 
 class OrderBookTable extends React.Component<Props> {
+    private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
+    private readonly _spreadRowFixed: React.RefObject<GridRowSpread>;
+    private readonly _itemsScroll: React.RefObject<HTMLDivElement>;
+    private _hasScrolled = false;
+
+    constructor(props: Props) {
+        super(props);
+
+        this._spreadRowScrollable = React.createRef();
+        this._spreadRowFixed = React.createRef();
+        this._itemsScroll = React.createRef();
+    }
+
     public render = () => {
         const { orderBook, baseToken, quoteToken, web3State, theme, absoluteSpread, percentageSpread } = this.props;
         const { sellOrders, buyOrders, mySizeOrders } = orderBook;
-
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
         });
-
         const mySizeBuyArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Buy;
         });
-
         const getColor = (order: OrderBookItem): string => {
             return order.side === OrderSide.Buy ? theme.componentsTheme.green : theme.componentsTheme.orange;
         };
@@ -104,72 +198,152 @@ class OrderBookTable extends React.Component<Props> {
         let content: React.ReactNode;
 
         if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
-            content = <CardLoading minHeight="120px" />;
+            content = <CenteredLoading />;
         } else if ((!buyOrders.length && !sellOrders.length) || !baseToken || !quoteToken) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {
             const mySizeHeader =
                 web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-                    <THLast styles={{ textAlign: 'right', borderBottom: true }}>My Size</THLast>
+                    <THLast as="div" styles={{ textAlign: 'right', borderBottom: true }}>
+                        My Size
+                    </THLast>
                 ) : null;
+
+            const spreadAbsFixed = absoluteSpread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
+            const spreadPercentFixed = percentageSpread.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT);
+
             content = (
-                <Table fitInCard={true}>
-                    <THead>
-                        <TR>
-                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Trade size</TH>
-                            <TH styles={{ textAlign: 'right', borderBottom: true }}>Price ({quoteToken.symbol})</TH>
-                            {mySizeHeader}
-                        </TR>
-                    </THead>
-                    <tbody>
-                        {sellOrders.map((order, index) =>
-                            orderToRow(
-                                order,
-                                index,
-                                sellOrders.length,
-                                baseToken,
-                                getColor(order),
-                                mySizeSellArray,
-                                web3State,
-                            ),
-                        )}
-                        <TR>
-                            <CustomTDTitle styles={{ textAlign: 'right', borderBottom: true, borderTop: true }}>
-                                Spread
-                            </CustomTDTitle>
-                            <CustomTD
-                                styles={{ textAlign: 'right', borderBottom: true, borderTop: true, tabular: true }}
-                            >
-                                {absoluteSpread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-                            </CustomTD>
-                            <CustomTDLast
-                                styles={{
-                                    tabular: true,
-                                    textAlign: 'right',
-                                    borderBottom: true,
-                                    borderTop: true,
-                                }}
-                            >
-                                {percentageSpread.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT)}%
-                            </CustomTDLast>
-                        </TR>
-                        {buyOrders.map((order, index) =>
-                            orderToRow(
-                                order,
-                                index,
-                                buyOrders.length,
-                                baseToken,
-                                getColor(order),
-                                mySizeBuyArray,
-                                web3State,
-                            ),
-                        )}
-                    </tbody>
-                </Table>
+                <>
+                    <GridRowTop as="div">
+                        <TH as="div" styles={{ textAlign: 'right', borderBottom: true }}>
+                            Trade size
+                        </TH>
+                        <TH as="div" styles={{ textAlign: 'right', borderBottom: true }}>
+                            Price ({quoteToken.symbol})
+                        </TH>
+                        {mySizeHeader}
+                    </GridRowTop>
+                    <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpreadState}>
+                        <GridRowSpread
+                            ref={this._spreadRowFixed}
+                            spreadAbsValue={spreadAbsFixed}
+                            spreadPercentValue={spreadPercentFixed}
+                        />
+                        <ItemsMainContainer>
+                            <TopItems>
+                                {sellOrders.map((order, index) =>
+                                    orderToRow(
+                                        order,
+                                        index,
+                                        sellOrders.length,
+                                        baseToken,
+                                        getColor(order),
+                                        mySizeSellArray,
+                                        web3State,
+                                    ),
+                                )}
+                            </TopItems>
+                            <GridRowSpreadContainer ref={this._spreadRowScrollable}>
+                                <CustomTDTitle as="div" styles={customTDTitleStyles}>
+                                    Spread
+                                </CustomTDTitle>
+                                <CustomTD as="div" styles={customTDStyles}>
+                                    {spreadAbsFixed}
+                                </CustomTD>
+                                <CustomTDLast as="div" styles={customTDLastStyles}>
+                                    {spreadPercentFixed}%
+                                </CustomTDLast>
+                            </GridRowSpreadContainer>
+                            <BottomItems>
+                                {buyOrders.map((order, index) =>
+                                    orderToRow(
+                                        order,
+                                        index,
+                                        buyOrders.length,
+                                        baseToken,
+                                        getColor(order),
+                                        mySizeBuyArray,
+                                        web3State,
+                                    ),
+                                )}
+                            </BottomItems>
+                        </ItemsMainContainer>
+                    </ItemsScroll>
+                </>
             );
         }
 
-        return <Card title="Orderbook">{content}</Card>;
+        return <OrderbookCard title="Orderbook">{content}</OrderbookCard>;
+    };
+
+    public componentDidMount = () => {
+        this._scrollToSpread();
+    };
+
+    public componentDidUpdate = () => {
+        this._refreshStickySpreadOnItemsListUpdate();
+        this._scrollToSpread();
+    };
+
+    private readonly _refreshStickySpreadOnItemsListUpdate = () => {
+        if (this._spreadRowFixed.current && this._hasScrolled) {
+            this._spreadRowFixed.current.updateStickSpreadState(this._getStickySpreadState(), this._getSpreadWidth());
+        }
+    };
+
+    private readonly _getSpreadWidth = (): string => {
+        return this._itemsScroll.current ? `${this._itemsScroll.current.clientWidth}px` : '';
+    };
+
+    private readonly _getSpreadOffsetTop = (): number => {
+        return this._spreadRowScrollable.current ? this._spreadRowScrollable.current.offsetTop : 0;
+    };
+
+    private readonly _getSpreadHeight = (): number => {
+        return this._spreadRowScrollable.current ? this._spreadRowScrollable.current.clientHeight : 0;
+    };
+
+    private readonly _getItemsListScroll = (): number => {
+        return this._itemsScroll.current ? this._itemsScroll.current.scrollTop : 0;
+    };
+
+    private readonly _getItemsListHeight = (): number => {
+        return this._itemsScroll.current ? this._itemsScroll.current.clientHeight : 0;
+    };
+
+    private readonly _getStickySpreadState = (): StickySpreadState => {
+        const spreadOffsetTop = this._getSpreadOffsetTop();
+        const itemsListScroll = this._getItemsListScroll();
+        const topLimit = 0;
+
+        if (spreadOffsetTop - itemsListScroll <= topLimit) {
+            return 'top';
+        } else if (itemsListScroll + this._getItemsListHeight() - this._getSpreadHeight() <= spreadOffsetTop) {
+            return 'bottom';
+        } else {
+            return 'hidden';
+        }
+    };
+
+    private readonly _updateStickySpreadState = () => {
+        if (this._spreadRowFixed.current) {
+            this._spreadRowFixed.current.updateStickSpreadState(this._getStickySpreadState(), this._getSpreadWidth());
+        }
+    };
+
+    private readonly _scrollToSpread = () => {
+        const { current } = this._spreadRowScrollable;
+
+        // avoid scrolling for tablet sized screens and below
+        if (window.outerWidth < parseInt(themeBreakPoints.xl, 10)) {
+            return;
+        }
+
+        if (current && !this._hasScrolled) {
+            // tslint:disable-next-line:no-unused-expression
+            current.scrollIntoView && current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            this._hasScrolled = true;
+        }
     };
 }
 
