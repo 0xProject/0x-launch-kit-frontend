@@ -103,7 +103,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
         const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
         const filteredCollectibles = this._filterCollectiblesByName(collectibles, filterText);
 
-        let content = null;
+        let content: any;
         if (filteredCollectibles) {
             content = filteredCollectibles.map((item, index) => {
                 return (
@@ -126,7 +126,9 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
                     </ModalTitleTop>
                     <SearchStyled placeHolder={'Search Wallet'} onChange={this._handleSearchInputChanged} />
                 </ModalTitleWrapper>
-                <ModalContent>{content ? content : <CardLoading minHeight={modalContentHeight} />}</ModalContent>
+                <ModalContent>
+                    {content && content.length > 0 ? content : <CardLoading minHeight={modalContentHeight} />}
+                </ModalContent>
             </Modal>
         );
     };
