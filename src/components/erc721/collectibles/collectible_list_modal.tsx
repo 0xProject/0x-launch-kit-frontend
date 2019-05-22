@@ -34,7 +34,6 @@ interface OwnProps {
 type Props = OwnProps & DispatchProps & StateProps;
 
 interface State {
-    currentCollectible: Collectible | null;
     filterText: string;
 }
 
@@ -89,7 +88,6 @@ const CloseModalButtonStyle = styled(CloseModalButton)`
 `;
 
 const initialState = {
-    currentCollectible: null,
     filterText: '',
 };
 
@@ -111,7 +109,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
             if (filteredCollectibles.length > 0) {
                 content = filteredCollectibles.map((item, index) => {
                     return (
-                        <CollectibleOnListContainer
+                        <CollectibleOnListContainer // TODO RENAME
                             collectible={item}
                             isListItem={true}
                             key={index}
@@ -130,7 +128,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
                         <ModalTitle>Select an item to sell</ModalTitle>
                         <CloseModalButtonStyle onClick={this._closeModal} />
                     </ModalTitleTop>
-                    <SearchStyled placeHolder={'Search Wallet'} onChange={this._handleSearchInputChanged} />
+                    <SearchStyled placeholder={'Search Wallet'} onChange={this._handleSearchInputChanged} />
                 </ModalTitleWrapper>
                 <ModalContent>{content ? content : null}</ModalContent>
             </Modal>

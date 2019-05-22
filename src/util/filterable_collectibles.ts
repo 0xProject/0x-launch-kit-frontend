@@ -23,7 +23,7 @@ const isCollectibleSoldInBasicSell = (collectible: Collectible): boolean => {
     return !isDutchAuction(collectible.order);
 };
 
-const filterCollectibleByNameFn = (collectible: Collectible, name: string): boolean => {
+const filterCollectibleByName = (collectible: Collectible, name: string): boolean => {
     const collectibleName = collectible.name.toLowerCase();
     const filterName = name.toLowerCase();
     return collectibleName.startsWith(filterName);
@@ -36,7 +36,7 @@ export const getFilterFunction = (filterType: CollectibleFilterType): ((sc: Sort
         case CollectibleFilterType.FixedPrice:
             return (sc: SortableCollectible) => isCollectibleSoldInBasicSell(sc.collectible);
         case CollectibleFilterType.Name:
-            return (sc: SortableCollectible) => filterCollectibleByNameFn(sc.collectible, sc.name);
+            return (sc: SortableCollectible) => filterCollectibleByName(sc.collectible, sc.name);
         default:
             return (c: any) => true;
     }

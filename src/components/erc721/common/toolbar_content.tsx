@@ -84,7 +84,7 @@ const ToolbarContent = (props: Props) => {
             <NotificationsDropdownContainer />
         </>
     );
-    const centerContent = <Search />;
+    const centerContent = <Search placeholder={'Search Cryptocards'} />;
 
     return <ToolbarContainer startContent={startContent} centerContent={centerContent} endContent={endContent} />;
 };

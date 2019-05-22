@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
 
 interface OwnProps {
-    placeHolder?: string;
+    placeholder: string;
     onChange?: any;
 }
 
@@ -44,13 +44,7 @@ const SearchInput = styled.input`
 
 export class Search extends React.Component<Props> {
     public render = () => {
-        const { placeHolder, onChange, ...restProps } = this.props;
-        return (
-            <SearchInput
-                {...restProps}
-                placeholder={placeHolder ? placeHolder : 'Search Cryptocards'}
-                onChange={onChange ? onChange : null}
-            />
-        );
+        const { placeholder, onChange, ...restProps } = this.props;
+        return <SearchInput {...restProps} placeholder={placeholder} onChange={onChange ? onChange : null} />;
     };
 }
