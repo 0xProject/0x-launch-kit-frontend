@@ -1,6 +1,9 @@
-import { push } from 'connected-react-router';
+import { push, replace } from 'connected-react-router';
+import queryString from 'query-string';
 
 import { ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH } from '../../common/constants';
+import { CollectibleFilterType } from '../../util/filterable_collectibles';
+import { CollectibleSortType } from '../../util/sortable_collectibles';
 import { ThunkCreator } from '../../util/types';
 
 export const goToHomeErc20: ThunkCreator = () => {
@@ -63,6 +66,48 @@ export const goToIndividualCollectible = (collectibleId: string) => {
             push({
                 ...state.router.location,
                 pathname: `${ERC721_APP_BASE_PATH}/collectible/${collectibleId}`,
+            }),
+        );
+    };
+};
+
+export const setCollectiblesListSortType = (sortType: CollectibleSortType | null) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const searchObject = {
+            ...queryString.parse(state.router.location.search),
+            sort: sortType,
+        };
+
+        if (sortType === null) {
+            delete searchObject.sort;
+        }
+
+        dispatch(
+            replace({
+                ...state.router.location,
+                search: queryString.stringify(searchObject),
+            }),
+        );
+    };
+};
+
+export const setCollectiblesListFilterType = (filterType: CollectibleFilterType | null) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const searchObject = {
+            ...queryString.parse(state.router.location.search),
+            filter: filterType,
+        };
+
+        if (filterType === null) {
+            delete searchObject.filter;
+        }
+
+        dispatch(
+            replace({
+                ...state.router.location,
+                search: queryString.stringify(searchObject),
             }),
         );
     };
