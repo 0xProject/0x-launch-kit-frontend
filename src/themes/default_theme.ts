@@ -35,6 +35,7 @@ const whiteThemeColors: ThemeProperties = {
     buttonConvertTextColor: '#474747',
     buttonErrorBackgroundColor: '#FF6534',
     buttonPrimaryBackgroundColor: '#002979',
+    buttonQuaternaryBackgroundColor: '#00AE99',
     buttonSecondaryBackgroundColor: '#474747',
     buttonSellBackgroundColor: '#00AE99',
     buttonTertiaryBackgroundColor: '#F6851B',

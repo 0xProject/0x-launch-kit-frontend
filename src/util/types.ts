@@ -175,11 +175,15 @@ export interface OrderBookItem {
     price: BigNumber;
 }
 
+export interface Spread {
+    absolute: BigNumber;
+    percentage: BigNumber;
+}
+
 export interface OrderBook {
     buyOrders: OrderBookItem[];
     sellOrders: OrderBookItem[];
     mySizeOrders: OrderBookItem[];
-    spread: BigNumber;
 }
 
 export interface CurrencyPair {

@@ -11,7 +11,8 @@ interface State {
 }
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-    spreadValue?: string;
+    spreadAbsValue?: string;
+    spreadPercentValue?: string;
 }
 
 interface GridRowSpreadProps {
@@ -57,7 +58,7 @@ export class GridRowSpread extends React.Component<Props> {
     };
 
     public render = () => {
-        const { spreadValue } = this.props;
+        const { spreadAbsValue, spreadPercentValue } = this.props;
 
         return this.state.stickySpreadState === 'hidden' ? null : (
             <GridRowSpreadContainer
@@ -68,10 +69,10 @@ export class GridRowSpread extends React.Component<Props> {
                     Spread
                 </CustomTDTitle>
                 <CustomTD as="div" styles={customTDStyles}>
-                    {}
+                    {spreadAbsValue}
                 </CustomTD>
                 <CustomTDLast as="div" styles={customTDLastStyles}>
-                    {spreadValue}
+                    {spreadPercentValue}%
                 </CustomTDLast>
             </GridRowSpreadContainer>
         );

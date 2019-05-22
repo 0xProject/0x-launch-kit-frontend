@@ -134,17 +134,28 @@ export const getSpread = createSelector(
     },
 );
 
+export const getSpreadInPercentage = createSelector(
+    getSpread,
+    getOpenSellOrders,
+    (absSpread, sellOrders) => {
+        if (!sellOrders.length) {
+            return new BigNumber(0);
+        }
+
+        const lowestPriceSell = sellOrders[sellOrders.length - 1].price;
+        return absSpread.dividedBy(lowestPriceSell).multipliedBy(100);
+    },
+);
+
 export const getOrderBook = createSelector(
     getOpenSellOrders,
     getOpenBuyOrders,
     getMySizeOrders,
-    getSpread,
-    (sellOrders, buyOrders, mySizeOrders, spread): OrderBook => {
+    (sellOrders, buyOrders, mySizeOrders): OrderBook => {
         const orderBook = {
             sellOrders: mergeByPrice(sellOrders),
             buyOrders: mergeByPrice(buyOrders),
             mySizeOrders,
-            spread,
         };
         return orderBook;
     },

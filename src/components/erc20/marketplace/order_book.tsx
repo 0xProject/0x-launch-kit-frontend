@@ -3,8 +3,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { UI_DECIMALS_DISPLAYED_ORDER_SIZE, UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
-import { getBaseToken, getOrderBook, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
+import {
+    UI_DECIMALS_DISPLAYED_ORDER_SIZE,
+    UI_DECIMALS_DISPLAYED_PRICE_ETH,
+    UI_DECIMALS_DISPLAYED_SPREAD_PERCENT,
+} from '../../../common/constants';
+import {
+    getBaseToken,
+    getOrderBook,
+    getQuoteToken,
+    getSpread,
+    getSpreadInPercentage,
+    getUserOrders,
+    getWeb3State,
+} from '../../../store/selectors';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
@@ -29,6 +41,8 @@ interface StateProps {
     quoteToken: Token | null;
     userOrders: UIOrder[];
     web3State?: Web3State;
+    absoluteSpread: BigNumber;
+    percentageSpread: BigNumber;
 }
 
 interface OwnProps {
@@ -136,7 +150,7 @@ const orderToRow = (
     const displayColor = isMySizeEmpty ? '#dedede' : undefined;
     const mySizeRow =
         web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }}>
+            <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }} id="mySize">
                 {isMySizeEmpty ? '-' : mySizeConverted}
             </CustomTDLast>
         ) : null;
@@ -169,8 +183,8 @@ class OrderBookTable extends React.Component<Props> {
     }
 
     public render = () => {
-        const { orderBook, baseToken, quoteToken, web3State, theme } = this.props;
-        const { sellOrders, buyOrders, mySizeOrders, spread } = orderBook;
+        const { orderBook, baseToken, quoteToken, web3State, theme, absoluteSpread, percentageSpread } = this.props;
+        const { sellOrders, buyOrders, mySizeOrders } = orderBook;
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
         });
@@ -180,7 +194,6 @@ class OrderBookTable extends React.Component<Props> {
         const getColor = (order: OrderBookItem): string => {
             return order.side === OrderSide.Buy ? theme.componentsTheme.green : theme.componentsTheme.orange;
         };
-        const spreadToFixed = spread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
 
         let content: React.ReactNode;
 
@@ -195,6 +208,10 @@ class OrderBookTable extends React.Component<Props> {
                         My Size
                     </THLast>
                 ) : null;
+
+            const spreadAbsFixed = absoluteSpread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
+            const spreadPercentFixed = percentageSpread.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT);
+
             content = (
                 <>
                     <GridRowTop as="div">
@@ -207,7 +224,11 @@ class OrderBookTable extends React.Component<Props> {
                         {mySizeHeader}
                     </GridRowTop>
                     <ItemsScroll ref={this._itemsScroll} onScroll={this._updateStickySpreadState}>
-                        <GridRowSpread ref={this._spreadRowFixed} spreadValue={spreadToFixed} />
+                        <GridRowSpread
+                            ref={this._spreadRowFixed}
+                            spreadAbsValue={spreadAbsFixed}
+                            spreadPercentValue={spreadPercentFixed}
+                        />
                         <ItemsMainContainer>
                             <TopItems>
                                 {sellOrders.map((order, index) =>
@@ -227,10 +248,10 @@ class OrderBookTable extends React.Component<Props> {
                                     Spread
                                 </CustomTDTitle>
                                 <CustomTD as="div" styles={customTDStyles}>
-                                    {spreadToFixed}
+                                    {spreadAbsFixed}
                                 </CustomTD>
                                 <CustomTDLast as="div" styles={customTDLastStyles}>
-                                    5%
+                                    {spreadPercentFixed}%
                                 </CustomTDLast>
                             </GridRowSpreadContainer>
                             <BottomItems>
@@ -333,6 +354,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
         userOrders: getUserOrders(state),
         quoteToken: getQuoteToken(state),
         web3State: getWeb3State(state),
+        absoluteSpread: getSpread(state),
+        percentageSpread: getSpreadInPercentage(state),
     };
 };
 

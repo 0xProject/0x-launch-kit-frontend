@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
     text: string;
 }
 
-const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
+export const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
     background-color: ${props =>
         props.active ? props.theme.componentsTheme.rowActive : props.theme.componentsTheme.dropdownBackgroundColor};
     border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
