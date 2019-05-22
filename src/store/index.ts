@@ -1,5 +1,5 @@
 import { routerMiddleware } from 'connected-react-router';
-import { createBrowserHistory } from 'history';
+import { createHashHistory } from 'history';
 import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 
@@ -21,7 +21,7 @@ const publicURLPath = (path: string): string => {
     return path;
 };
 
-export const history = createBrowserHistory({ basename: publicURLPath('/') });
+export const history = createHashHistory({ basename: publicURLPath('/') });
 const rootReducer = createRootReducer(history);
 
 const extraArgument = {
