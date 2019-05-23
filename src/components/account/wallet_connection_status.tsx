@@ -1,17 +1,17 @@
+import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getEthAccount } from '../../store/selectors';
+import { ETH_DECIMALS } from '../../common/constants';
+import { getEthAccount, getEthBalance } from '../../store/selectors';
 import { truncateAddress } from '../../util/number_utils';
+import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState } from '../../util/types';
-import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { ChevronDownIcon } from '../common/icons/chevron_down_icon';
 
-interface WrapperProps {
-    status?: string;
-}
+import { WalletConnectionStatusDot } from './wallet_connections_status_dot';
 
 const WalletConnectionStatusWrapper = styled.div`
     align-items: center;
@@ -19,12 +19,8 @@ const WalletConnectionStatusWrapper = styled.div`
     display: flex;
 `;
 
-const WalletConnectionStatusDot = styled.div<WrapperProps>`
-    background-color: ${props => (props.status ? '#55BC65' : '#ccc')};
-    border-radius: 50%;
-    height: 10px;
+const WalletConnectionStatusDotStyled = styled(WalletConnectionStatusDot)`
     margin-right: 10px;
-    width: 10px;
 `;
 
 const WalletConnectionStatusText = styled.span`
@@ -35,44 +31,60 @@ const WalletConnectionStatusText = styled.span`
     margin-right: 10px;
 `;
 
-const DropdownItems = styled(CardBase)`
-    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
-    min-width: 240px;
-`;
-
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> {
     walletConnectionContent: React.ReactNode;
+    shouldShowEthAccountInHeader: boolean;
 }
 
 interface StateProps {
     ethAccount: string;
+    ethBalance: BigNumber;
 }
 
 type Props = StateProps & OwnProps;
 
 class WalletConnectionStatus extends React.PureComponent<Props> {
     public render = () => {
-        const { ethAccount, walletConnectionContent, ...restProps } = this.props;
+        const {
+            ethAccount,
+            ethBalance,
+            walletConnectionContent,
+            shouldShowEthAccountInHeader,
+            ...restProps
+        } = this.props;
         const status: string = ethAccount ? 'active' : '';
 
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
+        const ethBalanceText = ethBalance ? `${tokenAmountInUnits(ethBalance, ETH_DECIMALS)} ETH` : 'No connected';
+        // If the app is erc20, we need to show the eth account in the header, otherwise, we should the ethBalance
+        const headerText = shouldShowEthAccountInHeader ? ethAccountText : ethBalanceText;
         const header = (
             <WalletConnectionStatusWrapper>
-                <WalletConnectionStatusDot status={status} />
-                <WalletConnectionStatusText>{ethAccountText}</WalletConnectionStatusText>
+                <WalletConnectionStatusDotStyled status={status} />
+                <WalletConnectionStatusText>{headerText}</WalletConnectionStatusText>
                 <ChevronDownIcon />
             </WalletConnectionStatusWrapper>
         );
 
-        const body = <DropdownItems>{walletConnectionContent}</DropdownItems>;
-
-        return <Dropdown body={body} header={header} horizontalPosition={DropdownPositions.Right} {...restProps} />;
+        const body = <>{walletConnectionContent}</>;
+        // If the application is erc720, the dropdown should not close on click outside, because the ethConverter modal won't be usable
+        return (
+            <Dropdown
+                body={body}
+                header={header}
+                horizontalPosition={DropdownPositions.Right}
+                {...restProps}
+                shouldCloseDropdownOnClickOutside={shouldShowEthAccountInHeader}
+                shouldCloseDropdownBodyOnClick={shouldShowEthAccountInHeader}
+            />
+        );
     };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         ethAccount: getEthAccount(state),
+        ethBalance: getEthBalance(state),
     };
 };
 
