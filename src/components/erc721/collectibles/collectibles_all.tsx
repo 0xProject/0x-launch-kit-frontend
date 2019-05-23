@@ -98,7 +98,7 @@ export class CollectiblesAll extends React.Component<Props> {
     public render = () => {
         const { title, description } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
-        //TODO: This should be better
+        // TODO: This should be better
         const isLoading: boolean = collectibles && collectibles.length < 1;
 
         return (

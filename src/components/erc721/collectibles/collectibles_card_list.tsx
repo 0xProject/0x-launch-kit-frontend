@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { EmptyContent } from '../../../components/common/empty_content';
 import { LoadingWrapper } from '../../../components/common/loading';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
@@ -82,7 +83,7 @@ export const CollectiblesCardList = (props: Props) => {
         return <Loading />;
     }
     if (collectibleCards.length === 0) {
-        return <p>No results.</p>;
+        return <EmptyContent text="No results." />;
     }
 
     return (
