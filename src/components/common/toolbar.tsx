@@ -107,7 +107,6 @@ const Toolbar = (props: Props) => {
             ) : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarCenter>{centerContent}</ToolbarCenter> : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarEnd>{endContentWrapper}</ToolbarEnd> : null}
-            {}
         </ToolbarWrapper>
     );
 };
