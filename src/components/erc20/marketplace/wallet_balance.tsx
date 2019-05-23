@@ -289,11 +289,11 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <WalletErrorContainer>
                     <ErrorCardStyled
+                        cursor={'default'}
                         fontSize={FontSize.Large}
                         icon={ErrorIcons.Warning}
                         text={errorsWallet.mmWrongNetwork}
                         textAlign="center"
-                        cursor={'default'}
                     />
                     <WalletErrorFiller top="0" left="0">
                         {fillerBig()}

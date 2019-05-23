@@ -6,6 +6,7 @@ import { themeDimensions } from '../../themes/commons';
 import { LockIcon } from './icons/lock_icon';
 import { MetamaskSideIcon } from './icons/metamask_side_icon';
 import { SadIcon } from './icons/sad_icon';
+import { WarningIcon } from './icons/warning_icon';
 
 interface Props extends HTMLAttributes<HTMLDivElement>, ErrorProps {
     text: string;
@@ -58,10 +59,8 @@ const getIcon = (icon: ErrorIcons) => {
     if (icon === ErrorIcons.Sad) {
         theIcon = <SadIcon />;
     }
-
     if (icon === ErrorIcons.Warning) {
-        // TODO ADD ICON
-        theIcon = null;
+        theIcon = <WarningIcon />;
     }
 
     return <IconContainer>{theIcon}</IconContainer>;
