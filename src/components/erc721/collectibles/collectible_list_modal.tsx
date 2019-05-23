@@ -94,8 +94,7 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { theme, isOpen } = this.props;
-        const { userCollectibles } = this.props;
+        const { theme, isOpen, userCollectibles } = this.props;
         const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
         const { filterText } = this.state;
         const filteredCollectibles = filterCollectibleByName(collectibles, filterText);
