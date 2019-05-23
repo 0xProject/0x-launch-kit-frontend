@@ -1,8 +1,10 @@
+import queryString from 'query-string';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import { getOtherUsersCollectibles, getUserCollectibles } from '../../../store/selectors';
+import { setCollectiblesListFilterType, setCollectiblesListSortType } from '../../../store/actions';
+import { getOtherUsersCollectibles, getRouterLocationSearch, getUserCollectibles } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
@@ -19,17 +21,15 @@ interface OwnProps {
 
 interface StateProps {
     collectibles: { [key: string]: Collectible };
+    search: string;
 }
 
 interface DispatchProps {
-    toggleCollectibleListModal: () => any;
+    setSortType: (sortType: CollectibleSortType | null) => any;
+    setFilterType: (filterType: CollectibleFilterType | null) => any;
 }
-type Props = StateProps & DispatchProps & OwnProps;
 
-interface State {
-    filterType: CollectibleFilterType;
-    sortType: CollectibleSortType;
-}
+type Props = OwnProps & StateProps & DispatchProps;
 
 const MainContainer = styled.div`
     display: flex;
@@ -98,16 +98,16 @@ const Title = styled.h1`
     }
 `;
 
-export class CollectiblesList extends React.Component<Props, State> {
-    public state = {
-        sortType: CollectibleSortType.NewestAdded,
-        filterType: CollectibleFilterType.ShowAll,
+export class CollectiblesList extends React.Component<Props, {}> {
+    public componentWillUnmount = () => {
+        this.props.setSortType(null);
+        this.props.setFilterType(null);
     };
 
     public render = () => {
-        const { title } = this.props;
+        const { title, search } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
-        const { sortType, filterType } = this.state;
+        const { sortType, filterType } = this._getSortTypeAndFilterTypeFromLocationSearch(search);
 
         return (
             <MainContainer>
@@ -123,25 +123,54 @@ export class CollectiblesList extends React.Component<Props, State> {
     };
 
     private readonly _onChangeSortType = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ sortType: evt.target.value as CollectibleSortType });
+        this.props.setSortType(evt.target.value as CollectibleSortType);
     };
 
     private readonly _onChangeFilterType = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ filterType: evt.target.value as CollectibleFilterType });
+        this.props.setFilterType(evt.target.value as CollectibleFilterType);
+    };
+
+    private readonly _getSortTypeAndFilterTypeFromLocationSearch = (search: string) => {
+        const parsedSearch = queryString.parse(search);
+        return {
+            sortType: (parsedSearch.sort as CollectibleSortType) || CollectibleSortType.NewestAdded,
+            filterType: (parsedSearch.filter as CollectibleFilterType) || CollectibleFilterType.ShowAll,
+        };
     };
 }
 
+// "All Collectibles" and "My Collectibles" get different selectors
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getOtherUsersCollectibles(state),
+        search: getRouterLocationSearch(state),
     };
 };
-
-export const AllCollectiblesListContainer = connect(allMapStateToProps)(CollectiblesList);
 
 const myMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getUserCollectibles(state),
+        search: getRouterLocationSearch(state),
     };
 };
-export const MyCollectiblesListContainer = connect(myMapStateToProps)(CollectiblesList);
+
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        setSortType: (sortType: CollectibleSortType | null) => {
+            dispatch(setCollectiblesListSortType(sortType));
+        },
+        setFilterType: (filterType: CollectibleFilterType | null) => {
+            dispatch(setCollectiblesListFilterType(filterType));
+        },
+    };
+};
+
+export const AllCollectiblesListContainer = connect(
+    allMapStateToProps,
+    mapDispatchToProps,
+)(CollectiblesList);
+
+export const MyCollectiblesListContainer = connect(
+    myMapStateToProps,
+    mapDispatchToProps,
+)(CollectiblesList);

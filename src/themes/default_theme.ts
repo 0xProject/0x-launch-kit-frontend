@@ -3,11 +3,15 @@ import { Theme, ThemeModalStyle, ThemeProperties } from './commons';
 const modalThemeStyle: ThemeModalStyle = {
     content: {
         backgroundColor: '#fff',
-        bottom: 'auto',
         borderColor: '#dedede',
+        bottom: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
         flexGrow: '0',
         left: 'auto',
+        maxHeight: '90%',
         minWidth: '350px',
+        overflow: 'hidden',
         padding: '16px',
         position: 'relative',
         right: 'auto',

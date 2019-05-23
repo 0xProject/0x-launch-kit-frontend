@@ -10,10 +10,23 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const ColumnWideWrapper = styled.div`
     flex-grow: 0;
     flex-shrink: 1;
+    max-width: 100%;
     min-width: 0;
-    margin-left: 10px;
+
     @media (min-width: ${themeBreakPoints.xl}) {
         flex-grow: 1;
+    }
+
+    &:first-child {
+        @media (min-width: ${themeBreakPoints.xl}) {
+            margin-right: 10px;
+        }
+    }
+
+    &:last-child {
+        @media (min-width: ${themeBreakPoints.xl}) {
+            margin-left: 10px;
+        }
     }
 `;
 

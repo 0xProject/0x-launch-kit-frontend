@@ -25,6 +25,8 @@ const ModalContent = styled.div`
     align-items: center;
     display: flex;
     flex-direction: column;
+    max-height: 100%;
+    overflow: auto;
     width: 310px;
 `;
 

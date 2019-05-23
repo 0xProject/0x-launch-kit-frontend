@@ -3,10 +3,10 @@ import { SortableCollectible } from './sortable_collectibles';
 import { Collectible } from './types';
 
 export enum CollectibleFilterType {
-    ShowAll = 'Show all',
-    FixedPrice = 'Fixed Price',
-    DecliningAuction = 'Declining Auction',
-    Name = 'Name',
+    ShowAll = 'show_all',
+    FixedPrice = 'fixed_price',
+    DecliningAuction = 'declining_auction',
+    Name = 'name',
 }
 
 const isCollectibleSoldInDutchAuction = (collectible: Collectible): boolean => {

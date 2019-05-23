@@ -43,6 +43,7 @@ export const getCollectibleById = (state: StoreState, props: { collectibleId: st
     state.collectibles.allCollectibles[props.collectibleId];
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 export const getCurrentRoutePath = (state: StoreState) => state.router.location.pathname;
+export const getRouterLocationSearch = (state: StoreState) => state.router.location.search;
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {
