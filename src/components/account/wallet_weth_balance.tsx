@@ -17,9 +17,9 @@ import { WethModal } from './wallet_weth_modal';
 
 interface StateProps {
     ethBalance: BigNumber;
-    wethBalance: BigNumber;
-    web3State: Web3State;
     ethInUsd: BigNumber | null;
+    web3State: Web3State;
+    wethBalance: BigNumber;
 }
 
 interface DispatchProps {
@@ -27,15 +27,17 @@ interface DispatchProps {
 }
 
 interface OwnProps {
+    className?: string;
+    inDropdown?: boolean;
     theme: Theme;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
+    isSubmitting: boolean;
     modalIsOpen: boolean;
     selectedWeth: string;
-    isSubmitting: boolean;
 }
 
 const Content = styled.div`
@@ -130,6 +132,7 @@ const ButtonLabel = styled.span`
     font-weight: 700;
     line-height: 1.2;
     margin-right: 10px;
+    user-select: none;
 `;
 
 const Note = styled.p`
@@ -150,10 +153,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd, theme } = this.props;
+        const { ethBalance, web3State, wethBalance, ethInUsd, theme, inDropdown, className } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.plus(wethBalance);
-
         const formattedEth = tokenAmountInUnits(ethBalance, 18);
         const formattedWeth = tokenAmountInUnits(wethBalance, 18);
         const formattedTotalEth = tokenAmountInUnits(totalEth, 18);
@@ -188,6 +190,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <Value>{formattedTotalEth} ETH</Value>
                     </Row>
                     <WethModal
+                        ethInUsd={ethInUsd}
                         isOpen={this.state.modalIsOpen}
                         isSubmitting={isSubmitting}
                         onRequestClose={this.closeModal}
@@ -195,7 +198,6 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
-                        ethInUsd={ethInUsd}
                     />
                 </>
             );
@@ -203,13 +205,15 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Card title="ETH / wETH Balances">
+                <Card title={inDropdown ? '' : 'ETH / wETH Balances'} className={className}>
                     <Content>{content}</Content>
                 </Card>
-                <Note>
-                    wETH is used for trades on 0x
-                    <br />1 wETH = 1 ETH
-                </Note>
+                {inDropdown ? null : (
+                    <Note>
+                        wETH is used for trades on 0x
+                        <br />1 wETH = 1 ETH
+                    </Note>
+                )}
             </>
         );
     };
@@ -218,6 +222,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         this.setState({
             isSubmitting: true,
         });
+
         try {
             await this.props.onStartWrapEtherSteps(newWeth);
         } finally {
@@ -228,7 +233,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         }
     };
 
-    public openModal = () => {
+    public openModal = (e: any) => {
+        e.stopPropagation(); // avoids dropdown closing when used inside one
+
         this.setState({
             modalIsOpen: true,
         });
@@ -249,6 +256,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethInUsd: getEthInUsd(state),
     };
 };
+
 const mapDispatchToProps = {
     onStartWrapEtherSteps: startWrapEtherSteps,
 };
