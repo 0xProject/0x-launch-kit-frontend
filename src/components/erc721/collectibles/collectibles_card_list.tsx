@@ -69,10 +69,10 @@ interface Props {
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType, filterType, limit } = props;
+    const { collectibles, sortType, filterType, limit, ...restProps } = props;
     const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit);
     return (
-        <CollectiblesListOverflow>
+        <CollectiblesListOverflow {...restProps}>
             <CollectiblesList>{collectibleCards}</CollectiblesList>
         </CollectiblesListOverflow>
     );
