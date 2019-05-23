@@ -15,6 +15,7 @@ interface Props extends HTMLAttributes<HTMLDivElement>, DropdownWrapperBodyProps
     body: React.ReactNode;
     header: React.ReactNode;
     shouldCloseDropdownBodyOnClick?: boolean;
+    shouldCloseDropdownOnClickOutside?: boolean;
 }
 
 const DropdownWrapper = styled.div`
@@ -80,7 +81,10 @@ export class Dropdown extends React.Component<Props, State> {
 
     private readonly _handleClickOutside = (event: any) => {
         if (this._wrapperRef && !this._wrapperRef.contains(event.target)) {
-            this.closeDropdown();
+            const { shouldCloseDropdownOnClickOutside = true } = this.props;
+            if (shouldCloseDropdownOnClickOutside) {
+                this.closeDropdown();
+            }
         }
     };
 
@@ -90,7 +94,6 @@ export class Dropdown extends React.Component<Props, State> {
 
     private readonly _closeDropdownBody = () => {
         const { shouldCloseDropdownBodyOnClick = true } = this.props;
-
         if (shouldCloseDropdownBodyOnClick) {
             this.closeDropdown();
         }

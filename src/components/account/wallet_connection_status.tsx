@@ -56,7 +56,7 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
 
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
         const ethBalanceText = ethBalance ? `${tokenAmountInUnits(ethBalance, ETH_DECIMALS)} ETH` : 'No connected';
-
+        // If the app is erc20, we need to show the eth account in the header, otherwise, we should the ethBalance
         const headerText = shouldShowEthAccountInHeader ? ethAccountText : ethBalanceText;
         const header = (
             <WalletConnectionStatusWrapper>
@@ -67,8 +67,17 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
         );
 
         const body = <>{walletConnectionContent}</>;
-
-        return <Dropdown body={body} header={header} horizontalPosition={DropdownPositions.Right} {...restProps} />;
+        // If the application is erc720, the dropdown should not close on click outside, because the ethConverter modal won't be usable
+        return (
+            <Dropdown
+                body={body}
+                header={header}
+                horizontalPosition={DropdownPositions.Right}
+                {...restProps}
+                shouldCloseDropdownOnClickOutside={shouldShowEthAccountInHeader}
+                shouldCloseDropdownBodyOnClick={shouldShowEthAccountInHeader}
+            />
+        );
     };
 }
 
