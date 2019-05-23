@@ -145,6 +145,7 @@ export const createBuySellMarketSteps = (
     wethTokenBalance: TokenBalance,
     amount: BigNumber,
     side: OrderSide,
+    price: BigNumber,
 ): Step[] => {
     const buySellMarketFlow: Step[] = [];
     const tokenToUnlock = side === OrderSide.Buy ? quoteToken : baseToken;
@@ -163,7 +164,7 @@ export const createBuySellMarketSteps = (
 
     // wrap the necessary ether if necessary
     if (isWeth(quoteToken.symbol) && wethTokenBalance.balance.isLessThan(amount)) {
-        const wrapEthStep = getWrapEthStepIfNeeded(amount, new BigNumber(1), side, wethTokenBalance);
+        const wrapEthStep = getWrapEthStepIfNeeded(amount, price, side, wethTokenBalance);
         if (wrapEthStep) {
             buySellMarketFlow.push(wrapEthStep);
         }
