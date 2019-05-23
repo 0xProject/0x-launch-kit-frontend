@@ -76,7 +76,13 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           <td
             className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
-            ETH Total (ETH + wETH)
+            <span
+              className="sc-eNQAEJ cOvcCf"
+            >
+              ETH Total
+            </span>
+             
+             (ETH + wETH)
           </td>
           <td
             className="sc-fjdhpX jsMPdn"
