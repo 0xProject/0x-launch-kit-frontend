@@ -1,12 +1,10 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../common/constants';
-import { setThemeColor } from '../../store/ui/actions';
-import { Theme } from '../../themes/commons';
-import { getThemeByRoute } from '../../themes/theme_meta_data_utils';
+import { getThemeByMarketplace } from '../../themes/theme_meta_data_utils';
+import { MARKETPLACES } from '../../util/types';
 import { AdBlockDetector } from '../common/adblock_detector';
 import { CheckMetamaskStateModalContainer } from '../common/check_metamask_state_modal_container';
 import { GeneralLayout } from '../general_layout';
@@ -17,21 +15,10 @@ import { AllCollectibles } from './pages/all_collectibles';
 import { IndividualCollectible } from './pages/individual_collectible';
 import { MyCollectibles } from './pages/my_collectibles';
 
-interface StateProps {
-    theme: Theme;
-}
-
-interface DispatchProps {
-    setThemeColor: (theme: Theme) => any;
-}
-
-type Props = StateProps & DispatchProps;
-
 const toolbar = <ToolbarContentContainer />;
 
-const Erc721AppContainer = (props: Props) => {
-    const themeColor = getThemeByRoute(ERC721_APP_BASE_PATH);
-    props.setThemeColor(themeColor);
+export const Erc721App = () => {
+    const themeColor = getThemeByMarketplace(MARKETPLACES.ERC721);
     return (
         <ThemeProvider theme={themeColor}>
             <GeneralLayout toolbar={toolbar}>
@@ -49,16 +36,3 @@ const Erc721AppContainer = (props: Props) => {
         </ThemeProvider>
     );
 };
-
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        setThemeColor: (theme: Theme) => dispatch(setThemeColor(theme)),
-    };
-};
-
-const Erc721App = connect(
-    null,
-    mapDispatchToProps,
-)(Erc721AppContainer);
-
-export { Erc721App, Erc721AppContainer };

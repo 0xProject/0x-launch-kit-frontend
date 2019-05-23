@@ -1,4 +1,4 @@
-import { ERC20_THEME_NAME, ERC721_APP_BASE_PATH, ERC721_THEME_NAME } from '../common/constants';
+import { ERC20_THEME_NAME, ERC721_THEME_NAME } from '../common/constants';
 import { getLogger } from '../util/logger';
 import { MARKETPLACES } from '../util/types';
 
@@ -18,14 +18,6 @@ export const getThemeByName = (themeName: string): Theme => {
         themeReturn = themeDataFetched.theme;
     }
     return themeReturn;
-};
-
-export const getThemeByRoute = (currentRoute: string): Theme => {
-    if (currentRoute === ERC721_APP_BASE_PATH) {
-        return getThemeByName(ERC721_THEME_NAME);
-    } else {
-        return getThemeByName(ERC20_THEME_NAME);
-    }
 };
 
 export const getThemeByMarketplace = (marketplace: MARKETPLACES): Theme => {
