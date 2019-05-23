@@ -10,7 +10,7 @@ import { filterCollectibleByName } from '../../../util/filterable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
 import { EmptyContent } from '../../common/empty_content';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
-import { Search } from '../common/inputSearch';
+import { InputSearch } from '../common/input_search';
 
 import { CollectibleOnListContainer } from './collectible_details_list';
 
@@ -68,7 +68,7 @@ const ModalTitle = styled.h2`
     padding: 0 15px 0 0;
 `;
 
-const SearchStyled = styled(Search)`
+const SearchStyled = styled(InputSearch)`
     background-color: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
     border-color: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
     color: ${props => props.theme.componentsTheme.marketsSearchFieldTextColor};

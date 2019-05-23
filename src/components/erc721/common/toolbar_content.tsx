@@ -10,7 +10,7 @@ import { separatorTopbar, ToolbarContainer } from '../../common/toolbar';
 import { NotificationsDropdownContainer } from '../../notifications/notifications_dropdown';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
-import { Search } from './inputSearch';
+import { InputSearch } from './input_search';
 
 interface DispatchProps {
     onGoToHome: () => any;
@@ -57,6 +57,10 @@ const WalletDropdown = styled(WalletConnectionContentContainer)`
     }
 `;
 
+const onSearchChange = () => {
+    return null;
+};
+
 const ToolbarContent = (props: Props) => {
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -84,7 +88,7 @@ const ToolbarContent = (props: Props) => {
             <NotificationsDropdownContainer />
         </>
     );
-    const centerContent = <Search placeholder={'Search Cryptocards'} />;
+    const centerContent = <InputSearch placeholder={'Search Cryptocards'} onChange={onSearchChange} />;
 
     return <ToolbarContainer startContent={startContent} centerContent={centerContent} endContent={endContent} />;
 };
