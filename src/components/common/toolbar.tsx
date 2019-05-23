@@ -85,8 +85,14 @@ const Toolbar = (props: Props) => {
     const isMmLocked = props.web3State === Web3State.Locked;
     const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
     const isMmLoading = props.web3State === Web3State.Loading;
+    const isMmOnWrongNetwork = props.web3State === Web3State.Error;
     const { startContent, endContent, centerContent } = props;
 
+    const endContentWrapper = isMmOnWrongNetwork ? (
+        <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmWrongNetwork} icon={ErrorIcons.Warning} />
+    ) : (
+        endContent
+    );
     return (
         <ToolbarWrapper>
             <ToolbarStart>{startContent}</ToolbarStart>
@@ -100,7 +106,8 @@ const Toolbar = (props: Props) => {
                 <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
             ) : null}
             {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarCenter>{centerContent}</ToolbarCenter> : null}
-            {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarEnd>{endContent}</ToolbarEnd> : null}
+            {!isMmLocked && !isMmNotInstalled && !isMmLoading ? <ToolbarEnd>{endContentWrapper}</ToolbarEnd> : null}
+            {}
         </ToolbarWrapper>
     );
 };

@@ -82,14 +82,22 @@ const TooltipStyled = styled(Tooltip)`
     margin-left: 10px;
 `;
 
-const ErrorCardStyled = styled(ErrorCard)`
-    cursor: pointer;
+interface ErrorCardStyledProps {
+    cursor?: string;
+}
+
+const ErrorCardStyled = styled(ErrorCard)<ErrorCardStyledProps>`
+    cursor: ${props => props.cursor}
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     width: 100%;
     z-index: 5;
 `;
+
+ErrorCardStyled.defaultProps = {
+    cursor: 'pointer',
+};
 
 const WalletErrorContainer = styled.div`
     height: 140px;
@@ -274,6 +282,32 @@ class WalletBalance extends React.Component<Props, State> {
                 <>
                     <ButtonStyled variant={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
+            );
+        }
+
+        if (web3State === Web3State.Error) {
+            content = (
+                <WalletErrorContainer>
+                    <ErrorCardStyled
+                        fontSize={FontSize.Large}
+                        icon={ErrorIcons.Warning}
+                        text={errorsWallet.mmWrongNetwork}
+                        textAlign="center"
+                        cursor={'default'}
+                    />
+                    <WalletErrorFiller top="0" left="0">
+                        {fillerBig()}
+                    </WalletErrorFiller>
+                    <WalletErrorFiller top="0" right="0">
+                        {fillerBig()}
+                    </WalletErrorFiller>
+                    <WalletErrorFiller bottom="0" left="0">
+                        {fillerSmall()}
+                    </WalletErrorFiller>
+                    <WalletErrorFiller bottom="0" right="0">
+                        {fillerSmall()}
+                    </WalletErrorFiller>
+                </WalletErrorContainer>
             );
         }
 

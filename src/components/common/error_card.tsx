@@ -21,6 +21,7 @@ export enum ErrorIcons {
     Lock = 1,
     Sad = 2,
     Metamask = 3,
+    Warning = 4,
 }
 
 export enum FontSize {
@@ -56,6 +57,11 @@ const getIcon = (icon: ErrorIcons) => {
     }
     if (icon === ErrorIcons.Sad) {
         theIcon = <SadIcon />;
+    }
+
+    if (icon === ErrorIcons.Warning) {
+        // TODO ADD ICON
+        theIcon = null;
     }
 
     return <IconContainer>{theIcon}</IconContainer>;
