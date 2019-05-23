@@ -38,6 +38,7 @@ const whiteThemeColors: ThemeProperties = {
     cardBackgroundColor: '#fff',
     cardBorderColor: '#dedede',
     cardTitleColor: '#000',
+    chartColor: '#00AE99',
     darkBlue: '#002979',
     darkGray: '#474747',
     darkerGray: '#666',

@@ -1,10 +1,14 @@
 import React from 'react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, YAxis } from 'recharts';
+import { withTheme } from 'styled-components';
+
+import { Theme } from '../../../themes/commons';
 
 interface Props {
     beginAmountInUnits: number;
     endAmountInUnits: number;
     currentPriceInUnits: number;
+    theme: Theme;
 }
 
 const CustomTooltip = (props: any) => {
@@ -18,7 +22,7 @@ const CustomTooltip = (props: any) => {
     return null;
 };
 
-class DecliningPriceGraph extends React.Component<Props> {
+class DecliningPriceGraphContainer extends React.Component<Props> {
     public state: any = {
         dataNumbers: [],
     };
@@ -46,24 +50,24 @@ class DecliningPriceGraph extends React.Component<Props> {
                     <Area
                         type="monotone"
                         dataKey="price"
-                        stroke="#00AE99"
-                        fill="#00AE99"
+                        stroke={this.props.theme.componentsTheme.chartColor}
+                        fill={this.props.theme.componentsTheme.chartColor}
                         activeDot={{ r: 4 }}
                         dot={false}
                     />
                     <Area
                         type="monotone"
                         dataKey="markerLimit"
-                        stroke="#00AE99"
-                        fill="#00AE99"
-                        dot={{ stroke: '#00AE99', strokeWidth: 4 }}
+                        stroke={this.props.theme.componentsTheme.chartColor}
+                        fill={this.props.theme.componentsTheme.chartColor}
+                        dot={{ stroke: this.props.theme.componentsTheme.chartColor, strokeWidth: 4 }}
                     />
                     <Area
                         type="monotone"
                         dataKey="currentPrice"
-                        stroke="#00AE99"
-                        fill="#00AE99"
-                        dot={{ stroke: '#00AE99', strokeWidth: 8 }}
+                        stroke={this.props.theme.componentsTheme.chartColor}
+                        fill={this.props.theme.componentsTheme.chartColor}
+                        dot={{ stroke: this.props.theme.componentsTheme.chartColor, strokeWidth: 8 }}
                     />
                 </AreaChart>
             </ResponsiveContainer>
@@ -119,5 +123,7 @@ class DecliningPriceGraph extends React.Component<Props> {
         });
     };
 }
+
+const DecliningPriceGraph = withTheme(DecliningPriceGraphContainer);
 
 export { DecliningPriceGraph };
