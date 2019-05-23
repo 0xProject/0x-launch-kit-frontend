@@ -10,6 +10,7 @@ import { CollectibleSellModal } from './collectibles/collectible_sell_modal';
 import { ToolbarContentContainer } from './common/toolbar_content';
 import { AllCollectibles } from './pages/all_collectibles';
 import { IndividualCollectible } from './pages/individual_collectible';
+import { ListCollectibles } from './pages/list_collectibles';
 import { MyCollectibles } from './pages/my_collectibles';
 
 const toolbar = <ToolbarContentContainer />;
@@ -22,6 +23,7 @@ export const Erc721App = () => (
         <Switch>
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={AllCollectibles} />
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/my-collectibles`} component={MyCollectibles} />
+            <Route exact={true} path={`${ERC721_APP_BASE_PATH}/list-collectibles`} component={ListCollectibles} />
             <Route path={`${ERC721_APP_BASE_PATH}/collectible/:id`}>
                 {({ match }) => match && <IndividualCollectible collectibleId={match.params.id} />}
             </Route>

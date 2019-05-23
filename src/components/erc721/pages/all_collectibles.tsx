@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { COLLECTIBLE_NAME } from '../../../common/constants';
-import { AllCollectiblesListContainer } from '../collectibles/collectibles_list';
+import { COLLECTIBLE_DESCRIPTION, COLLECTIBLE_NAME } from '../../../common/constants';
+import { AllCollectiblesContainer } from '../collectibles/collectibles_all';
 
-export const AllCollectibles = () => <AllCollectiblesListContainer title={COLLECTIBLE_NAME} />;
+export const AllCollectibles = () => (
+    <AllCollectiblesContainer title={COLLECTIBLE_NAME} description={COLLECTIBLE_DESCRIPTION} />
+);

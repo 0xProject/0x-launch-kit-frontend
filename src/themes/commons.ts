@@ -111,6 +111,7 @@ export const themeDimensions = {
     fieldHeight: '46px',
     footerHeight: '38px',
     horizontalPadding: '16px',
+    mainPadding: '10px',
     sidebarWidth: '350px',
     toolbarHeight: '64px',
     verticalPadding: '10px',
