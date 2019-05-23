@@ -3,6 +3,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
+import { ETH_DECIMALS } from '../../common/constants';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
@@ -237,9 +238,10 @@ const InputEth = styled<any>(BigNumberInput)`
     }
 `;
 
-const minEth = unitsInTokenAmount('0.05', 18);
+const minEth = unitsInTokenAmount('0.05', ETH_DECIMALS);
 const minSlidervalue = '0.00';
-
+const DECIMALS_DISPLAYED = 3;
+const PLACEHOLDER = '0.000';
 class WethModal extends React.Component<Props, State> {
     public state = {
         selectedWeth: this.props.wethBalance,
@@ -249,11 +251,12 @@ class WethModal extends React.Component<Props, State> {
     public render = () => {
         const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
-        const selectedEth = totalEth.minus(this.state.selectedWeth);
-        const initialWethStr = tokenAmountInUnits(this.props.wethBalance, 18);
-        const selectedWethStr = tokenAmountInUnits(this.state.selectedWeth, 18);
-        const selectedEthStr = tokenAmountInUnits(selectedEth, 18);
-        const totalEthStr = tokenAmountInUnits(totalEth, 18);
+
+        const selectedEth = totalEth.minus(selectedWeth);
+        const initialWethStr = tokenAmountInUnits(wethBalance, ETH_DECIMALS);
+        const selectedWethStr = tokenAmountInUnits(selectedWeth, ETH_DECIMALS, DECIMALS_DISPLAYED);
+        const selectedEthStr = tokenAmountInUnits(selectedEth, ETH_DECIMALS, DECIMALS_DISPLAYED);
+        const totalEthStr = tokenAmountInUnits(totalEth, ETH_DECIMALS);
         const isInsufficientEth = selectedEth.isLessThan(minEth);
         const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
 
@@ -261,7 +264,7 @@ class WethModal extends React.Component<Props, State> {
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
                 <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
-                {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toString()} </ETHPrice> : null}
+                {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toFixed(2)} </ETHPrice> : null}
                 <EthBoxes>
                     <EthBox boxType={ETHBoxType.Eth}>
                         {editing === Editing.Eth ? (
@@ -274,6 +277,8 @@ class WethModal extends React.Component<Props, State> {
                                     min={new BigNumber(0)}
                                     onChange={this._updateEth}
                                     value={selectedEth}
+                                    placeholder={PLACEHOLDER}
+                                    valueFixedDecimals={DECIMALS_DISPLAYED}
                                 />
                             </form>
                         ) : (
@@ -292,12 +297,14 @@ class WethModal extends React.Component<Props, State> {
                             <form noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
                                     autofocus={true}
-                                    decimals={18}
+                                    decimals={ETH_DECIMALS}
                                     max={totalEth}
                                     min={new BigNumber(0)}
                                     onChange={this._updateWeth}
                                     value={selectedWeth}
                                     boxType={ETHBoxType.Weth}
+                                    placeholder={PLACEHOLDER}
+                                    valueFixedDecimals={DECIMALS_DISPLAYED}
                                 />
                             </form>
                         ) : (
@@ -362,7 +369,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     private readonly _updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
-        const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, 18);
+        const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, ETH_DECIMALS);
 
         this.setState({
             selectedWeth: newSelectedWeth,
