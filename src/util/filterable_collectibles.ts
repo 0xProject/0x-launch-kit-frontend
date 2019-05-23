@@ -26,7 +26,7 @@ const isCollectibleSoldInBasicSell = (collectible: Collectible): boolean => {
 const filterCollectibleByName = (collectible: Collectible, name: string): boolean => {
     const collectibleName = collectible.name.toLowerCase();
     const filterName = name.toLowerCase();
-    return collectibleName.startsWith(filterName);
+    return collectibleName.indexOf(filterName) > -1;
 };
 
 export const getFilterFunction = (filterType: CollectibleFilterType): ((sc: SortableCollectible) => boolean) => {
@@ -38,7 +38,7 @@ export const getFilterFunction = (filterType: CollectibleFilterType): ((sc: Sort
         case CollectibleFilterType.Name:
             return (sc: SortableCollectible) => filterCollectibleByName(sc.collectible, sc.name);
         default:
-            return (c: any) => true;
+            return () => true;
     }
 };
 

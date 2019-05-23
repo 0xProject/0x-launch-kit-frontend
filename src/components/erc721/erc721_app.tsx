@@ -18,7 +18,6 @@ export const Erc721App = () => (
     <GeneralLayoutContainer toolbar={toolbar}>
         <AdBlockDetector />
         <CollectibleSellModal />
-
         <CheckMetamaskStateModalContainer />
         <Switch>
             <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={AllCollectibles} />
