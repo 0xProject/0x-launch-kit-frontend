@@ -224,6 +224,7 @@ describe('Buy sell market steps for zrx/weth', () => {
         };
         const amount: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
+        const amountOfWethNeededForOrders = new BigNumber('0');
 
         // when
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
@@ -233,6 +234,7 @@ describe('Buy sell market steps for zrx/weth', () => {
             wethTokenBalance,
             amount,
             side,
+            amountOfWethNeededForOrders,
         );
 
         // then
@@ -254,6 +256,7 @@ describe('Buy sell market steps for zrx/weth', () => {
         const side: OrderSide = OrderSide.Buy;
         // @ts-ignore
         CONSTANTS.TAKER_FEE = unitsInTokenAmount('1', 18);
+        const amountOfWethNeededForOrders = new BigNumber('0');
 
         // when
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
@@ -263,6 +266,7 @@ describe('Buy sell market steps for zrx/weth', () => {
             wethTokenBalance,
             amount,
             side,
+            amountOfWethNeededForOrders,
         );
 
         // then

@@ -14,6 +14,7 @@ interface Props {
     onChange: (newValue: BigNumber) => void;
     step?: BigNumber;
     value: BigNumber | null;
+    valueFixedDecimals?: number;
 }
 
 interface State {
@@ -35,13 +36,15 @@ export class BigNumberInput extends React.Component<Props, State> {
     };
 
     public readonly state = {
-        currentValueStr: this.props.value ? tokenAmountInUnits(this.props.value, this.props.decimals) : '',
+        currentValueStr: this.props.value
+            ? tokenAmountInUnits(this.props.value, this.props.decimals, this.props.valueFixedDecimals)
+            : '',
     };
 
     private _textInput: any;
 
     public static getDerivedStateFromProps = (props: Props, state: State) => {
-        const { decimals, value } = props;
+        const { decimals, value, valueFixedDecimals } = props;
         const { currentValueStr } = state;
 
         if (!value) {
@@ -50,7 +53,7 @@ export class BigNumberInput extends React.Component<Props, State> {
             };
         } else if (value && !unitsInTokenAmount(currentValueStr || '0', decimals).eq(value)) {
             return {
-                currentValueStr: tokenAmountInUnits(value, decimals),
+                currentValueStr: tokenAmountInUnits(value, decimals, valueFixedDecimals),
             };
         } else {
             return null;
@@ -68,7 +71,6 @@ export class BigNumberInput extends React.Component<Props, State> {
     public render = () => {
         const { currentValueStr } = this.state;
         const { decimals, step, min, max, className, placeholder } = this.props;
-
         const stepStr = step && tokenAmountInUnits(step, decimals);
         const minStr = min && tokenAmountInUnits(min, decimals);
         const maxStr = max && tokenAmountInUnits(max, decimals);
