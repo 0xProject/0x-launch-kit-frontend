@@ -8,8 +8,8 @@ import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
-import { Button } from '../../common/button';
 import { ViewAll } from '../../common/view_all';
+import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
 
@@ -44,12 +44,6 @@ const Menu = styled.div`
         align-items: center;
         flex-direction: row;
         padding-top: 24px;
-    }
-`;
-
-const ButtonStyled = styled(Button)`
-    @media (min-width: ${themeBreakPoints.md}) {
-        margin-left: auto;
     }
 `;
 
@@ -116,7 +110,7 @@ export class CollectiblesAll extends React.Component<Props> {
             <MainContainer>
                 <Menu>
                     <Title>{title}</Title>
-                    <ButtonStyled variant="quaternary">Sell collectibles</ButtonStyled>
+                    <SellCollectiblesButton />
                 </Menu>
                 {description ? <Description>{description}</Description> : null}
                 <SubSectionTitleWrapper>
