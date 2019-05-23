@@ -15,6 +15,7 @@ interface Props extends HTMLAttributes<HTMLDivElement>, DropdownWrapperBodyProps
     body: React.ReactNode;
     header: React.ReactNode;
     shouldCloseDropdownBodyOnClick?: boolean;
+    shouldCloseDropdownOnClickOutside?: boolean;
 }
 
 const DropdownWrapper = styled.div`
@@ -52,9 +53,9 @@ export class Dropdown extends React.Component<Props, State> {
 
         return (
             <DropdownWrapper ref={this._setWrapperRef} {...restProps}>
-                <DropdownWrapperHeader onClick={this._toggleDropwdown}>{header}</DropdownWrapperHeader>
+                <DropdownWrapperHeader onClick={this._toggleDropdown}>{header}</DropdownWrapperHeader>
                 {this.state.isOpen ? (
-                    <DropdownWrapperBody horizontalPosition={horizontalPosition} onClick={this._closeDropwdownBody}>
+                    <DropdownWrapperBody horizontalPosition={horizontalPosition} onClick={this._closeDropdownBody}>
                         {body}
                     </DropdownWrapperBody>
                 ) : null}
@@ -80,17 +81,19 @@ export class Dropdown extends React.Component<Props, State> {
 
     private readonly _handleClickOutside = (event: any) => {
         if (this._wrapperRef && !this._wrapperRef.contains(event.target)) {
-            this.closeDropdown();
+            const { shouldCloseDropdownOnClickOutside = true } = this.props;
+            if (shouldCloseDropdownOnClickOutside) {
+                this.closeDropdown();
+            }
         }
     };
 
-    private readonly _toggleDropwdown = () => {
+    private readonly _toggleDropdown = () => {
         this.setState({ isOpen: !this.state.isOpen });
     };
 
-    private readonly _closeDropwdownBody = () => {
+    private readonly _closeDropdownBody = () => {
         const { shouldCloseDropdownBodyOnClick = true } = this.props;
-
         if (shouldCloseDropdownBodyOnClick) {
             this.closeDropdown();
         }

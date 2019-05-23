@@ -29,8 +29,9 @@ export const ETH_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/t
 
 export const ZEROX_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/0x/';
 
-export const CACHE_CHECK_INTERVAL: number =
-    Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10) || 60000;
+export const CACHE_CHECK_INTERVAL: number = process.env.REACT_APP_CACHE_CHECK_INTERVAL
+    ? Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10)
+    : 60000;
 
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
@@ -39,12 +40,14 @@ export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
 export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
 
 // Default value is enabled, 0 is disabled
-export const UI_UPDATE_CHECK_INTERVAL: number =
-    Number.parseInt(process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL as string, 10) || 5000;
+export const UI_UPDATE_CHECK_INTERVAL: number = process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL
+    ? Number.parseInt(process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL as string, 10)
+    : 5000;
 
 // Default value is enabled, 0 is disabled
-export const UPDATE_ETHER_PRICE_INTERVAL: number =
-    Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10) || 3600000;
+export const UPDATE_ETHER_PRICE_INTERVAL: number = process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL
+    ? Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10)
+    : 3600000;
 
 export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;
@@ -74,6 +77,7 @@ export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_E
 export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || 'mocked';
 
 export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
+export const COLLECTIBLE_DESCRIPTION: string = process.env.REACT_APP_COLLECTIBLE_DESCRIPTION || 'Unknown';
 
 export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
     1: '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d', // mainnet axie
