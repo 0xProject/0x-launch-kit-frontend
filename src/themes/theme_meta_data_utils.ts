@@ -1,5 +1,6 @@
-import { ERC20_THEME_NAME, ERC721_APP_BASE_PATH, ERC721_THEME_NAME, MARKETPLACES } from '../common/constants';
+import { ERC20_THEME_NAME, ERC721_APP_BASE_PATH, ERC721_THEME_NAME } from '../common/constants';
 import { getLogger } from '../util/logger';
+import { MARKETPLACES } from '../util/types';
 
 import { Theme } from './commons';
 import { DefaultTheme } from './default_theme';

@@ -1,10 +1,5 @@
 import { BigNumber } from '0x.js';
 
-export enum MARKETPLACES {
-    ERC20 = 'ERC20',
-    ERC721 = 'ERC721',
-}
-
 export const ERC20_APP_BASE_PATH = '/erc20';
 export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;

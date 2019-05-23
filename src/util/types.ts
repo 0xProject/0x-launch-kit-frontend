@@ -267,6 +267,11 @@ export enum ModalDisplay {
     EnablePermissions = 'ACCEPT_PERMISSIONS',
 }
 
+export enum MARKETPLACES {
+    ERC20 = 'ERC20',
+    ERC721 = 'ERC721',
+}
+
 export interface Collectible {
     tokenId: string;
     name: string;
