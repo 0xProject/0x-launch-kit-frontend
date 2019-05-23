@@ -37,10 +37,10 @@ const SearchInput = styled.input`
 
 interface Props {
     placeholder: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => any;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => any;
+    onClick?: (event: React.MouseEvent<HTMLInputElement>) => any;
 }
 
 export const InputSearch = (props: Props) => {
-    const { placeholder, onChange, ...restProps } = props;
-    return <SearchInput {...restProps} placeholder={placeholder} onChange={onChange} />;
+    return <SearchInput {...props} />;
 };

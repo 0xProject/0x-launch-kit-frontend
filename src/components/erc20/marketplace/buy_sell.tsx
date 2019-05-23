@@ -74,11 +74,16 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     justify-content: center;
     width: 50%;
 
+    &:first-child {
+        border-top-left-radius: ${themeDimensions.borderRadius};
+    }
+
     &:last-child {
         border-left-color: ${props => (props.isSelected ? props.theme.componentsTheme.cardBorderColor : 'transparent')};
         border-left-style: solid;
         border-left-width: 1px;
         border-right: none;
+        border-top-right-radius: ${themeDimensions.borderRadius};
     }
 `;
 
