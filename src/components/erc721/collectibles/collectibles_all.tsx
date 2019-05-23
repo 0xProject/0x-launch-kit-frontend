@@ -15,6 +15,8 @@ import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button'
 
 import { CollectiblesCardList } from './collectibles_card_list';
 
+const MAX_ITEMS_TO_DISPLAY = 5;
+
 interface OwnProps {
     title: string;
     description: string;
@@ -27,15 +29,16 @@ interface StateProps {
 
 type Props = StateProps & OwnProps;
 
-const Menu = styled.div`
+const HeaderWrapper = styled.div`
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     margin: 0 0 22px;
     position: relative;
     z-index: 1;
 
     @media (min-width: ${themeBreakPoints.md}) {
-        align-items: center;
+        align-items: start;
         flex-direction: row;
         padding-top: 24px;
     }
@@ -43,10 +46,10 @@ const Menu = styled.div`
 
 const Title = styled.h1`
     color: ${props => props.theme.componentsTheme.textColorCommon};
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 600;
     line-height: 1.2;
-    margin: 0 0 25px;
+    margin: 20px 0 25px;
 
     @media (min-width: ${themeBreakPoints.md}) {
         margin-bottom: 0;
@@ -59,8 +62,15 @@ const Description = styled.p`
     font-size: 16px;
     font-weight: normal;
     line-height: 1.7;
-    margin: 0 0 50px;
+    max-width: 635px;
+    margin: 16px 0 50px;
+
+    @media (min-width: ${themeBreakPoints.md}) {
+        padding-right: 16px;
+    }
 `;
+
+const Summary = styled.div``;
 
 const SubSectionTitleWrapper = styled.div`
     flex-shrink: 0;
@@ -105,11 +115,13 @@ export class CollectiblesAll extends React.Component<Props> {
         return (
             <MainScrollableWrapper>
                 <CenteredWrapper>
-                    <Menu>
-                        <Title>{title}</Title>
+                    <HeaderWrapper>
+                        <Summary>
+                            <Title>{title}</Title>
+                            <Description>{description}</Description>
+                        </Summary>
                         <SellCollectiblesButton />
-                    </Menu>
-                    {description ? <Description>{description}</Description> : null}
+                    </HeaderWrapper>
                     <SubSectionTitleWrapper>
                         <SubSectionTitle>Recently listed</SubSectionTitle>
                         <ViewAll
@@ -122,7 +134,7 @@ export class CollectiblesAll extends React.Component<Props> {
                     <CollectiblesCardListStyled
                         collectibles={collectibles}
                         filterType={CollectibleFilterType.ShowAll}
-                        limit={5}
+                        limit={MAX_ITEMS_TO_DISPLAY}
                         sortType={CollectibleSortType.NewestAdded}
                         isLoading={isLoading}
                     />
@@ -138,7 +150,7 @@ export class CollectiblesAll extends React.Component<Props> {
                     <CollectiblesCardListStyled
                         collectibles={collectibles}
                         filterType={CollectibleFilterType.ShowAll}
-                        limit={5}
+                        limit={MAX_ITEMS_TO_DISPLAY}
                         sortType={CollectibleSortType.PriceHighToLow}
                         isLoading={isLoading}
                     />
