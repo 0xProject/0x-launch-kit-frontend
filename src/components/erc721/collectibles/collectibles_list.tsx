@@ -14,6 +14,8 @@ import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
+import { CenteredWrapper } from '../../common/centered_wrapper';
+import { MainScrollableWrapper } from '../../common/main_scrollable_wrapper';
 import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
@@ -36,13 +38,6 @@ interface DispatchProps {
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
-
-const MainContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    flex-basis: 100%;
-`;
 
 const FiltersMenu = styled.div`
     display: flex;
@@ -117,20 +112,22 @@ export class CollectiblesList extends React.Component<Props, {}> {
         const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
         return (
-            <MainContainer>
-                <FiltersMenu>
-                    <Title>{title}</Title>
-                    <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
-                    <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
-                    <SellCollectiblesButton />
-                </FiltersMenu>
-                <CollectiblesCardList
-                    collectibles={collectibles}
-                    sortType={sortType}
-                    filterType={filterType}
-                    isLoading={isLoading}
-                />
-            </MainContainer>
+            <MainScrollableWrapper>
+                <CenteredWrapper>
+                    <FiltersMenu>
+                        <Title>{title}</Title>
+                        <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
+                        <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
+                        <SellCollectiblesButton />
+                    </FiltersMenu>
+                    <CollectiblesCardList
+                        collectibles={collectibles}
+                        filterType={filterType}
+                        isLoading={isLoading}
+                        sortType={sortType}
+                    />
+                </CenteredWrapper>
+            </MainScrollableWrapper>
         );
     };
 

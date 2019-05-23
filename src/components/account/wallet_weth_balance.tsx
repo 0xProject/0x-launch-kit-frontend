@@ -10,7 +10,7 @@ import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
-import { CardLoading } from '../common/loading';
+import { LoadingWrapper } from '../common/loading';
 import { IconType, Tooltip } from '../common/tooltip';
 
 import { WethModal } from './wallet_weth_modal';
@@ -163,7 +163,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         let content: React.ReactNode;
 
         if (web3State === Web3State.Loading) {
-            content = <CardLoading />;
+            content = <LoadingWrapper />;
         } else if (ethBalance && wethBalance) {
             content = (
                 <>

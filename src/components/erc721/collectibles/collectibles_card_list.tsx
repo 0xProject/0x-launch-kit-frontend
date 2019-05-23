@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Spinner } from '../../../components/common/spinner';
+import { LoadingWrapper } from '../../../components/common/loading';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
 import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
@@ -34,6 +34,10 @@ const CollectiblesList = styled.div`
     @media (min-width: ${themeBreakPoints.xxl}) {
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     }
+`;
+
+const Loading = styled(LoadingWrapper)`
+    flex-grow: 1;
 `;
 
 const getCollectibleCards = (
@@ -75,7 +79,7 @@ export const CollectiblesCardList = (props: Props) => {
     const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit);
 
     if (isLoading) {
-        return <Spinner />;
+        return <Loading />;
     }
     if (collectibleCards.length === 0) {
         return <p>No results.</p>;

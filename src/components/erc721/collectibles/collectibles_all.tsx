@@ -4,11 +4,12 @@ import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
 import { getOtherUsersCollectibles } from '../../../store/selectors';
-import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
+import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
 import { CenteredWrapper } from '../../common/centered_wrapper';
+import { MainScrollableWrapper } from '../../common/main_scrollable_wrapper';
 import { ViewAll } from '../../common/view_all';
 import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button';
 
@@ -24,15 +25,6 @@ interface StateProps {
 }
 
 type Props = StateProps & OwnProps;
-
-const MainContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    margin: -${themeDimensions.mainPadding};
-    overflow: auto;
-    padding: ${themeDimensions.mainPadding};
-`;
 
 const Menu = styled.div`
     display: flex;
@@ -108,7 +100,7 @@ export class CollectiblesAll extends React.Component<Props> {
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
 
         return (
-            <MainContainer>
+            <MainScrollableWrapper>
                 <CenteredWrapper>
                     <Menu>
                         <Title>{title}</Title>
@@ -146,7 +138,7 @@ export class CollectiblesAll extends React.Component<Props> {
                         sortType={CollectibleSortType.PriceHighToLow}
                     />
                 </CenteredWrapper>
-            </MainContainer>
+            </MainScrollableWrapper>
         );
     };
 }
