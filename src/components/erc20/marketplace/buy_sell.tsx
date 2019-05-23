@@ -241,7 +241,7 @@ class BuySell extends React.Component<Props, State> {
                     <Button
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
-                        variant="secondary"
+                        variant={tab === OrderSide.Buy ? 'buy' : 'sell'}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         {tokenSymbolToDisplayString(currencyPair.base)}

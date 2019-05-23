@@ -7,6 +7,8 @@ export interface ThemeProperties {
     background: string;
     borderColor: string;
     boxShadow: string;
+    buttonBuyBackgroundColor: string;
+    buttonCollectibleSellBackgroundColor: string;
     buttonConvertBackgroundColor: string;
     buttonConvertBorderColor: string;
     buttonConvertTextColor: string;

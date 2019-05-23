@@ -35,6 +35,14 @@ const StyledButton = styled.button<{ variant?: string }>`
         props.variant && props.variant === 'balance'
             ? `background-color: ${props.theme.componentsTheme.ethBoxActiveColor};`
             : ''}
+    ${props =>
+        props.variant && props.variant === 'sell'
+            ? `background-color: ${props.theme.componentsTheme.buttonSellBackgroundColor};`
+            : ''}
+    ${props =>
+        props.variant && props.variant === 'buy'
+            ? `background-color: ${props.theme.componentsTheme.buttonBuyBackgroundColor};`
+            : ''}
 
     border-radius: ${themeDimensions.borderRadius};
     border: none;
