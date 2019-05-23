@@ -6,12 +6,10 @@ import styled, { withTheme } from 'styled-components';
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getUserCollectiblesAvailableToSell } from '../../../store/selectors';
 import { Theme } from '../../../themes/commons';
-import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
-import { SortableCollectible } from '../../../util/sortable_collectibles';
+import { filterCollectibleByName } from '../../../util/filterable_collectibles';
 import { Collectible, StoreState } from '../../../util/types';
 import { EmptyContent } from '../../common/empty_content';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
-import { CardLoading } from '../../common/loading';
 import { Search } from '../common/inputSearch';
 
 import { CollectibleOnListContainer } from './collectible_details_list';
@@ -90,36 +88,17 @@ const initialState = {
     filterText: '',
 };
 
-// PureComponents only rerender if at least one state or prop value changes.
 class CollectibleListModalContainer extends React.PureComponent<Props, State> {
-    public state: State = {
+    public state = {
         ...initialState,
     };
 
-    // The render method on this PureComponent is called only if props or state.filterText has changed.
     public render = () => {
-        const { theme, userCollectibles, isOpen } = this.props;
-        const { filterText } = this.state;
+        const { theme, isOpen } = this.props;
+        const { userCollectibles } = this.props;
         const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
-        const filteredCollectibles = this._filterCollectiblesByName(collectibles, filterText);
-
-        let content: any = <CardLoading minHeight={modalContentHeight} />;
-        if (filteredCollectibles) {
-            if (filteredCollectibles.length > 0) {
-                content = filteredCollectibles.map((item, index) => {
-                    return (
-                        <CollectibleOnListContainer // TODO RENAME
-                            collectible={item}
-                            isListItem={true}
-                            key={index}
-                            onClick={this._closeModal}
-                        />
-                    );
-                });
-            } else {
-                content = <EmptyContent text={'No results found'} />;
-            }
-        }
+        const { filterText } = this.state;
+        const filteredCollectibles = filterCollectibleByName(collectibles, filterText);
         return (
             <Modal isOpen={isOpen} style={theme.modalTheme} onRequestClose={this._closeModal}>
                 <ModalTitleWrapper>
@@ -129,7 +108,20 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
                     </ModalTitleTop>
                     <SearchStyled placeholder={'Search Wallet'} onChange={this._handleSearchInputChanged} />
                 </ModalTitleWrapper>
-                <ModalContent>{content ? content : null}</ModalContent>
+                <ModalContent>
+                    {filteredCollectibles.length > 0 ? (
+                        filteredCollectibles.map((item, index) => (
+                            <CollectibleOnListContainer
+                                collectible={item}
+                                isListItem={true}
+                                key={index}
+                                onClick={this._closeModal}
+                            />
+                        ))
+                    ) : (
+                        <EmptyContent text={'No results found'} />
+                    )}
+                </ModalContent>
             </Modal>
         );
     };
@@ -139,25 +131,8 @@ class CollectibleListModalContainer extends React.PureComponent<Props, State> {
         this.setState(initialState);
     };
 
-    private readonly _handleSearchInputChanged = (event: any) => {
-        const newInputValue = event && event.target ? event.target.value : '';
-
-        this.setState({
-            filterText: newInputValue,
-        });
-    };
-
-    private readonly _filterCollectiblesByName = (collectibles: Collectible[], name: string): Collectible[] => {
-        const filterFn = getFilterFunction(CollectibleFilterType.Name);
-        return collectibles.filter((collectible: Collectible) => {
-            const sortableCollectible: SortableCollectible = {
-                collectible,
-                name,
-                price: null,
-                creationDate: null,
-            };
-            return filterFn(sortableCollectible);
-        });
+    private readonly _handleSearchInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ filterText: event.target.value || '' });
     };
 }
 

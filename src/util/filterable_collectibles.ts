@@ -6,7 +6,6 @@ export enum CollectibleFilterType {
     ShowAll = 'show_all',
     FixedPrice = 'fixed_price',
     DecliningAuction = 'declining_auction',
-    Name = 'name',
 }
 
 const isCollectibleSoldInDutchAuction = (collectible: Collectible): boolean => {
@@ -23,20 +22,12 @@ const isCollectibleSoldInBasicSell = (collectible: Collectible): boolean => {
     return !isDutchAuction(collectible.order);
 };
 
-const filterCollectibleByName = (collectible: Collectible, name: string): boolean => {
-    const collectibleName = collectible.name.toLowerCase();
-    const filterName = name.toLowerCase();
-    return collectibleName.indexOf(filterName) > -1;
-};
-
 export const getFilterFunction = (filterType: CollectibleFilterType): ((sc: SortableCollectible) => boolean) => {
     switch (filterType) {
         case CollectibleFilterType.DecliningAuction:
             return (sc: SortableCollectible) => isCollectibleSoldInDutchAuction(sc.collectible);
         case CollectibleFilterType.FixedPrice:
             return (sc: SortableCollectible) => isCollectibleSoldInBasicSell(sc.collectible);
-        case CollectibleFilterType.Name:
-            return (sc: SortableCollectible) => filterCollectibleByName(sc.collectible, sc.name);
         default:
             return () => true;
     }
@@ -48,4 +39,11 @@ export const getFilteredCollectibles = (
 ): SortableCollectible[] => {
     const filterFunction = getFilterFunction(filterType);
     return collectibles.filter(filterFunction);
+};
+
+export const filterCollectibleByName = (collectibles: Collectible[], name: string): Collectible[] => {
+    return collectibles.filter(collectible => {
+        const collectibleName = collectible.name.toLowerCase();
+        return collectibleName.indexOf(name.toLowerCase()) > -1;
+    });
 };
