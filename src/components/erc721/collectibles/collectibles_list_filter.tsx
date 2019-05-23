@@ -16,11 +16,11 @@ interface Props {
     onChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const options: CollectibleFilterType[] = [
-    CollectibleFilterType.ShowAll,
-    CollectibleFilterType.FixedPrice,
-    CollectibleFilterType.DecliningAuction,
-];
+const options: { [key: string]: string } = {
+    [CollectibleFilterType.ShowAll]: 'Show all',
+    [CollectibleFilterType.FixedPrice]: 'Fixed Price',
+    [CollectibleFilterType.DecliningAuction]: 'Declining Auction',
+};
 
 const DropdownItemFilter = styled(DropdownTextItemWrapper)`
     ${props => (props.active ? 'cursor: default;' : '')}
@@ -53,16 +53,17 @@ const Text = styled.span`
 
 export const CollectiblesListFilter = (props: Props) => {
     const { currentValue, onChange, ...restProps } = props;
+    const filterTypes = Object.keys(options) as CollectibleFilterType[];
 
-    const header = <DropdownButton text={currentValue} extraIcon={<FilterIcon />} />;
+    const header = <DropdownButton text={options[currentValue]} extraIcon={<FilterIcon />} />;
 
     const body = (
         <DropdownContainer>
-            {options.map(option => (
-                <DropdownItemFilter key={option} active={currentValue === option}>
-                    <input checked={currentValue === option} onChange={onChange} type="radio" value={option} />
-                    {currentValue === option ? <RadioIconActive /> : <RadioIcon />}
-                    <Text>{option}</Text>
+            {filterTypes.map(filterType => (
+                <DropdownItemFilter key={filterType} active={currentValue === filterType}>
+                    <input checked={currentValue === filterType} onChange={onChange} type="radio" value={filterType} />
+                    {currentValue === filterType ? <RadioIconActive /> : <RadioIcon />}
+                    <Text>{options[filterType]}</Text>
                 </DropdownItemFilter>
             ))}
         </DropdownContainer>

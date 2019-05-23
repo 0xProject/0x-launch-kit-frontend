@@ -14,11 +14,11 @@ interface Props {
     onChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const options: CollectibleSortType[] = [
-    CollectibleSortType.NewestAdded,
-    CollectibleSortType.PriceLowToHigh,
-    CollectibleSortType.PriceHighToLow,
-];
+const options: { [key: string]: string } = {
+    [CollectibleSortType.NewestAdded]: 'Newest Added',
+    [CollectibleSortType.PriceLowToHigh]: 'Price: low to high',
+    [CollectibleSortType.PriceHighToLow]: 'Price: high to low',
+};
 
 const DropdownItemFilter = styled(DropdownTextItemWrapper)`
     ${props => (props.active ? 'cursor: default;' : '')}
@@ -52,15 +52,16 @@ const Text = styled.span`
 
 export const CollectiblesListSort = (props: Props) => {
     const { currentValue, onChange, ...restProps } = props;
+    const sortTypes = Object.keys(options) as CollectibleSortType[];
 
-    const header = <DropdownButton text={currentValue} extraIcon={<SortIcon />} />;
+    const header = <DropdownButton text={options[currentValue]} extraIcon={<SortIcon />} />;
 
     const body = (
         <DropdownContainer>
-            {options.map(option => (
-                <DropdownItemFilter key={option} active={currentValue === option}>
-                    <input type="radio" value={option} checked={currentValue === option} onChange={onChange} />
-                    <Text>{option}</Text>
+            {sortTypes.map(sortType => (
+                <DropdownItemFilter key={sortType} active={currentValue === sortType}>
+                    <input type="radio" value={sortType} checked={currentValue === sortType} onChange={onChange} />
+                    <Text>{options[sortType]}</Text>
                 </DropdownItemFilter>
             ))}
         </DropdownContainer>

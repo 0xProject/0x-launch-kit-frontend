@@ -29,10 +29,6 @@ const LabelWrapper = styled.div`
     justify-content: space-between;
     flex-shrink: 0;
     padding: 8px 0;
-
-    &:last-child {
-        padding-bottom: 0;
-    }
 `;
 
 const Label = styled.span`

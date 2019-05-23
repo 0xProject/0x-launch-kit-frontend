@@ -42,10 +42,11 @@ const ToolbarWrapper = styled.div`
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
-    height: 64px;
+    height: ${themeDimensions.toolbarHeight};
     justify-content: space-between;
     padding: 0 ${themeDimensions.horizontalPadding};
     position: sticky;
+    top: 0;
     z-index: 123;
 `;
 
