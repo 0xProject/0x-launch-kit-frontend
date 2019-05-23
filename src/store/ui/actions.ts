@@ -183,7 +183,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
-        const [, , canBeFilled] = buildMarketOrders(
+        const [, roundedAmountsToPayForOrdersInWeth, canBeFilled] = buildMarketOrders(
             {
                 amount,
                 orders,
@@ -195,6 +195,12 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             return;
         }
 
+        const amountOfWethNeededForOrders = roundedAmountsToPayForOrdersInWeth.reduce(
+            (total: BigNumber, currentValue: BigNumber) => {
+                return total.plus(currentValue);
+            },
+            new BigNumber(0),
+        );
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
             baseToken,
             quoteToken,
@@ -202,6 +208,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             wethTokenBalance,
             amount,
             side,
+            amountOfWethNeededForOrders,
         );
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
