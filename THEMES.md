@@ -76,4 +76,4 @@ REACT_APP_ERC721_THEME_NAME = 'LIGHT_THEME'
 
 ```
 
-Note: you can configure the themes for the ERC720 and ERC20 app separately using those env vars.
+Note: you can configure the themes for the ERC20 and ERC721 app separately using those env vars.
