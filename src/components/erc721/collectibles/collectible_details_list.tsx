@@ -25,8 +25,8 @@ export const CollectibleOnList: React.FC<Props> = (props: Props) => {
     const { color, image, name } = collectible;
     const price = getCollectiblePrice(collectible);
 
-    const handleAssetClick: React.EventHandler<React.MouseEvent> = e => {
-        e.preventDefault();
+    const handleAssetClick: React.EventHandler<React.MouseEvent> = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
         onClick();
         try {
             props.updateSelectedCollectible(collectible);

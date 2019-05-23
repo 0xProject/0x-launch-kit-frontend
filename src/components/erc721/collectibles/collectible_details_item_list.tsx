@@ -8,7 +8,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
     color: string;
     image: string;
     name: string;
-    onClick: any;
+    onClick: (event: React.MouseEvent<HTMLElement>) => any;
 }
 
 const CollectibleAssetWrapper = styled.div`
@@ -69,7 +69,6 @@ const ChevronContainer = styled.div`
 
 export const ListItem: React.FC<Props> = (props: Props) => {
     const { onClick, color, image, name } = props;
-
     return (
         <CollectibleAssetWrapper onClick={onClick}>
             <ImageWrapper color={color} image={image} />
