@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
-import { getOtherUsersCollectibles } from '../../../store/selectors';
+import { getAllCollectiblesFetchStatus, getOtherUsersCollectibles } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
-import { Collectible, StoreState } from '../../../util/types';
+import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
 import { CenteredWrapper } from '../../common/centered_wrapper';
 import { MainScrollableWrapper } from '../../common/main_scrollable_wrapper';
 import { ViewAll } from '../../common/view_all';
@@ -22,6 +22,7 @@ interface OwnProps {
 
 interface StateProps {
     collectibles: { [key: string]: Collectible };
+    fetchStatus: AllCollectiblesFetchStatus;
 }
 
 type Props = StateProps & OwnProps;
@@ -62,6 +63,7 @@ const Description = styled.p`
 `;
 
 const SubSectionTitleWrapper = styled.div`
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -96,10 +98,9 @@ const CollectiblesCardListStyled = styled(CollectiblesCardList)`
 
 export class CollectiblesAll extends React.Component<Props> {
     public render = () => {
-        const { title, description } = this.props;
+        const { title, description, fetchStatus } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
-        // TODO: This should be better
-        const isLoading: boolean = collectibles && collectibles.length < 1;
+        const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
         return (
             <MainScrollableWrapper>
@@ -150,6 +151,7 @@ export class CollectiblesAll extends React.Component<Props> {
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getOtherUsersCollectibles(state),
+        fetchStatus: getAllCollectiblesFetchStatus(state),
     };
 };
 export const AllCollectiblesContainer = connect(allMapStateToProps)(CollectiblesAll);
