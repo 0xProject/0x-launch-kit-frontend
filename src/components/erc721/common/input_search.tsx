@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
@@ -35,9 +35,12 @@ const SearchInput = styled.input`
     }
 `;
 
-export class Search extends Component {
-    public render = () => {
-        const { ...restProps } = this.props;
-        return <SearchInput {...restProps} placeholder={'Search Cryptocards'} />;
-    };
+interface Props {
+    placeholder: string;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => any;
 }
+
+export const InputSearch = (props: Props) => {
+    const { placeholder, onChange, ...restProps } = props;
+    return <SearchInput {...restProps} placeholder={placeholder} onChange={onChange} />;
+};

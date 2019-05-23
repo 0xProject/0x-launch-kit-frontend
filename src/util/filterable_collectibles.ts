@@ -29,7 +29,7 @@ export const getFilterFunction = (filterType: CollectibleFilterType): ((sc: Sort
         case CollectibleFilterType.FixedPrice:
             return (sc: SortableCollectible) => isCollectibleSoldInBasicSell(sc.collectible);
         default:
-            return (c: any) => true;
+            return () => true;
     }
 };
 
@@ -39,4 +39,11 @@ export const getFilteredCollectibles = (
 ): SortableCollectible[] => {
     const filterFunction = getFilterFunction(filterType);
     return collectibles.filter(filterFunction);
+};
+
+export const filterCollectibleByName = (collectibles: Collectible[], name: string): Collectible[] => {
+    return collectibles.filter(collectible => {
+        const collectibleName = collectible.name.toLowerCase();
+        return collectibleName.indexOf(name.toLowerCase()) > -1;
+    });
 };
