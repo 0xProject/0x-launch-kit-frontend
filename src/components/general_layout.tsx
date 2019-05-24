@@ -1,10 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import styled, { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
 
-import { getTheme } from '../store/selectors';
-import { Theme, themeBreakPoints, themeDimensions } from '../themes/commons';
-import { StoreState } from '../util/types';
+import { themeBreakPoints, themeDimensions } from '../themes/commons';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
@@ -42,39 +39,23 @@ const ContentScroll = styled.div`
     }
 `;
 
-interface StateProps {
-    theme: Theme;
-}
-
 interface OwnProps {
     children: React.ReactNode;
     toolbar: React.ReactNode;
 }
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps;
 
-const GeneralLayout = (props: Props) => {
-    const { children, toolbar, theme } = props;
+export const GeneralLayout = (props: Props) => {
+    const { children, toolbar } = props;
     return (
-        <ThemeProvider theme={theme}>
-            <General>
-                {toolbar}
-                <ContentScroll>
-                    <Content>{children}</Content>
-                    <Footer />
-                </ContentScroll>
-                <StepsModalContainer />
-            </General>
-        </ThemeProvider>
+        <General>
+            {toolbar}
+            <ContentScroll>
+                <Content>{children}</Content>
+                <Footer />
+            </ContentScroll>
+            <StepsModalContainer />
+        </General>
     );
 };
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        theme: getTheme(state),
-    };
-};
-
-const GeneralLayoutContainer = connect(mapStateToProps)(GeneralLayout);
-
-export { GeneralLayout, GeneralLayoutContainer };
