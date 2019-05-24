@@ -3,7 +3,6 @@ import { createAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
-import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
 import {
     createBasicBuyCollectibleSteps,
@@ -54,10 +53,6 @@ export const setStepsModalCurrentStep = createAction('ui/steps_modal/CURRENT_STE
 export const stepsModalAdvanceStep = createAction('ui/steps_modal/advance_step');
 
 export const stepsModalReset = createAction('ui/steps_modal/reset');
-
-export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
-    return (themeColor: DefaultTheme) => resolve(themeColor);
-});
 
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {
     return async dispatch => {
@@ -183,7 +178,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
-        const [, , canBeFilled] = buildMarketOrders(
+        const [, filledAmounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
                 orders,
@@ -195,6 +190,12 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             return;
         }
 
+        const totalFilledAmount = filledAmounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+            return total.plus(currentValue);
+        }, new BigNumber(0));
+
+        const price = totalFilledAmount.div(amount);
+
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
             baseToken,
             quoteToken,
@@ -202,6 +203,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             wethTokenBalance,
             amount,
             side,
+            price,
         );
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));

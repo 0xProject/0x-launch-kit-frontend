@@ -10,6 +10,7 @@ import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible } from '../../../util/types';
 import { Card } from '../../common/card';
+import { DecliningPriceGraph } from '../common/declining_price_graph';
 
 import { CollectibleDescriptionInnerTitle } from './collectible_description';
 
@@ -95,30 +96,37 @@ export const DutchAuctionPriceChartCard = (props: Props) => {
     const { beginAmount, beginTimeSeconds } = getDutchAuctionData(makerAssetData);
     const price = getCollectiblePrice(collectible) as BigNumber;
     const { days, hours } = convertTimeInSecondsToDaysAndHours(expirationTimeSeconds.minus(beginTimeSeconds));
+
+    const currentPriceInUnits = +tokenAmountInUnits(price, ETH_DECIMALS);
+    const beginAmountInUnits = +tokenAmountInUnits(beginAmount, ETH_DECIMALS);
+    const endAmountInUnits = +tokenAmountInUnits(order.takerAssetAmount, ETH_DECIMALS);
+
     return (
         <Card>
             <CollectibleDescriptionInnerTitle>Price Chart</CollectibleDescriptionInnerTitle>
             <PriceChartContainer>
                 <PriceChartPriceAndTime>
                     <PriceChartTitle>Current Price</PriceChartTitle>
-                    <PriceChartValue>{tokenAmountInUnits(price, ETH_DECIMALS)} ETH</PriceChartValue>
+                    <PriceChartValue>{currentPriceInUnits} ETH</PriceChartValue>
                     <PriceChartTitle>Time Remaining</PriceChartTitle>
                     <PriceChartValue>{`${days} Days ${hours} Hrs`}</PriceChartValue>
                 </PriceChartPriceAndTime>
                 <PriceChartGraphWrapper>
-                    <PriceChartGraph />
+                    <PriceChartGraph>
+                        <DecliningPriceGraph
+                            beginAmountInUnits={beginAmountInUnits}
+                            endAmountInUnits={endAmountInUnits}
+                            currentPriceInUnits={currentPriceInUnits}
+                        />
+                    </PriceChartGraph>
                     <PriceChartGraphValues>
                         <div>
                             <PriceChartTitle>Start Price</PriceChartTitle>
-                            <PriceChartValueNeutral>
-                                {tokenAmountInUnits(beginAmount, ETH_DECIMALS)} ETH
-                            </PriceChartValueNeutral>
+                            <PriceChartValueNeutral>{beginAmountInUnits} ETH</PriceChartValueNeutral>
                         </div>
                         <div>
                             <PriceChartTitle>End Price</PriceChartTitle>
-                            <PriceChartValueNeutral>
-                                {tokenAmountInUnits(order.takerAssetAmount, ETH_DECIMALS)} ETH
-                            </PriceChartValueNeutral>
+                            <PriceChartValueNeutral>{endAmountInUnits} ETH</PriceChartValueNeutral>
                         </div>
                     </PriceChartGraphValues>
                 </PriceChartGraphWrapper>

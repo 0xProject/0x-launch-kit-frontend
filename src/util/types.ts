@@ -5,7 +5,6 @@ import { ActionCreator, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { ExtraArgument } from '../store/index';
-import { Theme } from '../themes/commons';
 
 export interface TabItem {
     active: boolean;
@@ -60,7 +59,6 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
-    readonly theme: Theme;
 }
 
 export interface MarketState {
@@ -265,6 +263,11 @@ export interface GasInfo {
 export enum ModalDisplay {
     InstallMetamask = 'INSTALL_METAMASK',
     EnablePermissions = 'ACCEPT_PERMISSIONS',
+}
+
+export enum MARKETPLACES {
+    ERC20 = 'ERC20',
+    ERC721 = 'ERC721',
 }
 
 export interface Collectible {

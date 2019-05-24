@@ -39,9 +39,13 @@ const getCollectibleCards = (
     collectibles: Collectible[],
     sortType: CollectibleSortType,
     filterType: CollectibleFilterType,
+    limit?: number,
 ) => {
     const sortedItems = getSortedCollectibles(collectibles, sortType);
-    const filteredItems = sortedItems.filter(getFilterFunction(filterType));
+    let filteredItems = sortedItems.filter(getFilterFunction(filterType));
+    if (limit) {
+        filteredItems = filteredItems.slice(0, limit);
+    }
     return filteredItems.map((sortableCollectible, index) => {
         const { name, image, color, tokenId } = sortableCollectible.collectible;
         return (
@@ -61,13 +65,14 @@ interface Props {
     collectibles: Collectible[];
     sortType: CollectibleSortType;
     filterType: CollectibleFilterType;
+    limit?: number;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType, filterType } = props;
-    const collectibleCards = getCollectibleCards(collectibles, sortType, filterType);
+    const { collectibles, sortType, filterType, limit, ...restProps } = props;
+    const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit);
     return (
-        <CollectiblesListOverflow>
+        <CollectiblesListOverflow {...restProps}>
             <CollectiblesList>{collectibleCards}</CollectiblesList>
         </CollectiblesListOverflow>
     );
