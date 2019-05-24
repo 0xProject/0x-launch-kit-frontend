@@ -101,7 +101,9 @@ export class BaseStepModal extends React.Component<Props, State> {
                 content = <StepStatusError />;
                 bodyText = (
                     <ModalText>
-                        {errorCaption} <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
+                        {errorCaption}
+                        <br />
+                        <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
                     </ModalText>
                 );
                 break;
@@ -130,7 +132,7 @@ export class BaseStepModal extends React.Component<Props, State> {
             <>
                 {content}
                 <Title>{title}</Title>
-                <ModalText>{confirmCaption}</ModalText>
+                {bodyText}
                 <StepsProgress steps={stepsProgress} />
                 {this.props.showPartialProgress && (
                     <StepPendingTime

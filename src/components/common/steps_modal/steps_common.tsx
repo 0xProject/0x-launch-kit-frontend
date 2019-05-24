@@ -129,6 +129,7 @@ const IconContainer = styled.div`
         height: 52px;
         width: 52px;
     }
+    margin-top: auto;
 `;
 
 export {
