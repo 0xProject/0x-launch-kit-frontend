@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
+import { ButtonVariant } from '../../../util/types';
 import { Button } from '../../common/button';
 import { CollectibleListModal } from '../collectibles/collectible_list_modal';
 
@@ -19,7 +20,7 @@ export class SellCollectiblesButton extends React.Component {
         return (
             <>
                 <CollectibleListModal isOpen={this.state.isModalOpen} onModalCloseRequest={this._handleModalToggle} />
-                <ButtonStyled variant="quaternary" onClick={this._handleModalToggle}>
+                <ButtonStyled variant={ButtonVariant.Quaternary} onClick={this._handleModalToggle}>
                     Sell collectibles
                 </ButtonStyled>
             </>

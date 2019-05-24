@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { ETH_DECIMALS } from '../../common/constants';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
+import { ButtonVariant } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
@@ -343,7 +344,7 @@ class WethModal extends React.Component<Props, State> {
                         0.05 ETH Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>
-                <Button onClick={this.submit} disabled={isDisabled} variant="balance">
+                <Button onClick={this.submit} disabled={isDisabled} variant={ButtonVariant.Balance}>
                     Update Balance{isSubmitting && '...'}
                 </Button>
             </Modal>
