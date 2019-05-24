@@ -16,7 +16,7 @@ interface OwnProps {
 }
 
 interface StateProps {
-    web3State?: Web3State;
+    web3State: Web3State;
 }
 
 type Props = OwnProps & StateProps;
@@ -82,33 +82,43 @@ const ToolbarEnd = styled.div`
 `;
 
 const Toolbar = (props: Props) => {
-    const isMmLocked = props.web3State === Web3State.Locked;
-    const isMmNotInstalled = props.web3State === Web3State.NotInstalled;
-    const isMmLoading = props.web3State === Web3State.Loading;
-    const isMmOnWrongNetwork = props.web3State === Web3State.Error;
     const { startContent, endContent, centerContent } = props;
+
+    const getContentFromWeb3State = (web3State: Web3State): React.ReactNode => {
+        switch (web3State) {
+            case Web3State.Locked:
+                return <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />;
+            case Web3State.NotInstalled:
+                return (
+                    <ErrorCard
+                        fontSize={FontSize.Large}
+                        text={errorsWallet.mmNotInstalled}
+                        icon={ErrorIcons.Metamask}
+                    />
+                );
+            case Web3State.Loading:
+                return <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />;
+            case Web3State.Error:
+                return (
+                    <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmWrongNetwork} icon={ErrorIcons.Warning} />
+                );
+            case Web3State.Done:
+                return (
+                    <>
+                        <ToolbarCenter>{centerContent}</ToolbarCenter>
+                        <ToolbarEnd>{endContent}</ToolbarEnd>
+                    </>
+                );
+            default:
+                const _exhaustiveCheck: never = web3State;
+                return _exhaustiveCheck;
+        }
+    };
 
     return (
         <ToolbarWrapper>
             <ToolbarStart>{startContent}</ToolbarStart>
-            {isMmLocked ? (
-                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />
-            ) : null}
-            {isMmNotInstalled ? (
-                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmNotInstalled} icon={ErrorIcons.Metamask} />
-            ) : null}
-            {isMmLoading ? (
-                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />
-            ) : null}
-            {isMmOnWrongNetwork ? (
-                <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmWrongNetwork} icon={ErrorIcons.Warning} />
-            ) : null}
-            {!isMmLocked && !isMmNotInstalled && !isMmLoading && !isMmOnWrongNetwork ? (
-                <>
-                    <ToolbarCenter>{centerContent}</ToolbarCenter>
-                    <ToolbarEnd>{endContent}</ToolbarEnd>
-                </>
-            ) : null}
+            {getContentFromWeb3State(props.web3State)}
         </ToolbarWrapper>
     );
 };
