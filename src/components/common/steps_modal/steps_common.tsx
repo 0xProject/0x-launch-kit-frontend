@@ -83,11 +83,12 @@ const ModalContent = styled.div`
     min-height: 300px;
     overflow: auto;
     width: 310px;
+    height: 410px;
 `;
 
 const ModalText = styled.p`
     color: ${props => props.theme.componentsTheme.textColorCommon};
-    font-size: 16px;
+    font-size: 14px;
     font-weight: normal;
     line-height: 1.5;
     margin: 0;
