@@ -2,7 +2,9 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { InsufficientQuoteTokenException } from '../../exceptions/insufficient_quote_token_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
+import { isWeth } from '../../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
 import {
     createBasicBuyCollectibleSteps,
@@ -176,6 +178,8 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const totalEthBalance = selectors.getTotalEthBalance(state);
+        const quoteTokenBalance = selectors.getQuoteTokenBalance(state);
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
         const [, filledAmounts, canBeFilled] = buildMarketOrders(
@@ -195,6 +199,15 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         }, new BigNumber(0));
 
         const price = totalFilledAmount.div(amount);
+
+        // Before creating market steps, checks if the total amount of ETH (wETH + ETH) or the quoteToken balance is enough, otherwise throws an exception
+        if (quoteTokenBalance && quoteTokenBalance.balance.isLessThan(price)) {
+            // Before throwing an exception, we check if the quoteToken is wETH, in that case we could have more ETH To wrap.
+            if (isWeth(quoteToken.symbol) && totalEthBalance.isGreaterThan(price)) {
+                return;
+            }
+            throw new InsufficientQuoteTokenException(quoteToken.symbol);
+        }
 
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
             baseToken,
