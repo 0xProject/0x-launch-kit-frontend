@@ -16,8 +16,8 @@ export const CollectiblesSearch: React.FC<Props> = props => {
 
     return (
         <>
-            <InputSearch placeholder={'Search'} onClick={showModal}/>
+            <InputSearch placeholder={'Search'} onClick={showModal} />
             <SearchModalContainer isOpen={isModalOpen} onClose={hideModal} theme={props.theme} />
-    </>
+        </>
     );
 };
