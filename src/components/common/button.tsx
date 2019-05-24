@@ -2,45 +2,45 @@ import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 import { themeDimensions } from '../../themes/commons';
+import { ButtonVariant } from '../../util/types';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     disabled?: boolean;
-    variant?: string;
+    variant?: ButtonVariant;
 }
 
-const StyledButton = styled.button<{ variant?: string }>`
-
+const StyledButton = styled.button<{ variant?: ButtonVariant }>`
     ${props =>
-        props.variant && props.variant === 'primary'
+        props.variant && props.variant === ButtonVariant.Primary
             ? `background-color: ${props.theme.componentsTheme.buttonPrimaryBackgroundColor};`
             : ''}
     ${props =>
-        props.variant && props.variant === 'secondary'
+        props.variant && props.variant === ButtonVariant.Secondary
             ? `background-color: ${props.theme.componentsTheme.buttonSecondaryBackgroundColor};`
             : ''}
     ${props =>
-        props.variant && props.variant === 'tertiary'
+        props.variant && props.variant === ButtonVariant.Tertiary
             ? `background-color: ${props.theme.componentsTheme.buttonTertiaryBackgroundColor};`
             : ''}
     ${props =>
-        props.variant && props.variant === 'quaternary'
+        props.variant && props.variant === ButtonVariant.Quaternary
             ? `background-color: ${props.theme.componentsTheme.buttonQuaternaryBackgroundColor};`
             : ''}
     ${props =>
-        props.variant && props.variant === 'error'
+        props.variant && props.variant === ButtonVariant.Error
             ? `background-color: ${props.theme.componentsTheme.buttonErrorBackgroundColor};`
             : ''}
     ${props =>
-        props.variant && props.variant === 'balance'
+        props.variant && props.variant === ButtonVariant.Balance
             ? `background-color: ${props.theme.componentsTheme.ethBoxActiveColor};`
             : ''}
     ${props =>
-        props.variant && props.variant === 'sell'
+        props.variant && props.variant === ButtonVariant.Sell
             ? `background-color: ${props.theme.componentsTheme.buttonSellBackgroundColor};`
             : ''}
     ${props =>
-        props.variant && props.variant === 'buy'
+        props.variant && props.variant === ButtonVariant.Buy
             ? `background-color: ${props.theme.componentsTheme.buttonBuyBackgroundColor};`
             : ''}
 

@@ -7,7 +7,15 @@ import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../
 import { getCurrencyPair, getWeb3State } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, OrderSide, OrderType, StoreState, TokenSymbol, Web3State } from '../../../util/types';
+import {
+    ButtonVariant,
+    CurrencyPair,
+    OrderSide,
+    OrderType,
+    StoreState,
+    TokenSymbol,
+    Web3State,
+} from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { Button } from '../../common/button';
 import { CardBase } from '../../common/card_base';
@@ -241,7 +249,7 @@ class BuySell extends React.Component<Props, State> {
                     <Button
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                         onClick={tab === OrderSide.Buy ? this.buy : this.sell}
-                        variant={tab === OrderSide.Buy ? 'buy' : 'sell'}
+                        variant={tab === OrderSide.Buy ? ButtonVariant.Buy : ButtonVariant.Sell}
                     >
                         {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
                         {tokenSymbolToDisplayString(currencyPair.base)}
