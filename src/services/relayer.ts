@@ -1,5 +1,5 @@
 import { assetDataUtils, AssetProxyId, BigNumber } from '0x.js';
-import { HttpClient, SignedOrder } from '@0x/connect';
+import { HttpClient, OrderConfigRequest, OrderConfigResponse, SignedOrder } from '@0x/connect';
 
 import { RELAYER_URL } from '../common/constants';
 import { Token } from '../util/types';
@@ -18,6 +18,10 @@ export class Relayer {
         ]);
 
         return [...sellOrders, ...buyOrders];
+    }
+
+    public async getOrderConfigAsync(orderConfig: OrderConfigRequest): Promise<OrderConfigResponse> {
+        return this.client.getOrderConfigAsync(orderConfig);
     }
 
     public async getUserOrdersAsync(

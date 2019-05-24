@@ -240,7 +240,7 @@ export const createSignedOrder: ThunkCreator = (amount: BigNumber, price: BigNum
             const web3Wrapper = await getWeb3Wrapper();
             const contractWrappers = await getContractWrappers();
 
-            const order = buildLimitOrder(
+            const order = await buildLimitOrder(
                 {
                     account: ethAccount,
                     amount,
