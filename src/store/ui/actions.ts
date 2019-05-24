@@ -3,7 +3,6 @@ import { createAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
-import { DefaultTheme } from '../../themes/default_theme';
 import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
 import {
     createBasicBuyCollectibleSteps,
@@ -54,10 +53,6 @@ export const setStepsModalCurrentStep = createAction('ui/steps_modal/CURRENT_STE
 export const stepsModalAdvanceStep = createAction('ui/steps_modal/advance_step');
 
 export const stepsModalReset = createAction('ui/steps_modal/reset');
-
-export const setThemeColor = createAction('SET_THEME_COLOR', resolve => {
-    return (themeColor: DefaultTheme) => resolve(themeColor);
-});
 
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {
     return async dispatch => {

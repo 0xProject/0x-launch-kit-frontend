@@ -9,7 +9,7 @@ import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
-import { CardLoading } from '../common/loading';
+import { LoadingWrapper } from '../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
 
 interface StateProps {
@@ -144,7 +144,9 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                 <TokenTD>
                     <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
                 </TokenTD>
-                <CustomTDTokenName styles={{ borderBottom: true }}>ETH Total (ETH + wETH)</CustomTDTokenName>
+                <CustomTDTokenName styles={{ borderBottom: true }}>
+                    <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
+                </CustomTDTokenName>
                 <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
                     {formattedTotalEthBalance}
                 </CustomTD>
@@ -186,7 +188,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
         let content: React.ReactNode;
         if (web3State === Web3State.Loading) {
-            content = <CardLoading />;
+            content = <LoadingWrapper />;
         } else {
             content = (
                 <Table isResponsive={true}>

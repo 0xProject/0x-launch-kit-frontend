@@ -26,7 +26,7 @@ const modalThemeStyle: ThemeModalStyle = {
     },
 };
 
-const whiteThemeColors: ThemeProperties = {
+const lightThemeColors: ThemeProperties = {
     background: '#f4f3f4',
     borderColor: '#dedede',
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
@@ -43,6 +43,7 @@ const whiteThemeColors: ThemeProperties = {
     cardBackgroundColor: '#fff',
     cardBorderColor: '#dedede',
     cardTitleColor: '#000',
+    chartColor: '#00AE99',
     darkBlue: '#002979',
     darkGray: '#474747',
     darkerGray: '#666',
@@ -102,7 +103,7 @@ export class DefaultTheme implements Theme {
     public componentsTheme: ThemeProperties;
     public modalTheme: ThemeModalStyle;
     constructor() {
-        this.componentsTheme = whiteThemeColors;
+        this.componentsTheme = lightThemeColors;
         this.modalTheme = modalThemeStyle;
     }
 }

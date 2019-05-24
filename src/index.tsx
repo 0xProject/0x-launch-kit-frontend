@@ -16,12 +16,11 @@ import { history, store } from './store';
 
 ReactModal.setAppElement('#root');
 
-const RedirectToHome = () => <Redirect to={DEFAULT_BASE_PATH} />;
-
 if (['development', 'production'].includes(process.env.NODE_ENV) && !window.localStorage.debug) {
     // Log only the app constant id to the console
     window.localStorage.debug = `${LOGGER_ID}*`;
 }
+const RedirectToHome = () => <Redirect to={DEFAULT_BASE_PATH} />;
 
 const Web3WrappedApp = (
     <Provider store={store}>
