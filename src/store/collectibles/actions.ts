@@ -1,10 +1,11 @@
 import { MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS, ZERO_ADDRESS } from '../../common/constants';
+import { ZERO_ADDRESS } from '../../common/constants';
 import { cancelSignedOrder } from '../../services/orders';
 import { getLogger } from '../../util/logger';
 import { isDutchAuction } from '../../util/orders';
+import { getGasOptions } from '../../util/transactions';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount, getGasPriceInWei } from '../selectors';
 
@@ -49,6 +50,10 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
         const contractWrappers = await getContractWrappers();
         const web3Wrapper = await getWeb3Wrapper();
 
+        const state = getState();
+        const gasPrice = getGasPriceInWei(state);
+        const gasOptions = getGasOptions(gasPrice);
+
         let tx;
         if (isDutchAuction(order)) {
             const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetailsAsync(order);
@@ -64,7 +69,7 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
             const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
-            tx = await contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, TX_DEFAULTS);
+            tx = await contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, gasOptions);
         } else {
             tx = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
                 [order],
@@ -74,7 +79,7 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
                 [],
                 0,
                 ZERO_ADDRESS,
-                TX_DEFAULTS,
+                gasOptions,
             );
         }
         await web3Wrapper.awaitTransactionSuccessAsync(tx);

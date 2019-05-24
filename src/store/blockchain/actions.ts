@@ -1,7 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
+import { MAINNET_ID, START_BLOCK_LIMIT } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { getCollectibleContractAddress } from '../../services/collectibles_metadata_sources';
 import { subscribeToFillEvents } from '../../services/exchange';
@@ -13,6 +13,7 @@ import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
+import { getGasOptions } from '../../util/transactions';
 import {
     BlockchainState,
     Collectible,
@@ -91,10 +92,7 @@ export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlo
                 token.address,
                 ethAccount,
                 new BigNumber('0'),
-                {
-                    ...TX_DEFAULTS,
-                    gasPrice,
-                },
+                getGasOptions(gasPrice),
             );
         } else {
             tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
@@ -165,10 +163,7 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                 wethAddress,
                 wethBalance.minus(newWethBalance),
                 ethAccount,
-                {
-                    ...TX_DEFAULTS,
-                    gasPrice,
-                },
+                getGasOptions(gasPrice),
             );
         } else {
             return;
@@ -355,10 +350,7 @@ export const unlockCollectible: ThunkCreator<Promise<string>> = (collectible: Co
         const gasPrice = getGasPriceInWei(state);
         const networkId = getNetworkId(state) as number;
         const ethAccount = getEthAccount(state);
-        const defaultParams = {
-            ...TX_DEFAULTS,
-            gasPrice,
-        };
+        const defaultParams = getGasOptions(gasPrice);
 
         const collectibleContractAddress = getCollectibleContractAddress(networkId);
 
