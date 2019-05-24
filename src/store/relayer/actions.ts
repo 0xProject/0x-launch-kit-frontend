@@ -5,7 +5,7 @@ import { RelayerException } from '../../exceptions/relayer_exception';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
-import { getGasOptions } from '../../util/transactions';
+import { getTransactionOptions } from '../../util/transactions';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder } from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
@@ -152,7 +152,7 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
                 ordersToFill,
                 amounts,
                 ethAccount,
-                getGasOptions(gasPrice),
+                getTransactionOptions(gasPrice),
             );
 
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);

@@ -13,7 +13,7 @@ import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
-import { getGasOptions } from '../../util/transactions';
+import { getTransactionOptions } from '../../util/transactions';
 import {
     BlockchainState,
     Collectible,
@@ -92,7 +92,7 @@ export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlo
                 token.address,
                 ethAccount,
                 new BigNumber('0'),
-                getGasOptions(gasPrice),
+                getTransactionOptions(gasPrice),
             );
         } else {
             tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
@@ -163,7 +163,7 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                 wethAddress,
                 wethBalance.minus(newWethBalance),
                 ethAccount,
-                getGasOptions(gasPrice),
+                getTransactionOptions(gasPrice),
             );
         } else {
             return;
@@ -350,7 +350,7 @@ export const unlockCollectible: ThunkCreator<Promise<string>> = (collectible: Co
         const gasPrice = getGasPriceInWei(state);
         const networkId = getNetworkId(state) as number;
         const ethAccount = getEthAccount(state);
-        const defaultParams = getGasOptions(gasPrice);
+        const defaultParams = getTransactionOptions(gasPrice);
 
         const collectibleContractAddress = getCollectibleContractAddress(networkId);
 

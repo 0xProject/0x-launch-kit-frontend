@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 
 import { TX_DEFAULTS } from '../common/constants';
 
-export const getGasOptions = (gasPrice: BigNumber) => {
+export const getTransactionOptions = (gasPrice: BigNumber) => {
     let options = {
         gasPrice,
     };

@@ -5,7 +5,7 @@ import { ZERO_ADDRESS } from '../../common/constants';
 import { cancelSignedOrder } from '../../services/orders';
 import { getLogger } from '../../util/logger';
 import { isDutchAuction } from '../../util/orders';
-import { getGasOptions } from '../../util/transactions';
+import { getTransactionOptions } from '../../util/transactions';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount, getGasPriceInWei } from '../selectors';
 
@@ -52,7 +52,7 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 
         const state = getState();
         const gasPrice = getGasPriceInWei(state);
-        const gasOptions = getGasOptions(gasPrice);
+        const gasOptions = getTransactionOptions(gasPrice);
 
         let tx;
         if (isDutchAuction(order)) {
