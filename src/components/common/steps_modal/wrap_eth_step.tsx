@@ -66,7 +66,7 @@ class WrapEthStep extends React.Component<Props> {
                 .join(' ');
         };
 
-        const title = 'Convert ETH';
+        const title = `Convert ${convertingFrom}`;
 
         const confirmCaption = `Confirm on Metamask to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
         const loadingCaption = buildMessage('Converting');
