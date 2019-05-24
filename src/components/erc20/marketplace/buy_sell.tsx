@@ -73,7 +73,7 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
         props.isSelected
             ? props.side === OrderSide.Buy
                 ? props.theme.componentsTheme.green
-                : props.theme.componentsTheme.orange
+                : props.theme.componentsTheme.red
             : props.theme.componentsTheme.textLight};
     cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
     display: flex;

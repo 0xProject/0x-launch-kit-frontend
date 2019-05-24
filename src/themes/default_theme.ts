@@ -78,6 +78,7 @@ const whiteThemeColors: ThemeProperties = {
     notificationIconColor: '#474747',
     notificationsBadgeColor: '#ff6534',
     numberDecimalsColor: '#dedede',
+    red: '#FF6534',
     orange: '#F6851B',
     rowActive: '#FBFDFF',
     stepsProgressCheckMarkColor: '#fff',
