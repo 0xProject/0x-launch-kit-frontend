@@ -37,6 +37,7 @@ export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
 export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
+export const getAllCollectiblesFetchStatus = (state: StoreState) => state.collectibles.allCollectiblesFetchStatus;
 export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
     state.collectibles.allCollectibles[props.collectibleId];
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;

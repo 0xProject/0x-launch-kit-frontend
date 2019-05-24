@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { EmptyContent } from '../../../components/common/empty_content';
+import { LoadingWrapper } from '../../../components/common/loading';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType, getFilterFunction } from '../../../util/filterable_collectibles';
 import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
@@ -35,6 +37,10 @@ const CollectiblesList = styled.div`
     }
 `;
 
+const Loading = styled(LoadingWrapper)`
+    flex-grow: 1;
+`;
+
 const getCollectibleCards = (
     collectibles: Collectible[],
     sortType: CollectibleSortType,
@@ -66,11 +72,20 @@ interface Props {
     sortType: CollectibleSortType;
     filterType: CollectibleFilterType;
     limit?: number;
+    isLoading?: boolean;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType, filterType, limit, ...restProps } = props;
+    const { collectibles, sortType, filterType, limit, isLoading, ...restProps } = props;
     const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit);
+
+    if (isLoading) {
+        return <Loading />;
+    }
+    if (collectibleCards.length === 0) {
+        return <EmptyContent text="No results." />;
+    }
+
     return (
         <CollectiblesListOverflow {...restProps}>
             <CollectiblesList>{collectibleCards}</CollectiblesList>

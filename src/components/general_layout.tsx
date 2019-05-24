@@ -10,6 +10,7 @@ const General = styled.div`
     background: ${props => props.theme.componentsTheme.background};
     display: flex;
     flex-direction: column;
+    min-height: 100%;
 
     @media (min-width: ${themeBreakPoints.xl}) {
         height: 100%;
