@@ -1,12 +1,13 @@
 import { getType } from 'typesafe-actions';
 
-import { Collectible, CollectiblesState } from '../../util/types';
+import { AllCollectiblesFetchStatus, Collectible, CollectiblesState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
 const initialCollectibles: CollectiblesState = {
     collectibleSelected: null,
     allCollectibles: {},
+    allCollectiblesFetchStatus: AllCollectiblesFetchStatus.Request,
 };
 
 export function collectibles(state: CollectiblesState = initialCollectibles, action: RootAction): CollectiblesState {
@@ -16,7 +17,8 @@ export function collectibles(state: CollectiblesState = initialCollectibles, act
             action.payload.collectibles.forEach(collectible => {
                 allCollectibles[collectible.tokenId] = collectible;
             });
-            return { ...state, allCollectibles };
+            const allCollectiblesFetchStatus = AllCollectiblesFetchStatus.Success;
+            return { ...state, allCollectibles, allCollectiblesFetchStatus };
         case getType(actions.selectCollectible):
             return { ...state, collectibleSelected: action.payload };
         default:

@@ -6,6 +6,7 @@ import { Button } from '../../common/button';
 import { CollectibleListModal } from '../collectibles/collectible_list_modal';
 
 const ButtonStyled = styled(Button)`
+    min-width: 195px;
     @media (min-width: ${themeBreakPoints.md}) {
         margin-left: auto;
     }

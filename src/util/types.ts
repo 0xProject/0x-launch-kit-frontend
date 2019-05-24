@@ -281,8 +281,14 @@ export interface Collectible {
     order: SignedOrder | null;
 }
 
+export enum AllCollectiblesFetchStatus {
+    Request = 'Request',
+    Success = 'Success',
+}
+
 export interface CollectiblesState {
     readonly allCollectibles: { [tokenId: string]: Collectible };
+    readonly allCollectiblesFetchStatus: AllCollectiblesFetchStatus;
     readonly collectibleSelected: Collectible | null;
 }
 
