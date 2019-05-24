@@ -55,6 +55,7 @@ export interface ThemeProperties {
     notificationIconColor: string;
     notificationsBadgeColor: string;
     numberDecimalsColor: string;
+    red: string;
     orange: string;
     rowActive: string;
     stepsProgressCheckMarkColor: string;
