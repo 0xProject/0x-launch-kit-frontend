@@ -71,5 +71,9 @@ export const KNOWN_THEMES_META_DATA: ThemeMetaData[] = [
 
 ```
     ...
-    REACT_APP_THEME_NAME='DARK_THEME'
+REACT_APP_ERC20_THEME_NAME = 'DARK_THEME'
+REACT_APP_ERC721_THEME_NAME = 'LIGHT_THEME'
+
 ```
+
+Note: you can configure the themes for the ERC20 and ERC721 app separately using those env vars.
