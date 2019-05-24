@@ -9,7 +9,7 @@ import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
-import { CardLoading } from '../../common/loading';
+import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
@@ -72,7 +72,7 @@ class OrderHistory extends React.Component<Props> {
             }
             default: {
                 if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
-                    content = <CardLoading minHeight="120px" />;
+                    content = <LoadingWrapper minHeight="120px" />;
                 } else if (!ordersToShow.length || !baseToken || !quoteToken) {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
                 } else {
