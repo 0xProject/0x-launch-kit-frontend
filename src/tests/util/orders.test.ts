@@ -1,6 +1,6 @@
 import { assetDataUtils, BigNumber, Order } from '0x.js';
 
-import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
+import * as utilOrders from '../../util/orders';
 import { addressFactory, uiOrder } from '../../util/test-utils';
 import { OrderSide } from '../../util/types';
 
@@ -14,8 +14,24 @@ describe('buildLimitOrder', () => {
         const amount = new BigNumber('100');
         const price = new BigNumber(0.1);
 
+        const spy = jest.spyOn(utilOrders, 'getOrderWithTakerAndFeeConfigFromRelayer');
+        spy.mockReturnValue({
+            account,
+            makerAddress: account,
+            baseTokenAddress,
+            quoteTokenAddress,
+            amount,
+            price,
+            exchangeAddress,
+            makerAssetAmount: new BigNumber('10'),
+            makerAssetData: assetDataUtils.encodeERC20AssetData(quoteTokenAddress),
+            takerAddress: '0x0000000000000000000000000000000000000000',
+            takerAssetAmount: new BigNumber('100'),
+            takerAssetData: assetDataUtils.encodeERC20AssetData(baseTokenAddress),
+        });
+
         // when
-        const order = buildLimitOrder(
+        const order = await utilOrders.buildLimitOrder(
             {
                 account,
                 baseTokenAddress,
@@ -47,7 +63,23 @@ describe('buildLimitOrder', () => {
         const price = new BigNumber(0.1);
 
         // when
-        const order = buildLimitOrder(
+        const spy = jest.spyOn(utilOrders, 'getOrderWithTakerAndFeeConfigFromRelayer');
+        spy.mockReturnValue({
+            account,
+            makerAddress: account,
+            baseTokenAddress,
+            quoteTokenAddress,
+            amount,
+            price,
+            exchangeAddress,
+            makerAssetAmount: new BigNumber('100'),
+            makerAssetData: assetDataUtils.encodeERC20AssetData(baseTokenAddress),
+            takerAddress: '0x0000000000000000000000000000000000000000',
+            takerAssetAmount: new BigNumber('10'),
+            takerAssetData: assetDataUtils.encodeERC20AssetData(quoteTokenAddress),
+        });
+
+        const order = await utilOrders.buildLimitOrder(
             {
                 account,
                 baseTokenAddress,
@@ -70,7 +102,7 @@ describe('buildLimitOrder', () => {
     });
 });
 describe('buildMarketOrders', () => {
-    it('should fill one order and partially fill another', async () => {
+    it('should fill one order and partially fill another', () => {
         // given
         const amount = new BigNumber(5);
         const orders = [
@@ -79,14 +111,14 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [ordersToFill, amounts] = buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
         expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
         expect(amounts).toEqual([new BigNumber(3), new BigNumber(2)]);
     });
 
-    it('should take price into account', async () => {
+    it('should take price into account', () => {
         // given
         const amount = new BigNumber(5);
         const orders = [
@@ -95,14 +127,14 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [ordersToFill, amounts] = buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
         expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
         expect(amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
     });
 
-    it('should sort buy orders before filling them', async () => {
+    it('should sort buy orders before filling them', () => {
         // given
         const amount = new BigNumber(5);
         const orders = [
@@ -111,14 +143,14 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [ordersToFill, amounts] = buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
         expect(ordersToFill).toEqual([orders[1].rawOrder, orders[0].rawOrder]);
         expect(amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
     });
 
-    it('should sort sell orders before filling them', async () => {
+    it('should sort sell orders before filling them', () => {
         // given
         const amount = new BigNumber(5);
         const orders = [
@@ -127,14 +159,14 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [ordersToFill, amounts] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(ordersToFill).toEqual([orders[1].rawOrder, orders[0].rawOrder]);
         expect(amounts).toEqual([new BigNumber(4), new BigNumber(1)]);
     });
 
-    it('work when only one order is enough', async () => {
+    it('work when only one order is enough', () => {
         // given
         const amount = new BigNumber(5);
         const orders = [
@@ -143,14 +175,14 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [ordersToFill, amounts] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(ordersToFill).toEqual([orders[1].rawOrder]);
         expect(amounts).toEqual([new BigNumber(5)]);
     });
 
-    it('should indicate when the amount can be filled', async () => {
+    it('should indicate when the amount can be filled', () => {
         // given
         const amount = new BigNumber(5);
         const orders = [
@@ -159,13 +191,13 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [, , canBeFilled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const [, , canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(canBeFilled).toBe(true);
     });
 
-    it('should indicate when the amount cannot be filled', async () => {
+    it('should indicate when the amount cannot be filled', () => {
         // given
         const amount = new BigNumber(10);
         const orders = [
@@ -174,7 +206,7 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [, , canBeFilled] = buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const [, , canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(canBeFilled).toBe(false);
@@ -189,7 +221,7 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [ordersToFill, amounts] = buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
         expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
@@ -202,7 +234,7 @@ describe('sumTakerAssetFillableOrders', () => {
     const quoteTokenAddress = addressFactory.build().address;
     const exchangeAddress = addressFactory.build().address;
     // The check is the same on both scenarios, we will abstract it into a function here
-    const getSumAndCheckExpectation = (
+    const getSumAndCheckExpectation = async (
         orderCreationSide: OrderSide,
         sumCheckSide: OrderSide,
         amountsToFill: number[],
@@ -214,21 +246,43 @@ describe('sumTakerAssetFillableOrders', () => {
             { amount: new BigNumber(2), price: new BigNumber(0.5) },
             { amount: new BigNumber(1), price: new BigNumber(0.3) },
         ];
-        const orders: Order[] = amountAndPrices.map(amountAndPrice => {
-            return buildLimitOrder(
-                {
+
+        const orders: Order[] = await Promise.all(
+            amountAndPrices.map(amountAndPrice => {
+                const spy = jest.spyOn(utilOrders, 'getOrderWithTakerAndFeeConfigFromRelayer');
+                spy.mockReturnValue({
                     account,
+                    makerAddress: account,
                     baseTokenAddress,
                     quoteTokenAddress,
                     amount: amountAndPrice.amount,
                     price: amountAndPrice.price,
                     exchangeAddress,
-                },
-                orderCreationSide,
-            );
-        });
+                    makerAssetAmount: new BigNumber('100'),
+                    makerAssetData: assetDataUtils.encodeERC20AssetData(baseTokenAddress),
+                    takerAddress: '0x0000000000000000000000000000000000000000',
+                    takerAssetAmount: new BigNumber('10'),
+                    takerAssetData: assetDataUtils.encodeERC20AssetData(quoteTokenAddress),
+                });
+                return utilOrders.buildLimitOrder(
+                    {
+                        account,
+                        baseTokenAddress,
+                        quoteTokenAddress,
+                        amount: amountAndPrice.amount,
+                        price: amountAndPrice.price,
+                        exchangeAddress,
+                    },
+                    orderCreationSide,
+                );
+            }),
+        );
         // when sum is calculated with the given/corresponding amounts to fill
-        const sum = sumTakerAssetFillableOrders(sumCheckSide, orders, amountsToFill.map(n => new BigNumber(n)));
+        const sum = utilOrders.sumTakerAssetFillableOrders(
+            sumCheckSide,
+            orders,
+            amountsToFill.map(n => new BigNumber(n)),
+        );
         // then sum should be equal to the expectation
         expect(sum.toString()).toBe(expectation);
     };
@@ -237,21 +291,21 @@ describe('sumTakerAssetFillableOrders', () => {
         const orderCreationSide = OrderSide.Buy;
         const sumCheckSide = OrderSide.Sell;
         // The sum of maker collectible is needs to take into consideration the correspondig prices
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '0.25');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '0.75');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '1.25');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 1], '1.05');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 1], '1.55');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '10');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '20');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '30');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 1], '30');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 1], '40');
     });
 
     it('should sum the corresponding maker collectible amounts of fillable sell orders', async () => {
         const orderCreationSide = OrderSide.Sell;
         const sumCheckSide = OrderSide.Buy;
         // The sum of maker collectible is the sum of the amounts specified by the given array
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '1');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '2');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '3');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 1], '3');
-        getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 1], '4');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 0, 0], '1');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 0], '2');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 0], '3');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 1, 1], '3');
+        await getSumAndCheckExpectation(orderCreationSide, sumCheckSide, [1, 2, 1], '4');
     });
 });

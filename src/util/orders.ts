@@ -4,6 +4,7 @@ import { OrderConfigRequest } from '@0x/connect';
 import { ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
+import * as orderHelper from './orders';
 import { tomorrow } from './time_utils';
 import { OrderSide, UIOrder } from './types';
 
@@ -65,7 +66,7 @@ export const buildDutchAuctionCollectibleOrder = async (params: DutchAuctionOrde
         expirationTimeSeconds: expirationDate,
     };
 
-    return getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
+    return orderHelper.getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
 };
 
 export const buildSellCollectibleOrder = async (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
@@ -93,7 +94,7 @@ export const buildSellCollectibleOrder = async (params: BuildSellCollectibleOrde
         expirationTimeSeconds: expirationDate,
     };
 
-    return getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
+    return orderHelper.getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
 };
 
 export const buildLimitOrder = async (params: BuildLimitOrderParams, side: OrderSide): Promise<Order> => {
@@ -113,7 +114,7 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
         expirationTimeSeconds: tomorrow(),
     };
 
-    return getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
+    return orderHelper.getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
 };
 
 export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigRequest: OrderConfigRequest) => {
