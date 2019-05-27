@@ -15,12 +15,12 @@ export const Loading: React.FC = props => {
     );
 };
 
-const LoadingWrapper = styled.div<Props>`
+const LoadingContainer = styled.div<Props>`
     ${props => `min-height: ${props.minHeight}`};
     position: relative;
 `;
 
-LoadingWrapper.defaultProps = {
+LoadingContainer.defaultProps = {
     minHeight: '200px',
 };
 
@@ -31,12 +31,12 @@ const CenteredLoading = styled(Loading)`
     transform: translate(-50%, -50%);
 `;
 
-export const CardLoading: React.FC<Props> = props => {
+export const LoadingWrapper: React.FC<Props> = props => {
     const { ...restProps } = props;
 
     return (
-        <LoadingWrapper {...restProps}>
+        <LoadingContainer {...restProps}>
             <CenteredLoading />
-        </LoadingWrapper>
+        </LoadingContainer>
     );
 };

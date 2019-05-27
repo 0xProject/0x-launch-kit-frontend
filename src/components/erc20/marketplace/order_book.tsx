@@ -22,7 +22,7 @@ import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
-import { CardLoading } from '../../common/loading';
+import { LoadingWrapper } from '../../common/loading';
 import { ShowNumberWithColors } from '../../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, TH, THLast } from '../../common/table';
 
@@ -85,7 +85,7 @@ const GridRowTop = styled(GridRow)`
     z-index: 1;
 `;
 
-const CenteredLoading = styled(CardLoading)`
+const CenteredLoading = styled(LoadingWrapper)`
     height: 100%;
 `;
 
