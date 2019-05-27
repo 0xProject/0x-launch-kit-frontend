@@ -330,7 +330,37 @@ class BuySell extends React.Component<Props, State> {
         if (this.state.orderType === OrderType.Limit) {
             await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Sell);
         } else {
-            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell);
+            try {
+                await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell);
+            } catch (error) {
+                this.setState(
+                    {
+                        error: {
+                            btnMsg: 'Error',
+                            cardMsg: error.message,
+                        },
+                    },
+                    () => {
+                        // After a timeout both error message and button gets cleared
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    btnMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_BTN_ERROR);
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    cardMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_CARD_ERROR);
+                    },
+                );
+            }
         }
         this._reset();
     };
