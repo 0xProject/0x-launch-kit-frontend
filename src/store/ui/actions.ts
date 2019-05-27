@@ -2,7 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
-import { InsufficientQuoteTokenException } from '../../exceptions/insufficient_quote_token_exception';
+import { InsufficientTokenBalanceException } from '../../exceptions/insufficient_token_balance_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { isWeth } from '../../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
@@ -206,7 +206,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             (isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount)) ||
             (quoteTokenBalance && quoteTokenBalance.balance.isLessThan(totalFilledAmount))
         ) {
-            throw new InsufficientQuoteTokenException(quoteToken.symbol);
+            throw new InsufficientTokenBalanceException(quoteToken.symbol);
         }
 
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(

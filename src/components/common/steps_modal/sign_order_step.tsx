@@ -2,6 +2,8 @@ import { BigNumber, SignedOrder } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { INSUFFICIENT_MAKER_BALANCE_ERR, SIGNATURE_ERR } from '../../../exceptions/common';
+import { InsufficientTokenBalanceException } from '../../../exceptions/insufficient_token_balance_exception';
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
@@ -67,19 +69,29 @@ class SignOrderStep extends React.Component<Props, State> {
     };
 
     private readonly _getSignedOrder = async ({ onLoading, onDone, onError }: any) => {
-        const { amount, price, side } = this.props.step;
+        const { step } = this.props;
+        const { amount, price, side } = step;
         try {
             const signedOrder = await this.props.createSignedOrder(amount, price, side);
             onLoading();
             await this.props.submitLimitOrder(signedOrder, amount, side);
             onDone();
         } catch (error) {
-            const signError = new SignatureFailedException(error);
+            let errorException = error;
+            if (error.message.toLowerCase() === INSUFFICIENT_MAKER_BALANCE_ERR.toLowerCase()) {
+                // Maker balance not enough
+                errorException = new InsufficientTokenBalanceException(step.token.symbol);
+            } else if (error.message.toLocaleString().includes(SIGNATURE_ERR)) {
+                // User denied signature
+                errorException = new SignatureFailedException(error);
+            }
+
+            const errorMsg = errorException.message;
             this.setState(
                 {
-                    errorMsg: signError.message,
+                    errorMsg,
                 },
-                () => onError(signError),
+                () => onError(errorException),
             );
         }
     };
