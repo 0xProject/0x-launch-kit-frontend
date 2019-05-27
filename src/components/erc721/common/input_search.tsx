@@ -39,6 +39,7 @@ interface Props {
     placeholder: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => any;
     onClick?: (event: React.MouseEvent<HTMLInputElement>) => any;
+    autoFocus?: boolean;
 }
 
 export const InputSearch = (props: Props) => {

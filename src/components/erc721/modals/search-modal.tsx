@@ -96,7 +96,7 @@ const CollectiblesListCount = styled.div`
 
     @media (min-width: ${themeBreakPoints.md}) {
         margin-right: 0;
-        text-align: right;
+        text-align: left;
         padding-right: ${props => props.theme.modalTheme.content.padding};
     }
 `;
@@ -119,26 +119,31 @@ class SearchModal extends React.Component<Props, State> {
     public state = { ...initialState };
 
     public render = () => {
-        const { isOpen, theme, onClose, allCollectibles } = this.props;
+        const { isOpen, theme, allCollectibles } = this.props;
         const { searchText, sortType, filterType } = this.state;
 
         const collectibles = Object.keys(allCollectibles).map(key => allCollectibles[key]);
         const searchResult = filterCollectibleByName(collectibles, searchText);
 
         return (
-            <Modal isOpen={isOpen} style={theme.modalTheme} onRequestClose={onClose} shouldCloseOnOverlayClick={true}>
+            <Modal
+                isOpen={isOpen}
+                style={theme.modalTheme}
+                onRequestClose={this._closeModal}
+                shouldCloseOnOverlayClick={true}
+            >
                 <ModalTitleWrapper>
-                    <SearchStyled placeholder={'Search'} onChange={this._onChangeSearchText} />
+                    <SearchStyled placeholder={'Search'} onChange={this._onChangeSearchText} autoFocus={true} />
                 </ModalTitleWrapper>
                 {searchText.length > 0 ? (
                     <ModalContent>
                         <FiltersMenu>
+                            <CollectiblesListCount>Showing {searchResult.length} results</CollectiblesListCount>
                             <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
                             <CollectiblesListFilterStyled
                                 currentValue={filterType}
                                 onChange={this._onChangeFilterType}
                             />
-                            <CollectiblesListCount>Showing {searchResult.length} results</CollectiblesListCount>
                         </FiltersMenu>
                         <CollectiblesCardList collectibles={searchResult} filterType={filterType} sortType={sortType} />
                     </ModalContent>
@@ -160,6 +165,7 @@ class SearchModal extends React.Component<Props, State> {
     };
 
     private readonly _closeModal = () => {
+        this.props.onClose();
         this.setState(initialState);
     };
 }
