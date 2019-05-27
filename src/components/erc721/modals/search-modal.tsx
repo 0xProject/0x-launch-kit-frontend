@@ -31,37 +31,38 @@ interface State {
     filterType: CollectibleFilterType;
 }
 
-const modalWidth = '80vw';
-const modalContentHeight = '70vh';
-
 const ModalContent = styled.div`
-    height: ${modalContentHeight};
     overflow: auto;
-`;
 
-const ModalTitleWrapper = styled.div`
-    padding: 0;
+    @media (min-width: ${themeBreakPoints.md}) {
+        height: 500px;
+    }
 `;
 
 const SearchStyled = styled(InputSearch)`
-    background-color: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
-    border-color: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
-    color: ${props => props.theme.componentsTheme.marketsSearchFieldTextColor};
-    max-width: 100%;
-    width: ${modalWidth};
+    background-color: ${props => props.theme.componentsTheme.modalSearchFieldBackgroundColor};
+    border-color: ${props => props.theme.componentsTheme.modalSearchFieldBackgroundColor};
+    color: ${props => props.theme.componentsTheme.modalSearchFieldTextColor};
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    width: 100%;
 
     ::placeholder {
+        color: ${props => props.theme.componentsTheme.modalSearchFieldPlaceholderColor};
+        font-weight: 400;
         text-align: left;
     }
 `;
 
 const FiltersMenu = styled.div`
+    border-top: 1px solid ${props => props.theme.componentsTheme.borderColor};
     display: flex;
     flex-direction: column;
-    margin: 0 auto 22px;
+    margin: 0 auto 40px;
     max-width: ${themeBreakPoints.xxl};
+    padding: 30px 0 0 0;
     position: relative;
-    padding: 30px 0 20px 0;
     width: 100%;
     z-index: 1;
 
@@ -71,11 +72,32 @@ const FiltersMenu = styled.div`
     }
 `;
 
+const CollectiblesListCount = styled.p`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    flex-grow: 1;
+    font-size: 16px;
+    line-height: 1.2;
+    margin: 0 0 25px;
+    padding: 0;
+    text-align: left;
+
+    @media (min-width: ${themeBreakPoints.md}) {
+        margin-bottom: 0;
+    }
+`;
+
 const CollectiblesFilterDropdown = css`
+    font-size: 14px;
     margin-bottom: 25px;
     margin-right: auto;
     position: relative;
-    font-size: 14px;
+
+    @media (max-width: ${themeBreakPoints.sm}) {
+        > div:nth-child(2) {
+            left: 0;
+            right: auto;
+        }
+    }
 
     @media (min-width: ${themeBreakPoints.md}) {
         margin-bottom: 0;
@@ -91,15 +113,6 @@ const CollectiblesFilterDropdown = css`
     }
 `;
 
-const CollectiblesListCount = styled.div`
-    flex-grow: 1;
-
-    @media (min-width: ${themeBreakPoints.md}) {
-        margin-right: 0;
-        text-align: left;
-        padding-right: ${props => props.theme.modalTheme.content.padding};
-    }
-`;
 const CollectiblesListSortStyled = styled(CollectiblesListSort)`
     ${CollectiblesFilterDropdown}
     z-index: 5;
@@ -110,9 +123,9 @@ const CollectiblesListFilterStyled = styled(CollectiblesListFilter)`
 `;
 
 const initialState = {
+    filterType: CollectibleFilterType.ShowAll,
     searchText: '',
     sortType: CollectibleSortType.NewestAdded,
-    filterType: CollectibleFilterType.ShowAll,
 };
 
 class SearchModal extends React.Component<Props, State> {
@@ -124,19 +137,27 @@ class SearchModal extends React.Component<Props, State> {
 
         const collectibles = Object.keys(allCollectibles).map(key => allCollectibles[key]);
         const searchResult = filterCollectibleByName(collectibles, searchText);
+        const shouldShowResults = searchText.length > 0;
+
+        Object.assign(theme.modalTheme.content, {
+            alignSelf: 'flex-start',
+            marginLeft: '15px',
+            marginRight: '15px',
+            marginTop: '80px',
+            maxWidth: '100%',
+            width: '1196px',
+        });
 
         return (
             <Modal
                 isOpen={isOpen}
-                style={theme.modalTheme}
                 onRequestClose={this._closeModal}
                 shouldCloseOnOverlayClick={true}
+                style={theme.modalTheme}
             >
-                <ModalTitleWrapper>
-                    <SearchStyled placeholder={'Search'} onChange={this._onChangeSearchText} autoFocus={true} />
-                </ModalTitleWrapper>
-                {searchText.length > 0 ? (
-                    <ModalContent>
+                <SearchStyled placeholder={'Search'} onChange={this._onChangeSearchText} autoFocus={true} />
+                {shouldShowResults ? (
+                    <>
                         <FiltersMenu>
                             <CollectiblesListCount>Showing {searchResult.length} results</CollectiblesListCount>
                             <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
@@ -145,8 +166,14 @@ class SearchModal extends React.Component<Props, State> {
                                 onChange={this._onChangeFilterType}
                             />
                         </FiltersMenu>
-                        <CollectiblesCardList collectibles={searchResult} filterType={filterType} sortType={sortType} />
-                    </ModalContent>
+                        <ModalContent>
+                            <CollectiblesCardList
+                                collectibles={searchResult}
+                                filterType={filterType}
+                                sortType={sortType}
+                            />
+                        </ModalContent>
+                    </>
                 ) : null}
             </Modal>
         );
