@@ -22,7 +22,7 @@ interface DispatchProps {
 
 type Props = DispatchProps & OwnProps;
 
-const CollectibleAssetWrapper = styled.div`
+const CollectibleCardWrapper = styled.div`
     background: ${props => props.theme.componentsTheme.cardBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
@@ -58,7 +58,7 @@ const Title = styled.h2`
     white-space: nowrap;
 `;
 
-export const CollectibleAsset: React.FC<Props> = (props: Props) => {
+export const CollectibleCard: React.FC<Props> = (props: Props) => {
     const { id, name, price, image, color, ...restProps } = props;
 
     const handleAssetClick: React.EventHandler<React.MouseEvent> = e => {
@@ -67,12 +67,12 @@ export const CollectibleAsset: React.FC<Props> = (props: Props) => {
     };
 
     return (
-        <CollectibleAssetWrapper {...restProps} onClick={handleAssetClick}>
+        <CollectibleCardWrapper {...restProps} onClick={handleAssetClick}>
             <ImageWrapper color={color} image={image}>
                 <PriceBadge price={price} />
             </ImageWrapper>
             <Title>{name}</Title>
-        </CollectibleAssetWrapper>
+        </CollectibleCardWrapper>
     );
 };
 
@@ -82,7 +82,7 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-export const CollectibleAssetContainer = connect(
+export const CollectibleCardContainer = connect(
     null,
     mapDispatchToProps,
-)(CollectibleAsset);
+)(CollectibleCard);
