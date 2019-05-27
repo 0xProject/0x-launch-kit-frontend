@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 interface Props {
     estimatedTimeMs: number;
@@ -6,7 +7,11 @@ interface Props {
     startTime: Date;
 }
 
-export const PendingTime: React.FC<Props> = ({ estimatedTimeMs, now, startTime }) => {
+const PendingTimeWrapper = styled.span`
+    color: ${props => props.theme.componentsTheme.textLight};
+`;
+
+export const PendingTime: React.FC<Props> = ({ estimatedTimeMs, now, startTime, ...restProps }) => {
     const estimatedSeconds = Math.round(estimatedTimeMs / 1000);
     const finishTime = new Date(startTime.valueOf() + estimatedTimeMs);
 
@@ -19,8 +24,8 @@ export const PendingTime: React.FC<Props> = ({ estimatedTimeMs, now, startTime }
     const pendingSecondsStr = pendingSeconds < 10 ? `0${pendingSeconds}` : pendingSeconds.toString();
 
     return (
-        <span>
+        <PendingTimeWrapper {...restProps}>
             {pendingMinutesStr}:{pendingSecondsStr} (Est. {estimatedSeconds} seconds)
-        </span>
+        </PendingTimeWrapper>
     );
 };

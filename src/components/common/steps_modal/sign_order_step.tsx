@@ -51,17 +51,17 @@ class SignOrderStep extends React.Component<Props, State> {
 
         return (
             <BaseStepModal
+                buildStepsProgress={buildStepsProgress}
+                confirmCaption={confirmCaption}
+                doneCaption={doneCaption}
+                doneFooterCaption={doneFooterCaption}
+                errorCaption={errorCaption}
+                estimatedTxTimeMs={estimatedTxTimeMs}
+                loadingCaption={loadingCaption}
+                loadingFooterCaption={loadingFooterCaption}
+                runAction={this._getSignedOrder}
                 step={step}
                 title={title}
-                confirmCaption={confirmCaption}
-                loadingCaption={loadingCaption}
-                doneCaption={doneCaption}
-                errorCaption={errorCaption}
-                loadingFooterCaption={loadingFooterCaption}
-                doneFooterCaption={doneFooterCaption}
-                buildStepsProgress={buildStepsProgress}
-                estimatedTxTimeMs={estimatedTxTimeMs}
-                runAction={this._getSignedOrder}
             />
         );
     };
