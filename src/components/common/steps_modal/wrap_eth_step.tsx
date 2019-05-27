@@ -2,7 +2,10 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
+import {
+    STEP_MODAL_DONE_STATUS_VISIBILITY_TIME,
+    UI_DECIMALS_DISPLAYED_ON_STEP_MODALS,
+} from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
@@ -41,7 +44,9 @@ class WrapEthStep extends React.Component<Props> {
         const { context, currentWethBalance, newWethBalance } = step;
         const amount = newWethBalance.minus(currentWethBalance);
         const wethToken = getKnownTokens(networkId).getWethToken();
-        const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toString();
+        const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toFixed(
+            UI_DECIMALS_DISPLAYED_ON_STEP_MODALS,
+        );
 
         const ethToWeth = amount.isGreaterThan(0);
         const convertingFrom = ethToWeth ? 'ETH' : 'wETH';
@@ -61,7 +66,7 @@ class WrapEthStep extends React.Component<Props> {
                 .join(' ');
         };
 
-        const title = 'Order setup';
+        const title = `Convert ${convertingFrom}`;
 
         const confirmCaption = `Confirm on Metamask to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
         const loadingCaption = buildMessage('Converting');

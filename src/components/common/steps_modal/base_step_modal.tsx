@@ -85,39 +85,31 @@ export class BaseStepModal extends React.Component<Props, State> {
         const { loadingStarted, status } = this.state;
         const retry = () => this._retry();
         let content;
+        let bodyText;
         let footer = this.props.showPartialProgress ? null : <ModalStatusTextLight>{}</ModalStatusTextLight>;
         switch (status) {
             case StepStatus.Loading:
-                content = (
-                    <StepStatusLoading>
-                        <ModalText>{loadingCaption}</ModalText>
-                    </StepStatusLoading>
-                );
+                content = <StepStatusLoading />;
+                bodyText = <ModalText>{loadingCaption}</ModalText>;
                 break;
             case StepStatus.Done:
-                content = (
-                    <StepStatusDone>
-                        <ModalText>{doneCaption}</ModalText>
-                    </StepStatusDone>
-                );
+                content = <StepStatusDone />;
+                bodyText = <ModalText>{doneCaption}</ModalText>;
                 footer = <ModalStatusTextLight>{doneFooterCaption}</ModalStatusTextLight>;
                 break;
             case StepStatus.Error:
-                content = (
-                    <StepStatusError>
-                        <ModalText>
-                            {errorCaption}{' '}
-                            <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
-                        </ModalText>
-                    </StepStatusError>
+                content = <StepStatusError />;
+                bodyText = (
+                    <ModalText>
+                        {errorCaption}
+                        <br />
+                        <ModalTextClickable onClick={retry}>Click here to try again</ModalTextClickable>
+                    </ModalText>
                 );
                 break;
             default:
-                content = (
-                    <StepStatusConfirmOnMetamask>
-                        <ModalText>{confirmCaption}</ModalText>
-                    </StepStatusConfirmOnMetamask>
-                );
+                content = <StepStatusConfirmOnMetamask />;
+                bodyText = <ModalText>{confirmCaption}</ModalText>;
                 footer = <ModalStatusTextLight>{loadingFooterCaption}</ModalStatusTextLight>;
                 break;
         }
@@ -138,8 +130,9 @@ export class BaseStepModal extends React.Component<Props, State> {
 
         return (
             <>
-                <Title>{title}</Title>
                 {content}
+                <Title>{title}</Title>
+                {bodyText}
                 <StepsProgress steps={stepsProgress} />
                 {this.props.showPartialProgress && (
                     <StepPendingTime
