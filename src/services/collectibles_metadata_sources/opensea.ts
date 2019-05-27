@@ -1,4 +1,4 @@
-import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS } from '../../common/constants';
 import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
 export class Opensea implements CollectibleMetadataSource {
@@ -28,7 +28,7 @@ export class Opensea implements CollectibleMetadataSource {
 
     public async fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]> {
         const metadataSourceUrl = this._endpointsUrls[networkId];
-        const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
+        const contractAddress = COLLECTIBLE_ADDRESS;
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${userAddress}`;
         const assetsResponse = await fetch(url);
         const assetsResponseJson = await assetsResponse.json();
@@ -37,7 +37,7 @@ export class Opensea implements CollectibleMetadataSource {
 
     public async fetchIndividualCollectibleAsync(tokenId: string, networkId: number): Promise<Collectible | null> {
         const metadataSourceUrl = this._endpointsUrls[networkId];
-        const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
+        const contractAddress = COLLECTIBLE_ADDRESS;
         const url = `${metadataSourceUrl}/asset/${contractAddress}/${tokenId}`;
         const assetsResponse = await fetch(url);
         const assetsResponseJson = await assetsResponse.json();

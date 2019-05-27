@@ -1,6 +1,6 @@
 import { BigNumber } from '0x.js';
 
-import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
 import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
@@ -89,7 +89,7 @@ const allCollectibles: Collectible[] = [
 
 export class Mocked implements CollectibleMetadataSource {
     public fetchAllUserCollectiblesAsync = async (userAddress: string, networkId: number): Promise<Collectible[]> => {
-        const contractAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
+        const contractAddress = COLLECTIBLE_ADDRESS;
         const contractWrappers = await getContractWrappers();
 
         const allCollectiblesWithOwner = await Promise.all(
