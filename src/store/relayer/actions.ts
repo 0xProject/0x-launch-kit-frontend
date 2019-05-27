@@ -5,7 +5,7 @@ import { TX_DEFAULTS } from '../../common/constants';
 import { RelayerException } from '../../exceptions/relayer_exception';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
-import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
+import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder } from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
@@ -194,5 +194,38 @@ export const getOrderbookAndUserOrders: ThunkCreator = () => {
 export const getOrderBook: ThunkCreator = () => {
     return async dispatch => {
         return dispatch(getAllOrders());
+    };
+};
+
+export const fetchTakerAndMakerFee: ThunkCreator<Promise<{ makerFee: BigNumber; takerFee: BigNumber }>> = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const baseToken = getBaseToken(state) as Token;
+        const quoteToken = getQuoteToken(state) as Token;
+        const contractWrappers = await getContractWrappers();
+
+        const order = await buildLimitOrder(
+            {
+                account: ethAccount,
+                amount,
+                price,
+                baseTokenAddress: baseToken.address,
+                quoteTokenAddress: quoteToken.address,
+                exchangeAddress: contractWrappers.exchange.address,
+            },
+            side,
+        );
+
+        const { makerFee, takerFee } = order;
+
+        return {
+            makerFee,
+            takerFee,
+        };
     };
 };

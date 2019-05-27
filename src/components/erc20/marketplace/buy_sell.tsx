@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
+import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getCurrencyPair, getWeb3State } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
@@ -21,9 +22,10 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
-    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<any>;
+    onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide, makerFee: BigNumber) => Promise<any>;
+    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => Promise<any>;
     onConnectWallet: () => any;
+    onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -267,10 +269,11 @@ class BuySell extends React.Component<Props, State> {
         const makerAmount = this.state.makerAmount || new BigNumber(0);
         const price = this.state.price || new BigNumber(0);
 
+        const { makerFee, takerFee } = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
         if (this.state.orderType === OrderType.Limit) {
-            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Buy);
+            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Buy, makerFee);
         } else {
-            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Buy);
+            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Buy, takerFee);
         }
         this._reset();
     };
@@ -279,10 +282,11 @@ class BuySell extends React.Component<Props, State> {
         const makerAmount = this.state.makerAmount || new BigNumber(0);
         const price = this.state.price || new BigNumber(0);
 
+        const { makerFee, takerFee } = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
         if (this.state.orderType === OrderType.Limit) {
-            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Sell);
+            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Sell, makerFee);
         } else {
-            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell);
+            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell, takerFee);
         }
         this._reset();
     };
@@ -314,13 +318,21 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide, makerFee: BigNumber) =>
+            dispatch(startBuySellLimitSteps(amount, price, side, makerFee)),
+        onSubmitMarketOrder: (amount: BigNumber, side: OrderSide, takerFee: BigNumber) =>
+            dispatch(startBuySellMarketSteps(amount, side, takerFee)),
+        onConnectWallet: () => dispatch(initWallet()),
+        onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
+            dispatch(fetchTakerAndMakerFee(amount, price, side)),
+    };
+};
+
 const BuySellContainer = connect(
     mapStateToProps,
-    {
-        onSubmitLimitOrder: startBuySellLimitSteps,
-        onSubmitMarketOrder: startBuySellMarketSteps,
-        onConnectWallet: initWallet,
-    },
+    mapDispatchToProps,
 )(BuySell);
 
 export { BuySell, BuySellContainer };

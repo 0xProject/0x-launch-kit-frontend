@@ -1,6 +1,8 @@
 import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } from '0x.js';
+import { OrderConfigRequest } from '@0x/connect';
 
-import { FEE_RECIPIENT, MAKER_FEE, TAKER_FEE, ZERO_ADDRESS } from '../common/constants';
+import { ZERO_ADDRESS } from '../common/constants';
+import { getRelayer } from '../services/relayer';
 
 import { tomorrow } from './time_utils';
 import { OrderSide, UIOrder } from './types';
@@ -35,7 +37,7 @@ interface BuildMarketOrderParams {
     orders: UIOrder[];
 }
 
-export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParams) => {
+export const buildDutchAuctionCollectibleOrder = async (params: DutchAuctionOrderParams) => {
     const {
         account,
         collectibleId,
@@ -44,7 +46,6 @@ export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParam
         price,
         exchangeAddress,
         wethAddress,
-        senderAddress,
         expirationDate,
         endPrice,
     } = params;
@@ -52,24 +53,22 @@ export const buildDutchAuctionCollectibleOrder = (params: DutchAuctionOrderParam
     const beginTimeSeconds = new BigNumber(Math.round(Date.now() / 1000));
     const auctionAssetData = DutchAuctionWrapper.encodeDutchAuctionAssetData(collectibleData, beginTimeSeconds, price);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
-    return {
-        makerAddress: account,
+
+    const orderConfigRequest: OrderConfigRequest = {
         exchangeAddress,
-        takerAddress: ZERO_ADDRESS,
-        senderAddress,
-        feeRecipientAddress: FEE_RECIPIENT,
-        expirationTimeSeconds: expirationDate,
-        salt: new BigNumber(Date.now()),
         makerAssetData: auctionAssetData,
         takerAssetData: wethAssetData,
         makerAssetAmount: amount,
         takerAssetAmount: endPrice,
-        makerFee: MAKER_FEE,
-        takerFee: TAKER_FEE,
+        makerAddress: account,
+        takerAddress: ZERO_ADDRESS,
+        expirationTimeSeconds: expirationDate,
     };
+
+    return getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
 };
 
-export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
+export const buildSellCollectibleOrder = async (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
     const {
         account,
         collectibleId,
@@ -82,43 +81,49 @@ export const buildSellCollectibleOrder = (params: BuildSellCollectibleOrderParam
     } = params;
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
-    return {
+
+    const orderConfigRequest: OrderConfigRequest = {
         exchangeAddress,
-        expirationTimeSeconds: expirationDate,
-        feeRecipientAddress: FEE_RECIPIENT,
-        makerAddress: account,
-        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
         makerAssetData: collectibleData,
-        takerAddress: ZERO_ADDRESS,
-        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
         takerAssetData: wethAssetData,
-        makerFee: MAKER_FEE,
-        takerFee: TAKER_FEE,
-        salt: new BigNumber(Date.now()),
-        senderAddress: ZERO_ADDRESS,
+        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
+        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
+        makerAddress: account,
+        takerAddress: ZERO_ADDRESS,
+        expirationTimeSeconds: expirationDate,
     };
+
+    return getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
 };
 
-export const buildLimitOrder = (params: BuildLimitOrderParams, side: OrderSide): Order => {
+export const buildLimitOrder = async (params: BuildLimitOrderParams, side: OrderSide): Promise<Order> => {
     const { account, baseTokenAddress, exchangeAddress, amount, price, quoteTokenAddress } = params;
 
     const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseTokenAddress);
     const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteTokenAddress);
 
-    return {
+    const orderConfigRequest: OrderConfigRequest = {
         exchangeAddress,
-        expirationTimeSeconds: tomorrow(),
-        feeRecipientAddress: FEE_RECIPIENT,
-        makerAddress: account,
-        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
         makerAssetData: side === OrderSide.Buy ? quoteTokenAssetData : baseTokenAssetData,
-        takerAddress: ZERO_ADDRESS,
-        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
         takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
-        makerFee: MAKER_FEE,
-        takerFee: TAKER_FEE,
+        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
+        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
+        makerAddress: account,
+        takerAddress: ZERO_ADDRESS,
+        expirationTimeSeconds: tomorrow(),
+    };
+
+    return getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
+};
+
+export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigRequest: OrderConfigRequest) => {
+    const client = getRelayer();
+    const orderResult = await client.getOrderConfigAsync(orderConfigRequest);
+
+    return {
+        ...orderConfigRequest,
+        ...orderResult,
         salt: new BigNumber(Date.now()),
-        senderAddress: '0x0000000000000000000000000000000000000000',
     };
 };
 

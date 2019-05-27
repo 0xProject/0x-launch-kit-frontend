@@ -407,7 +407,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                 if (endPrice) {
                     // DutchAuction sell
                     const senderAddress = contractWrappers.dutchAuction.address;
-                    order = buildDutchAuctionCollectibleOrder({
+                    order = await buildDutchAuctionCollectibleOrder({
                         account: ethAccount,
                         amount: new BigNumber('1'),
                         price: startPrice,
@@ -421,7 +421,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                     });
                 } else {
                     // Normal Sell
-                    order = buildSellCollectibleOrder(
+                    order = await buildSellCollectibleOrder(
                         {
                             account: ethAccount,
                             amount: new BigNumber('1'),
