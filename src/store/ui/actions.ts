@@ -2,6 +2,7 @@ import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { InsufficientTokenBalanceException } from '../../exceptions/insufficient_token_balance_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { isWeth } from '../../util/known_tokens';
@@ -190,8 +191,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             side,
         );
         if (!canBeFilled) {
-            window.alert('There are no enough orders to fill this amount');
-            return;
+            throw new InsufficientOrdersAmountException();
         }
 
         const totalFilledAmount = filledAmounts.reduce((total: BigNumber, currentValue: BigNumber) => {
