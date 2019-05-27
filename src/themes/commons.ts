@@ -78,6 +78,7 @@ export interface ThemeProperties {
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
+    myWalletLinkColor: string;
 }
 
 export interface ThemeModalStyle {

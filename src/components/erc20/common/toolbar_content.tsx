@@ -25,7 +25,7 @@ type Props = DispatchProps & OwnProps;
 
 const MyWalletLink = styled.a`
     align-items: center;
-    color: #333333;
+    color: ${props => props.theme.componentsTheme.myWalletLinkColor};
     display: flex;
     font-size: 16px;
     font-weight: 500;
