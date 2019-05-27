@@ -2,13 +2,15 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
+import { ETH_DECIMALS, STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
+import { INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT } from '../../../exceptions/common';
+import { InsufficientEthDepositBalanceException } from '../../../exceptions/insufficient_eth_deposit_balance_exception';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getEthBalance, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
-import { tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
+import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
 import { StepWrapEth, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
@@ -21,6 +23,7 @@ interface StateProps {
     estimatedTxTimeMs: number;
     networkId: number | null;
     step: StepWrapEth;
+    ethBalance: BigNumber;
 }
 
 interface DispatchProps {
@@ -32,7 +35,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class WrapEthStep extends React.Component<Props> {
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, networkId, step } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, networkId, step, ethBalance } = this.props;
 
         if (networkId === null) {
             return null;
@@ -66,9 +69,12 @@ class WrapEthStep extends React.Component<Props> {
         const confirmCaption = `Confirm on Metamask to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
         const loadingCaption = buildMessage('Converting');
         const doneCaption = buildMessage('Converted');
-        const errorCaption = buildMessage('Error converting');
         const loadingFooterCaption = `Waiting for confirmation....`;
         const doneFooterCaption = `${convertingFrom} converted!`;
+
+        const currentEthAmount = tokenAmountInUnits(ethBalance, ETH_DECIMALS);
+        const ethNeeded = tokenAmountInUnits(amount, ETH_DECIMALS);
+        const errorCaption = `You have ${currentEthAmount} ETH but you need ${ethNeeded} ETH to make this operation`;
 
         return (
             <BaseStepModal
@@ -89,8 +95,8 @@ class WrapEthStep extends React.Component<Props> {
     };
 
     private readonly _convertWeth = async ({ onLoading, onDone, onError }: any) => {
-        const { step, advanceStep } = this.props;
-        const { newWethBalance } = step;
+        const { step, advanceStep, ethBalance } = this.props;
+        const { currentWethBalance, newWethBalance } = step;
         try {
             const web3Wrapper = await getWeb3Wrapper();
             const convertTxHash = await this.props.updateWeth(newWethBalance);
@@ -101,7 +107,14 @@ class WrapEthStep extends React.Component<Props> {
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
         } catch (err) {
-            onError(err);
+            let exception = err;
+            if (err.toString().includes(INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT)) {
+                const amount = newWethBalance.minus(currentWethBalance);
+                const currentEthAmount = tokenAmountInUnits(ethBalance, ETH_DECIMALS);
+                const ethNeeded = tokenAmountInUnits(amount, ETH_DECIMALS);
+                exception = new InsufficientEthDepositBalanceException(currentEthAmount, ethNeeded);
+            }
+            onError(exception);
         }
     };
 }
@@ -111,6 +124,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         networkId: getNetworkId(state),
         step: getStepsModalCurrentStep(state) as StepWrapEth,
+        ethBalance: getEthBalance(state),
     };
 };
 
