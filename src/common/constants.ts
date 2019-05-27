@@ -33,6 +33,7 @@ export const CACHE_CHECK_INTERVAL: number = process.env.REACT_APP_CACHE_CHECK_IN
     ? Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10)
     : 60000;
 
+export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;

@@ -6,8 +6,9 @@ const IconContainer = styled.div`
     background-position: 50% 50%;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 62px;
+    height: 82px;
     width: 104px;
+    margin-top: auto;
 `;
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
