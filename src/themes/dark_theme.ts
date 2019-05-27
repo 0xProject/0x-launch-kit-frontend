@@ -80,7 +80,6 @@ const darkThemeColors: ThemeProperties = {
     notificationsBadgeColor: '#ff6534',
     numberDecimalsColor: '#5A5A5A',
     red: '#FF6534',
-    orange: '#F6851B',
     rowActive: '#1B1B1B',
     stepsProgressCheckMarkColor: '#202123',
     stepsProgressStartingDotColor: '#fff',
