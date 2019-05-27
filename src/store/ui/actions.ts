@@ -200,12 +200,12 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
 
         const price = totalFilledAmount.div(amount);
 
-        // Before creating market steps, checks if the total amount of ETH (wETH + ETH) or the quoteToken balance is enough, otherwise throws an exception
-        if (quoteTokenBalance && quoteTokenBalance.balance.isLessThan(price)) {
-            // Before throwing an exception, we check if the quoteToken is wETH, in that case we could have more ETH To wrap.
-            if (isWeth(quoteToken.symbol) && totalEthBalance.isGreaterThan(price)) {
-                return;
-            }
+        // Checks if the quoteToken is wETH and if the total amount of eth + wETH is enough to cover the order
+        // In case the quoteToken is not wETH, checks if the quoteToken balance is enough to pay the orders, otherwise throws an exception
+        if (
+            (isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount)) ||
+            (quoteTokenBalance && quoteTokenBalance.balance.isLessThan(totalFilledAmount))
+        ) {
             throw new InsufficientQuoteTokenException(quoteToken.symbol);
         }
 

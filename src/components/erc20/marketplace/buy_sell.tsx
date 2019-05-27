@@ -34,7 +34,10 @@ interface State {
     orderType: OrderType;
     price: BigNumber | null;
     tab: OrderSide;
-    error: string | null;
+    error: {
+        btnMsg: string | null;
+        cardMsg: string | null;
+    };
 }
 
 const BuySellWrapper = styled(CardBase)`
@@ -152,13 +155,19 @@ const BigInputNumberTokenLabel = (props: { tokenSymbol: TokenSymbol }) => (
     </TokenContainer>
 );
 
+const TIMEOUT_BTN_ERROR = 2000;
+const TIMEOUT_CARD_ERROR = 4000;
+
 class BuySell extends React.Component<Props, State> {
     public state: State = {
         makerAmount: null,
         price: null,
         orderType: OrderType.Market,
         tab: OrderSide.Buy,
-        error: null,
+        error: {
+            btnMsg: null,
+            cardMsg: null,
+        },
     };
 
     public render = () => {
@@ -185,8 +194,7 @@ class BuySell extends React.Component<Props, State> {
         const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
         const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
-        const btnText = error ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
-
+        const btnText = error && error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
         return (
             <>
                 <BuySellWrapper>
@@ -248,13 +256,15 @@ class BuySell extends React.Component<Props, State> {
                         <Button
                             disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                             onClick={tab === OrderSide.Buy ? this.buy : this.sell}
-                            variant={error ? 'error' : 'secondary'}
+                            variant={error && error.btnMsg ? 'error' : 'secondary'}
                         >
                             {btnText}
                         </Button>
                     </Content>
                 </BuySellWrapper>
-                {error ? <ErrorCard fontSize={FontSize.Large} text={error} icon={ErrorIcons.Sad} /> : null}
+                {error && error.cardMsg ? (
+                    <ErrorCard fontSize={FontSize.Large} text={error.cardMsg} icon={ErrorIcons.Sad} />
+                ) : null}
             </>
         );
     };
@@ -281,12 +291,33 @@ class BuySell extends React.Component<Props, State> {
             try {
                 await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Buy);
             } catch (error) {
-                this.setState({ error: error.message }, () => {
-                    // After two seconds both error message and button gets cleared
-                    setTimeout(() => {
-                        this.setState({ error: null });
-                    }, 2000);
-                });
+                this.setState(
+                    {
+                        error: {
+                            btnMsg: 'Error',
+                            cardMsg: error.message,
+                        },
+                    },
+                    () => {
+                        // After a timeout both error message and button gets cleared
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    btnMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_BTN_ERROR);
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    cardMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_CARD_ERROR);
+                    },
+                );
             }
         }
         this._reset();
