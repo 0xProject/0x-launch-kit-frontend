@@ -27,6 +27,12 @@ REACT_APP_RELAYER_URL='https://RELAYER_URL/api/v2' yarn start
 
 A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to the network used by the relayer.
 
+You can optionally pass in any relayer endpoint that complies with the [0x Standard Relayer API](https://github.com/0xProject/standard-relayer-api). For example, if you want to mirror Kovan liquidity from [Radar Relay](https://radarrelay.com/):
+
+```
+REACT_APP_RELAYER_URL='https://api.kovan.radarrelay.com/0x/v2' yarn start
+```
+
 These commands start the app in development mode. You can run `yarn build` to build the assets. The results will be in the `build` directory. Remember to set the environment variable with the relayer URL when running the `build` command:
 
 ```
