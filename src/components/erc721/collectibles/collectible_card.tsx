@@ -1,5 +1,6 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
@@ -16,7 +17,7 @@ interface Props {
     onClick?: (e: any) => void;
 }
 
-const CollectibleCardWrapper = styled.a`
+const CollectibleCardWrapper = styled(Link)`
     background: ${props => props.theme.componentsTheme.cardBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
@@ -58,7 +59,12 @@ const defaultHandleClick = (e: any) => undefined;
 export const CollectibleCard: React.FC<Props> = (props: Props) => {
     const { id, name, price, image, color, onClick, ...restProps } = props;
     return (
-        <CollectibleCardWrapper {...restProps} id={id} onClick={onClick || defaultHandleClick} href={`#${ERC721_APP_BASE_PATH}/collectible/${props.id}`}>
+        <CollectibleCardWrapper
+            {...restProps}
+            id={id}
+            onClick={onClick || defaultHandleClick}
+            to={`${ERC721_APP_BASE_PATH}/collectible/${props.id}`}
+        >
             <ImageWrapper color={color} image={image}>
                 <PriceBadge price={price} />
             </ImageWrapper>
