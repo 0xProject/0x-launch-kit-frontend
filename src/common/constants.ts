@@ -81,8 +81,8 @@ export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SO
 export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
 export const COLLECTIBLE_DESCRIPTION: string = process.env.REACT_APP_COLLECTIBLE_DESCRIPTION || 'Unknown';
 
-export const COLLECTIBLE_ADDRESS =
-    process.env.REACT_APP_COLLECTIBLE_ADDRESS || '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb';
+const mockERC721Address = '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb'; // Mock ERC721 in ganache
+export const COLLECTIBLE_ADDRESS = process.env.REACT_APP_COLLECTIBLE_ADDRESS || mockERC721Address;
 
 export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
     Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;
