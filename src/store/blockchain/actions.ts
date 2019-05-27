@@ -95,7 +95,11 @@ export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlo
                 getTransactionOptions(gasPrice),
             );
         } else {
-            tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(token.address, ethAccount);
+            tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(
+                token.address,
+                ethAccount,
+                getTransactionOptions(gasPrice),
+            );
         }
 
         web3Wrapper.awaitTransactionSuccessAsync(tx).then(() => {
@@ -157,6 +161,7 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                 wethAddress,
                 newWethBalance.minus(wethBalance),
                 ethAccount,
+                getTransactionOptions(gasPrice),
             );
         } else if (wethBalance.isGreaterThan(newWethBalance)) {
             tx = await contractWrappers.etherToken.withdrawAsync(
