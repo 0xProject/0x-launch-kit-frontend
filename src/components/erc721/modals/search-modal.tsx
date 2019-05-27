@@ -171,6 +171,7 @@ class SearchModal extends React.Component<Props, State> {
                                 collectibles={searchResult}
                                 filterType={filterType}
                                 sortType={sortType}
+                                onClick={this._closeModal}
                             />
                         </ModalContent>
                     </>
