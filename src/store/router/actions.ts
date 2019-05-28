@@ -15,7 +15,7 @@ export const goToHome: ThunkCreator = () => {
     };
 };
 
-export const goToHomeErc20: ThunkCreator = () => {
+const goToHomeErc20: ThunkCreator = () => {
     return async (dispatch, getState) => {
         const state = getState();
 
@@ -41,7 +41,7 @@ export const goToWallet: ThunkCreator = () => {
     };
 };
 
-export const goToHomeErc721 = () => {
+const goToHomeErc721 = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
 

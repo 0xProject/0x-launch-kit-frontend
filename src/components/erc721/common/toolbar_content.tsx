@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as LogoSvg } from '../../../assets/icons/erc721_logo.svg';
-import { goToHomeErc721, goToMyCollectibles } from '../../../store/router/actions';
+import { goToHome, goToMyCollectibles } from '../../../store/router/actions';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { Logo } from '../../common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../common/toolbar';
@@ -90,7 +90,7 @@ const ToolbarContent = (props: Props) => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        onGoToHome: () => dispatch(goToHomeErc721()),
+        onGoToHome: () => dispatch(goToHome()),
         goToMyCollectibles: () => dispatch(goToMyCollectibles()),
     };
 };
