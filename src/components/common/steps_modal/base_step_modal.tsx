@@ -115,6 +115,7 @@ export class BaseStepModal extends React.Component<Props, State> {
         }
 
         let getProgress: GetProgress = () => 0;
+
         if (status === StepStatus.Loading && this.props.showPartialProgress && loadingStarted !== null) {
             getProgress = makeGetProgress(loadingStarted, this._estimatedTxTimeMs);
         } else if (status === StepStatus.Done) {
@@ -135,11 +136,13 @@ export class BaseStepModal extends React.Component<Props, State> {
                 {bodyText}
                 <StepsProgress steps={stepsProgress} />
                 {this.props.showPartialProgress && (
-                    <StepPendingTime
-                        txStarted={loadingStarted}
-                        stepStatus={status}
-                        estimatedTxTimeMs={this._estimatedTxTimeMs}
-                    />
+                    <ModalStatusTextLight>
+                        <StepPendingTime
+                            txStarted={loadingStarted}
+                            stepStatus={status}
+                            estimatedTxTimeMs={this._estimatedTxTimeMs}
+                        />
+                    </ModalStatusTextLight>
                 )}
                 {footer}
             </>
