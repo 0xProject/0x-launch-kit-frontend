@@ -5,7 +5,7 @@ import { getKnownTokens } from '../util/known_tokens';
 
 import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
 import { getAllCollectibles } from './collectibles/actions';
-import { fetchMarkets, setMarketTokens } from './market/actions';
+import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair, getCurrentRoutePath } from './selectors';
 
@@ -31,6 +31,7 @@ export const updateStore = () => {
         dispatch(setEthBalance(ethBalance));
         dispatch(setWethBalance(wethBalance));
         dispatch(updateGasInfo());
+        dispatch(updateMarketPriceEther());
         // Updates based on the current app
         const currentRoute = getCurrentRoutePath(state);
         currentRoute.includes(ERC20_APP_BASE_PATH)
@@ -68,7 +69,6 @@ export const updateERC20Store = (ethAccount: string, networkId: number) => {
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderBook());
-            dispatch(updateGasInfo());
         }
     };
 };
