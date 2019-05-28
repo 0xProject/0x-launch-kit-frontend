@@ -1,4 +1,4 @@
-import { MAINNET_ID } from '../common/constants';
+import { ERC20_APP_BASE_PATH, MAINNET_ID } from '../common/constants';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
@@ -7,7 +7,7 @@ import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from '
 import { getAllCollectibles } from './collectibles/actions';
 import { fetchMarkets, setMarketTokens } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
-import { getCurrencyPair } from './selectors';
+import { getCurrencyPair, getCurrentRoutePath } from './selectors';
 
 export * from './blockchain/actions';
 export * from './market/actions';
@@ -18,6 +18,22 @@ export * from './market/actions';
 export * from './collectibles/actions';
 
 export const updateStore = () => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const currentRoute = getCurrentRoutePath(state);
+        currentRoute.includes(ERC20_APP_BASE_PATH) ? dispatch(updateERC20Store()) : dispatch(updateERC721Store());
+    };
+};
+
+export const updateERC721Store = () => {
+    return async (dispatch: any) => {
+        const web3Wrapper = await getWeb3Wrapper();
+        const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+        dispatch(getAllCollectibles(ethAccount));
+    };
+};
+
+export const updateERC20Store = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         try {
@@ -41,8 +57,6 @@ export const updateStore = () => {
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
-            // tslint:disable-next-line:no-floating-promises
-            dispatch(getAllCollectibles(ethAccount));
             dispatch(setTokenBalances(tokenBalances));
             dispatch(setEthBalance(ethBalance));
             dispatch(setWethBalance(wethBalance));
