@@ -55,6 +55,12 @@ const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTok
     );
 };
 
+export const getTotalEthBalance = createSelector(
+    getEthBalance,
+    getWethBalance,
+    (ethBalance: BigNumber, wethTokenBalance: BigNumber) => ethBalance.plus(wethTokenBalance),
+);
+
 export const getBaseTokenBalance = createSelector(
     getTokenBalances,
     getWethTokenBalance,

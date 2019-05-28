@@ -20,6 +20,7 @@ import { BigNumberInput } from '../../common/big_number_input';
 import { Button } from '../../common/button';
 import { CardBase } from '../../common/card_base';
 import { CardTabSelector } from '../../common/card_tab_selector';
+import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
 import { OrderDetailsContainer } from './order_details';
 
@@ -41,6 +42,10 @@ interface State {
     orderType: OrderType;
     price: BigNumber | null;
     tab: OrderSide;
+    error: {
+        btnMsg: string | null;
+        cardMsg: string | null;
+    };
 }
 
 const BuySellWrapper = styled(CardBase)`
@@ -158,17 +163,24 @@ const BigInputNumberTokenLabel = (props: { tokenSymbol: TokenSymbol }) => (
     </TokenContainer>
 );
 
+const TIMEOUT_BTN_ERROR = 2000;
+const TIMEOUT_CARD_ERROR = 4000;
+
 class BuySell extends React.Component<Props, State> {
     public state: State = {
         makerAmount: null,
         price: null,
         orderType: OrderType.Market,
         tab: OrderSide.Buy,
+        error: {
+            btnMsg: null,
+            cardMsg: null,
+        },
     };
 
     public render = () => {
         const { currencyPair, web3State } = this.props;
-        const { makerAmount, price, tab, orderType } = this.state;
+        const { makerAmount, price, tab, orderType, error } = this.state;
 
         const buySellInnerTabs = [
             {
@@ -189,73 +201,85 @@ class BuySell extends React.Component<Props, State> {
         const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty);
         const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
+        const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
+        const btnText = error && error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
         return (
-            <BuySellWrapper>
-                <TabsContainer>
-                    <TabButton
-                        isSelected={tab === OrderSide.Buy}
-                        onClick={this.changeTab(OrderSide.Buy)}
-                        side={OrderSide.Buy}
-                    >
-                        Buy
-                    </TabButton>
-                    <TabButton
-                        isSelected={tab === OrderSide.Sell}
-                        onClick={this.changeTab(OrderSide.Sell)}
-                        side={OrderSide.Sell}
-                    >
-                        Sell
-                    </TabButton>
-                </TabsContainer>
-                <Content>
-                    <LabelContainer>
-                        <Label>Amount</Label>
-                        <InnerTabs tabs={buySellInnerTabs} />
-                    </LabelContainer>
-                    <FieldContainer>
-                        <BigInputNumberStyled
-                            decimals={18}
-                            min={new BigNumber(0)}
-                            onChange={this.updateMakerAmount}
-                            value={makerAmount}
-                            placeholder={'0.00'}
+            <>
+                <BuySellWrapper>
+                    <TabsContainer>
+                        <TabButton
+                            isSelected={tab === OrderSide.Buy}
+                            onClick={this.changeTab(OrderSide.Buy)}
+                            side={OrderSide.Buy}
+                        >
+                            Buy
+                        </TabButton>
+                        <TabButton
+                            isSelected={tab === OrderSide.Sell}
+                            onClick={this.changeTab(OrderSide.Sell)}
+                            side={OrderSide.Sell}
+                        >
+                            Sell
+                        </TabButton>
+                    </TabsContainer>
+                    <Content>
+                        <LabelContainer>
+                            <Label>Amount</Label>
+                            <InnerTabs tabs={buySellInnerTabs} />
+                        </LabelContainer>
+                        <FieldContainer>
+                            <BigInputNumberStyled
+                                decimals={18}
+                                min={new BigNumber(0)}
+                                onChange={this.updateMakerAmount}
+                                value={makerAmount}
+                                placeholder={'0.00'}
+                            />
+                            <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
+                        </FieldContainer>
+                        {orderType === OrderType.Limit && (
+                            <>
+                                <LabelContainer>
+                                    <Label>Price per token</Label>
+                                </LabelContainer>
+                                <FieldContainer>
+                                    <BigInputNumberStyled
+                                        decimals={0}
+                                        min={new BigNumber(0)}
+                                        onChange={this.updatePrice}
+                                        value={price}
+                                        placeholder={'0.00'}
+                                    />
+                                    <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
+                                </FieldContainer>
+                            </>
+                        )}
+                        <OrderDetailsContainer
+                            orderType={orderType}
+                            orderSide={tab}
+                            tokenAmount={makerAmount || new BigNumber(0)}
+                            tokenPrice={price || new BigNumber(0)}
+                            currencyPair={currencyPair}
                         />
-                        <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
-                    </FieldContainer>
-                    {orderType === OrderType.Limit && (
-                        <>
-                            <LabelContainer>
-                                <Label>Price per token</Label>
-                            </LabelContainer>
-                            <FieldContainer>
-                                <BigInputNumberStyled
-                                    decimals={0}
-                                    min={new BigNumber(0)}
-                                    onChange={this.updatePrice}
-                                    value={price}
-                                    placeholder={'0.00'}
-                                />
-                                <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
-                            </FieldContainer>
-                        </>
-                    )}
-                    <OrderDetailsContainer
-                        orderType={orderType}
-                        orderSide={tab}
-                        tokenAmount={makerAmount || new BigNumber(0)}
-                        tokenPrice={price || new BigNumber(0)}
-                        currencyPair={currencyPair}
-                    />
-                    <Button
-                        disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
-                        onClick={tab === OrderSide.Buy ? this.buy : this.sell}
-                        variant={tab === OrderSide.Buy ? ButtonVariant.Buy : ButtonVariant.Sell}
-                    >
-                        {tab === OrderSide.Buy ? 'Buy ' : 'Sell '}
-                        {tokenSymbolToDisplayString(currencyPair.base)}
-                    </Button>
-                </Content>
-            </BuySellWrapper>
+                        <Button
+                            disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
+                            onClick={tab === OrderSide.Buy ? this.buy : this.sell}
+                            variant={
+                                error && error.btnMsg
+                                    ? ButtonVariant.Error
+                                    : tab === OrderSide.Buy
+                                    ? ButtonVariant.Buy
+                                    : ButtonVariant.Sell
+                            }
+                        >
+                            {btnText}
+                        </Button>
+                    </Content>
+                </BuySellWrapper>
+                {error && error.cardMsg ? (
+                    <ErrorCard fontSize={FontSize.Large} text={error.cardMsg} icon={ErrorIcons.Sad} />
+                ) : null}
+            </>
         );
     };
 
@@ -278,7 +302,37 @@ class BuySell extends React.Component<Props, State> {
         if (this.state.orderType === OrderType.Limit) {
             await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Buy);
         } else {
-            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Buy);
+            try {
+                await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Buy);
+            } catch (error) {
+                this.setState(
+                    {
+                        error: {
+                            btnMsg: 'Error',
+                            cardMsg: error.message,
+                        },
+                    },
+                    () => {
+                        // After a timeout both error message and button gets cleared
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    btnMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_BTN_ERROR);
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    cardMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_CARD_ERROR);
+                    },
+                );
+            }
         }
         this._reset();
     };
@@ -290,7 +344,37 @@ class BuySell extends React.Component<Props, State> {
         if (this.state.orderType === OrderType.Limit) {
             await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Sell);
         } else {
-            await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell);
+            try {
+                await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell);
+            } catch (error) {
+                this.setState(
+                    {
+                        error: {
+                            btnMsg: 'Error',
+                            cardMsg: error.message,
+                        },
+                    },
+                    () => {
+                        // After a timeout both error message and button gets cleared
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    btnMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_BTN_ERROR);
+                        setTimeout(() => {
+                            this.setState({
+                                error: {
+                                    ...this.state.error,
+                                    cardMsg: null,
+                                },
+                            });
+                        }, TIMEOUT_CARD_ERROR);
+                    },
+                );
+            }
         }
         this._reset();
     };
