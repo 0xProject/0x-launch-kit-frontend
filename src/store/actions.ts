@@ -20,37 +20,39 @@ export * from './collectibles/actions';
 export const updateStore = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
+        const web3Wrapper = await getWeb3Wrapper();
+        const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+        const networkId = await web3Wrapper.getNetworkIdAsync();
+        const knownTokens = getKnownTokens(networkId);
+        const wethToken = knownTokens.getWethToken();
+        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+        const wethBalance = await getTokenBalance(wethToken, ethAccount);
+        // Generals update for both apps
+        dispatch(setEthBalance(ethBalance));
+        dispatch(setWethBalance(wethBalance));
+        dispatch(updateGasInfo());
+        // Updates based on the current app
         const currentRoute = getCurrentRoutePath(state);
-        currentRoute.includes(ERC20_APP_BASE_PATH) ? dispatch(updateERC20Store()) : dispatch(updateERC721Store());
+        currentRoute.includes(ERC20_APP_BASE_PATH)
+            ? dispatch(updateERC20Store(ethAccount, networkId))
+            : dispatch(updateERC721Store(ethAccount));
     };
 };
 
-export const updateERC721Store = () => {
+export const updateERC721Store = (ethAccount: string) => {
     return async (dispatch: any) => {
-        const web3Wrapper = await getWeb3Wrapper();
-        const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
         dispatch(getAllCollectibles(ethAccount));
     };
 };
 
-export const updateERC20Store = () => {
+export const updateERC20Store = (ethAccount: string, networkId: number) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         try {
-            const web3Wrapper = await getWeb3Wrapper();
-
-            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-            const networkId = await web3Wrapper.getNetworkIdAsync();
-
             const knownTokens = getKnownTokens(networkId);
-
             const tokenBalances = await Promise.all(
                 knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
             );
-            const wethToken = knownTokens.getWethToken();
-            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-            const wethBalance = await getTokenBalance(wethToken, ethAccount);
-
             const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
@@ -58,10 +60,7 @@ export const updateERC20Store = () => {
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
             dispatch(setTokenBalances(tokenBalances));
-            dispatch(setEthBalance(ethBalance));
-            dispatch(setWethBalance(wethBalance));
             await dispatch(fetchMarkets());
-            dispatch(updateGasInfo());
         } catch (error) {
             const knownTokens = getKnownTokens(MAINNET_ID);
             const currencyPair = getCurrencyPair(state);
