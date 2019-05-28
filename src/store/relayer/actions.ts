@@ -1,13 +1,13 @@
 import { BigNumber, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { TX_DEFAULTS } from '../../common/constants';
 import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { RelayerException } from '../../exceptions/relayer_exception';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
+import { getTransactionOptions } from '../../util/transactions';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder } from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
@@ -150,10 +150,12 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
             const contractWrappers = await getContractWrappers();
             const web3Wrapper = await getWeb3Wrapper();
-            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(ordersToFill, amounts, ethAccount, {
-                ...TX_DEFAULTS,
-                gasPrice,
-            });
+            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(
+                ordersToFill,
+                amounts,
+                ethAccount,
+                getTransactionOptions(gasPrice),
+            );
 
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
