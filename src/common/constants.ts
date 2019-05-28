@@ -89,3 +89,5 @@ export const COLLECTIBLE_ADDRESS = process.env.REACT_APP_COLLECTIBLE_ADDRESS || 
 
 export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
     Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;
+
+export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
