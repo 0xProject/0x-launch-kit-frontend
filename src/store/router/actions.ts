@@ -5,6 +5,15 @@ import { ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH } from '../../common/constant
 import { CollectibleFilterType } from '../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../util/sortable_collectibles';
 import { ThunkCreator } from '../../util/types';
+import { getCurrentRoutePath } from '../selectors';
+
+export const goToHome: ThunkCreator = () => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const currentRoute = getCurrentRoutePath(state);
+        currentRoute.includes(ERC20_APP_BASE_PATH) ? dispatch(goToHomeErc20()) : dispatch(goToHomeErc721());
+    };
+};
 
 export const goToHomeErc20: ThunkCreator = () => {
     return async (dispatch, getState) => {
