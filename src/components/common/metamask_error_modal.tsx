@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install_metamask.svg';
+import { METAMASK_CHROME_EXTENSION_DOWNLOAD_URL } from '../../common/constants';
 import { Theme } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
 import { ModalDisplay } from '../../util/types';
@@ -84,6 +85,11 @@ const LinkButton = styled.a`
 
 const MetamaskErrorModalContainer: React.FC<Props> = props => {
     const { isOpen, closeModal, noMetamaskType, connectWallet, theme } = props;
+
+    const getMetamask = () => {
+        window.open(METAMASK_CHROME_EXTENSION_DOWNLOAD_URL, '_blank');
+    };
+
     const metamaskNotInstalledContent = (
         <>
             <ModalTitle>Install Metamask</ModalTitle>
@@ -96,13 +102,8 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled variant="tertiary">
-                <LinkButton
-                    target="_blank"
-                    href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
-                >
-                    Get Chrome Extension
-                </LinkButton>
+            <ButtonStyled onClick={getMetamask} variant="tertiary">
+                <LinkButton>Get Chrome Extension</LinkButton>
             </ButtonStyled>
         </>
     );
@@ -119,8 +120,8 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled variant="tertiary">
-                <LinkButton onClick={connectWallet}>{errorsWallet.mmConnect}</LinkButton>
+            <ButtonStyled onClick={connectWallet} variant="tertiary">
+                <LinkButton>{errorsWallet.mmConnect}</LinkButton>
             </ButtonStyled>
         </>
     );
