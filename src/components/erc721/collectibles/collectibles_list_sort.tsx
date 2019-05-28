@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
-import { Dropdown } from '../../common/dropdown';
+import { Dropdown, DropdownPositions } from '../../common/dropdown';
 import { DropdownTextItemWrapper } from '../../common/dropdown_text_item';
 import { SortIcon } from '../../common/icons/sort_icon';
 
@@ -67,5 +67,5 @@ export const CollectiblesListSort = (props: Props) => {
         </DropdownContainer>
     );
 
-    return <Dropdown body={body} header={header} {...restProps} />;
+    return <Dropdown body={body} header={header} horizontalPosition={DropdownPositions.Right} {...restProps} />;
 };
