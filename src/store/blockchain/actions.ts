@@ -1,9 +1,8 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { MAINNET_ID, START_BLOCK_LIMIT } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
-import { getCollectibleContractAddress } from '../../services/collectibles_metadata_sources';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
@@ -353,14 +352,11 @@ export const unlockCollectible: ThunkCreator<Promise<string>> = (collectible: Co
         const state = getState();
         const contractWrappers = await getContractWrappers();
         const gasPrice = getGasPriceInWei(state);
-        const networkId = getNetworkId(state) as number;
         const ethAccount = getEthAccount(state);
         const defaultParams = getTransactionOptions(gasPrice);
 
-        const collectibleContractAddress = getCollectibleContractAddress(networkId);
-
         const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
-            collectibleContractAddress,
+            COLLECTIBLE_ADDRESS,
             ethAccount,
             true,
             defaultParams,
@@ -398,7 +394,6 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                 const web3Wrapper = await getWeb3Wrapper();
                 const contractWrappers = await getContractWrappers();
                 const wethAddress = getKnownTokens(networkId).getWethToken().address;
-                const collectibleAddress = getCollectibleContractAddress(networkId);
                 const exchangeAddress = contractWrappers.exchange.address;
                 let order;
                 if (endPrice) {
@@ -411,7 +406,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                         endPrice,
                         expirationDate,
                         wethAddress,
-                        collectibleAddress,
+                        collectibleAddress: COLLECTIBLE_ADDRESS,
                         collectibleId,
                         exchangeAddress,
                         senderAddress,
@@ -426,7 +421,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                             exchangeAddress,
                             expirationDate,
                             collectibleId,
-                            collectibleAddress,
+                            collectibleAddress: COLLECTIBLE_ADDRESS,
                             wethAddress,
                         },
                         side,

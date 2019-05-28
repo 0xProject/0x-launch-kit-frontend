@@ -98,6 +98,7 @@ const darkThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
+    myWalletLinkColor: '#fff',
 };
 
 export class DarkTheme extends DefaultTheme {

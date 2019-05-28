@@ -28,7 +28,6 @@ export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnre
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
-export const getTheme = (state: StoreState) => state.ui.theme;
 export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
 export const getBaseToken = (state: StoreState) => state.market.baseToken;
 export const getQuoteToken = (state: StoreState) => state.market.quoteToken;
@@ -38,6 +37,7 @@ export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
 export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
+export const getAllCollectiblesFetchStatus = (state: StoreState) => state.collectibles.allCollectiblesFetchStatus;
 export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
     state.collectibles.allCollectibles[props.collectibleId];
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;

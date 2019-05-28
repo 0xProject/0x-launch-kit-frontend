@@ -33,6 +33,7 @@ export const CACHE_CHECK_INTERVAL: number = process.env.REACT_APP_CACHE_CHECK_IN
     ? Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10)
     : 60000;
 
+export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
@@ -68,7 +69,9 @@ export const START_BLOCK_LIMIT: number = Number.parseInt(process.env.REACT_APP_S
 
 export const LOGGER_ID: string = process.env.REACT_APP_LOGGER_ID || '0x-launch-kit-frontend';
 
-export const THEME_NAME: string = process.env.REACT_APP_THEME_NAME || 'DEFAULT_THEME';
+export const ERC20_THEME_NAME: string = process.env.REACT_APP_ERC20_THEME_NAME || 'DARK_THEME';
+
+export const ERC721_THEME_NAME: string = process.env.REACT_APP_ERC721_THEME_NAME || 'LIGHT_THEME';
 
 export const SHOULD_ENABLE_NO_METAMASK_PROMPT: boolean = process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT
     ? process.env.REACT_APP_ENABLE_NO_METAMASK_PROMPT === 'true'
@@ -79,11 +82,8 @@ export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SO
 export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
 export const COLLECTIBLE_DESCRIPTION: string = process.env.REACT_APP_COLLECTIBLE_DESCRIPTION || 'Unknown';
 
-export const COLLECTIBLE_CONTRACT_ADDRESSES: { [key: number]: string } = {
-    1: '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d', // mainnet axie
-    4: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf', // rinkeby cryptokitties
-    50: '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb', // ganache mock erc721
-};
+const mockERC721Address = '0x07f96aa816c1f244cbc6ef114bb2b023ba54a2eb'; // Mock ERC721 in ganache
+export const COLLECTIBLE_ADDRESS = process.env.REACT_APP_COLLECTIBLE_ADDRESS || mockERC721Address;
 
 export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
     Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;

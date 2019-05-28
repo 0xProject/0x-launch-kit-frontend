@@ -8,6 +8,9 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Centered = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     margin: 0 auto;
     max-width: 100%;
     width: ${themeBreakPoints.xxl};
