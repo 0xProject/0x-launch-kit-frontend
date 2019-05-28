@@ -17,7 +17,7 @@ import {
 import { errorsWallet } from '../../../util/error_messages';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
+import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
@@ -270,7 +270,7 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled variant={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                    <ButtonStyled variant={ButtonVariant.Tertiary} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>
                 </>
@@ -280,7 +280,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled variant={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
+                    <ButtonStyled variant={ButtonVariant.Tertiary}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
             );
         }
