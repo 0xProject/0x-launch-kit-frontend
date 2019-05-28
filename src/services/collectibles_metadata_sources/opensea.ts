@@ -1,4 +1,4 @@
-import { COLLECTIBLE_ADDRESS } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, OPENSEA_API_KEY } from '../../common/constants';
 import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
 export class Opensea implements CollectibleMetadataSource {
@@ -30,7 +30,7 @@ export class Opensea implements CollectibleMetadataSource {
         const metadataSourceUrl = this._endpointsUrls[networkId];
         const contractAddress = COLLECTIBLE_ADDRESS;
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${userAddress}`;
-        const assetsResponse = await fetch(url);
+        const assetsResponse = await this._fetch(url);
         const assetsResponseJson = await assetsResponse.json();
         return Opensea.getAssetsAsCollectible(assetsResponseJson.assets);
     }
@@ -39,8 +39,14 @@ export class Opensea implements CollectibleMetadataSource {
         const metadataSourceUrl = this._endpointsUrls[networkId];
         const contractAddress = COLLECTIBLE_ADDRESS;
         const url = `${metadataSourceUrl}/asset/${contractAddress}/${tokenId}`;
-        const assetsResponse = await fetch(url);
+        const assetsResponse = await this._fetch(url);
         const assetsResponseJson = await assetsResponse.json();
         return Opensea.getAssetAsCollectible(assetsResponseJson);
     }
+
+    private readonly _fetch = async (url: string) => {
+        return fetch(url, {
+            headers: { 'X-API-KEY': OPENSEA_API_KEY || '' } as any,
+        });
+    };
 }
