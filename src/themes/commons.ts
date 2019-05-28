@@ -51,6 +51,10 @@ export interface ThemeProperties {
     marketsSearchFieldBackgroundColor: string;
     marketsSearchFieldBorderColor: string;
     marketsSearchFieldTextColor: string;
+    modalSearchFieldBackgroundColor: string;
+    modalSearchFieldBorderColor: string;
+    modalSearchFieldPlaceholderColor: string;
+    modalSearchFieldTextColor: string;
     notificationActive: string;
     notificationIconColor: string;
     notificationsBadgeColor: string;

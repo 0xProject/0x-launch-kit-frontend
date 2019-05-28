@@ -8,7 +8,7 @@ import { CollectibleFilterType, getFilterFunction } from '../../../util/filterab
 import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
 import { Collectible } from '../../../util/types';
 
-import { CollectibleAssetContainer } from './collectible_details';
+import { CollectibleCard } from './collectible_card';
 
 const CollectiblesListOverflow = styled.div`
     flex-grow: 1;
@@ -46,6 +46,7 @@ const getCollectibleCards = (
     sortType: CollectibleSortType,
     filterType: CollectibleFilterType,
     limit?: number,
+    onClick?: (e: any) => void,
 ) => {
     const sortedItems = getSortedCollectibles(collectibles, sortType);
     let filteredItems = sortedItems.filter(getFilterFunction(filterType));
@@ -55,13 +56,14 @@ const getCollectibleCards = (
     return filteredItems.map((sortableCollectible, index) => {
         const { name, image, color, tokenId } = sortableCollectible.collectible;
         return (
-            <CollectibleAssetContainer
+            <CollectibleCard
                 color={color}
                 id={tokenId}
                 image={image}
                 key={index}
                 name={name}
                 price={sortableCollectible.price}
+                onClick={onClick}
             />
         );
     });
@@ -73,11 +75,12 @@ interface Props {
     filterType: CollectibleFilterType;
     limit?: number;
     isLoading?: boolean;
+    onClick?: (e: any) => void;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType, filterType, limit, isLoading, ...restProps } = props;
-    const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit);
+    const { collectibles, sortType, filterType, limit, isLoading, onClick, ...restProps } = props;
+    const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit, onClick);
 
     if (isLoading) {
         return <Loading />;

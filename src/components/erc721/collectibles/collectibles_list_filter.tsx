@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
-import { Dropdown } from '../../common/dropdown';
+import { Dropdown, DropdownPositions } from '../../common/dropdown';
 import { DropdownTextItemWrapper } from '../../common/dropdown_text_item';
 import { FilterIcon } from '../../common/icons/filter_icon';
 import { RadioIcon } from '../../common/icons/radio_icon';
@@ -69,5 +69,5 @@ export const CollectiblesListFilter = (props: Props) => {
         </DropdownContainer>
     );
 
-    return <Dropdown body={body} header={header} {...restProps} />;
+    return <Dropdown body={body} header={header} horizontalPosition={DropdownPositions.Right} {...restProps} />;
 };
