@@ -1,6 +1,6 @@
 import { assetDataUtils, SignedOrder } from '0x.js';
 
-import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../common/constants';
+import { COLLECTIBLE_ADDRESS } from '../common/constants';
 import { getRelayer, Relayer } from '../services/relayer';
 import { getKnownTokens } from '../util/known_tokens';
 import { getLogger } from '../util/logger';
@@ -23,13 +23,12 @@ export class CollectiblesMetadataGateway {
 
         const knownTokens = getKnownTokens(networkId);
 
-        const collectibleAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
         const wethAddress = knownTokens.getWethToken().address;
 
         // Step 1: Get all sell orders in the relayer
         let orders: any[] = [];
         try {
-            orders = await this._relayer.getSellCollectibleOrdersAsync(collectibleAddress, wethAddress);
+            orders = await this._relayer.getSellCollectibleOrdersAsync(COLLECTIBLE_ADDRESS, wethAddress);
         } catch (err) {
             logger.error(err);
             throw err;

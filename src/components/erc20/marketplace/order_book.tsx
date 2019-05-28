@@ -192,7 +192,7 @@ class OrderBookTable extends React.Component<Props> {
             return order.side === OrderSide.Buy;
         });
         const getColor = (order: OrderBookItem): string => {
-            return order.side === OrderSide.Buy ? theme.componentsTheme.green : theme.componentsTheme.orange;
+            return order.side === OrderSide.Buy ? theme.componentsTheme.green : theme.componentsTheme.red;
         };
 
         let content: React.ReactNode;
