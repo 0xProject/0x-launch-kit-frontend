@@ -6,7 +6,7 @@ import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install
 import { METAMASK_CHROME_EXTENSION_DOWNLOAD_URL } from '../../common/constants';
 import { Theme } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
-import { ModalDisplay } from '../../util/types';
+import { ButtonVariant, ModalDisplay } from '../../util/types';
 
 import { Button } from './button';
 import { CloseModalButton } from './icons/close_modal_button';
@@ -102,7 +102,7 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled onClick={getMetamask} variant="tertiary">
+            <ButtonStyled onClick={getMetamask} variant={ButtonVariant.Tertiary}>
                 <LinkButton>Get Chrome Extension</LinkButton>
             </ButtonStyled>
         </>
@@ -120,7 +120,7 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
                     What is MetaMask?
                 </ModalTextLink>
             </ModalText>
-            <ButtonStyled onClick={connectWallet} variant="tertiary">
+            <ButtonStyled onClick={connectWallet} variant={ButtonVariant.Tertiary}>
                 <LinkButton>{errorsWallet.mmConnect}</LinkButton>
             </ButtonStyled>
         </>

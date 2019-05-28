@@ -7,6 +7,8 @@ export interface ThemeProperties {
     background: string;
     borderColor: string;
     boxShadow: string;
+    buttonBuyBackgroundColor: string;
+    buttonCollectibleSellBackgroundColor: string;
     buttonConvertBackgroundColor: string;
     buttonConvertBorderColor: string;
     buttonConvertTextColor: string;
@@ -53,7 +55,7 @@ export interface ThemeProperties {
     notificationIconColor: string;
     notificationsBadgeColor: string;
     numberDecimalsColor: string;
-    orange: string;
+    red: string;
     rowActive: string;
     stepsProgressCheckMarkColor: string;
     stepsProgressStartingDotColor: string;
