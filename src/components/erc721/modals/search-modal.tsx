@@ -139,21 +139,25 @@ class SearchModal extends React.Component<Props, State> {
         const searchResult = filterCollectibleByName(collectibles, searchText);
         const shouldShowResults = searchText.length > 0;
 
-        Object.assign(theme.modalTheme.content, {
-            alignSelf: 'flex-start',
-            marginLeft: '15px',
-            marginRight: '15px',
-            marginTop: '80px',
-            maxWidth: '100%',
-            width: '1196px',
-        });
+        const modalTheme = {
+            ...theme.modalTheme,
+            content: {
+                ...theme.modalTheme.content,
+                alignSelf: 'flex-start',
+                marginLeft: '15px',
+                marginRight: '15px',
+                marginTop: '80px',
+                maxWidth: '100%',
+                width: '1196px',
+            },
+        };
 
         return (
             <Modal
                 isOpen={isOpen}
                 onRequestClose={this._closeModal}
                 shouldCloseOnOverlayClick={true}
-                style={theme.modalTheme}
+                style={modalTheme}
             >
                 <SearchStyled placeholder={'Search'} onChange={this._onChangeSearchText} autoFocus={true} />
                 {shouldShowResults ? (
