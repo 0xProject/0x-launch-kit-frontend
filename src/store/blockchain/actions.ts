@@ -1,7 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_ADDRESS, MAINNET_ID, START_BLOCK_LIMIT, TX_DEFAULTS } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, MAINNET_ID, START_BLOCK_LIMIT } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
