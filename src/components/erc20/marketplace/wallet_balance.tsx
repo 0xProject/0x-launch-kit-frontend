@@ -12,6 +12,7 @@ import {
     getEthAccount,
     getQuoteToken,
     getQuoteTokenBalance,
+    getTotalEthBalance,
     getWeb3State,
 } from '../../../store/selectors';
 import { errorsWallet } from '../../../util/error_messages';
@@ -133,6 +134,7 @@ interface StateProps {
     ethAccount: string;
     baseTokenBalance: TokenBalance | null;
     quoteTokenBalance: TokenBalance | null;
+    totalEthBalance: BigNumber;
 }
 
 interface DispatchProps {
@@ -212,10 +214,13 @@ class WalletBalance extends React.Component<Props, State> {
             quoteToken,
             quoteTokenBalance,
             baseTokenBalance,
+            totalEthBalance,
         } = this.props;
 
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
-            const quoteBalanceString = tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
+            const quoteBalanceString = isWeth(quoteToken.symbol)
+                ? tokenAmountInUnits(totalEthBalance, quoteTokenBalance.token.decimals)
+                : tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
             const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, quoteTokenBalance.token.decimals);
             const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled
@@ -223,6 +228,9 @@ class WalletBalance extends React.Component<Props, State> {
                     iconType={IconType.Fill}
                 />
             ) : null;
+            const quoteTokenLabel = isWeth(quoteToken.symbol)
+                ? 'ETH Total (ETH + wETH)'
+                : tokenSymbolToDisplayString(currencyPair.quote);
             content = (
                 <>
                     <LabelWrapper>
@@ -231,7 +239,7 @@ class WalletBalance extends React.Component<Props, State> {
                     </LabelWrapper>
                     <LabelWrapper>
                         <Label>
-                            {tokenSymbolToDisplayString(currencyPair.quote)}
+                            {quoteTokenLabel}
                             {toolTip}
                         </Label>
                         <Value>{quoteBalanceString}</Value>
@@ -324,6 +332,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethAccount: getEthAccount(state),
         quoteTokenBalance: getQuoteTokenBalance(state),
         baseTokenBalance: getBaseTokenBalance(state),
+        totalEthBalance: getTotalEthBalance(state),
     };
 };
 
