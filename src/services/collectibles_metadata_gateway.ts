@@ -4,6 +4,7 @@ import { COLLECTIBLE_ADDRESS } from '../common/constants';
 import { getRelayer, Relayer } from '../services/relayer';
 import { getKnownTokens } from '../util/known_tokens';
 import { getLogger } from '../util/logger';
+import { sleep } from '../util/sleep';
 import { Collectible, CollectibleMetadataSource } from '../util/types';
 
 import { getConfiguredSource } from './collectibles_metadata_sources';
@@ -41,6 +42,8 @@ export class CollectiblesMetadataGateway {
 
         // Step 2: Get all the user's collectibles and add the order
         const collectibles = await source.fetchAllUserCollectiblesAsync(userAddress, networkId);
+        // TODO remove this when we get OpenSea API key
+        await sleep(1100);
         const collectiblesWithOrders: Collectible[] = collectibles.map(collectible => {
             if (tokenIdToOrder[collectible.tokenId]) {
                 return {
@@ -62,6 +65,8 @@ export class CollectiblesMetadataGateway {
                     ...collectibleFetched,
                     order: tokenIdToOrder[tokenId],
                 });
+                // TODO remove this when we get OpenSea API key
+                await sleep(1100);
             }
         }
         collectiblesWithOrders.push(...collectiblesFetched);
