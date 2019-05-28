@@ -43,7 +43,7 @@ export const getFilteredCollectibles = (
 
 export const filterCollectibleByName = (collectibles: Collectible[], name: string): Collectible[] => {
     return collectibles.filter(collectible => {
-        const collectibleName = collectible.name.toLowerCase();
+        const collectibleName = (collectible.name || '').toLowerCase();
         return collectibleName.indexOf(name.toLowerCase()) > -1;
     });
 };
