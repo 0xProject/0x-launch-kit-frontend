@@ -223,14 +223,9 @@ class WalletBalance extends React.Component<Props, State> {
                 : tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
             const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, quoteTokenBalance.token.decimals);
             const toolTip = isWeth(quoteToken.symbol) ? (
-                <TooltipStyled
-                    description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
-                    iconType={IconType.Fill}
-                />
+                <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />
             ) : null;
-            const quoteTokenLabel = isWeth(quoteToken.symbol)
-                ? 'ETH Total (ETH + wETH)'
-                : tokenSymbolToDisplayString(currencyPair.quote);
+            const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ETH' : tokenSymbolToDisplayString(currencyPair.quote);
             content = (
                 <>
                     <LabelWrapper>
