@@ -25,7 +25,7 @@ type Props = StateProps;
 
 const SideTD = styled(CustomTD)<{ side: OrderSide }>`
     color: ${props =>
-        props.side === OrderSide.Buy ? props.theme.componentsTheme.green : props.theme.componentsTheme.orange};
+        props.side === OrderSide.Buy ? props.theme.componentsTheme.green : props.theme.componentsTheme.red};
 `;
 
 const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {

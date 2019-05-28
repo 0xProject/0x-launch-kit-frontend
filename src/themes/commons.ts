@@ -7,6 +7,8 @@ export interface ThemeProperties {
     background: string;
     borderColor: string;
     boxShadow: string;
+    buttonBuyBackgroundColor: string;
+    buttonCollectibleSellBackgroundColor: string;
     buttonConvertBackgroundColor: string;
     buttonConvertBorderColor: string;
     buttonConvertTextColor: string;
@@ -49,11 +51,15 @@ export interface ThemeProperties {
     marketsSearchFieldBackgroundColor: string;
     marketsSearchFieldBorderColor: string;
     marketsSearchFieldTextColor: string;
+    modalSearchFieldBackgroundColor: string;
+    modalSearchFieldBorderColor: string;
+    modalSearchFieldPlaceholderColor: string;
+    modalSearchFieldTextColor: string;
     notificationActive: string;
     notificationIconColor: string;
     notificationsBadgeColor: string;
     numberDecimalsColor: string;
-    orange: string;
+    red: string;
     rowActive: string;
     stepsProgressCheckMarkColor: string;
     stepsProgressStartingDotColor: string;

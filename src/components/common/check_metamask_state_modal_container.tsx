@@ -48,17 +48,24 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
 
     public render = () => {
         const { shouldOpenModal, modalToDisplay } = this.state;
-        const { onGoToHome, children } = this.props;
+        const { children } = this.props;
         return shouldOpenModal && modalToDisplay ? (
             <MetamaskErrorModal
                 isOpen={shouldOpenModal}
-                closeModal={onGoToHome}
+                closeModal={this._closeModal}
                 noMetamaskType={modalToDisplay}
                 connectWallet={this._connectWallet}
             />
         ) : (
             children || null
         );
+    };
+
+    private readonly _closeModal = () => {
+        this.setState({
+            shouldOpenModal: false,
+        });
+        this.props.onGoToHome();
     };
 
     private readonly _connectWallet = () => {

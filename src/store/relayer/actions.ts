@@ -1,6 +1,8 @@
 import { BigNumber, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
+import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { RelayerException } from '../../exceptions/relayer_exception';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
@@ -177,9 +179,8 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
             return { txHash, amountInReturn };
         } else {
-            const errorMessage = 'There are no enough orders to fill this amount';
-            window.alert(errorMessage);
-            throw new Error(errorMessage);
+            window.alert(INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR);
+            throw new InsufficientOrdersAmountException();
         }
     };
 };

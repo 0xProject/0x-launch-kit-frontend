@@ -1,28 +1,23 @@
 import { BigNumber } from '0x.js';
-import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { goToIndividualCollectible } from '../../../store/router/actions';
+import { ERC721_APP_BASE_PATH } from '../../../common/constants';
 import { themeDimensions, themeFeatures } from '../../../themes/commons';
 
 import { PriceBadge } from './price_badge';
 
-interface OwnProps extends HTMLAttributes<HTMLDivElement> {
+interface Props {
     color: string;
     id: string;
     image: string;
     name: string;
     price: BigNumber | null;
+    onClick?: (e: any) => void;
 }
 
-interface DispatchProps {
-    goToIndividualCollectible: (collectibleId: string) => any;
-}
-
-type Props = DispatchProps & OwnProps;
-
-const CollectibleAssetWrapper = styled.div`
+const CollectibleCardWrapper = styled(Link)`
     background: ${props => props.theme.componentsTheme.cardBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
@@ -30,6 +25,7 @@ const CollectibleAssetWrapper = styled.div`
     cursor: pointer;
     position: relative;
     transition: box-shadow 0.15s linear;
+    text-decoration: none;
 
     &:hover {
         box-shadow: ${themeFeatures.boxShadow};
@@ -58,31 +54,21 @@ const Title = styled.h2`
     white-space: nowrap;
 `;
 
-export const CollectibleAsset: React.FC<Props> = (props: Props) => {
-    const { id, name, price, image, color, ...restProps } = props;
+const defaultHandleClick = (e: any) => undefined;
 
-    const handleAssetClick: React.EventHandler<React.MouseEvent> = e => {
-        e.preventDefault();
-        props.goToIndividualCollectible(id);
-    };
-
+export const CollectibleCard: React.FC<Props> = (props: Props) => {
+    const { id, name, price, image, color, onClick, ...restProps } = props;
     return (
-        <CollectibleAssetWrapper {...restProps} onClick={handleAssetClick}>
+        <CollectibleCardWrapper
+            {...restProps}
+            id={id}
+            onClick={onClick || defaultHandleClick}
+            to={`${ERC721_APP_BASE_PATH}/collectible/${props.id}`}
+        >
             <ImageWrapper color={color} image={image}>
                 <PriceBadge price={price} />
             </ImageWrapper>
             <Title>{name}</Title>
-        </CollectibleAssetWrapper>
+        </CollectibleCardWrapper>
     );
 };
-
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        goToIndividualCollectible: (collectibleId: string) => dispatch(goToIndividualCollectible(collectibleId)),
-    };
-};
-
-export const CollectibleAssetContainer = connect(
-    null,
-    mapDispatchToProps,
-)(CollectibleAsset);
