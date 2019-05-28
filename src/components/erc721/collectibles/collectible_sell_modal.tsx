@@ -9,7 +9,7 @@ import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
 import { Theme, themeDimensions } from '../../../themes/commons';
 import { todayInSeconds, tomorrow } from '../../../util/time_utils';
-import { Collectible, OrderSide, StoreState } from '../../../util/types';
+import { ButtonVariant, Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { Button } from '../../common/button';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
@@ -372,7 +372,11 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                             <option value={expirationDates[2]}>7 days</option>
                         </SelectStyled>
                     </FormRow>
-                    <ButtonStyled onClick={this._openStepsModals} disabled={this._isFormInvalid()} variant="error">
+                    <ButtonStyled
+                        onClick={this._openStepsModals}
+                        disabled={this._isFormInvalid()}
+                        variant={ButtonVariant.Error}
+                    >
                         Sell
                     </ButtonStyled>
                 </ModalContent>

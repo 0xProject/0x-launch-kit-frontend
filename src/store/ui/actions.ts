@@ -1,8 +1,11 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_CONTRACT_ADDRESSES } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS } from '../../common/constants';
+import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
+import { InsufficientTokenBalanceException } from '../../exceptions/insufficient_token_balance_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
+import { isWeth } from '../../util/known_tokens';
 import { buildLimitOrder, buildMarketOrders, isDutchAuction } from '../../util/orders';
 import {
     createBasicBuyCollectibleSteps,
@@ -89,17 +92,16 @@ export const startSellCollectibleSteps: ThunkCreator = (
     expirationDate: BigNumber,
     endingPrice: BigNumber | null,
 ) => {
-    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
         const state = getState();
 
         const contractWrapers = await getContractWrappers();
         const ethAccount = selectors.getEthAccount(state);
 
-        const web3Wrapper = await getWeb3Wrapper();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const collectibleAddress = COLLECTIBLE_CONTRACT_ADDRESSES[networkId];
-
-        const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(collectibleAddress, ethAccount);
+        const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(
+            COLLECTIBLE_ADDRESS,
+            ethAccount,
+        );
         const sellCollectibleSteps: Step[] = createSellCollectibleSteps(
             collectible,
             startingPrice,
@@ -182,6 +184,8 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const totalEthBalance = selectors.getTotalEthBalance(state);
+        const quoteTokenBalance = selectors.getQuoteTokenBalance(state);
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
         const [, filledAmounts, canBeFilled] = buildMarketOrders(
@@ -192,8 +196,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             side,
         );
         if (!canBeFilled) {
-            window.alert('There are no enough orders to fill this amount');
-            return;
+            throw new InsufficientOrdersAmountException();
         }
 
         const totalFilledAmount = filledAmounts.reduce((total: BigNumber, currentValue: BigNumber) => {
@@ -201,6 +204,19 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         }, new BigNumber(0));
 
         const price = totalFilledAmount.div(amount);
+
+        // Case 1: the quote token is wETH and the user does not have enough to wrap and pay orders
+        if (isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount)) {
+            throw new InsufficientTokenBalanceException(quoteToken.symbol);
+        }
+        // Case 2: the quote token is NOT wETH and the user does not have enough quote to pay orders
+        if (
+            !isWeth(quoteToken.symbol) &&
+            quoteTokenBalance &&
+            quoteTokenBalance.balance.isLessThan(totalFilledAmount)
+        ) {
+            throw new InsufficientTokenBalanceException(quoteToken.symbol);
+        }
 
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
             baseToken,

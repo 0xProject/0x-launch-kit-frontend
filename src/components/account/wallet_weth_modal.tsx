@@ -3,8 +3,9 @@ import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-import { ETH_DECIMALS } from '../../common/constants';
+import { ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS } from '../../common/constants';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
+import { ButtonVariant } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
 import { Button as ButtonBase } from '../common/button';
 import { CloseModalButton } from '../common/icons/close_modal_button';
@@ -240,7 +241,6 @@ const InputEth = styled<any>(BigNumberInput)`
 
 const minEth = unitsInTokenAmount('0.05', ETH_DECIMALS);
 const minSlidervalue = '0.00';
-const DECIMALS_DISPLAYED = 3;
 const PLACEHOLDER = '0.000';
 class WethModal extends React.Component<Props, State> {
     public state = {
@@ -254,8 +254,8 @@ class WethModal extends React.Component<Props, State> {
 
         const selectedEth = totalEth.minus(selectedWeth);
         const initialWethStr = tokenAmountInUnits(wethBalance, ETH_DECIMALS);
-        const selectedWethStr = tokenAmountInUnits(selectedWeth, ETH_DECIMALS, DECIMALS_DISPLAYED);
-        const selectedEthStr = tokenAmountInUnits(selectedEth, ETH_DECIMALS, DECIMALS_DISPLAYED);
+        const selectedWethStr = tokenAmountInUnits(selectedWeth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
+        const selectedEthStr = tokenAmountInUnits(selectedEth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
         const totalEthStr = tokenAmountInUnits(totalEth, ETH_DECIMALS);
         const isInsufficientEth = selectedEth.isLessThan(minEth);
         const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
@@ -278,7 +278,7 @@ class WethModal extends React.Component<Props, State> {
                                     onChange={this._updateEth}
                                     value={selectedEth}
                                     placeholder={PLACEHOLDER}
-                                    valueFixedDecimals={DECIMALS_DISPLAYED}
+                                    valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
                                 />
                             </form>
                         ) : (
@@ -304,7 +304,7 @@ class WethModal extends React.Component<Props, State> {
                                     value={selectedWeth}
                                     boxType={ETHBoxType.Weth}
                                     placeholder={PLACEHOLDER}
-                                    valueFixedDecimals={DECIMALS_DISPLAYED}
+                                    valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
                                 />
                             </form>
                         ) : (
@@ -343,7 +343,7 @@ class WethModal extends React.Component<Props, State> {
                         0.05 ETH Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>
-                <Button onClick={this.submit} disabled={isDisabled} variant="balance">
+                <Button onClick={this.submit} disabled={isDisabled} variant={ButtonVariant.Balance}>
                     Update Balance{isSubmitting && '...'}
                 </Button>
             </Modal>

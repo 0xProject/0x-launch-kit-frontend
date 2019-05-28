@@ -12,12 +12,13 @@ import {
     getEthAccount,
     getQuoteToken,
     getQuoteTokenBalance,
+    getTotalEthBalance,
     getWeb3State,
 } from '../../../store/selectors';
 import { errorsWallet } from '../../../util/error_messages';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
+import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
@@ -133,6 +134,7 @@ interface StateProps {
     ethAccount: string;
     baseTokenBalance: TokenBalance | null;
     quoteTokenBalance: TokenBalance | null;
+    totalEthBalance: BigNumber;
 }
 
 interface DispatchProps {
@@ -212,17 +214,18 @@ class WalletBalance extends React.Component<Props, State> {
             quoteToken,
             quoteTokenBalance,
             baseTokenBalance,
+            totalEthBalance,
         } = this.props;
 
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
-            const quoteBalanceString = tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
+            const quoteBalanceString = isWeth(quoteToken.symbol)
+                ? tokenAmountInUnits(totalEthBalance, quoteTokenBalance.token.decimals)
+                : tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
             const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, quoteTokenBalance.token.decimals);
             const toolTip = isWeth(quoteToken.symbol) ? (
-                <TooltipStyled
-                    description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
-                    iconType={IconType.Fill}
-                />
+                <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />
             ) : null;
+            const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ETH' : tokenSymbolToDisplayString(currencyPair.quote);
             content = (
                 <>
                     <LabelWrapper>
@@ -231,7 +234,7 @@ class WalletBalance extends React.Component<Props, State> {
                     </LabelWrapper>
                     <LabelWrapper>
                         <Label>
-                            {tokenSymbolToDisplayString(currencyPair.quote)}
+                            {quoteTokenLabel}
                             {toolTip}
                         </Label>
                         <Value>{quoteBalanceString}</Value>
@@ -270,7 +273,7 @@ class WalletBalance extends React.Component<Props, State> {
             content = (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled variant={'tertiary'} onClick={openMetamaskExtensionUrl}>
+                    <ButtonStyled variant={ButtonVariant.Tertiary} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>
                 </>
@@ -280,7 +283,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.Loading) {
             content = (
                 <>
-                    <ButtonStyled variant={'tertiary'}>{errorsWallet.mmLoading}</ButtonStyled>
+                    <ButtonStyled variant={ButtonVariant.Tertiary}>{errorsWallet.mmLoading}</ButtonStyled>
                 </>
             );
         }
@@ -324,6 +327,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethAccount: getEthAccount(state),
         quoteTokenBalance: getQuoteTokenBalance(state),
         baseTokenBalance: getBaseTokenBalance(state),
+        totalEthBalance: getTotalEthBalance(state),
     };
 };
 
