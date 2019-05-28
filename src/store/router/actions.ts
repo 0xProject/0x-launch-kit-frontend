@@ -5,8 +5,17 @@ import { ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH } from '../../common/constant
 import { CollectibleFilterType } from '../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../util/sortable_collectibles';
 import { ThunkCreator } from '../../util/types';
+import { getCurrentRoutePath } from '../selectors';
 
-export const goToHomeErc20: ThunkCreator = () => {
+export const goToHome: ThunkCreator = () => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const currentRoute = getCurrentRoutePath(state);
+        currentRoute.includes(ERC20_APP_BASE_PATH) ? dispatch(goToHomeErc20()) : dispatch(goToHomeErc721());
+    };
+};
+
+const goToHomeErc20: ThunkCreator = () => {
     return async (dispatch, getState) => {
         const state = getState();
 
@@ -32,7 +41,7 @@ export const goToWallet: ThunkCreator = () => {
     };
 };
 
-export const goToHomeErc721 = () => {
+const goToHomeErc721 = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
 
