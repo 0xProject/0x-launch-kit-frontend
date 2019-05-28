@@ -35,7 +35,7 @@ BtnStyled.defaultProps = {
 interface Props {
     asset: Collectible;
     ethAccount: string;
-    isDisabled: boolean;
+    isDisabled?: boolean;
     onBuy: () => void;
     onCancel: () => void;
     onSell: () => void;
@@ -43,8 +43,8 @@ interface Props {
 }
 
 export const TradeButtonContainer: React.FC<Props> = ({
-    ethAccount,
     asset,
+    ethAccount,
     onBuy,
     onSell,
     onCancel,
@@ -74,8 +74,8 @@ export const TradeButtonContainer: React.FC<Props> = ({
         textColor = theme.componentsTheme.buttonTextColor;
     } else if (!isOwner && order) {
         const price = getCollectiblePrice(asset) as BigNumber;
-        backgroundColor = theme.componentsTheme.buttonSellBackgroundColor;
-        borderColor = theme.componentsTheme.buttonSellBackgroundColor;
+        backgroundColor = theme.componentsTheme.buttonCollectibleSellBackgroundColor;
+        borderColor = theme.componentsTheme.buttonCollectibleSellBackgroundColor;
         buttonText = `Buy for ${tokenAmountInUnits(price, ETH_DECIMALS)} ETH`;
         onClick = onBuy;
         textColor = theme.componentsTheme.buttonTextColor;
