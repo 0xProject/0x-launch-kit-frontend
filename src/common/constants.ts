@@ -71,9 +71,6 @@ export const ERC20_THEME_NAME: string = process.env.REACT_APP_ERC20_THEME_NAME |
 
 export const ERC721_THEME_NAME: string = process.env.REACT_APP_ERC721_THEME_NAME || 'LIGHT_THEME';
 
-export const SHOULD_ALWAYS_PROMPT_CONNECT_METAMASK: boolean =
-    process.env.REACT_APP_ENABLE_ALWAYS_PROMPT_CONNECT_METAMASK === 'true';
-
 export const COLLECTIBLES_SOURCE: string = process.env.REACT_APP_COLLECTIBLES_SOURCE || 'mocked';
 
 export const COLLECTIBLE_NAME: string = process.env.REACT_APP_COLLECTIBLE_NAME || 'Unknown';
