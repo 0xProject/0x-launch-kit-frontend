@@ -48,9 +48,9 @@ interface OwnProps {
 type Props = OwnProps;
 
 export const GeneralLayout = (props: Props) => {
-    const { children, toolbar } = props;
+    const { children, toolbar, ...restProps } = props;
     return (
-        <General>
+        <General {...restProps}>
             {toolbar}
             <ContentScroll>
                 <Content>{children}</Content>

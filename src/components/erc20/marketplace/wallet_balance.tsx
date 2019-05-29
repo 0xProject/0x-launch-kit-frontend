@@ -88,7 +88,7 @@ interface ErrorCardStyledProps {
 }
 
 const ErrorCardStyled = styled(ErrorCard)<ErrorCardStyledProps>`
-    cursor: ${props => props.cursor}
+    cursor: ${props => props.cursor};
     position: absolute;
     top: 50%;
     transform: translateY(-50%);

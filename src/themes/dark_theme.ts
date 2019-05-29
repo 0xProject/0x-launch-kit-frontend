@@ -29,6 +29,7 @@ const modalThemeStyle: ThemeModalStyle = {
 
 const darkThemeColors: ThemeProperties = {
     background: '#000',
+    backgroundERC721: '#000',
     borderColor: '#5A5A5A',
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
     buttonBuyBackgroundColor: '#3CB34F',
@@ -79,6 +80,7 @@ const darkThemeColors: ThemeProperties = {
     modalSearchFieldBorderColor: '#fff',
     modalSearchFieldPlaceholderColor: '#DEDEDE',
     modalSearchFieldTextColor: '#000',
+    myWalletLinkColor: '#fff',
     notificationActive: '#F8F8F8',
     notificationIconColor: '#fff',
     notificationsBadgeColor: '#ff6534',
@@ -104,7 +106,6 @@ const darkThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
-    myWalletLinkColor: '#fff',
 };
 
 export class DarkTheme extends DefaultTheme {
