@@ -280,11 +280,14 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
     return async (dispatch, getState, { initializeWeb3Wrapper }) => {
         dispatch(setWeb3State(Web3State.Loading));
         const web3Wrapper = await initializeWeb3Wrapper();
+        const state = getState();
+        const currentRoute = getCurrentRoutePath(state);
         if (!web3Wrapper) {
-            initializeAppNoMetamaskOrLocked();
+            if (currentRoute.includes(ERC20_APP_BASE_PATH)) {
+                initializeAppNoMetamaskOrLocked();
+            }
         } else {
             try {
-                const state = getState();
                 const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
                 const networkId = await web3Wrapper.getNetworkIdAsync();
 
@@ -317,7 +320,6 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(updateMarketPriceEther());
                 // Inits wallet based on the current app
-                const currentRoute = getCurrentRoutePath(state);
                 currentRoute.includes(ERC20_APP_BASE_PATH)
                     ? dispatch(initWalletERC20(ethAccount, networkId))
                     : dispatch(initWalletERC721(ethAccount));
