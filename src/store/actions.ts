@@ -27,11 +27,13 @@ export const updateStore = () => {
         const wethToken = knownTokens.getWethToken();
         const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
         const wethBalance = await getTokenBalance(wethToken, ethAccount);
+
         // Generals update for both apps
         dispatch(setEthBalance(ethBalance));
         dispatch(setWethBalance(wethBalance));
         dispatch(updateGasInfo());
         dispatch(updateMarketPriceEther());
+
         // Updates based on the current app
         const currentRoute = getCurrentRoutePath(state);
         currentRoute.includes(ERC20_APP_BASE_PATH)
@@ -67,6 +69,7 @@ export const updateERC20Store = (ethAccount: string, networkId: number) => {
             const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderBook());
         }
