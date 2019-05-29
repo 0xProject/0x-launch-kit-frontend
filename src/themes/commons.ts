@@ -5,6 +5,7 @@ export interface Theme {
 
 export interface ThemeProperties {
     background: string;
+    backgroundERC721: string;
     borderColor: string;
     boxShadow: string;
     buttonBuyBackgroundColor: string;
@@ -55,6 +56,7 @@ export interface ThemeProperties {
     modalSearchFieldBorderColor: string;
     modalSearchFieldPlaceholderColor: string;
     modalSearchFieldTextColor: string;
+    myWalletLinkColor: string;
     notificationActive: string;
     notificationIconColor: string;
     notificationsBadgeColor: string;
@@ -80,7 +82,6 @@ export interface ThemeProperties {
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
-    myWalletLinkColor: string;
     simplifiedTextBoxColor: string;
 }
 
