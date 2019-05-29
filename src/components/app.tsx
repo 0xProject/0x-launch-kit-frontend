@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import {
-    SHOULD_ENABLE_NO_METAMASK_PROMPT,
+    SHOULD_ALWAYS_PROMPT_CONNECT_METAMASK,
     UI_UPDATE_CHECK_INTERVAL,
     UPDATE_ETHER_PRICE_INTERVAL,
 } from '../common/constants';
@@ -37,10 +37,10 @@ class App extends React.Component<Props> {
 
     public componentDidMount = () => {
         const wasWalletConnected = localStorage.getWalletConnected();
-        if (SHOULD_ENABLE_NO_METAMASK_PROMPT && wasWalletConnected) {
-            this.props.onConnectWallet();
-        } else {
+        if (SHOULD_ALWAYS_PROMPT_CONNECT_METAMASK || !wasWalletConnected) {
             this.props.onInitMetamaskState();
+        } else {
+            this.props.onConnectWallet();
         }
     };
 
