@@ -87,7 +87,7 @@ export const cancelOrder: ThunkCreator = (order: UIOrder) => {
 export const submitCollectibleOrder: ThunkCreator = (signedOrder: SignedOrder) => {
     return async dispatch => {
         try {
-            const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+            const submitResult = await getRelayer().submitOrderAsync(signedOrder);
             // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());
             // TODO: Dispatch notification
@@ -103,7 +103,7 @@ export const submitLimitOrder: ThunkCreator = (signedOrder: SignedOrder, amount:
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         try {
-            const submitResult = await getRelayer().client.submitOrderAsync(signedOrder);
+            const submitResult = await getRelayer().submitOrderAsync(signedOrder);
 
             // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderbookAndUserOrders());

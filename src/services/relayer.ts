@@ -5,10 +5,10 @@ import { RELAYER_URL } from '../common/constants';
 import { Token } from '../util/types';
 
 export class Relayer {
-    public readonly client: HttpClient;
+    private readonly _client: HttpClient;
 
     constructor(client: HttpClient) {
-        this.client = client;
+        this._client = client;
     }
 
     public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
@@ -21,7 +21,7 @@ export class Relayer {
     }
 
     public async getOrderConfigAsync(orderConfig: OrderConfigRequest): Promise<OrderConfigResponse> {
-        return this.client.getOrderConfigAsync(orderConfig);
+        return this._client.getOrderConfigAsync(orderConfig);
     }
 
     public async getUserOrdersAsync(
@@ -38,7 +38,7 @@ export class Relayer {
     }
 
     public async getCurrencyPairPriceAsync(baseToken: Token, quoteToken: Token): Promise<BigNumber | null> {
-        const { asks } = await this.client.getOrderbookAsync({
+        const { asks } = await this._client.getOrderbookAsync({
             baseAssetData: assetDataUtils.encodeERC20AssetData(baseToken.address),
             quoteAssetData: assetDataUtils.encodeERC20AssetData(quoteToken.address),
         });
@@ -58,7 +58,7 @@ export class Relayer {
         collectibleAddress: string,
         wethAddress: string,
     ): Promise<SignedOrder[]> {
-        const result = await this.client.getOrdersAsync({
+        const result = await this._client.getOrdersAsync({
             makerAssetProxyId: AssetProxyId.ERC721,
             takerAssetProxyId: AssetProxyId.ERC20,
             makerAssetAddress: collectibleAddress,
@@ -66,6 +66,10 @@ export class Relayer {
         });
 
         return result.records.map(record => record.order);
+    }
+
+    public async submitOrderAsync(order: SignedOrder): Promise<void> {
+        return this._client.submitOrderAsync(order);
     }
 
     private async _getOrdersAsync(
@@ -84,7 +88,7 @@ export class Relayer {
         let page = 1;
 
         while (hasMorePages) {
-            const { total, records, perPage } = await this.client.getOrdersAsync({
+            const { total, records, perPage } = await this._client.getOrdersAsync({
                 ...requestOpts,
                 page,
             });
