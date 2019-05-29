@@ -1,14 +1,17 @@
 import { assetDataUtils, AssetProxyId, BigNumber } from '0x.js';
 import { HttpClient, OrderConfigRequest, OrderConfigResponse, SignedOrder } from '@0x/connect';
+import { RateLimit } from 'async-sema';
 
 import { RELAYER_URL } from '../common/constants';
 import { Token } from '../util/types';
 
 export class Relayer {
     private readonly _client: HttpClient;
+    private readonly _rateLimit: () => Promise<void>;
 
-    constructor(client: HttpClient) {
+    constructor(client: HttpClient, options: { rps: number }) {
         this._client = client;
+        this._rateLimit = RateLimit(options.rps); // requests per second
     }
 
     public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
@@ -21,6 +24,7 @@ export class Relayer {
     }
 
     public async getOrderConfigAsync(orderConfig: OrderConfigRequest): Promise<OrderConfigResponse> {
+        await this._rateLimit();
         return this._client.getOrderConfigAsync(orderConfig);
     }
 
@@ -38,6 +42,7 @@ export class Relayer {
     }
 
     public async getCurrencyPairPriceAsync(baseToken: Token, quoteToken: Token): Promise<BigNumber | null> {
+        await this._rateLimit();
         const { asks } = await this._client.getOrderbookAsync({
             baseAssetData: assetDataUtils.encodeERC20AssetData(baseToken.address),
             quoteAssetData: assetDataUtils.encodeERC20AssetData(quoteToken.address),
@@ -58,6 +63,7 @@ export class Relayer {
         collectibleAddress: string,
         wethAddress: string,
     ): Promise<SignedOrder[]> {
+        await this._rateLimit();
         const result = await this._client.getOrdersAsync({
             makerAssetProxyId: AssetProxyId.ERC721,
             takerAssetProxyId: AssetProxyId.ERC20,
@@ -69,6 +75,7 @@ export class Relayer {
     }
 
     public async submitOrderAsync(order: SignedOrder): Promise<void> {
+        await this._rateLimit();
         return this._client.submitOrderAsync(order);
     }
 
@@ -88,6 +95,7 @@ export class Relayer {
         let page = 1;
 
         while (hasMorePages) {
+            await this._rateLimit();
             const { total, records, perPage } = await this._client.getOrdersAsync({
                 ...requestOpts,
                 page,
@@ -110,7 +118,7 @@ let relayer: Relayer;
 export const getRelayer = (): Relayer => {
     if (!relayer) {
         const client = new HttpClient(RELAYER_URL);
-        relayer = new Relayer(client);
+        relayer = new Relayer(client, { rps: 5 });
     }
 
     return relayer;
