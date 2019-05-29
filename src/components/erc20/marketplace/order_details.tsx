@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { MAKER_FEE } from '../../../common/constants';
+import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { getLogger } from '../../../util/logger';
@@ -81,7 +81,11 @@ interface StateProps {
     openBuyOrders: UIOrder[];
 }
 
-type Props = StateProps & OwnProps;
+interface DispatchProps {
+    onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
+}
+
+type Props = StateProps & OwnProps & DispatchProps;
 
 interface State {
     feeInZrx: BigNumber;
@@ -134,20 +138,21 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     private readonly _updateOrderDetailsState = async () => {
-        const { currencyPair, orderType } = this.props;
+        const { currencyPair, orderType, orderSide } = this.props;
         if (!currencyPair) {
             return;
         }
 
         if (orderType === OrderType.Limit) {
-            const { tokenAmount, tokenPrice } = this.props;
+            const { tokenAmount, tokenPrice, onFetchTakerAndMakerFee } = this.props;
             const quoteTokenAmount = tokenAmount.multipliedBy(tokenPrice);
+            const { makerFee } = await onFetchTakerAndMakerFee(tokenAmount, tokenPrice, orderSide);
             this.setState({
-                feeInZrx: MAKER_FEE,
+                feeInZrx: makerFee,
                 quoteTokenAmount,
             });
         } else {
-            const { tokenAmount, orderSide, openSellOrders, openBuyOrders } = this.props;
+            const { tokenAmount, openSellOrders, openBuyOrders } = this.props;
             const isSell = orderSide === OrderSide.Sell;
             const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
                 {
@@ -202,6 +207,16 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const OrderDetailsContainer = connect(mapStateToProps)(OrderDetails);
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
+            dispatch(fetchTakerAndMakerFee(amount, price, side, side)),
+    };
+};
+
+const OrderDetailsContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(OrderDetails);
 
 export { CostValue, OrderDetails, OrderDetailsContainer, Value };

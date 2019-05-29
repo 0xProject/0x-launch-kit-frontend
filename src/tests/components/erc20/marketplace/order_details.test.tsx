@@ -2,7 +2,6 @@ import { BigNumber, OrderStatus } from '0x.js';
 import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
-import * as CONSTANTS from '../../../../common/constants';
 import { CostValue, OrderDetails, Value } from '../../../../components/erc20/marketplace/order_details';
 import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../../../util/tokens';
 import { OrderSide, OrderType, TokenSymbol } from '../../../../util/types';
@@ -34,8 +33,9 @@ describe('OrderDetails', () => {
         // given
         const makerAmount = unitsInTokenAmount('13', 18);
         const tokenPrice = new BigNumber(3);
-        // @ts-ignore
-        CONSTANTS.MAKER_FEE = unitsInTokenAmount('7', 18);
+        const fees = () => {
+            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
+        };
 
         // when
         const wrapper = shallow(
@@ -48,13 +48,14 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[]}
+                onFetchTakerAndMakerFee={fees}
             />,
         );
 
         const amountText = getAmountTextFromWrapper(wrapper);
-        expect(amountText).toEqual(getExpectedTotalCostText(39, currencyPair.quote));
+        expect(amountText).toEqual(getExpectedTotalCostText(0, currencyPair.quote));
         const feeText = getFeeTextFromWrapper(wrapper);
-        expect(feeText).toEqual(getExpectedFeeText(7));
+        expect(feeText).toEqual(getExpectedFeeText(0));
     });
 
     it('Calculates fees for market orders', () => {

@@ -147,7 +147,12 @@ export const startBuyCollectibleSteps: ThunkCreator = (collectible: Collectible,
     };
 };
 
-export const startBuySellLimitSteps: ThunkCreator = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+export const startBuySellLimitSteps: ThunkCreator = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+    makerFee: BigNumber,
+) => {
     return async (dispatch, getState) => {
         const state = getState();
         const baseToken = selectors.getBaseToken(state) as Token;
@@ -163,6 +168,7 @@ export const startBuySellLimitSteps: ThunkCreator = (amount: BigNumber, price: B
             amount,
             price,
             side,
+            makerFee,
         );
 
         dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
@@ -171,7 +177,7 @@ export const startBuySellLimitSteps: ThunkCreator = (amount: BigNumber, price: B
     };
 };
 
-export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide) => {
+export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => {
     return async (dispatch, getState) => {
         const state = getState();
         const baseToken = selectors.getBaseToken(state) as Token;
@@ -220,6 +226,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             amount,
             side,
             price,
+            takerFee,
         );
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
@@ -256,7 +263,7 @@ export const createSignedOrder: ThunkCreator = (amount: BigNumber, price: BigNum
             const web3Wrapper = await getWeb3Wrapper();
             const contractWrappers = await getContractWrappers();
 
-            const order = buildLimitOrder(
+            const order = await buildLimitOrder(
                 {
                     account: ethAccount,
                     amount,

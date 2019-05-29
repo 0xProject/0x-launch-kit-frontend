@@ -6,7 +6,7 @@ import { ReactComponent as LogoSvg } from '../../../assets/icons/erc20_logo.svg'
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
-import { goToHomeErc20, goToWallet } from '../../../store/actions';
+import { goToHome, goToWallet } from '../../../store/actions';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
@@ -102,7 +102,7 @@ const ToolbarContent = (props: Props) => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        onGoToHome: () => dispatch(goToHomeErc20()),
+        onGoToHome: () => dispatch(goToHome()),
         onGoToWallet: () => dispatch(goToWallet()),
     };
 };

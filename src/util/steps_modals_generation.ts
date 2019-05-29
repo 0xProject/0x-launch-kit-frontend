@@ -1,7 +1,5 @@
 import { BigNumber, SignedOrder } from '0x.js';
 
-import { MAKER_FEE, TAKER_FEE } from '../common/constants';
-
 import { isWeth, isZrx } from './known_tokens';
 import {
     Collectible,
@@ -24,6 +22,7 @@ export const createBuySellLimitSteps = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
+    makerFee: BigNumber,
 ): Step[] => {
     const buySellLimitFlow: Step[] = [];
     let unlockBaseOrQuoteTokenStep;
@@ -42,7 +41,7 @@ export const createBuySellLimitSteps = (
     }
 
     // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
-    if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && MAKER_FEE.isGreaterThan(0)) {
+    if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && makerFee.isGreaterThan(0)) {
         const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
         if (unlockZrxStep) {
             buySellLimitFlow.push(unlockZrxStep);
@@ -146,6 +145,7 @@ export const createBuySellMarketSteps = (
     amount: BigNumber,
     side: OrderSide,
     price: BigNumber,
+    takerFee: BigNumber,
 ): Step[] => {
     const buySellMarketFlow: Step[] = [];
     const tokenToUnlock = side === OrderSide.Buy ? quoteToken : baseToken;
@@ -155,7 +155,7 @@ export const createBuySellMarketSteps = (
     }
 
     // unlock zrx (for fees) if the taker fee is positive
-    if (!isZrx(tokenToUnlock.symbol) && TAKER_FEE.isGreaterThan(0)) {
+    if (!isZrx(tokenToUnlock.symbol) && takerFee.isGreaterThan(0)) {
         const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
         if (unlockZrxStep) {
             buySellMarketFlow.push(unlockZrxStep);

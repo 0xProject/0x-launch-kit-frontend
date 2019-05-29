@@ -1,6 +1,5 @@
 import { BigNumber } from '0x.js';
 
-import * as CONSTANTS from '../../common/constants';
 import {
     createBuySellLimitSteps,
     createBuySellMarketSteps,
@@ -100,6 +99,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
         const amount: BigNumber = new BigNumber(0);
         const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
+        const makerFee = unitsInTokenAmount('1', 18);
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -110,6 +110,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
+            makerFee,
         );
 
         // then
@@ -128,6 +129,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
         const amount: BigNumber = new BigNumber(0);
         const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
+        const makerFee = unitsInTokenAmount('1', 18);
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -138,6 +140,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
+            makerFee,
         );
 
         // then
@@ -159,6 +162,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
         const amount: BigNumber = new BigNumber(0);
         const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Sell;
+        const makerFee = unitsInTokenAmount('1', 18);
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -169,6 +173,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
+            makerFee,
         );
         // then
         expect(buySellLimitFlow).toHaveLength(2);
@@ -189,8 +194,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
         const amount: BigNumber = new BigNumber(0);
         const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
-        // @ts-ignore
-        CONSTANTS.MAKER_FEE = unitsInTokenAmount('1', 18);
+        const makerFee = unitsInTokenAmount('1', 18);
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -201,6 +205,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
+            makerFee,
         );
 
         // then
@@ -225,6 +230,7 @@ describe('Buy sell market steps for zrx/weth', () => {
         const amount: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
         const amountOfWethNeededForOrders = new BigNumber('0');
+        const takerFee = unitsInTokenAmount('1', 18);
 
         // when
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
@@ -235,6 +241,7 @@ describe('Buy sell market steps for zrx/weth', () => {
             amount,
             side,
             amountOfWethNeededForOrders,
+            takerFee,
         );
 
         // then
@@ -254,8 +261,7 @@ describe('Buy sell market steps for zrx/weth', () => {
         tokenBalances[0].isUnlocked = false;
         const amount: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
-        // @ts-ignore
-        CONSTANTS.TAKER_FEE = unitsInTokenAmount('1', 18);
+        const takerFee = unitsInTokenAmount('1', 18);
         const amountOfWethNeededForOrders = new BigNumber('0');
 
         // when
@@ -267,6 +273,7 @@ describe('Buy sell market steps for zrx/weth', () => {
             amount,
             side,
             amountOfWethNeededForOrders,
+            takerFee,
         );
 
         // then
