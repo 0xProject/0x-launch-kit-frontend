@@ -81,6 +81,7 @@ export interface ThemeProperties {
     topbarBorderColor: string;
     topbarSeparatorColor: string;
     myWalletLinkColor: string;
+    simplifiedTextBoxColor: string;
 }
 
 export interface ThemeModalStyle {

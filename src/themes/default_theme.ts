@@ -104,6 +104,7 @@ const lightThemeColors: ThemeProperties = {
     topbarBorderColor: '#dedede',
     topbarSeparatorColor: '#dedede',
     myWalletLinkColor: '#333333',
+    simplifiedTextBoxColor: '#F9F9F9',
 };
 
 export class DefaultTheme implements Theme {
