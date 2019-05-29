@@ -8,15 +8,10 @@ import { truncateAddress } from '../../../util/number_utils';
 import { Collectible, StoreState } from '../../../util/types';
 import { Card } from '../../common/card';
 import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
-import { CustomTD, Table, TBody, TR } from '../../common/table';
 
 import { DutchAuctionPriceChartCard } from './dutch_auction_price_chart_card';
 
 const CollectibleDescriptionWrapper = styled.div``;
-
-const CustomTDStyled = styled(CustomTD)`
-    white-space: nowrap;
-`;
 
 const CollectibleDescriptionTitleWrapper = styled.div`
     align-items: center;
@@ -102,31 +97,11 @@ const CollectibleOwnerText = styled.p`
     margin: 0;
 `;
 
-const TransactionContainerTableWrapper = styled.div`
-    overflow-x: auto;
-    width: 100%;
-`;
-
-const ValuePlaceholder = styled.span`
-    color: #d1d1d1;
-`;
-
 const CollectibleCard = styled(Card)`
     > div {
         min-height: 0;
     }
 `;
-
-const arrowSVG = () => {
-    return (
-        <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M13.3536 4.35355C13.5488 4.15829 13.5488 3.84171 13.3536 3.64645L10.1716 0.464466C9.97631 0.269204 9.65973 0.269204 9.46447 0.464466C9.2692 0.659728 9.2692 0.976311 9.46447 1.17157L12.2929 4L9.46447 6.82843C9.2692 7.02369 9.2692 7.34027 9.46447 7.53553C9.65973 7.7308 9.97631 7.7308 10.1716 7.53553L13.3536 4.35355ZM0 4.5H13V3.5H0V4.5Z"
-                fill="black"
-            />
-        </svg>
-    );
-};
 
 interface OwnProps {
     collectibleId: string;
@@ -147,7 +122,6 @@ const CollectibleDescription = (props: Props) => {
     }
 
     const { currentOwner, description, name, assetUrl } = collectible;
-    const tableTitlesStyling = { fontWeight: '500', color: '#0036f4' };
     const typeImage = 'https://placeimg.com/32/32/any';
     const ownerImage = 'https://placeimg.com/50/50/any';
 
@@ -184,53 +158,6 @@ const CollectibleDescription = (props: Props) => {
                 ) : null}
             </CollectibleCard>
             <DutchAuctionPriceChartCard collectible={collectible} />
-            <CollectibleCard>
-                <CollectibleDescriptionInnerTitle>Transaction history</CollectibleDescriptionInnerTitle>
-                <TransactionContainerTableWrapper>
-                    <Table>
-                        <TBody>
-                            <TR>
-                                <CustomTDStyled styles={tableTitlesStyling}>Sold For</CustomTDStyled>
-                                <CustomTDStyled>123.0234 ETH</CustomTDStyled>
-                                <CustomTDStyled>Cryptokitties...</CustomTDStyled>
-                                <CustomTDStyled>{arrowSVG()}</CustomTDStyled>
-                                <CustomTDStyled>0xa49...322</CustomTDStyled>
-                                <CustomTDStyled>2/3/19</CustomTDStyled>
-                            </TR>
-                            <TR>
-                                <CustomTDStyled styles={tableTitlesStyling}>Listed at</CustomTDStyled>
-                                <CustomTDStyled>0.41 ETH</CustomTDStyled>
-                                <CustomTDStyled>0xa49...322...</CustomTDStyled>
-                                <CustomTDStyled>{arrowSVG()}</CustomTDStyled>
-                                <CustomTDStyled>Cryptokitties</CustomTDStyled>
-                                <CustomTDStyled>2/3/19</CustomTDStyled>
-                            </TR>
-                            <TR>
-                                <CustomTDStyled styles={tableTitlesStyling}>Transfer</CustomTDStyled>
-                                <CustomTDStyled>
-                                    <ValuePlaceholder>--</ValuePlaceholder>
-                                </CustomTDStyled>
-                                <CustomTDStyled>Cryptokitties...</CustomTDStyled>
-                                <CustomTDStyled>{arrowSVG()}</CustomTDStyled>
-                                <CustomTDStyled>0xa49...322</CustomTDStyled>
-                                <CustomTDStyled>2/3/19</CustomTDStyled>
-                            </TR>
-                            <TR>
-                                <CustomTDStyled styles={tableTitlesStyling}>Created</CustomTDStyled>
-                                <CustomTDStyled>
-                                    <ValuePlaceholder>
-                                        <ValuePlaceholder>--</ValuePlaceholder>
-                                    </ValuePlaceholder>
-                                </CustomTDStyled>
-                                <CustomTDStyled>Cryptokitties...</CustomTDStyled>
-                                <CustomTDStyled>{arrowSVG()}</CustomTDStyled>
-                                <CustomTDStyled>Cryptokitties</CustomTDStyled>
-                                <CustomTDStyled>2/3/19</CustomTDStyled>
-                            </TR>
-                        </TBody>
-                    </Table>
-                </TransactionContainerTableWrapper>
-            </CollectibleCard>
         </CollectibleDescriptionWrapper>
     );
 };

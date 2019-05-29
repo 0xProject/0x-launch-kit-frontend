@@ -74,8 +74,6 @@ After starting those containers, you can run `yarn start` in another terminal. A
 You can create a `.env` file to set environment variables and configure the behavior of the dApp. Start by copying the example file (`cp .env.example .env`) and modify the ones you want. Some things you can configure are:
 
 -   `REACT_APP_RELAYER_URL`: The URL of the relayer used by the dApp. Defaults to `http://localhost:3001/api/v2`
--   `REACT_APP_MAKER_FEE`: The fee in ZRX payed by the maker of an order. Defaults to `1000000000000000000`
--   `REACT_APP_TAKER_FEE`: The fee in ZRX payed when filling an order. Defaults to `100000000000000000`
 
 Check `.env.example` for the full list.
 
