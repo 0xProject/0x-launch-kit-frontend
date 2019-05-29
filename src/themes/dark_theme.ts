@@ -66,7 +66,7 @@ const darkThemeColors: ThemeProperties = {
     gray: '#808080',
     green: '#3CB34F',
     iconLockedColor: '#fff',
-    iconUnlockedColor: '#B9B9B9',
+    iconUnlockedColor: '#5A5A5A',
     inactiveTabBackgroundColor: '#1B1B1B',
     lightGray: '#B9B9B9',
     logoERC20Color: '#fff',
