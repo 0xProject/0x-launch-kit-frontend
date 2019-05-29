@@ -86,6 +86,7 @@ const lightThemeColors: ThemeProperties = {
     numberDecimalsColor: '#dedede',
     red: '#FF6534',
     rowActive: '#FBFDFF',
+    simplifiedTextBoxColor: '#F9F9F9',
     stepsProgressCheckMarkColor: '#fff',
     stepsProgressStartingDotColor: '#000',
     stepsProgressStepLineColor: 'rgba(0, 0, 0, 0.1)',
@@ -102,10 +103,11 @@ const lightThemeColors: ThemeProperties = {
     textLight: '#999',
     textLighter: '#666',
     thColor: '#B9B9B9',
+    tooltipBackgroundColor: '#222',
+    tooltipTextColor: '#fff',
     topbarBackgroundColor: '#fff',
     topbarBorderColor: '#dedede',
     topbarSeparatorColor: '#dedede',
-    simplifiedTextBoxColor: '#F9F9F9',
 };
 
 export class DefaultTheme implements Theme {

@@ -63,6 +63,7 @@ export interface ThemeProperties {
     numberDecimalsColor: string;
     red: string;
     rowActive: string;
+    simplifiedTextBoxColor: string;
     stepsProgressCheckMarkColor: string;
     stepsProgressStartingDotColor: string;
     stepsProgressStepLineColor: string;
@@ -79,10 +80,11 @@ export interface ThemeProperties {
     textLight: string;
     textLighter: string;
     thColor: string;
+    tooltipBackgroundColor: string;
+    tooltipTextColor: string;
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
-    simplifiedTextBoxColor: string;
 }
 
 export interface ThemeModalStyle {

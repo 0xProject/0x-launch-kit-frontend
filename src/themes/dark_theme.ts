@@ -87,6 +87,7 @@ const darkThemeColors: ThemeProperties = {
     numberDecimalsColor: '#5A5A5A',
     red: '#FF6534',
     rowActive: '#1B1B1B',
+    simplifiedTextBoxColor: '#1B1B1B',
     stepsProgressCheckMarkColor: '#202123',
     stepsProgressStartingDotColor: '#fff',
     stepsProgressStepLineColor: '#5A5A5A',
@@ -103,10 +104,11 @@ const darkThemeColors: ThemeProperties = {
     textLight: '#999',
     textLighter: '#666',
     thColor: '#B9B9B9',
+    tooltipBackgroundColor: '#1B1B1B',
+    tooltipTextColor: '#fff',
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
-    simplifiedTextBoxColor: '#1B1B1B',
 };
 
 export class DarkTheme extends DefaultTheme {
