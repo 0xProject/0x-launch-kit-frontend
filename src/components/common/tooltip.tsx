@@ -23,8 +23,28 @@ const TooltipPopup = styled.div`
     position: relative;
 
     .reactTooltip {
+        background-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+        color: ${props => props.theme.componentsTheme.tooltipTextColor};
         max-width: 250px;
+        opacity: 1;
         text-align: left;
+
+        &.place-left:after {
+            border-left-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+        }
+
+        &.place-right:after {
+            border-right-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+        }
+
+        &.place-top:after {
+            border-top-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+        }
+
+        &.place-bottom:after {
+            border-bottom-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+        }
+
         .multi-line {
             text-align: left;
         }

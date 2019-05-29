@@ -23,6 +23,7 @@ const CollectibleCardWrapper = styled(Link)`
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     box-sizing: border-box;
     cursor: pointer;
+    overflow: hidden;
     position: relative;
     transition: box-shadow 0.15s linear;
     text-decoration: none;
@@ -33,12 +34,11 @@ const CollectibleCardWrapper = styled(Link)`
 `;
 
 const ImageWrapper = styled.div<{ color: string; image: string }>`
+    background-clip: padding-box;
     background-color: ${props => props.color || props.theme.componentsTheme.cardBackgroundColor};
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
-    border-top-left-radius: ${themeDimensions.borderRadius};
-    border-top-right-radius: ${themeDimensions.borderRadius};
     height: 272px;
 `;
 

@@ -88,7 +88,7 @@ interface ErrorCardStyledProps {
 }
 
 const ErrorCardStyled = styled(ErrorCard)<ErrorCardStyledProps>`
-    cursor: ${props => props.cursor}
+    cursor: ${props => props.cursor};
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -113,13 +113,17 @@ const WalletErrorText = styled.p`
     padding: 20px 0;
 `;
 
-const WalletErrorFiller = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
+const SimplifiedTextBox = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
     ${props => (props.bottom ? `bottom: ${props.bottom};` : '')}
     ${props => (props.left ? `left: ${props.left};` : '')}
     ${props => (props.right ? `right: ${props.right};` : '')}
     ${props => (props.top ? `top: ${props.top};` : '')}
     position: absolute;
     z-index: 1;
+
+    rect {
+        fill: ${props => props.theme.componentsTheme.simplifiedTextBoxColor};
+    }
 `;
 
 const ButtonStyled = styled(Button)`
@@ -148,18 +152,18 @@ interface State {
     baseBalance: BigNumber;
 }
 
-const fillerBig = () => {
+const simplifiedTextBoxBig = () => {
     return (
         <svg width="67" height="14" viewBox="0 0 67 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="67" height="14" rx="4" fill="#F9F9F9" />
+            <rect width="67" height="14" rx="4" />
         </svg>
     );
 };
 
-const fillerSmall = () => {
+const simplifiedTextBoxSmall = () => {
     return (
         <svg width="56" height="14" viewBox="0 0 56 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="56" height="14" rx="4" fill="#F9F9F9" />
+            <rect width="56" height="14" rx="4" />
         </svg>
     );
 };
@@ -249,22 +253,22 @@ class WalletBalance extends React.Component<Props, State> {
                     <ErrorCardStyled
                         fontSize={FontSize.Large}
                         icon={ErrorIcons.Lock}
+                        onClick={onConnectWallet}
                         text={errorsWallet.mmConnect}
                         textAlign="center"
-                        onClick={onConnectWallet}
                     />
-                    <WalletErrorFiller top="0" left="0">
-                        {fillerBig()}
-                    </WalletErrorFiller>
-                    <WalletErrorFiller top="0" right="0">
-                        {fillerBig()}
-                    </WalletErrorFiller>
-                    <WalletErrorFiller bottom="0" left="0">
-                        {fillerSmall()}
-                    </WalletErrorFiller>
-                    <WalletErrorFiller bottom="0" right="0">
-                        {fillerSmall()}
-                    </WalletErrorFiller>
+                    <SimplifiedTextBox top="0" left="0">
+                        {simplifiedTextBoxBig()}
+                    </SimplifiedTextBox>
+                    <SimplifiedTextBox top="0" right="0">
+                        {simplifiedTextBoxBig()}
+                    </SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" left="0">
+                        {simplifiedTextBoxSmall()}
+                    </SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" right="0">
+                        {simplifiedTextBoxSmall()}
+                    </SimplifiedTextBox>
                 </WalletErrorContainer>
             );
         }
@@ -298,18 +302,18 @@ class WalletBalance extends React.Component<Props, State> {
                         text={errorsWallet.mmWrongNetwork}
                         textAlign="center"
                     />
-                    <WalletErrorFiller top="0" left="0">
-                        {fillerBig()}
-                    </WalletErrorFiller>
-                    <WalletErrorFiller top="0" right="0">
-                        {fillerBig()}
-                    </WalletErrorFiller>
-                    <WalletErrorFiller bottom="0" left="0">
-                        {fillerSmall()}
-                    </WalletErrorFiller>
-                    <WalletErrorFiller bottom="0" right="0">
-                        {fillerSmall()}
-                    </WalletErrorFiller>
+                    <SimplifiedTextBox top="0" left="0">
+                        {simplifiedTextBoxBig()}
+                    </SimplifiedTextBox>
+                    <SimplifiedTextBox top="0" right="0">
+                        {simplifiedTextBoxBig()}
+                    </SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" left="0">
+                        {simplifiedTextBoxSmall()}
+                    </SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" right="0">
+                        {simplifiedTextBoxSmall()}
+                    </SimplifiedTextBox>
                 </WalletErrorContainer>
             );
         }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../common/constants';
 import { getThemeByMarketplace } from '../../themes/theme_meta_data_utils';
@@ -18,11 +18,15 @@ import { MyCollectibles } from './pages/my_collectibles';
 
 const toolbar = <ToolbarContentContainer />;
 
+const GeneralLayoutERC721 = styled(GeneralLayout)`
+    background-color: ${props => props.theme.componentsTheme.backgroundERC721};
+`;
+
 export const Erc721App = () => {
     const themeColor = getThemeByMarketplace(MARKETPLACES.ERC721);
     return (
         <ThemeProvider theme={themeColor}>
-            <GeneralLayout toolbar={toolbar}>
+            <GeneralLayoutERC721 toolbar={toolbar}>
                 <AdBlockDetector />
                 <CollectibleSellModal />
                 <CheckMetamaskStateModalContainer />
@@ -38,7 +42,7 @@ export const Erc721App = () => {
                         {({ match }) => match && <IndividualCollectible collectibleId={match.params.id} />}
                     </Route>
                 </Switch>
-            </GeneralLayout>
+            </GeneralLayoutERC721>
         </ThemeProvider>
     );
 };

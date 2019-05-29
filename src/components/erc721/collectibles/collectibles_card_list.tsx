@@ -62,8 +62,8 @@ const getCollectibleCards = (
                 image={image}
                 key={index}
                 name={name}
-                price={sortableCollectible.price}
                 onClick={onClick}
+                price={sortableCollectible.price}
             />
         );
     });

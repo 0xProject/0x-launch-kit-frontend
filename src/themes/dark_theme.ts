@@ -29,6 +29,7 @@ const modalThemeStyle: ThemeModalStyle = {
 
 const darkThemeColors: ThemeProperties = {
     background: '#000',
+    backgroundERC721: '#000',
     borderColor: '#5A5A5A',
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
     buttonBuyBackgroundColor: '#3CB34F',
@@ -65,7 +66,7 @@ const darkThemeColors: ThemeProperties = {
     gray: '#808080',
     green: '#3CB34F',
     iconLockedColor: '#fff',
-    iconUnlockedColor: '#B9B9B9',
+    iconUnlockedColor: '#5A5A5A',
     inactiveTabBackgroundColor: '#1B1B1B',
     lightGray: '#B9B9B9',
     logoERC20Color: '#fff',
@@ -79,12 +80,14 @@ const darkThemeColors: ThemeProperties = {
     modalSearchFieldBorderColor: '#fff',
     modalSearchFieldPlaceholderColor: '#DEDEDE',
     modalSearchFieldTextColor: '#000',
+    myWalletLinkColor: '#fff',
     notificationActive: '#F8F8F8',
     notificationIconColor: '#fff',
     notificationsBadgeColor: '#ff6534',
     numberDecimalsColor: '#5A5A5A',
     red: '#FF6534',
     rowActive: '#1B1B1B',
+    simplifiedTextBoxColor: '#1B1B1B',
     stepsProgressCheckMarkColor: '#202123',
     stepsProgressStartingDotColor: '#fff',
     stepsProgressStepLineColor: '#5A5A5A',
@@ -101,10 +104,11 @@ const darkThemeColors: ThemeProperties = {
     textLight: '#999',
     textLighter: '#666',
     thColor: '#B9B9B9',
+    tooltipBackgroundColor: '#1B1B1B',
+    tooltipTextColor: '#fff',
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
-    myWalletLinkColor: '#fff',
 };
 
 export class DarkTheme extends DefaultTheme {

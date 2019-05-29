@@ -28,6 +28,7 @@ const modalThemeStyle: ThemeModalStyle = {
 
 const lightThemeColors: ThemeProperties = {
     background: '#f4f3f4',
+    backgroundERC721: '#F9FAFC',
     borderColor: '#dedede',
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
     buttonBuyBackgroundColor: '#3CB34F',
@@ -78,12 +79,14 @@ const lightThemeColors: ThemeProperties = {
     modalSearchFieldBorderColor: '#fff',
     modalSearchFieldPlaceholderColor: '#DEDEDE',
     modalSearchFieldTextColor: '#000',
+    myWalletLinkColor: '#333333',
     notificationActive: '#F8F8F8',
     notificationIconColor: '#474747',
     notificationsBadgeColor: '#ff6534',
     numberDecimalsColor: '#dedede',
     red: '#FF6534',
     rowActive: '#FBFDFF',
+    simplifiedTextBoxColor: '#F9F9F9',
     stepsProgressCheckMarkColor: '#fff',
     stepsProgressStartingDotColor: '#000',
     stepsProgressStepLineColor: 'rgba(0, 0, 0, 0.1)',
@@ -100,10 +103,11 @@ const lightThemeColors: ThemeProperties = {
     textLight: '#999',
     textLighter: '#666',
     thColor: '#B9B9B9',
+    tooltipBackgroundColor: '#222',
+    tooltipTextColor: '#fff',
     topbarBackgroundColor: '#fff',
     topbarBorderColor: '#dedede',
     topbarSeparatorColor: '#dedede',
-    myWalletLinkColor: '#333333',
 };
 
 export class DefaultTheme implements Theme {

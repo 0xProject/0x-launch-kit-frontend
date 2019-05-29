@@ -5,6 +5,7 @@ export interface Theme {
 
 export interface ThemeProperties {
     background: string;
+    backgroundERC721: string;
     borderColor: string;
     boxShadow: string;
     buttonBuyBackgroundColor: string;
@@ -55,12 +56,14 @@ export interface ThemeProperties {
     modalSearchFieldBorderColor: string;
     modalSearchFieldPlaceholderColor: string;
     modalSearchFieldTextColor: string;
+    myWalletLinkColor: string;
     notificationActive: string;
     notificationIconColor: string;
     notificationsBadgeColor: string;
     numberDecimalsColor: string;
     red: string;
     rowActive: string;
+    simplifiedTextBoxColor: string;
     stepsProgressCheckMarkColor: string;
     stepsProgressStartingDotColor: string;
     stepsProgressStepLineColor: string;
@@ -77,10 +80,11 @@ export interface ThemeProperties {
     textLight: string;
     textLighter: string;
     thColor: string;
+    tooltipBackgroundColor: string;
+    tooltipTextColor: string;
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
-    myWalletLinkColor: string;
 }
 
 export interface ThemeModalStyle {
