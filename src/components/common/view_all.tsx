@@ -19,7 +19,7 @@ const ViewAllWrapper = styled(Link)`
     text-decoration: none;
 
     svg {
-        margin: 0 14px 0 0;
+        margin: 0 0 0 8px;
     }
 `;
 
@@ -27,8 +27,8 @@ export const ViewAll: React.FC<Props> = props => {
     const { to, text, ...restProps } = props;
     return (
         <ViewAllWrapper to={to} {...restProps}>
-            <ViewAllIcon />
             {text}
+            <ViewAllIcon />
         </ViewAllWrapper>
     );
 };
