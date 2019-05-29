@@ -7,6 +7,12 @@
 
 This is an example implementation of a dApp that interacts with a [0x relayer](https://github.com/0xProject/standard-relayer-api). To use it, you need to have the URL of an existing relayer, or you can start one locally for use during development.
 
+This repo ships with both an ERC-20 token trading interface and an ERC-721 marketplace interface.
+
+|                              ERC-20                              |                              ERC-721                              |
+| :--------------------------------------------------------------: | :---------------------------------------------------------------: |
+| ![](https://s3.eu-west-2.amazonaws.com/0x-wiki-images/erc20.png) | ![](https://s3.eu-west-2.amazonaws.com/0x-wiki-images/erc721.png) |
+
 ## Usage
 
 Clone this repository and install its dependencies:
