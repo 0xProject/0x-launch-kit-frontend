@@ -1,14 +1,17 @@
 import { assetDataUtils, AssetProxyId, BigNumber } from '0x.js';
 import { HttpClient, OrderConfigRequest, OrderConfigResponse, SignedOrder } from '@0x/connect';
+import { RateLimit } from 'async-sema';
 
 import { RELAYER_URL } from '../common/constants';
 import { Token } from '../util/types';
 
 export class Relayer {
-    public readonly client: HttpClient;
+    private readonly _client: HttpClient;
+    private readonly _rateLimit: () => Promise<void>;
 
-    constructor(client: HttpClient) {
-        this.client = client;
+    constructor(client: HttpClient, options: { rps: number }) {
+        this._client = client;
+        this._rateLimit = RateLimit(options.rps); // requests per second
     }
 
     public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
@@ -21,7 +24,8 @@ export class Relayer {
     }
 
     public async getOrderConfigAsync(orderConfig: OrderConfigRequest): Promise<OrderConfigResponse> {
-        return this.client.getOrderConfigAsync(orderConfig);
+        await this._rateLimit();
+        return this._client.getOrderConfigAsync(orderConfig);
     }
 
     public async getUserOrdersAsync(
@@ -38,7 +42,8 @@ export class Relayer {
     }
 
     public async getCurrencyPairPriceAsync(baseToken: Token, quoteToken: Token): Promise<BigNumber | null> {
-        const { asks } = await this.client.getOrderbookAsync({
+        await this._rateLimit();
+        const { asks } = await this._client.getOrderbookAsync({
             baseAssetData: assetDataUtils.encodeERC20AssetData(baseToken.address),
             quoteAssetData: assetDataUtils.encodeERC20AssetData(quoteToken.address),
         });
@@ -58,7 +63,8 @@ export class Relayer {
         collectibleAddress: string,
         wethAddress: string,
     ): Promise<SignedOrder[]> {
-        const result = await this.client.getOrdersAsync({
+        await this._rateLimit();
+        const result = await this._client.getOrdersAsync({
             makerAssetProxyId: AssetProxyId.ERC721,
             takerAssetProxyId: AssetProxyId.ERC20,
             makerAssetAddress: collectibleAddress,
@@ -66,6 +72,11 @@ export class Relayer {
         });
 
         return result.records.map(record => record.order);
+    }
+
+    public async submitOrderAsync(order: SignedOrder): Promise<void> {
+        await this._rateLimit();
+        return this._client.submitOrderAsync(order);
     }
 
     private async _getOrdersAsync(
@@ -84,7 +95,8 @@ export class Relayer {
         let page = 1;
 
         while (hasMorePages) {
-            const { total, records, perPage } = await this.client.getOrdersAsync({
+            await this._rateLimit();
+            const { total, records, perPage } = await this._client.getOrdersAsync({
                 ...requestOpts,
                 page,
             });
@@ -106,7 +118,7 @@ let relayer: Relayer;
 export const getRelayer = (): Relayer => {
     if (!relayer) {
         const client = new HttpClient(RELAYER_URL);
-        relayer = new Relayer(client);
+        relayer = new Relayer(client, { rps: 5 });
     }
 
     return relayer;

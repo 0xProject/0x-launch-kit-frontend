@@ -5,7 +5,7 @@ import { Mocked } from './mocked';
 import { Opensea } from './opensea';
 
 const sources: { [key: string]: CollectibleMetadataSource } = {
-    opensea: new Opensea(),
+    opensea: new Opensea({ rps: 5 }),
     mocked: new Mocked(),
 };
 
