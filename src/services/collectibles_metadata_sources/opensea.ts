@@ -16,7 +16,7 @@ export class Opensea implements CollectibleMetadataSource {
     public static getAssetAsCollectible(asset: any): Collectible {
         return {
             tokenId: asset.token_id,
-            name: asset.name,
+            name: asset.name ? asset.name : `${asset.asset_contract.name} - ${asset.token_id}`,
             color: asset.background_color ? `#${asset.background_color}` : '',
             image: asset.image_url,
             currentOwner: asset.owner.address,
