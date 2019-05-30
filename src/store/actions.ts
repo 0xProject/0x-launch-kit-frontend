@@ -1,13 +1,14 @@
-import { ERC20_APP_BASE_PATH, MAINNET_ID } from '../common/constants';
+import { MAINNET_ID } from '../common/constants';
 import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
+import { MARKETPLACES } from '../util/types';
 
 import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
 import { getAllCollectibles } from './collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
-import { getCurrencyPair, getCurrentRoutePath } from './selectors';
+import { getCurrencyPair, getCurrentMarketPlace } from './selectors';
 
 export * from './blockchain/actions';
 export * from './market/actions';
@@ -35,10 +36,12 @@ export const updateStore = () => {
         dispatch(updateMarketPriceEther());
 
         // Updates based on the current app
-        const currentRoute = getCurrentRoutePath(state);
-        currentRoute.includes(ERC20_APP_BASE_PATH)
-            ? dispatch(updateERC20Store(ethAccount, networkId))
-            : dispatch(updateERC721Store(ethAccount));
+        const currentMarketPlace = getCurrentMarketPlace(state);
+        if (currentMarketPlace === MARKETPLACES.ERC20) {
+            dispatch(updateERC20Store(ethAccount, networkId));
+        } else {
+            dispatch(updateERC721Store(ethAccount));
+        }
     };
 };
 

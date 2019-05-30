@@ -1,7 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_ADDRESS, ERC20_APP_BASE_PATH, MAINNET_ID, START_BLOCK_LIMIT } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, MAINNET_ID, START_BLOCK_LIMIT } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
@@ -17,6 +17,7 @@ import {
     BlockchainState,
     Collectible,
     GasInfo,
+    MARKETPLACES,
     OrderSide,
     ThunkCreator,
     Token,
@@ -28,7 +29,7 @@ import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,
-    getCurrentRoutePath,
+    getCurrentMarketPlace,
     getEthAccount,
     getGasPriceInWei,
     getMarkets,
@@ -281,9 +282,9 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
         dispatch(setWeb3State(Web3State.Loading));
         const web3Wrapper = await initializeWeb3Wrapper();
         const state = getState();
-        const currentRoute = getCurrentRoutePath(state);
+        const currentMarketPlace = getCurrentMarketPlace(state);
         if (!web3Wrapper) {
-            if (currentRoute.includes(ERC20_APP_BASE_PATH)) {
+            if (currentMarketPlace === MARKETPLACES.ERC20) {
                 initializeAppNoMetamaskOrLocked();
             }
         } else {
@@ -320,9 +321,13 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(updateMarketPriceEther());
                 // Inits wallet based on the current app
-                currentRoute.includes(ERC20_APP_BASE_PATH)
-                    ? dispatch(initWalletERC20(ethAccount, networkId))
-                    : dispatch(initWalletERC721(ethAccount));
+                if (currentMarketPlace === MARKETPLACES.ERC20) {
+                    // tslint:disable-next-line:no-floating-promises
+                    dispatch(initWalletERC20(ethAccount, networkId));
+                } else {
+                    // tslint:disable-next-line:no-floating-promises
+                    dispatch(initWalletERC721(ethAccount));
+                }
             } catch (error) {
                 // Web3Error
                 logger.error('There was an error fetching the account or networkId from web3', error);
