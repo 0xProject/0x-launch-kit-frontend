@@ -1,9 +1,11 @@
 import { BigNumber, OrderStatus } from '0x.js';
 import { createSelector } from 'reselect';
 
+import { ERC20_APP_BASE_PATH } from '../common/constants';
 import { isWeth } from '../util/known_tokens';
 import {
     Collectible,
+    MARKETPLACES,
     OrderBook,
     OrderSide,
     SearchTokenBalanceObject,
@@ -43,6 +45,11 @@ export const getCollectibleById = (state: StoreState, props: { collectibleId: st
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 export const getCurrentRoutePath = (state: StoreState) => state.router.location.pathname;
 export const getRouterLocationSearch = (state: StoreState) => state.router.location.search;
+
+export const getCurrentMarketPlace = createSelector(
+    getCurrentRoutePath,
+    (currentRoute: string) => (currentRoute.includes(ERC20_APP_BASE_PATH) ? MARKETPLACES.ERC20 : MARKETPLACES.ERC721),
+);
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {
