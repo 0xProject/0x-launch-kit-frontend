@@ -104,7 +104,7 @@ const darkThemeColors: ThemeProperties = {
     textLight: '#999',
     textLighter: '#666',
     thColor: '#B9B9B9',
-    tooltipBackgroundColor: '#1B1B1B',
+    tooltipBackgroundColor: '#000',
     tooltipTextColor: '#fff',
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
