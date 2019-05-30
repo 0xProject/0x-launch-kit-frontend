@@ -17,18 +17,6 @@ const General = styled.div`
     }
 `;
 
-const Content = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    padding: ${themeDimensions.mainPadding};
-
-    @media (min-width: ${themeBreakPoints.xl}) {
-        flex-direction: row;
-        height: calc(100% - ${themeDimensions.footerHeight});
-    }
-`;
-
 const ContentScroll = styled.div`
     display: flex;
     flex-direction: column;
@@ -53,7 +41,7 @@ export const GeneralLayout = (props: Props) => {
         <General {...restProps}>
             {toolbar}
             <ContentScroll>
-                <Content>{children}</Content>
+                {children}
                 <Footer />
             </ContentScroll>
             <StepsModalContainer />

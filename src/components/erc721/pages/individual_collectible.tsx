@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
+import { Content } from '../common/content_wrapper';
 import { CollectibleBuySellContainer } from '../marketplace/collectible_buy_sell';
 import { CollectibleDescriptionContainer } from '../marketplace/collectible_description';
 
@@ -51,9 +52,11 @@ export const IndividualCollectible = (props: Props) => {
     }
 
     return (
-        <IndividualCollectibleWrapper>
-            <CollectibleBuySell collectibleId={collectibleId} />
-            <CollectibleDescription collectibleId={collectibleId} />
-        </IndividualCollectibleWrapper>
+        <Content>
+            <IndividualCollectibleWrapper>
+                <CollectibleBuySell collectibleId={collectibleId} />
+                <CollectibleDescription collectibleId={collectibleId} />
+            </IndividualCollectibleWrapper>
+        </Content>
     );
 };
