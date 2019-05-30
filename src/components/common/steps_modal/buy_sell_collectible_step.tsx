@@ -3,8 +3,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
-import { createSignedCollectibleOrder, submitBuyCollectible, submitCollectibleOrder } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getEthAccount, getStepsModalCurrentStep } from '../../../store/selectors';
+import {
+    createSignedCollectibleOrder,
+    goToIndividualCollectible,
+    submitBuyCollectible,
+    submitCollectibleOrder,
+} from '../../../store/actions';
+import {
+    getCurrentRoutePath,
+    getEstimatedTxTimeMs,
+    getEthAccount,
+    getStepsModalCurrentStep,
+} from '../../../store/selectors';
 import {
     Collectible,
     OrderSide,
@@ -24,6 +34,7 @@ interface StateProps {
     estimatedTxTimeMs: number;
     step: StepSellCollectible | StepBuyCollectible;
     ethAccount: string;
+    currentRoutePath: string;
 }
 
 interface DispatchProps {
@@ -36,6 +47,7 @@ interface DispatchProps {
     ) => Promise<any>;
     submitCollectibleOrder: (signedOrder: SignedOrder) => Promise<any>;
     submitBuyCollectible: (order: SignedOrder, ethAccount: string) => Promise<any>;
+    goToIndividualCollectible: (collectibleId: string) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -86,7 +98,7 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
     };
 
     private readonly _confirmOnMetamaskSell = async ({ onLoading, onDone, onError }: any) => {
-        const { step } = this.props;
+        const { step, currentRoutePath } = this.props;
         if (step.kind === StepKind.SellCollectible) {
             const stepSell: StepSellCollectible = step;
             const { startPrice, endPrice, expirationDate, side, collectible } = stepSell;
@@ -101,6 +113,11 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
                 onLoading();
                 await this.props.submitCollectibleOrder(signedOrder);
                 onDone();
+
+                // Go to the collectible's profile
+                if (!currentRoutePath.includes(`collectible/${collectible.tokenId}`)) {
+                    await this.props.goToIndividualCollectible(collectible.tokenId);
+                }
             } catch (error) {
                 onError(error);
             }
@@ -132,6 +149,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         ethAccount: getEthAccount(state),
         step: getStepsModalCurrentStep(state) as StepSellCollectible | StepBuyCollectible,
+        currentRoutePath: getCurrentRoutePath(state),
     };
 };
 
@@ -147,6 +165,7 @@ const mapDispatchToProps = (dispatch: any) => {
         ) => dispatch(createSignedCollectibleOrder(collectible, side, startPrice, expirationDate, endPrice)),
         submitBuyCollectible: (order: SignedOrder, ethAccount: string) =>
             dispatch(submitBuyCollectible(order, ethAccount)),
+        goToIndividualCollectible: (collectibleId: string) => dispatch(goToIndividualCollectible(collectibleId)),
     };
 };
 
