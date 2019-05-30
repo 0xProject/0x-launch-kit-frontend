@@ -15,15 +15,6 @@ import { WalletConnectionStatusDot } from '../../account/wallet_connections_stat
 import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
 
-interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
-
-interface StateProps {
-    ethAccount: string;
-    ethBalance: BigNumber;
-}
-
-type Props = StateProps & OwnProps;
-
 const truncateAddress = (address: string) => {
     return `${address.slice(0, 7)}...${address.slice(address.length - 5)}`;
 };
@@ -82,7 +73,23 @@ const DropdownTextItemStyled = styled(DropdownTextItem)`
     border: none;
 `;
 
-class WalletConnectionContent extends React.PureComponent<Props> {
+interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
+
+interface StateProps {
+    ethAccount: string;
+    ethBalance: BigNumber;
+}
+
+type Props = StateProps & OwnProps;
+
+interface State {
+    isEthModalOpen: boolean;
+}
+
+class WalletConnectionContent extends React.Component<Props, State> {
+    public readonly state: State = {
+        isEthModalOpen: false,
+    };
     public render = () => {
         const { ethAccount, ethBalance, ...restProps } = this.props;
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
@@ -97,7 +104,11 @@ class WalletConnectionContent extends React.PureComponent<Props> {
                         {ethAccountText}
                     </WalletAddress>
                 </DropdownHeader>
-                <WalletWethBalanceContainerStyled inDropdown={true} />
+                <WalletWethBalanceContainerStyled
+                    inDropdown={true}
+                    onWethModalOpen={this._ethModalOpen}
+                    onWethModalClose={this._ethModalClose}
+                />
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <DropdownTextItemStyled text="Copy Address" />
                 </CopyToClipboard>
@@ -108,12 +119,20 @@ class WalletConnectionContent extends React.PureComponent<Props> {
         return (
             <WalletConnectionStatusContainer
                 walletConnectionContent={content}
-                shouldShowEthAccountInHeader={false}
+                shouldCloseDropdownOnClickOutside={!this.state.isEthModalOpen}
                 headerText={ethBalanceText}
                 ethAccount={ethAccount}
                 {...restProps}
             />
         );
+    };
+
+    private readonly _ethModalOpen = () => {
+        this.setState({ isEthModalOpen: true });
+    };
+
+    private readonly _ethModalClose = () => {
+        this.setState({ isEthModalOpen: false });
     };
 }
 

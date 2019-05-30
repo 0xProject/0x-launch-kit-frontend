@@ -26,7 +26,7 @@ const WalletConnectionStatusText = styled.span`
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> {
     walletConnectionContent: React.ReactNode;
-    shouldShowEthAccountInHeader: boolean;
+    shouldCloseDropdownOnClickOutside?: boolean;
     headerText: string;
     ethAccount: string;
 }
@@ -38,8 +38,8 @@ export class WalletConnectionStatusContainer extends React.PureComponent<Props> 
         const {
             headerText,
             walletConnectionContent,
-            shouldShowEthAccountInHeader,
             ethAccount,
+            shouldCloseDropdownOnClickOutside,
             ...restProps
         } = this.props;
         const status: string = ethAccount ? 'active' : '';
@@ -52,15 +52,13 @@ export class WalletConnectionStatusContainer extends React.PureComponent<Props> 
         );
 
         const body = <>{walletConnectionContent}</>;
-        // If the application is erc720, the dropdown should not close on click outside, because the ethConverter modal won't be usable
         return (
             <Dropdown
                 body={body}
                 header={header}
                 horizontalPosition={DropdownPositions.Right}
+                shouldCloseDropdownOnClickOutside={shouldCloseDropdownOnClickOutside}
                 {...restProps}
-                shouldCloseDropdownOnClickOutside={shouldShowEthAccountInHeader}
-                shouldCloseDropdownBodyOnClick={shouldShowEthAccountInHeader}
             />
         );
     };

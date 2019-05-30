@@ -30,6 +30,8 @@ interface OwnProps {
     className?: string;
     inDropdown?: boolean;
     theme: Theme;
+    onWethModalOpen?: () => any;
+    onWethModalClose?: () => any;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -235,16 +237,23 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
     public openModal = (e: any) => {
         e.stopPropagation(); // avoids dropdown closing when used inside one
-
+        const { onWethModalOpen } = this.props;
         this.setState({
             modalIsOpen: true,
         });
+        if (onWethModalOpen) {
+            onWethModalOpen();
+        }
     };
 
     public closeModal = () => {
+        const { onWethModalClose } = this.props;
         this.setState({
             modalIsOpen: false,
         });
+        if (onWethModalClose) {
+            onWethModalClose();
+        }
     };
 }
 

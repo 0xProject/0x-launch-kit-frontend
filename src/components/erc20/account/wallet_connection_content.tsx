@@ -49,7 +49,6 @@ class WalletConnectionContent extends React.PureComponent<Props> {
         return (
             <WalletConnectionStatusContainer
                 walletConnectionContent={content}
-                shouldShowEthAccountInHeader={true}
                 headerText={ethAccountText}
                 ethAccount={ethAccount}
                 {...restProps}
