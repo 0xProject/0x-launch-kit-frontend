@@ -9,6 +9,7 @@ import { getCurrencyPair, getWeb3State } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import {
+    ButtonIcons,
     ButtonVariant,
     CurrencyPair,
     OrderSide,
@@ -265,6 +266,7 @@ class BuySell extends React.Component<Props, State> {
                         />
                         <Button
                             disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
+                            icon={error && error.btnMsg ? ButtonIcons.Warning : undefined}
                             onClick={tab === OrderSide.Buy ? this.buy : this.sell}
                             variant={
                                 error && error.btnMsg

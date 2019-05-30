@@ -1,7 +1,11 @@
+import { RateLimit } from 'async-sema';
+
 import { COLLECTIBLE_ADDRESS, OPENSEA_API_KEY } from '../../common/constants';
 import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
 export class Opensea implements CollectibleMetadataSource {
+    private readonly _rateLimit: () => Promise<void>;
+
     private readonly _endpointsUrls: { [key: number]: string } = {
         1: 'https://api.opensea.io/api/v1',
         4: 'https://rinkeby-api.opensea.io/api/v1',
@@ -16,7 +20,7 @@ export class Opensea implements CollectibleMetadataSource {
     public static getAssetAsCollectible(asset: any): Collectible {
         return {
             tokenId: asset.token_id,
-            name: asset.name,
+            name: asset.name || `${asset.asset_contract.name} - #${asset.token_id}`,
             color: asset.background_color ? `#${asset.background_color}` : '',
             image: asset.image_url,
             currentOwner: asset.owner.address,
@@ -24,6 +28,10 @@ export class Opensea implements CollectibleMetadataSource {
             description: asset.name,
             order: null,
         };
+    }
+
+    constructor(options: { rps: number }) {
+        this._rateLimit = RateLimit(options.rps); // requests per second
     }
 
     public async fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]> {
@@ -45,6 +53,7 @@ export class Opensea implements CollectibleMetadataSource {
     }
 
     private readonly _fetch = async (url: string) => {
+        await this._rateLimit();
         return fetch(url, {
             headers: { 'X-API-KEY': OPENSEA_API_KEY || '' } as any,
         });

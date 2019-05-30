@@ -300,12 +300,16 @@ export interface CollectibleMetadataSource {
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
 
 export enum ButtonVariant {
-    Primary = 'primary',
-    Secondary = 'secondary',
-    Tertiary = 'tertiary',
-    Quaternary = 'quaternary',
-    Error = 'error',
     Balance = 'balance',
-    Sell = 'sell',
     Buy = 'buy',
+    Error = 'error',
+    Primary = 'primary',
+    Quaternary = 'quaternary',
+    Secondary = 'secondary',
+    Sell = 'sell',
+    Tertiary = 'tertiary',
+}
+
+export enum ButtonIcons {
+    Warning = 'warning',
 }

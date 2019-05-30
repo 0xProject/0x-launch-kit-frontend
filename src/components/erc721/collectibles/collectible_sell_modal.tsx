@@ -37,10 +37,10 @@ interface OwnProps {
 type Props = OwnProps & DispatchProps & StateProps;
 
 interface State {
+    startPrice: BigNumber | null;
     endingPrice: BigNumber | null;
     expirationDate: BigNumber;
     shouldIncludeEndPrice: boolean;
-    startPrice: BigNumber;
 }
 
 interface ImageProps {
@@ -270,10 +270,10 @@ const iconETH = () => {
 };
 
 const initialState = {
+    startPrice: null,
     endingPrice: null,
     expirationDate: tomorrow(),
     shouldIncludeEndPrice: false,
-    startPrice: new BigNumber(0),
 };
 
 class CollectibleSellModalContainer extends React.Component<Props> {
@@ -433,7 +433,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
     private readonly _openStepsModals = async () => {
         const { currentCollectible } = this.props;
         const { startPrice, endingPrice, expirationDate } = this.state;
-        if (!currentCollectible) {
+        if (!currentCollectible || !startPrice) {
             return;
         }
         this._closeModal();
