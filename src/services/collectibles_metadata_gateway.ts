@@ -4,7 +4,6 @@ import { COLLECTIBLE_ADDRESS } from '../common/constants';
 import { getRelayer, Relayer } from '../services/relayer';
 import { getKnownTokens } from '../util/known_tokens';
 import { getLogger } from '../util/logger';
-import { sleep } from '../util/sleep';
 import { Collectible, CollectibleMetadataSource } from '../util/types';
 
 import { getConfiguredSource } from './collectibles_metadata_sources';
@@ -13,14 +12,14 @@ const logger = getLogger('CollectiblesMetadataGateway');
 
 export class CollectiblesMetadataGateway {
     private readonly _relayer: Relayer;
+    private readonly _source: CollectibleMetadataSource;
 
-    constructor(relayer: Relayer) {
+    constructor(relayer: Relayer, source: CollectibleMetadataSource) {
         this._relayer = relayer;
+        this._source = source;
     }
 
     public fetchAllCollectibles = async (userAddress: string, networkId: number): Promise<Collectible[]> => {
-        const source: CollectibleMetadataSource = getConfiguredSource();
-
         const knownTokens = getKnownTokens(networkId);
 
         const wethAddress = knownTokens.getWethToken().address;
@@ -41,10 +40,8 @@ export class CollectiblesMetadataGateway {
         }, {});
 
         // Step 2: Get all the user's collectibles and add the order
-        const collectibles = await source.fetchAllUserCollectiblesAsync(userAddress, networkId);
-        // TODO remove this when we get OpenSea API key
-        await sleep(1100);
-        const collectiblesWithOrders: Collectible[] = collectibles.map(collectible => {
+        const userCollectibles = await this._source.fetchAllUserCollectiblesAsync(userAddress, networkId);
+        const collectiblesWithOrders: Collectible[] = userCollectibles.map(collectible => {
             if (tokenIdToOrder[collectible.tokenId]) {
                 return {
                     ...collectible,
@@ -56,19 +53,20 @@ export class CollectiblesMetadataGateway {
         });
 
         // Step 3: Get collectibles that are not from the user
-        const collectiblesFetched: any[] = [];
-        for (const tokenId of Object.keys(tokenIdToOrder)) {
-            const collectibleSearch = collectiblesWithOrders.find(collectible => collectible.tokenId === tokenId);
-            if (!collectibleSearch) {
-                const collectibleFetched = await source.fetchIndividualCollectibleAsync(tokenId, networkId);
-                collectiblesFetched.push({
-                    ...collectibleFetched,
-                    order: tokenIdToOrder[tokenId],
-                });
-                // TODO remove this when we get OpenSea API key
-                await sleep(1100);
-            }
+        let collectiblesFetched: any[] = [];
+        const tokenIds: string[] = Object.keys(tokenIdToOrder).filter(
+            tokenId => !collectiblesWithOrders.find(collectible => collectible.tokenId === tokenId),
+        );
+        for (let chunkBegin = 0; chunkBegin < tokenIds.length; chunkBegin += 10) {
+            const tokensIdsChunk = tokenIds.slice(chunkBegin, chunkBegin + 10);
+            const collectiblesChunkFetched = await this._source.fetchCollectiblesAsync(tokensIdsChunk, networkId);
+            const collectiblesChunkWithOrders = collectiblesChunkFetched.map(collectible => ({
+                ...collectible,
+                order: tokenIdToOrder[collectible.tokenId],
+            }));
+            collectiblesFetched = collectiblesFetched.concat(collectiblesChunkWithOrders);
         }
+
         collectiblesWithOrders.push(...collectiblesFetched);
 
         return collectiblesWithOrders;
@@ -79,7 +77,8 @@ let collectiblesMetadataGateway: CollectiblesMetadataGateway;
 export const getCollectiblesMetadataGateway = (): CollectiblesMetadataGateway => {
     if (!collectiblesMetadataGateway) {
         const relayer = getRelayer();
-        collectiblesMetadataGateway = new CollectiblesMetadataGateway(relayer);
+        const source = getConfiguredSource();
+        collectiblesMetadataGateway = new CollectiblesMetadataGateway(relayer, source);
     }
     return collectiblesMetadataGateway;
 };
