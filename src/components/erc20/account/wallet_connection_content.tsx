@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { getEthAccount } from '../../../store/selectors';
+import { truncateAddress } from '../../../util/number_utils';
 import { StoreState } from '../../../util/types';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
@@ -33,6 +34,7 @@ const DropdownItems = styled(CardBase)`
 class WalletConnectionContent extends React.PureComponent<Props> {
     public render = () => {
         const { ethAccount, ...restProps } = this.props;
+        const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
 
         const content = (
             <DropdownItems>
@@ -48,6 +50,8 @@ class WalletConnectionContent extends React.PureComponent<Props> {
             <WalletConnectionStatusContainer
                 walletConnectionContent={content}
                 shouldShowEthAccountInHeader={true}
+                headerText={ethAccountText}
+                ethAccount={ethAccount}
                 {...restProps}
             />
         );

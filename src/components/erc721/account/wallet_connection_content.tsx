@@ -1,10 +1,13 @@
+import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getEthAccount } from '../../../store/selectors';
+import { ETH_DECIMALS } from '../../../common/constants';
+import { getEthAccount, getEthBalance } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
+import { tokenAmountInUnits } from '../../../util/tokens';
 import { StoreState } from '../../../util/types';
 import { WalletWethBalanceContainer } from '../../account';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
@@ -16,6 +19,7 @@ interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
 
 interface StateProps {
     ethAccount: string;
+    ethBalance: BigNumber;
 }
 
 type Props = StateProps & OwnProps;
@@ -80,10 +84,10 @@ const DropdownTextItemStyled = styled(DropdownTextItem)`
 
 class WalletConnectionContent extends React.PureComponent<Props> {
     public render = () => {
-        const { ethAccount, ...restProps } = this.props;
+        const { ethAccount, ethBalance, ...restProps } = this.props;
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
         const status: string = ethAccount ? 'active' : '';
-
+        const ethBalanceText = ethBalance ? `${tokenAmountInUnits(ethBalance, ETH_DECIMALS)} ETH` : 'No connected';
         const content = (
             <WalletConnectionWrapper>
                 <DropdownHeader>
@@ -105,6 +109,8 @@ class WalletConnectionContent extends React.PureComponent<Props> {
             <WalletConnectionStatusContainer
                 walletConnectionContent={content}
                 shouldShowEthAccountInHeader={false}
+                headerText={ethBalanceText}
+                ethAccount={ethAccount}
                 {...restProps}
             />
         );
@@ -114,6 +120,7 @@ class WalletConnectionContent extends React.PureComponent<Props> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         ethAccount: getEthAccount(state),
+        ethBalance: getEthBalance(state),
     };
 };
 

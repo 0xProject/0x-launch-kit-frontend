@@ -1,13 +1,6 @@
-import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { ETH_DECIMALS } from '../../common/constants';
-import { getEthAccount, getEthBalance } from '../../store/selectors';
-import { truncateAddress } from '../../util/number_utils';
-import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState } from '../../util/types';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { ChevronDownIcon } from '../common/icons/chevron_down_icon';
 
@@ -34,30 +27,22 @@ const WalletConnectionStatusText = styled.span`
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> {
     walletConnectionContent: React.ReactNode;
     shouldShowEthAccountInHeader: boolean;
-}
-
-interface StateProps {
+    headerText: string;
     ethAccount: string;
-    ethBalance: BigNumber;
 }
 
-type Props = StateProps & OwnProps;
+type Props = OwnProps;
 
-class WalletConnectionStatus extends React.PureComponent<Props> {
+export class WalletConnectionStatusContainer extends React.PureComponent<Props> {
     public render = () => {
         const {
-            ethAccount,
-            ethBalance,
+            headerText,
             walletConnectionContent,
             shouldShowEthAccountInHeader,
+            ethAccount,
             ...restProps
         } = this.props;
         const status: string = ethAccount ? 'active' : '';
-
-        const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
-        const ethBalanceText = ethBalance ? `${tokenAmountInUnits(ethBalance, ETH_DECIMALS)} ETH` : 'No connected';
-        // If the app is erc20, we need to show the eth account in the header, otherwise, we should the ethBalance
-        const headerText = shouldShowEthAccountInHeader ? ethAccountText : ethBalanceText;
         const header = (
             <WalletConnectionStatusWrapper>
                 <WalletConnectionStatusDotStyled status={status} />
@@ -80,17 +65,3 @@ class WalletConnectionStatus extends React.PureComponent<Props> {
         );
     };
 }
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        ethAccount: getEthAccount(state),
-        ethBalance: getEthBalance(state),
-    };
-};
-
-const WalletConnectionStatusContainer = connect(
-    mapStateToProps,
-    {},
-)(WalletConnectionStatus);
-
-export { WalletConnectionStatus, WalletConnectionStatusContainer };
