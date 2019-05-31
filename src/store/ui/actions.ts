@@ -186,6 +186,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
         const totalEthBalance = selectors.getTotalEthBalance(state);
         const quoteTokenBalance = selectors.getQuoteTokenBalance(state);
+        const baseTokenBalance = selectors.getBaseTokenBalance(state);
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
         const [, filledAmounts, canBeFilled] = buildMarketOrders(
@@ -205,17 +206,20 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
 
         const price = totalFilledAmount.div(amount);
 
-        // Case 1: the quote token is wETH and the user does not have enough to wrap and pay orders
-        if (isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount)) {
-            throw new InsufficientTokenBalanceException(quoteToken.symbol);
-        }
-        // Case 2: the quote token is NOT wETH and the user does not have enough quote to pay orders
-        if (
-            !isWeth(quoteToken.symbol) &&
-            quoteTokenBalance &&
-            quoteTokenBalance.balance.isLessThan(totalFilledAmount)
-        ) {
-            throw new InsufficientTokenBalanceException(quoteToken.symbol);
+        // Case 1: the operation is SELL -> user should have enough BASE Token
+        if (side === OrderSide.Sell) {
+            if (baseTokenBalance && baseTokenBalance.balance.isLessThan(totalFilledAmount)) {
+                throw new InsufficientTokenBalanceException(baseToken.symbol);
+            }
+        } else {
+            // Case 2: the quote token is wETH and the user does not have enough to wrap and pay orders
+            if (isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount)) {
+                throw new InsufficientTokenBalanceException(quoteToken.symbol);
+            }
+            // Case 3: the operation is BUY -> user should have enough QUOTE token and the quoteToken is not wETH
+            if (quoteTokenBalance && quoteTokenBalance.balance.isLessThan(totalFilledAmount)) {
+                throw new InsufficientTokenBalanceException(quoteToken.symbol);
+            }
         }
 
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
