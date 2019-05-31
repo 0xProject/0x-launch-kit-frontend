@@ -10,12 +10,7 @@ import {
     submitBuyCollectible,
     submitCollectibleOrder,
 } from '../../../store/actions';
-import {
-    getCurrentRoutePath,
-    getEstimatedTxTimeMs,
-    getEthAccount,
-    getStepsModalCurrentStep,
-} from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getEthAccount, getStepsModalCurrentStep } from '../../../store/selectors';
 import { sleep } from '../../../util/sleep';
 import {
     Collectible,
@@ -37,7 +32,6 @@ interface StateProps {
     estimatedTxTimeMs: number;
     step: StepSellCollectible | StepBuyCollectible;
     ethAccount: string;
-    currentRoutePath: string;
 }
 
 interface DispatchProps {
@@ -101,7 +95,7 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
     };
 
     private readonly _confirmOnMetamaskSell = async ({ onLoading, onDone, onError }: any) => {
-        const { step, currentRoutePath } = this.props;
+        const { step } = this.props;
         if (step.kind === StepKind.SellCollectible) {
             const stepSell: StepSellCollectible = step;
             const { startPrice, endPrice, expirationDate, side, collectible } = stepSell;
@@ -120,10 +114,8 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
                 await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
 
                 // Go to the collectible's profile
-                if (!currentRoutePath.includes(`collectible/${collectible.tokenId}`)) {
-                    await this.props.goToIndividualCollectible(collectible.tokenId);
-                    this.props.closeModal();
-                }
+                await this.props.goToIndividualCollectible(collectible.tokenId);
+                this.props.closeModal();
             } catch (error) {
                 onError(error);
             }
@@ -155,7 +147,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         ethAccount: getEthAccount(state),
         step: getStepsModalCurrentStep(state) as StepSellCollectible | StepBuyCollectible,
-        currentRoutePath: getCurrentRoutePath(state),
     };
 };
 
