@@ -152,7 +152,7 @@ const EthBox = styled.div<EthBoxProps>`
     justify-content: center;
     max-width: 146px;
     min-height: 105px;
-    padding: 10px;
+    padding: 10px 5px;
     position: relative;
     transition: border-color 0.15s ease-in;
 
@@ -188,7 +188,9 @@ const EthBoxValue = styled.h2<EthBoxProps>`
     font-weight: 600;
     line-height: 1.2;
     margin: 0 0 5px;
+    padding: 0;
     text-align: center;
+    width: 100%;
 `;
 
 const EthBoxUnit = styled.h4`
@@ -217,9 +219,13 @@ const SetMinEthButton = styled.a`
     text-decoration: none;
 `;
 
+const FormBox = styled.form`
+    width: 100%;
+`;
+
 const InputEth = styled<any>(BigNumberInput)`
     background-color: transparent;
-    border-color: transparent;
+    border: none;
     color: ${props =>
         props.boxType === ETHBoxType.Eth
             ? props.theme.componentsTheme.textDark
@@ -232,6 +238,7 @@ const InputEth = styled<any>(BigNumberInput)`
     margin: 0 0 5px;
     padding: 0;
     text-align: center;
+    width: 100%;
 
     &:focus,
     &:active {
@@ -268,7 +275,7 @@ class WethModal extends React.Component<Props, State> {
                 <EthBoxes>
                     <EthBox boxType={ETHBoxType.Eth}>
                         {editing === Editing.Eth ? (
-                            <form noValidate={true} onSubmit={this._disableEdit}>
+                            <FormBox noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
                                     autofocus={true}
                                     boxType={ETHBoxType.Eth}
@@ -280,7 +287,7 @@ class WethModal extends React.Component<Props, State> {
                                     placeholder={PLACEHOLDER}
                                     valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
                                 />
-                            </form>
+                            </FormBox>
                         ) : (
                             <EthBoxValue
                                 boxType={ETHBoxType.Eth}
@@ -294,7 +301,7 @@ class WethModal extends React.Component<Props, State> {
                     </EthBox>
                     <EthBox boxType={ETHBoxType.Weth}>
                         {editing === Editing.Weth ? (
-                            <form noValidate={true} onSubmit={this._disableEdit}>
+                            <FormBox noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
                                     autofocus={true}
                                     decimals={ETH_DECIMALS}
@@ -306,7 +313,7 @@ class WethModal extends React.Component<Props, State> {
                                     placeholder={PLACEHOLDER}
                                     valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
                                 />
-                            </form>
+                            </FormBox>
                         ) : (
                             <EthBoxValue
                                 boxType={ETHBoxType.Weth}

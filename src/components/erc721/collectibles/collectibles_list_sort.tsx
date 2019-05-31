@@ -53,7 +53,6 @@ const Text = styled.span`
 export const CollectiblesListSort = (props: Props) => {
     const { currentValue, onChange, ...restProps } = props;
     const sortTypes = Object.keys(options) as CollectibleSortType[];
-
     const header = <DropdownButton text={options[currentValue]} extraIcon={<SortIcon />} />;
 
     const body = (
