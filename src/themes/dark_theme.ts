@@ -44,6 +44,7 @@ const darkThemeColors: ThemeProperties = {
     buttonSellBackgroundColor: '#FF6534',
     buttonTertiaryBackgroundColor: '#F6851B',
     buttonTextColor: '#fff',
+    cardImageBackgroundColor: '#EBF0F5',
     cardBackgroundColor: '#202123',
     cardBorderColor: '#000',
     cardTitleColor: '#fff',
