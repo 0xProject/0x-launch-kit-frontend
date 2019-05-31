@@ -2,6 +2,7 @@ import { BigNumber, SignedOrder } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import {
     createSignedCollectibleOrder,
@@ -15,6 +16,7 @@ import {
     getEthAccount,
     getStepsModalCurrentStep,
 } from '../../../store/selectors';
+import { sleep } from '../../../util/sleep';
 import {
     Collectible,
     OrderSide,
@@ -29,6 +31,7 @@ import { StepItem } from './steps_progress';
 
 interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
+    closeModal: () => void;
 }
 interface StateProps {
     estimatedTxTimeMs: number;
@@ -114,9 +117,12 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
                 await this.props.submitCollectibleOrder(signedOrder);
                 onDone();
 
+                await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
+
                 // Go to the collectible's profile
                 if (!currentRoutePath.includes(`collectible/${collectible.tokenId}`)) {
                     await this.props.goToIndividualCollectible(collectible.tokenId);
+                    this.props.closeModal();
                 }
             } catch (error) {
                 onError(error);

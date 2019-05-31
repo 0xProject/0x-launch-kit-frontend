@@ -78,7 +78,11 @@ class StepsModal extends React.Component<Props> {
                     {currentStep &&
                         (currentStep.kind === StepKind.SellCollectible ||
                             currentStep.kind === StepKind.BuyCollectible) && (
-                            <BuySellCollectibleStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
+                            <BuySellCollectibleStepContainer
+                                key={stepIndex}
+                                buildStepsProgress={buildStepsProgress}
+                                closeModal={reset}
+                            />
                         )}
                     {currentStep && currentStep.kind === StepKind.WrapEth && (
                         <WrapEthStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
