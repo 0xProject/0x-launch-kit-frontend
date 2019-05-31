@@ -1,24 +1,19 @@
+import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getEthAccount } from '../../../store/selectors';
+import { ETH_DECIMALS } from '../../../common/constants';
+import { getEthAccount, getEthBalance } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
+import { tokenAmountInUnits } from '../../../util/tokens';
 import { StoreState } from '../../../util/types';
 import { WalletWethBalanceContainer } from '../../account';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { WalletConnectionStatusDot } from '../../account/wallet_connections_status_dot';
 import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
-
-interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
-
-interface StateProps {
-    ethAccount: string;
-}
-
-type Props = StateProps & OwnProps;
 
 const truncateAddress = (address: string) => {
     return `${address.slice(0, 7)}...${address.slice(address.length - 5)}`;
@@ -78,12 +73,28 @@ const DropdownTextItemStyled = styled(DropdownTextItem)`
     border: none;
 `;
 
-class WalletConnectionContent extends React.PureComponent<Props> {
+interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
+
+interface StateProps {
+    ethAccount: string;
+    ethBalance: BigNumber;
+}
+
+type Props = StateProps & OwnProps;
+
+interface State {
+    isEthModalOpen: boolean;
+}
+
+class WalletConnectionContent extends React.Component<Props, State> {
+    public readonly state: State = {
+        isEthModalOpen: false,
+    };
     public render = () => {
-        const { ethAccount, ...restProps } = this.props;
+        const { ethAccount, ethBalance, ...restProps } = this.props;
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
         const status: string = ethAccount ? 'active' : '';
-
+        const ethBalanceText = ethBalance ? `${tokenAmountInUnits(ethBalance, ETH_DECIMALS)} ETH` : 'No connected';
         const content = (
             <WalletConnectionWrapper>
                 <DropdownHeader>
@@ -93,7 +104,11 @@ class WalletConnectionContent extends React.PureComponent<Props> {
                         {ethAccountText}
                     </WalletAddress>
                 </DropdownHeader>
-                <WalletWethBalanceContainerStyled inDropdown={true} />
+                <WalletWethBalanceContainerStyled
+                    inDropdown={true}
+                    onWethModalOpen={this._ethModalOpen}
+                    onWethModalClose={this._ethModalClose}
+                />
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <DropdownTextItemStyled text="Copy Address" />
                 </CopyToClipboard>
@@ -104,16 +119,27 @@ class WalletConnectionContent extends React.PureComponent<Props> {
         return (
             <WalletConnectionStatusContainer
                 walletConnectionContent={content}
-                shouldShowEthAccountInHeader={false}
+                shouldCloseDropdownOnClickOutside={!this.state.isEthModalOpen}
+                headerText={ethBalanceText}
+                ethAccount={ethAccount}
                 {...restProps}
             />
         );
+    };
+
+    private readonly _ethModalOpen = () => {
+        this.setState({ isEthModalOpen: true });
+    };
+
+    private readonly _ethModalClose = () => {
+        this.setState({ isEthModalOpen: false });
     };
 }
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         ethAccount: getEthAccount(state),
+        ethBalance: getEthBalance(state),
     };
 };
 
