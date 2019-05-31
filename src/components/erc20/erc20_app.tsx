@@ -16,6 +16,7 @@ const toolbar = <ToolbarContentContainer />;
 
 export const Erc20App = () => {
     const themeColor = getThemeByMarketplace(MARKETPLACES.ERC20);
+
     return (
         <ThemeProvider theme={themeColor}>
             <GeneralLayout toolbar={toolbar}>
