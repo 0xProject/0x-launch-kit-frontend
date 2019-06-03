@@ -260,12 +260,11 @@ class WethModal extends React.Component<Props, State> {
         const { editing, selectedWeth } = this.state;
 
         const selectedEth = totalEth.minus(selectedWeth);
-        const initialWethStr = tokenAmountInUnits(wethBalance, ETH_DECIMALS);
         const selectedWethStr = tokenAmountInUnits(selectedWeth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
         const selectedEthStr = tokenAmountInUnits(selectedEth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
         const totalEthStr = tokenAmountInUnits(totalEth, ETH_DECIMALS);
         const isInsufficientEth = selectedEth.isLessThan(minEth);
-        const isDisabled = selectedWethStr === initialWethStr || isSubmitting || isInsufficientEth;
+        const isDisabled = wethBalance.isEqualTo(selectedWeth) || isSubmitting || isInsufficientEth;
 
         return (
             <Modal {...restProps}>
