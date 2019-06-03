@@ -256,7 +256,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { onSubmit, isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
+        const { isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
 
         const selectedEth = totalEth.minus(selectedWeth);
