@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { RateLimit } from 'async-sema';
 
 import {
     DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
@@ -6,6 +7,7 @@ import {
     ETH_GAS_STATION_API_BASE_URL,
     GWEI_IN_WEI,
 } from '../common/constants';
+import { getLogger } from '../util/logger';
 import { GasInfo } from '../util/types';
 
 interface EthGasStationResult {
@@ -22,20 +24,28 @@ interface EthGasStationResult {
     safeLow: number;
 }
 
-let fetchedAmount: GasInfo | undefined;
+const logger = getLogger('Gas Estimation from ethgasAPI::gas_price_estimation.ts');
+
 export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {
+    let fetchedAmount: GasInfo | undefined;
+
+    const lim = RateLimit(1);
+
     try {
+        await lim();
         fetchedAmount = await fetchFastAmountInWeiAsync();
-        return (
-            fetchedAmount || {
-                gasPriceInWei: DEFAULT_GAS_PRICE,
-                estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
-            }
-        );
     } catch (e) {
         fetchedAmount = undefined;
-        return Promise.reject('Could not get gas price');
     }
+
+    logger.info(fetchedAmount);
+
+    return (
+        fetchedAmount || {
+            gasPriceInWei: DEFAULT_GAS_PRICE,
+            estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
+        }
+    );
 };
 
 const fetchFastAmountInWeiAsync = async (): Promise<GasInfo> => {
