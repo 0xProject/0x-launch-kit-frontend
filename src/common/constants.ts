@@ -55,7 +55,9 @@ export const ETH_GAS_STATION_API_BASE_URL = 'https://ethgasstation.info';
 
 export const GWEI_IN_WEI = new BigNumber(1000000000);
 
-export const ONE_MINUTE_MS = 1000 * 60;
+export const ONE_SECOND_MS = 1000;
+
+export const ONE_MINUTE_MS = ONE_SECOND_MS * 60;
 
 export const DEFAULT_GAS_PRICE = GWEI_IN_WEI.multipliedBy(6);
 
