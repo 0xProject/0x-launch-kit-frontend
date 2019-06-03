@@ -43,6 +43,7 @@ const lightThemeColors: ThemeProperties = {
     buttonSellBackgroundColor: '#FF6534',
     buttonTertiaryBackgroundColor: '#F6851B',
     buttonTextColor: '#fff',
+    cardImageBackgroundColor: '#EBF0F5',
     cardBackgroundColor: '#fff',
     cardBorderColor: '#dedede',
     cardTitleColor: '#000',
