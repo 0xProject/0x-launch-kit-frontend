@@ -5,8 +5,8 @@ import styled, { css } from 'styled-components';
 
 import { setCollectiblesListFilterType, setCollectiblesListSortType } from '../../../store/actions';
 import {
+    getAllCollectibles,
     getAllCollectiblesFetchStatus,
-    getOtherUsersCollectibles,
     getRouterLocationSearch,
     getUserCollectibles,
 } from '../../../store/selectors';
@@ -123,6 +123,7 @@ export class CollectiblesList extends React.Component<Props, {}> {
                     filterType={filterType}
                     isLoading={isLoading}
                     sortType={sortType}
+                    mustShowCollectibleOwnerBadge={true}
                 />
             </CenteredWrapper>
         );
@@ -148,7 +149,7 @@ export class CollectiblesList extends React.Component<Props, {}> {
 // "All Collectibles" and "My Collectibles" get different selectors
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {
-        collectibles: getOtherUsersCollectibles(state),
+        collectibles: getAllCollectibles(state),
         search: getRouterLocationSearch(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
     };

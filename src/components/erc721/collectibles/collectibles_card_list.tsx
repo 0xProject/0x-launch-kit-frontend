@@ -8,7 +8,7 @@ import { CollectibleFilterType, getFilterFunction } from '../../../util/filterab
 import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
 import { Collectible } from '../../../util/types';
 
-import { CollectibleCard } from './collectible_card';
+import { CollectibleCardContainer } from './collectible_card';
 
 const CollectiblesListOverflow = styled.div`
     flex-grow: 1;
@@ -47,6 +47,7 @@ const getCollectibleCards = (
     filterType: CollectibleFilterType,
     limit?: number,
     onClick?: (e: any) => void,
+    mustShowCollectibleOwnerBadge?: boolean,
 ) => {
     const sortedItems = getSortedCollectibles(collectibles, sortType);
     let filteredItems = sortedItems.filter(getFilterFunction(filterType));
@@ -54,9 +55,9 @@ const getCollectibleCards = (
         filteredItems = filteredItems.slice(0, limit);
     }
     return filteredItems.map((sortableCollectible, index) => {
-        const { name, image, color, tokenId } = sortableCollectible.collectible;
+        const { name, image, color, tokenId, currentOwner } = sortableCollectible.collectible;
         return (
-            <CollectibleCard
+            <CollectibleCardContainer
                 color={color}
                 id={tokenId}
                 image={image}
@@ -64,6 +65,8 @@ const getCollectibleCards = (
                 name={name}
                 onClick={onClick}
                 price={sortableCollectible.price}
+                mustShowCollectibleOwnerBadge={mustShowCollectibleOwnerBadge}
+                currentOwner={currentOwner}
             />
         );
     });
@@ -76,11 +79,28 @@ interface Props {
     limit?: number;
     isLoading?: boolean;
     onClick?: (e: any) => void;
+    mustShowCollectibleOwnerBadge?: boolean;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType, filterType, limit, isLoading, onClick, ...restProps } = props;
-    const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit, onClick);
+    const {
+        collectibles,
+        sortType,
+        filterType,
+        limit,
+        mustShowCollectibleOwnerBadge,
+        isLoading,
+        onClick,
+        ...restProps
+    } = props;
+    const collectibleCards = getCollectibleCards(
+        collectibles,
+        sortType,
+        filterType,
+        limit,
+        onClick,
+        mustShowCollectibleOwnerBadge,
+    );
 
     if (isLoading) {
         return <Loading />;

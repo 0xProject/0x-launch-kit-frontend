@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
-import { getAllCollectiblesFetchStatus, getOtherUsersCollectibles } from '../../../store/selectors';
+import { getAllCollectibles, getAllCollectiblesFetchStatus } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
@@ -135,6 +135,7 @@ export class CollectiblesAll extends React.Component<Props> {
                     limit={MAX_ITEMS_TO_DISPLAY}
                     sortType={CollectibleSortType.NewestAdded}
                     isLoading={isLoading}
+                    mustShowCollectibleOwnerBadge={true}
                 />
                 <SubSectionTitleWrapper>
                     <SubSectionTitle>Most valued</SubSectionTitle>
@@ -151,6 +152,7 @@ export class CollectiblesAll extends React.Component<Props> {
                     limit={MAX_ITEMS_TO_DISPLAY}
                     sortType={CollectibleSortType.PriceHighToLow}
                     isLoading={isLoading}
+                    mustShowCollectibleOwnerBadge={true}
                 />
             </CenteredWrapper>
         );
@@ -159,7 +161,7 @@ export class CollectiblesAll extends React.Component<Props> {
 
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {
-        collectibles: getOtherUsersCollectibles(state),
+        collectibles: getAllCollectibles(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
     };
 };
