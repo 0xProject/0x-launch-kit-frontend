@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { ReactComponent as LogoSvg } from '../../../assets/icons/erc20_logo.svg';
+import { ReactComponent as LogoSvg } from '../../../assets/icons/veridex_logo.svg';
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
@@ -76,7 +76,7 @@ const ToolbarContent = (props: Props) => {
             <LogoHeader
                 image={<LogoSVGStyled />}
                 onClick={handleLogoClick}
-                text="Launch Kit"
+                text="VeriDex"
                 textColor={props.theme.componentsTheme.logoERC20TextColor}
             />
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />

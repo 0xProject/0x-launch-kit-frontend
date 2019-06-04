@@ -8,6 +8,8 @@
         "no-unnecessary-type-assertion": false,
         "completed-docs": false,
         "promise-function-async": false,
-        "interface-name": [true, "never-prefix"]
+        "interface-name": [true, "never-prefix"],
+        "linebreak-style": [true, "CRLF"]
     }
+   
 }

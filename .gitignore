@@ -25,3 +25,6 @@ yarn-error.log*
 
 #Webstorm
 .idea
+#Firebase Deployment files
+.firebaserc
+/.firebase

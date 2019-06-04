@@ -7,7 +7,7 @@ import { RootAction } from '../reducers';
 
 const initialMarketState: MarketState = {
     currencyPair: {
-        base: (queryString.parse(queryString.extract(window.location.hash)).base as TokenSymbol) || TokenSymbol.Zrx,
+        base: (queryString.parse(queryString.extract(window.location.hash)).base as TokenSymbol) || TokenSymbol.Vsf,
         quote: (queryString.parse(queryString.extract(window.location.hash)).quote as TokenSymbol) || TokenSymbol.Weth,
     },
     baseToken: null,

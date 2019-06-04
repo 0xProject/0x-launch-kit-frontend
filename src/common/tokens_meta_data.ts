@@ -23,6 +23,15 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
+        symbol: TokenSymbol.Vsf,
+        name: 'VeriSafe',
+        primaryColor: '#081e6e',
+        addresses: {
+            1: '0xac9ce326e95f51b5005e9fe1dd8085a01f18450c',
+        },
+    },
+    {
+        decimals: 18,
         symbol: TokenSymbol.Zrx,
         name: '0x',
         primaryColor: '#333333',

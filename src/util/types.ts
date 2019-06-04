@@ -248,6 +248,7 @@ export enum TokenSymbol {
     Rep = 'rep',
     Dgd = 'dgd',
     Mln = 'mln',
+    Vsf = 'vsf',
 }
 
 export enum OrderType {

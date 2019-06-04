@@ -234,6 +234,10 @@ const marketFilters: Filter[] = [
         value: null,
     },
     {
+        text: tokenSymbolToDisplayString(TokenSymbol.Vsf),
+        value: TokenSymbol.Vsf,
+    },
+    {
         text: 'ETH',
         value: TokenSymbol.Weth,
     },

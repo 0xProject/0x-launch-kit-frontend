@@ -39,8 +39,8 @@ class WalletConnectionContent extends React.PureComponent<Props> {
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <DropdownTextItem text="Copy Address to Clipboard" />
                 </CopyToClipboard>
-                <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
-                <DropdownTextItem onClick={goToURL} text="Manage Account" />
+              {/*  <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
+                <DropdownTextItem onClick={goToURL} text="Manage Account" />*/}
             </DropdownItems>
         );
 

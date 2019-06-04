@@ -30,6 +30,7 @@ import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
+import { ReactComponent as VsfTokenIcon } from '../../../assets/icons/vsf.svg';
 import { Theme } from '../../../themes/commons';
 
 interface Props {
@@ -69,6 +70,7 @@ const TokenIcons = {
     WaxTokenIcon,
     ZilTokenIcon,
     ZrxTokenIcon,
+    VsfTokenIcon,
 };
 
 const IconContainer = styled.div<{ color: string; isInline?: boolean }>`
