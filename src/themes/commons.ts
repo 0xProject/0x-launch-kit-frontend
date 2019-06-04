@@ -20,6 +20,7 @@ export interface ThemeProperties {
     buttonSellBackgroundColor: string;
     buttonTertiaryBackgroundColor: string;
     buttonTextColor: string;
+    cardImageBackgroundColor: string;
     cardBackgroundColor: string;
     cardBorderColor: string;
     cardTitleColor: string;

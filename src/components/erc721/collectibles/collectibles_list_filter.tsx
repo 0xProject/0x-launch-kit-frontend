@@ -5,8 +5,6 @@ import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { Dropdown, DropdownPositions } from '../../common/dropdown';
 import { DropdownTextItemWrapper } from '../../common/dropdown_text_item';
 import { FilterIcon } from '../../common/icons/filter_icon';
-import { RadioIcon } from '../../common/icons/radio_icon';
-import { RadioIconActive } from '../../common/icons/radio_icon_active';
 
 import { DropdownButton } from './collectibles_dropdown_button';
 import { DropdownContainer } from './collectibles_dropdown_container';
@@ -24,8 +22,6 @@ const options: { [key: string]: string } = {
 
 const DropdownItemFilter = styled(DropdownTextItemWrapper)`
     ${props => (props.active ? 'cursor: default;' : '')}
-    align-items: center;
-    display: flex;
     position: relative;
 
     input[type='radio'] {
@@ -42,11 +38,14 @@ const DropdownItemFilter = styled(DropdownTextItemWrapper)`
             cursor: default;
             pointer-events: none;
         }
+
+        &:checked + span {
+            font-weight: 500;
+        }
     }
 `;
 
 const Text = styled.span`
-    margin-left: 14px;
     position: relative;
     z-index: 1;
 `;
@@ -54,7 +53,6 @@ const Text = styled.span`
 export const CollectiblesListFilter = (props: Props) => {
     const { currentValue, onChange, ...restProps } = props;
     const filterTypes = Object.keys(options) as CollectibleFilterType[];
-
     const header = <DropdownButton text={options[currentValue]} extraIcon={<FilterIcon />} />;
 
     const body = (
@@ -62,7 +60,6 @@ export const CollectiblesListFilter = (props: Props) => {
             {filterTypes.map(filterType => (
                 <DropdownItemFilter key={filterType} active={currentValue === filterType}>
                     <input checked={currentValue === filterType} onChange={onChange} type="radio" value={filterType} />
-                    {currentValue === filterType ? <RadioIconActive /> : <RadioIcon />}
                     <Text>{options[filterType]}</Text>
                 </DropdownItemFilter>
             ))}

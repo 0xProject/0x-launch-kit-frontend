@@ -295,7 +295,7 @@ export interface CollectiblesState {
 
 export interface CollectibleMetadataSource {
     fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]>;
-    fetchIndividualCollectibleAsync(tokenId: string, networkId: number): Promise<Collectible | null>;
+    fetchCollectiblesAsync(tokenIds: string[], networkId: number): Promise<Collectible[]>;
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;

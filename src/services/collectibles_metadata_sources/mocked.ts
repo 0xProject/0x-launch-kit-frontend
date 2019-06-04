@@ -109,8 +109,8 @@ export class Mocked implements CollectibleMetadataSource {
         return allCollectiblesWithOwner;
     };
 
-    public fetchIndividualCollectibleAsync = (tokenId: string, networkId: number): Promise<Collectible | null> => {
-        const collectible = allCollectibles.find(value => value.tokenId === tokenId) || null;
-        return Promise.resolve(collectible);
+    public fetchCollectiblesAsync = (tokenIds: string[], networkId: number): Promise<Collectible[]> => {
+        const collectibles = allCollectibles.filter(value => tokenIds.indexOf(value.tokenId) !== -1);
+        return Promise.resolve(collectibles);
     };
 }

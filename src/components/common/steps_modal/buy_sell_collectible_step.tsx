@@ -2,9 +2,16 @@ import { BigNumber, SignedOrder } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
-import { createSignedCollectibleOrder, submitBuyCollectible, submitCollectibleOrder } from '../../../store/actions';
+import {
+    createSignedCollectibleOrder,
+    goToIndividualCollectible,
+    submitBuyCollectible,
+    submitCollectibleOrder,
+} from '../../../store/actions';
 import { getEstimatedTxTimeMs, getEthAccount, getStepsModalCurrentStep } from '../../../store/selectors';
+import { sleep } from '../../../util/sleep';
 import {
     Collectible,
     OrderSide,
@@ -19,6 +26,7 @@ import { StepItem } from './steps_progress';
 
 interface OwnProps {
     buildStepsProgress: (currentStepItem: StepItem) => StepItem[];
+    closeModal: () => void;
 }
 interface StateProps {
     estimatedTxTimeMs: number;
@@ -36,6 +44,7 @@ interface DispatchProps {
     ) => Promise<any>;
     submitCollectibleOrder: (signedOrder: SignedOrder) => Promise<any>;
     submitBuyCollectible: (order: SignedOrder, ethAccount: string) => Promise<any>;
+    goToIndividualCollectible: (collectibleId: string) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -101,6 +110,12 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
                 onLoading();
                 await this.props.submitCollectibleOrder(signedOrder);
                 onDone();
+
+                await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
+
+                // Go to the collectible's profile
+                await this.props.goToIndividualCollectible(collectible.tokenId);
+                this.props.closeModal();
             } catch (error) {
                 onError(error);
             }
@@ -147,6 +162,7 @@ const mapDispatchToProps = (dispatch: any) => {
         ) => dispatch(createSignedCollectibleOrder(collectible, side, startPrice, expirationDate, endPrice)),
         submitBuyCollectible: (order: SignedOrder, ethAccount: string) =>
             dispatch(submitBuyCollectible(order, ethAccount)),
+        goToIndividualCollectible: (collectibleId: string) => dispatch(goToIndividualCollectible(collectibleId)),
     };
 };
 

@@ -9,7 +9,6 @@ import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
 import { CenteredWrapper } from '../../common/centered_wrapper';
-import { MainScrollableWrapper } from '../../common/main_scrollable_wrapper';
 import { ViewAll } from '../../common/view_all';
 import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button';
 
@@ -113,49 +112,47 @@ export class CollectiblesAll extends React.Component<Props> {
         const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
         return (
-            <MainScrollableWrapper>
-                <CenteredWrapper>
-                    <HeaderWrapper>
-                        <Summary>
-                            <Title>{title}</Title>
-                            <Description>{description}</Description>
-                        </Summary>
-                        <SellCollectiblesButton />
-                    </HeaderWrapper>
-                    <SubSectionTitleWrapper>
-                        <SubSectionTitle>Recently listed</SubSectionTitle>
-                        <ViewAll
-                            text="View all"
-                            to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${
-                                CollectibleFilterType.ShowAll
-                            }&sort=${CollectibleSortType.NewestAdded}`}
-                        />
-                    </SubSectionTitleWrapper>
-                    <CollectiblesCardListStyled
-                        collectibles={collectibles}
-                        filterType={CollectibleFilterType.ShowAll}
-                        limit={MAX_ITEMS_TO_DISPLAY}
-                        sortType={CollectibleSortType.NewestAdded}
-                        isLoading={isLoading}
+            <CenteredWrapper>
+                <HeaderWrapper>
+                    <Summary>
+                        <Title>{title}</Title>
+                        <Description>{description}</Description>
+                    </Summary>
+                    <SellCollectiblesButton />
+                </HeaderWrapper>
+                <SubSectionTitleWrapper>
+                    <SubSectionTitle>Recently listed</SubSectionTitle>
+                    <ViewAll
+                        text="View all"
+                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${
+                            CollectibleSortType.NewestAdded
+                        }`}
                     />
-                    <SubSectionTitleWrapper>
-                        <SubSectionTitle>Most valued</SubSectionTitle>
-                        <ViewAll
-                            text="View all"
-                            to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${
-                                CollectibleFilterType.ShowAll
-                            }&sort=${CollectibleSortType.PriceHighToLow}`}
-                        />
-                    </SubSectionTitleWrapper>
-                    <CollectiblesCardListStyled
-                        collectibles={collectibles}
-                        filterType={CollectibleFilterType.ShowAll}
-                        limit={MAX_ITEMS_TO_DISPLAY}
-                        sortType={CollectibleSortType.PriceHighToLow}
-                        isLoading={isLoading}
+                </SubSectionTitleWrapper>
+                <CollectiblesCardListStyled
+                    collectibles={collectibles}
+                    filterType={CollectibleFilterType.ShowAll}
+                    limit={MAX_ITEMS_TO_DISPLAY}
+                    sortType={CollectibleSortType.NewestAdded}
+                    isLoading={isLoading}
+                />
+                <SubSectionTitleWrapper>
+                    <SubSectionTitle>Most valued</SubSectionTitle>
+                    <ViewAll
+                        text="View all"
+                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${
+                            CollectibleSortType.PriceHighToLow
+                        }`}
                     />
-                </CenteredWrapper>
-            </MainScrollableWrapper>
+                </SubSectionTitleWrapper>
+                <CollectiblesCardListStyled
+                    collectibles={collectibles}
+                    filterType={CollectibleFilterType.ShowAll}
+                    limit={MAX_ITEMS_TO_DISPLAY}
+                    sortType={CollectibleSortType.PriceHighToLow}
+                    isLoading={isLoading}
+                />
+            </CenteredWrapper>
         );
     };
 }

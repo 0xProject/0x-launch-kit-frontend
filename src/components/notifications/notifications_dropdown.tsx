@@ -23,7 +23,9 @@ interface DispatchProps {
 
 type Props = HTMLAttributes<HTMLDivElement> & StateProps & DispatchProps;
 
-const NotificationsDropdownWrapper = styled(Dropdown)``;
+const NotificationsDropdownWrapper = styled(Dropdown)`
+    z-index: 100;
+`;
 
 const NotificationsDropdownHeader = styled.div`
     align-items: center;
@@ -109,7 +111,6 @@ class NotificationsDropdown extends React.Component<Props, {}> {
                 header={header}
                 horizontalPosition={DropdownPositions.Right}
                 onClick={onMarkNotificationsAsRead}
-                shouldCloseDropdownBodyOnClick={false}
                 {...restProps}
             />
         );

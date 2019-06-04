@@ -17,6 +17,7 @@ import {
     BlockchainState,
     Collectible,
     GasInfo,
+    MARKETPLACES,
     OrderSide,
     ThunkCreator,
     Token,
@@ -28,6 +29,7 @@ import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,
+    getCurrentMarketPlace,
     getEthAccount,
     getGasPriceInWei,
     getMarkets,
@@ -279,8 +281,12 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
     return async (dispatch, getState, { initializeWeb3Wrapper }) => {
         dispatch(setWeb3State(Web3State.Loading));
         const web3Wrapper = await initializeWeb3Wrapper();
+        const state = getState();
+        const currentMarketPlace = getCurrentMarketPlace(state);
         if (!web3Wrapper) {
-            initializeAppNoMetamaskOrLocked();
+            if (currentMarketPlace === MARKETPLACES.ERC20) {
+                initializeAppNoMetamaskOrLocked();
+            }
         } else {
             try {
                 const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
@@ -288,28 +294,19 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
 
                 const knownTokens = getKnownTokens(networkId);
 
-                const tokenBalances = await Promise.all(
-                    knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-                );
-
                 const wethToken = knownTokens.getWethToken();
 
                 const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
 
                 const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-                const state = getState();
-                const currencyPair = getCurrencyPair(state);
-                const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
-                const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
-
-                dispatch(setEthAccount(ethAccount));
                 dispatch(
                     initializeBlockchainData({
+                        ethAccount,
                         web3State: Web3State.Done,
                         ethBalance,
                         wethTokenBalance,
-                        tokenBalances,
+                        tokenBalances: [],
                         networkId,
                     }),
                 );
@@ -319,24 +316,17 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                         userOrders: [],
                     }),
                 );
-                dispatch(setMarketTokens({ baseToken, quoteToken }));
-
                 // tslint:disable-next-line:no-floating-promises
-                dispatch(getOrderbookAndUserOrders());
-
+                dispatch(updateGasInfo());
                 // tslint:disable-next-line:no-floating-promises
-                dispatch(getAllCollectibles(ethAccount));
-
-                try {
-                    await dispatch(fetchMarkets());
-                    // For executing this method is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+                dispatch(updateMarketPriceEther());
+                // Inits wallet based on the current app
+                if (currentMarketPlace === MARKETPLACES.ERC20) {
                     // tslint:disable-next-line:no-floating-promises
-                    dispatch(setConnectedUserNotifications(ethAccount, networkId));
+                    dispatch(initWalletERC20(ethAccount, networkId));
+                } else {
                     // tslint:disable-next-line:no-floating-promises
-                    dispatch(updateMarketPriceEther());
-                } catch (error) {
-                    // Relayer error
-                    logger.error('The fetch orders from the relayer failed', error);
+                    dispatch(initWalletERC721(ethAccount));
                 }
             } catch (error) {
                 // Web3Error
@@ -344,6 +334,41 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 dispatch(setWeb3State(Web3State.Error));
             }
         }
+    };
+};
+
+const initWalletERC20: ThunkCreator<Promise<any>> = (ethAccount: string, networkId: number) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const knownTokens = getKnownTokens(networkId);
+
+        const tokenBalances = await Promise.all(
+            knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+        );
+        const currencyPair = getCurrencyPair(state);
+        const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+        const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+
+        dispatch(setMarketTokens({ baseToken, quoteToken }));
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(getOrderbookAndUserOrders());
+        dispatch(setTokenBalances(tokenBalances));
+        try {
+            await dispatch(fetchMarkets());
+            // For executing this method (setConnectedUserNotifications) is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(setConnectedUserNotifications(ethAccount, networkId));
+        } catch (error) {
+            // Relayer error
+            logger.error('The fetch orders from the relayer failed', error);
+        }
+    };
+};
+
+const initWalletERC721: ThunkCreator<Promise<any>> = (ethAccount: string) => {
+    return async dispatch => {
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(getAllCollectibles(ethAccount));
     };
 };
 

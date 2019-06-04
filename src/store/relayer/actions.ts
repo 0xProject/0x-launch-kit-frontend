@@ -6,6 +6,7 @@ import { InsufficientOrdersAmountException } from '../../exceptions/insufficient
 import { RelayerException } from '../../exceptions/relayer_exception';
 import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
+import { getLogger } from '../../util/logger';
 import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder } from '../../util/types';
@@ -19,6 +20,8 @@ import {
     getQuoteToken,
 } from '../selectors';
 import { addNotifications } from '../ui/actions';
+
+const logger = getLogger('Store::Market::Actions');
 
 export const initializeRelayerData = createAction('relayer/init', resolve => {
     return (relayerData: RelayerState) => resolve(relayerData);
@@ -37,9 +40,12 @@ export const getAllOrders: ThunkCreator = () => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         const quoteToken = getQuoteToken(state) as Token;
-        const uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken);
-
-        dispatch(setOrders(uiOrders));
+        try {
+            const uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken);
+            dispatch(setOrders(uiOrders));
+        } catch (err) {
+            logger.error(`getAllOrders: fetch orders from the relayer failed.`, err);
+        }
     };
 };
 
@@ -49,9 +55,12 @@ export const getUserOrders: ThunkCreator = () => {
         const baseToken = getBaseToken(state) as Token;
         const quoteToken = getQuoteToken(state) as Token;
         const ethAccount = getEthAccount(state);
-        const myUIOrders = await getUserOrdersAsUIOrders(baseToken, quoteToken, ethAccount);
-
-        dispatch(setUserOrders(myUIOrders));
+        try {
+            const myUIOrders = await getUserOrdersAsUIOrders(baseToken, quoteToken, ethAccount);
+            dispatch(setUserOrders(myUIOrders));
+        } catch (err) {
+            logger.error(`getUserOrders: fetch orders from the relayer failed.`, err);
+        }
     };
 };
 

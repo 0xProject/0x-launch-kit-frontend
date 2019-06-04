@@ -70,13 +70,16 @@ export const goToMyCollectibles = () => {
 export const goToIndividualCollectible = (collectibleId: string) => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
+        const currentRoutePath = getCurrentRoutePath(state);
 
-        dispatch(
-            push({
-                ...state.router.location,
-                pathname: `${ERC721_APP_BASE_PATH}/collectible/${collectibleId}`,
-            }),
-        );
+        if (!currentRoutePath.includes(`collectible/${collectibleId}`)) {
+            dispatch(
+                push({
+                    ...state.router.location,
+                    pathname: `${ERC721_APP_BASE_PATH}/collectible/${collectibleId}`,
+                }),
+            );
+        }
     };
 };
 

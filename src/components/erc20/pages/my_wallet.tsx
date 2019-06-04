@@ -5,6 +5,7 @@ import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../../
 import { CheckMetamaskStateModalContainer } from '../../common/check_metamask_state_modal_container';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
+import { Content } from '../common/content_wrapper';
 
 const ColumnWideMyWallet = styled(ColumnWide)`
     margin-left: 0;
@@ -15,7 +16,7 @@ const ColumnWideMyWallet = styled(ColumnWide)`
 `;
 
 export const MyWallet = () => (
-    <>
+    <Content>
         <CheckMetamaskStateModalContainer>
             <ColumnNarrow>
                 <WalletWethBalanceContainer />
@@ -24,5 +25,5 @@ export const MyWallet = () => (
                 <WalletTokenBalancesContainer />
             </ColumnWideMyWallet>
         </CheckMetamaskStateModalContainer>
-    </>
+    </Content>
 );

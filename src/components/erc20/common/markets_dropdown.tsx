@@ -35,6 +35,7 @@ type Props = PropsDivElement & PropsToken & DispatchProps;
 interface State {
     selectedFilter: Filter;
     search: string;
+    isUserOnDropdown: boolean;
 }
 
 interface TokenFiltersTabProps {
@@ -251,6 +252,7 @@ class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
         selectedFilter: marketFilters[0],
         search: '',
+        isUserOnDropdown: false,
     };
 
     private readonly _dropdown = React.createRef<Dropdown>();
@@ -276,7 +278,7 @@ class MarketsDropdown extends React.Component<Props, State> {
 
         const body = (
             <MarketsDropdownBody>
-                <MarketsFilters>
+                <MarketsFilters onMouseOver={this._setUserOnDropdown} onMouseOut={this._removeUserOnDropdown}>
                     <MarketsFiltersLabel>Markets</MarketsFiltersLabel>
                     {this._getTokensFilterTabs()}
                     {this._getSearchField()}
@@ -284,8 +286,23 @@ class MarketsDropdown extends React.Component<Props, State> {
                 <TableWrapper>{this._getMarkets()}</TableWrapper>
             </MarketsDropdownBody>
         );
+        return (
+            <MarketsDropdownWrapper
+                body={body}
+                header={header}
+                ref={this._dropdown}
+                shouldCloseDropdownOnClickOutside={!this.state.isUserOnDropdown}
+                {...restProps}
+            />
+        );
+    };
 
-        return <MarketsDropdownWrapper body={body} header={header} ref={this._dropdown} {...restProps} />;
+    private readonly _setUserOnDropdown = () => {
+        this.setState({ isUserOnDropdown: true });
+    };
+
+    private readonly _removeUserOnDropdown = () => {
+        this.setState({ isUserOnDropdown: false });
     };
 
     private readonly _getTokensFilterTabs = () => {

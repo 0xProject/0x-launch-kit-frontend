@@ -15,7 +15,6 @@ import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
 import { CenteredWrapper } from '../../common/centered_wrapper';
-import { MainScrollableWrapper } from '../../common/main_scrollable_wrapper';
 import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
@@ -112,22 +111,20 @@ export class CollectiblesList extends React.Component<Props, {}> {
         const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
         return (
-            <MainScrollableWrapper>
-                <CenteredWrapper>
-                    <FiltersMenu>
-                        <Title>{title}</Title>
-                        <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
-                        <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
-                        <SellCollectiblesButton />
-                    </FiltersMenu>
-                    <CollectiblesCardList
-                        collectibles={collectibles}
-                        filterType={filterType}
-                        isLoading={isLoading}
-                        sortType={sortType}
-                    />
-                </CenteredWrapper>
-            </MainScrollableWrapper>
+            <CenteredWrapper>
+                <FiltersMenu>
+                    <Title>{title}</Title>
+                    <CollectiblesListSortStyled currentValue={sortType} onChange={this._onChangeSortType} />
+                    <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
+                    <SellCollectiblesButton />
+                </FiltersMenu>
+                <CollectiblesCardList
+                    collectibles={collectibles}
+                    filterType={filterType}
+                    isLoading={isLoading}
+                    sortType={sortType}
+                />
+            </CenteredWrapper>
         );
     };
 
