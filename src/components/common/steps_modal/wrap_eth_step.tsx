@@ -7,8 +7,13 @@ import {
     STEP_MODAL_DONE_STATUS_VISIBILITY_TIME,
     UI_DECIMALS_DISPLAYED_ON_STEP_MODALS,
 } from '../../../common/constants';
-import { INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT } from '../../../exceptions/common';
+import {
+    INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT,
+    UNEXPECTED_ERROR,
+    USER_DENIED_TRANSACTION_SIGNATURE_ERR,
+} from '../../../exceptions/common';
 import { InsufficientEthDepositBalanceException } from '../../../exceptions/insufficient_eth_deposit_balance_exception';
+import { UserDeniedTransactionSignatureException } from '../../../exceptions/user_denied_transaction_exception';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getEthBalance, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
@@ -37,9 +42,17 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-class WrapEthStep extends React.Component<Props> {
+interface State {
+    errorCaption: string;
+}
+
+class WrapEthStep extends React.Component<Props, State> {
+    public state = {
+        errorCaption: '',
+    };
+
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, networkId, step, ethBalance } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, networkId, step } = this.props;
 
         if (networkId === null) {
             return null;
@@ -78,10 +91,6 @@ class WrapEthStep extends React.Component<Props> {
         const loadingFooterCaption = `Waiting for confirmation....`;
         const doneFooterCaption = `${convertingFrom} converted!`;
 
-        const currentEthAmount = tokenAmountInUnits(ethBalance, ETH_DECIMALS);
-        const ethNeeded = tokenAmountInUnits(amount, ETH_DECIMALS);
-        const errorCaption = `You have ${currentEthAmount} ETH but you need ${ethNeeded} ETH to make this operation`;
-
         return (
             <BaseStepModal
                 step={step}
@@ -89,7 +98,7 @@ class WrapEthStep extends React.Component<Props> {
                 confirmCaption={confirmCaption}
                 loadingCaption={loadingCaption}
                 doneCaption={doneCaption}
-                errorCaption={errorCaption}
+                errorCaption={this.state.errorCaption}
                 loadingFooterCaption={loadingFooterCaption}
                 doneFooterCaption={doneFooterCaption}
                 buildStepsProgress={buildStepsProgress}
@@ -107,19 +116,24 @@ class WrapEthStep extends React.Component<Props> {
             const web3Wrapper = await getWeb3Wrapper();
             const convertTxHash = await this.props.updateWeth(newWethBalance);
             onLoading();
-
             await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
             onDone();
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
         } catch (err) {
             let exception = err;
-            if (err.toString().includes(INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT)) {
+            let errorCaption = UNEXPECTED_ERROR;
+            if (err.toString().includes(USER_DENIED_TRANSACTION_SIGNATURE_ERR)) {
+                exception = new UserDeniedTransactionSignatureException();
+                errorCaption = USER_DENIED_TRANSACTION_SIGNATURE_ERR;
+            } else if (err.toString().includes(INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT)) {
                 const amount = newWethBalance.minus(currentWethBalance);
                 const currentEthAmount = tokenAmountInUnits(ethBalance, ETH_DECIMALS);
                 const ethNeeded = tokenAmountInUnits(amount, ETH_DECIMALS);
                 exception = new InsufficientEthDepositBalanceException(currentEthAmount, ethNeeded);
+                errorCaption = `You have ${currentEthAmount} ETH but you need ${ethNeeded} ETH to make this operation`;
             }
+            this.setState({ errorCaption });
             onError(exception);
         }
     };
