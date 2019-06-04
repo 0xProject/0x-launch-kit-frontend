@@ -48,6 +48,7 @@ const darkThemeColors: ThemeProperties = {
     cardBackgroundColor: '#202123',
     cardBorderColor: '#000',
     cardTitleColor: '#fff',
+    cardTitleOwnerColor: '#3CB34F',
     chartColor: '#00AE99',
     darkBlue: '#002979',
     darkGray: '#474747',
