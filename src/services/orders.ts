@@ -31,6 +31,11 @@ export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token
     }
 };
 
+export const getAllOrdersAsUIOrdersWithoutOrdersInfo = async (baseToken: Token, quoteToken: Token) => {
+    const orders: SignedOrder[] = await getAllOrders(baseToken, quoteToken);
+    return ordersToUIOrders(orders, baseToken);
+};
+
 export const getUserOrders = (baseToken: Token, quoteToken: Token, ethAccount: string) => {
     const relayer = getRelayer();
     const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
