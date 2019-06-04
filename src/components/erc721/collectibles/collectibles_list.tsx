@@ -7,6 +7,7 @@ import { setCollectiblesListFilterType, setCollectiblesListSortType } from '../.
 import {
     getAllCollectibles,
     getAllCollectiblesFetchStatus,
+    getCurrentRoutePath,
     getRouterLocationSearch,
     getUserCollectibles,
 } from '../../../store/selectors';
@@ -29,6 +30,7 @@ interface StateProps {
     collectibles: { [key: string]: Collectible };
     search: string;
     fetchStatus: AllCollectiblesFetchStatus;
+    currentRoutePath: string;
 }
 
 interface DispatchProps {
@@ -105,7 +107,7 @@ export class CollectiblesList extends React.Component<Props, {}> {
     };
 
     public render = () => {
-        const { title, search, fetchStatus } = this.props;
+        const { title, search, fetchStatus, currentRoutePath } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
         const { sortType, filterType } = this._getSortTypeAndFilterTypeFromLocationSearch(search);
         const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
@@ -123,7 +125,7 @@ export class CollectiblesList extends React.Component<Props, {}> {
                     filterType={filterType}
                     isLoading={isLoading}
                     sortType={sortType}
-                    mustShowCollectibleOwnerBadge={true}
+                    mustShowCollectibleOwnerBadge={!currentRoutePath.includes('my-collectibles')}
                 />
             </CenteredWrapper>
         );
@@ -152,6 +154,7 @@ const allMapStateToProps = (state: StoreState): StateProps => {
         collectibles: getAllCollectibles(state),
         search: getRouterLocationSearch(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
+        currentRoutePath: getCurrentRoutePath(state),
     };
 };
 
@@ -160,6 +163,7 @@ const myMapStateToProps = (state: StoreState): StateProps => {
         collectibles: getUserCollectibles(state),
         search: getRouterLocationSearch(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
+        currentRoutePath: getCurrentRoutePath(state),
     };
 };
 
