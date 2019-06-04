@@ -1,21 +1,16 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
+import { getEthAccount } from '../../../store/selectors';
 import { themeDimensions, themeFeatures } from '../../../themes/commons';
+import { StoreState } from '../../../util/types';
 
+import { OwnerBadge } from './owner_badge';
 import { PriceBadge } from './price_badge';
-
-interface Props {
-    color: string;
-    id: string;
-    image: string;
-    name: string;
-    price: BigNumber | null;
-    onClick?: (e: any) => void;
-}
 
 const CollectibleCardWrapper = styled(Link)`
     background: ${props => props.theme.componentsTheme.cardBackgroundColor};
@@ -56,19 +51,66 @@ const Title = styled.h2`
 
 const defaultHandleClick = (e: any) => undefined;
 
-export const CollectibleCard: React.FC<Props> = (props: Props) => {
-    const { id, name, price, image, color, onClick, ...restProps } = props;
-    return (
-        <CollectibleCardWrapper
-            {...restProps}
-            id={id}
-            onClick={onClick || defaultHandleClick}
-            to={`${ERC721_APP_BASE_PATH}/collectible/${props.id}`}
-        >
-            <ImageWrapper color={color} image={image}>
-                <PriceBadge price={price} />
-            </ImageWrapper>
-            <Title>{name}</Title>
-        </CollectibleCardWrapper>
-    );
+interface OwnProps {
+    color: string;
+    id: string;
+    image: string;
+    name: string;
+    price: BigNumber | null;
+    onClick?: (e: any) => void;
+    currentOwner: string;
+    mustShowCollectibleOwnerBadge?: boolean;
+}
+
+interface StateProps {
+    ethAccount: string;
+}
+
+type Props = StateProps & OwnProps;
+
+class CollectibleCard extends React.Component<Props> {
+    public render = () => {
+        const {
+            id,
+            name,
+            price,
+            image,
+            currentOwner,
+            mustShowCollectibleOwnerBadge,
+            ethAccount,
+            color,
+            onClick,
+            ...restProps
+        } = this.props;
+        const isOwner = currentOwner.toLowerCase() === ethAccount.toLowerCase();
+        const ownerBadge = isOwner && mustShowCollectibleOwnerBadge ? <OwnerBadge /> : null;
+
+        return (
+            <CollectibleCardWrapper
+                {...restProps}
+                id={id}
+                onClick={onClick || defaultHandleClick}
+                to={`${ERC721_APP_BASE_PATH}/collectible/${id}`}
+            >
+                <ImageWrapper color={color} image={image}>
+                    {ownerBadge}
+                    <PriceBadge price={price} />
+                </ImageWrapper>
+                <Title>{name}</Title>
+            </CollectibleCardWrapper>
+        );
+    };
+}
+
+const mapStateToProps = (state: StoreState): StateProps => {
+    return {
+        ethAccount: getEthAccount(state),
+    };
 };
+
+const CollectibleCardContainer = connect(
+    mapStateToProps,
+    {},
+)(CollectibleCard);
+
+export { CollectibleCard, CollectibleCardContainer };
