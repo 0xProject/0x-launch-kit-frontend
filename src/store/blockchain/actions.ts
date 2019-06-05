@@ -1,7 +1,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_ADDRESS, START_BLOCK_LIMIT } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT } from '../../common/constants';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
@@ -283,6 +283,12 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
             }
         } else {
             try {
+                const networkId = await web3Wrapper.getNetworkIdAsync();
+
+                if (networkId !== NETWORK_ID) {
+                    throw new Error('Wrong network id selected');
+                }
+
                 const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
 
                 const knownTokens = getKnownTokens();

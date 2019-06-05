@@ -8,6 +8,8 @@ export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhos
 
 export const MAINNET_ID = 1;
 
+export const MAINNET_NAME = 'Mainnet';
+
 export const ETHERSCAN_TRANSACTION_URL = process.env.REACT_APP_ETHERSCAN_TRANSACTION_URL || 'https://etherscan.io/tx/';
 
 export const TX_DEFAULTS = {
@@ -84,3 +86,5 @@ export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
 export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
 
 export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || MAINNET_ID;
+
+export const NETWORK_NAME: string = process.env.REACT_APP_NETWORK_NAME || MAINNET_NAME;
