@@ -1,6 +1,5 @@
 import { assetDataUtils, BigNumber, ExchangeFillEventArgs } from '0x.js';
 
-import { MAINNET_ID } from '../../common/constants';
 import { getKnownTokens } from '../../util/known_tokens';
 import {
     buildOrderFilledNotification,
@@ -11,8 +10,7 @@ import { addressFactory } from '../../util/test-utils';
 import { Notification, OrderSide, TokenSymbol } from '../../util/types';
 
 describe('buildOrderFilledNotification', () => {
-    const networkId = 50;
-    const knownTokens = getKnownTokens(networkId);
+    const knownTokens = getKnownTokens();
     const zrxToken = knownTokens.getTokenBySymbol(TokenSymbol.Zrx);
     const wethToken = knownTokens.getWethToken();
 
@@ -219,7 +217,7 @@ describe('getTransactionHashFromNotification and getTransactionHashFromNotificat
 
     for (const item of notifications) {
         const { value, expectedUrl, expectedTxHash } = item;
-        const url = getEtherscanUrlForNotificationTx(MAINNET_ID, value as Notification);
+        const url = getEtherscanUrlForNotificationTx(value as Notification);
         expect(url).toEqual(expectedUrl);
         const transactionHash = getTransactionHashFromNotification(value as Notification);
         expect(transactionHash).toEqual(expectedTxHash);

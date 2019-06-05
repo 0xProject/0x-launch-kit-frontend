@@ -176,14 +176,14 @@ const fillEvent4 = {
 
 describe('getKnownTokens', () => {
     it('should return an instance of KnownTokens', () => {
-        const knownTokens = getKnownTokens(networkId, dummyTokensMetaData);
+        const knownTokens = getKnownTokens(dummyTokensMetaData);
         expect(knownTokens).toBeTruthy();
     });
 });
 
 describe('KnownTokens', () => {
     it('should take networkId and TokenMetada[] to instantiate', () => {
-        const knownTokens = new KnownTokens(networkId, dummyTokensMetaData);
+        const knownTokens = new KnownTokens(dummyTokensMetaData);
         expect(knownTokens).toBeTruthy();
     });
     it('should throw when TokenMetada[] does not contain weth metadata for the specified networkId', async () => {

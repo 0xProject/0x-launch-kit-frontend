@@ -1,6 +1,6 @@
 import { RateLimit } from 'async-sema';
 
-import { COLLECTIBLE_ADDRESS, OPENSEA_API_KEY } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, NETWORK_ID, OPENSEA_API_KEY } from '../../common/constants';
 import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
 export class Opensea implements CollectibleMetadataSource {
@@ -34,8 +34,8 @@ export class Opensea implements CollectibleMetadataSource {
         this._rateLimit = RateLimit(options.rps); // requests per second
     }
 
-    public async fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]> {
-        const metadataSourceUrl = this._endpointsUrls[networkId];
+    public async fetchAllUserCollectiblesAsync(userAddress: string): Promise<Collectible[]> {
+        const metadataSourceUrl = this._endpointsUrls[NETWORK_ID];
         const contractAddress = COLLECTIBLE_ADDRESS;
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&owner=${userAddress}`;
         const assetsResponse = await this._fetch(url);
@@ -43,8 +43,8 @@ export class Opensea implements CollectibleMetadataSource {
         return Opensea.getAssetsAsCollectible(assetsResponseJson.assets);
     }
 
-    public async fetchCollectiblesAsync(tokenIds: string[], networkId: number): Promise<Collectible[]> {
-        const metadataSourceUrl = this._endpointsUrls[networkId];
+    public async fetchCollectiblesAsync(tokenIds: string[]): Promise<Collectible[]> {
+        const metadataSourceUrl = this._endpointsUrls[NETWORK_ID];
         const contractAddress = COLLECTIBLE_ADDRESS;
         const tokenIdsQueryParam = tokenIds.map((id: string) => `token_ids=${id}`).join('&');
         const url = `${metadataSourceUrl}/assets?asset_contract_address=${contractAddress}&${tokenIdsQueryParam}`;

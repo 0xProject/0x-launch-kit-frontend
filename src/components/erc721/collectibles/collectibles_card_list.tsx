@@ -76,10 +76,11 @@ interface Props {
     limit?: number;
     isLoading?: boolean;
     onClick?: (e: any) => void;
+    className?: string;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const { collectibles, sortType, filterType, limit, isLoading, onClick, ...restProps } = props;
+    const { collectibles, sortType, filterType, limit, isLoading, onClick, className, ...restProps } = props;
     const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit, onClick);
 
     if (isLoading) {
@@ -90,7 +91,7 @@ export const CollectiblesCardList = (props: Props) => {
     }
 
     return (
-        <CollectiblesListOverflow {...restProps}>
+        <CollectiblesListOverflow className={className} {...restProps}>
             <CollectiblesList>{collectibleCards}</CollectiblesList>
         </CollectiblesListOverflow>
     );

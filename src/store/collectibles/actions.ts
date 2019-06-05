@@ -32,11 +32,9 @@ export const getAllCollectibles: ThunkCreator = () => {
         dispatch(fetchAllCollectiblesAsync.request());
         try {
             const state = getState();
-            const web3Wrapper = await getWeb3Wrapper();
-            const networkId = await web3Wrapper.getNetworkIdAsync();
             const ethAccount = getEthAccount(state);
             const collectiblesMetadataGateway = getCollectiblesMetadataGateway();
-            const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(ethAccount, networkId);
+            const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(ethAccount);
             dispatch(fetchAllCollectiblesAsync.success({ collectibles }));
         } catch (err) {
             logger.error('There was a problem fetching the collectibles', err);

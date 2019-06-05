@@ -1,6 +1,6 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
-import { ETHERSCAN_KOVAN_URL, ETHERSCAN_MAINNET_URL, MAINNET_ID } from '../common/constants';
+import { ETHERSCAN_TRANSACTION_URL } from '../common/constants';
 
 import { KnownTokens } from './known_tokens';
 import { Market, Notification, NotificationKind, OrderFilledNotification, OrderSide, Token } from './types';
@@ -74,8 +74,7 @@ export const getTransactionHashFromNotification = (notification: Notification): 
     return notification.id.slice(0, 66);
 };
 
-export const getEtherscanUrlForNotificationTx = (networkId: number | null, notification: Notification): string => {
-    const url = networkId === MAINNET_ID ? ETHERSCAN_MAINNET_URL : ETHERSCAN_KOVAN_URL;
+export const getEtherscanUrlForNotificationTx = (notification: Notification): string => {
     const hash = getTransactionHashFromNotification(notification);
-    return `${url}${hash}`;
+    return `${ETHERSCAN_TRANSACTION_URL}${hash}`;
 };

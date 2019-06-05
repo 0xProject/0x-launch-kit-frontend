@@ -8,8 +8,7 @@ export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhos
 
 export const MAINNET_ID = 1;
 
-export const ETHERSCAN_MAINNET_URL = 'https://etherscan.io/tx/';
-export const ETHERSCAN_KOVAN_URL = 'https://kovan.etherscan.io/tx/';
+export const ETHERSCAN_TRANSACTION_URL = process.env.REACT_APP_ETHERSCAN_TRANSACTION_URL || 'https://etherscan.io/tx/';
 
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
@@ -83,3 +82,5 @@ export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
     Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;
 
 export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
+
+export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || MAINNET_ID;

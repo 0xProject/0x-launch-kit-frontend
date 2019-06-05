@@ -47,7 +47,6 @@ export interface BlockchainState {
     readonly ethBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
     readonly gasInfo: GasInfo;
-    readonly networkId: number | null;
 }
 
 export interface RelayerState {
@@ -293,8 +292,8 @@ export interface CollectiblesState {
 }
 
 export interface CollectibleMetadataSource {
-    fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]>;
-    fetchCollectiblesAsync(tokenIds: string[], networkId: number): Promise<Collectible[]>;
+    fetchAllUserCollectiblesAsync(userAddress: string): Promise<Collectible[]>;
+    fetchCollectiblesAsync(tokenIds: string[]): Promise<Collectible[]>;
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;

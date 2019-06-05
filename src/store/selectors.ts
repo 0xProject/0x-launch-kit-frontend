@@ -37,7 +37,6 @@ export const getMarkets = (state: StoreState) => state.market.markets;
 export const getEthInUsd = (state: StoreState) => state.market.ethInUsd;
 export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.gasPriceInWei;
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
-export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
 export const getAllCollectiblesFetchStatus = (state: StoreState) => state.collectibles.allCollectiblesFetchStatus;
 export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
