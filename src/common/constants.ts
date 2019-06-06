@@ -1,16 +1,12 @@
 import { BigNumber } from '0x.js';
 
+import { Network } from '../util/types';
+
 export const ERC20_APP_BASE_PATH = '/erc20';
 export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
 
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
-
-export const MAINNET_ID = 1;
-
-export const MAINNET_NAME = 'Mainnet';
-
-export const ETHERSCAN_TRANSACTION_URL = process.env.REACT_APP_ETHERSCAN_TRANSACTION_URL || 'https://etherscan.io/tx/';
 
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
@@ -83,6 +79,6 @@ export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
 
 export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
 
-export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || MAINNET_ID;
+export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || Network.Ganache;
 
-export const NETWORK_NAME: string = process.env.REACT_APP_NETWORK_NAME || MAINNET_NAME;
+export const NETWORK_NAME: string = Network[NETWORK_ID];

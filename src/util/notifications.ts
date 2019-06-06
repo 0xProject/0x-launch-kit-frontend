@@ -1,8 +1,7 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
-import { ETHERSCAN_TRANSACTION_URL } from '../common/constants';
-
 import { KnownTokens } from './known_tokens';
+import { getTransactionLink } from './transaction_link';
 import { Market, Notification, NotificationKind, OrderFilledNotification, OrderSide, Token } from './types';
 
 export const buildOrderFilledNotification = (
@@ -76,5 +75,5 @@ export const getTransactionHashFromNotification = (notification: Notification): 
 
 export const getEtherscanUrlForNotificationTx = (notification: Notification): string => {
     const hash = getTransactionHashFromNotification(notification);
-    return `${ETHERSCAN_TRANSACTION_URL}${hash}`;
+    return getTransactionLink(hash);
 };
