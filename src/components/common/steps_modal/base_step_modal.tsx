@@ -1,9 +1,9 @@
 import React from 'react';
 
+import { ComponentUnmountedException } from '../../../exceptions/component_unmounted_exception';
 import { getStepTitle, isLongStep, makeGetProgress } from '../../../util/steps';
 import { Step } from '../../../util/types';
 
-import { BaseStepModalUnmountedException } from './exceptions/unmounted_exception';
 import { StepPendingTime } from './step_pending_time';
 import {
     ModalStatusTextLight,
@@ -25,7 +25,7 @@ type RunAction = ({
 }: {
     onLoading: () => any;
     onDone: () => any;
-    onError: (err: Error | BaseStepModalUnmountedException) => any;
+    onError: (err: Error | ComponentUnmountedException) => any;
 }) => Promise<any>;
 
 interface Props {
@@ -163,8 +163,8 @@ export class BaseStepModal extends React.Component<Props, State> {
                 status: StepStatus.Done,
             });
         };
-        const onError = (err: Error | BaseStepModalUnmountedException) => {
-            if (err instanceof BaseStepModalUnmountedException) {
+        const onError = (err: Error | ComponentUnmountedException) => {
+            if (err instanceof ComponentUnmountedException) {
                 return;
             }
             this.setState({
@@ -187,7 +187,7 @@ export class BaseStepModal extends React.Component<Props, State> {
 
     private readonly _throwIfUnmounted = () => {
         if (this._isUnmounted) {
-            throw new BaseStepModalUnmountedException();
+            throw new ComponentUnmountedException('BaseStepModal');
         }
     };
 }

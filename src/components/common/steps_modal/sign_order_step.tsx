@@ -5,13 +5,13 @@ import { connect } from 'react-redux';
 import { INSUFFICIENT_FEE_BALANCE, INSUFFICIENT_MAKER_BALANCE_ERR, SIGNATURE_ERR } from '../../../exceptions/common';
 import { InsufficientFeeBalanceException } from '../../../exceptions/insufficient_fee_balance_exception';
 import { InsufficientTokenBalanceException } from '../../../exceptions/insufficient_token_balance_exception';
+import { SignatureFailedException } from '../../../exceptions/signature_failed_exception';
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
-import { SignatureFailedException } from './exceptions/signature_failed_exception';
 import { StepItem } from './steps_progress';
 
 interface OwnProps {
