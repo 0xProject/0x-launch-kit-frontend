@@ -27,7 +27,7 @@ const tokenBalances: TokenBalance[] = [
             primaryColor: 'white',
             address: '0x1',
             decimals: 18,
-            symbol: 'ZRX',
+            symbol: 'zrx',
             name: 'Zrx',
         },
         isUnlocked: true,
@@ -38,7 +38,7 @@ const tokenBalances: TokenBalance[] = [
             primaryColor: 'white',
             address: '0x2',
             decimals: 18,
-            symbol: 'MKR',
+            symbol: 'mkr',
             name: 'Mkr',
         },
         isUnlocked: true,
@@ -49,7 +49,7 @@ const tokenBalances: TokenBalance[] = [
             primaryColor: 'white',
             address: '0x3',
             decimals: 18,
-            symbol: 'REP',
+            symbol: 'rep',
             name: 'Augur',
         },
         isUnlocked: true,
@@ -60,7 +60,7 @@ const tokenBalances: TokenBalance[] = [
             primaryColor: 'white',
             address: '0x3',
             decimals: 18,
-            symbol: 'DGD',
+            symbol: 'dgd',
             name: 'Digi',
         },
         isUnlocked: true,
@@ -71,7 +71,7 @@ const tokenBalances: TokenBalance[] = [
             primaryColor: 'white',
             address: '0x3',
             decimals: 18,
-            symbol: 'MLN',
+            symbol: 'mln',
             name: 'Melon',
         },
         isUnlocked: true,
@@ -81,8 +81,8 @@ const tokenBalances: TokenBalance[] = [
 describe('Buy sell limit steps for zrx/weth', () => {
     it('should create just one buy limit step if base and quote tokens are unlocked', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'ZRX' });
-        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'WETH' });
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
@@ -111,8 +111,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
     });
     it('Should create two steps, buy and unlock step if creating a buy limit order for an X/Y market with Y locked', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'ZRX' });
-        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'WETH' });
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
@@ -142,8 +142,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
     });
     it('Should create two steps, buy and unlock step if creating a sell limit order for an X/Y market with X locked', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'ZRX' });
-        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'WETH' });
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         // Base token zrx is locked
         tokenBalances[0].isUnlocked = false;
         const wethTokenBalance = {
@@ -174,8 +174,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
     });
     it('Should create a unlock zrx step if MAKER FEE is positive and if zrx is locked', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'MKR' });
-        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'WETH' });
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
@@ -210,8 +210,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
 describe('Buy sell market steps for zrx/weth', () => {
     it('should create just one buy market step if base and quote tokens are unlocked', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'ZRX' });
-        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'WETH' });
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         // Unlocks base zrx token
         tokenBalances[0].isUnlocked = true;
         const wethTokenBalance = {
@@ -244,8 +244,8 @@ describe('Buy sell market steps for zrx/weth', () => {
     });
     it('Should create a unlock zrx step if TAKER FEE is positive and if zrx is locked', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'MKR' });
-        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'WETH' });
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
@@ -282,7 +282,7 @@ describe('Buy sell market steps for zrx/weth', () => {
 describe('getUnlockTokenStepIfNeeded', () => {
     it('if the token is locked, should return a toggle lock step', async () => {
         // given
-        const lockedToken = tokenFactory.build({ decimals: 18, symbol: 'MKR' });
+        const lockedToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
         // locks mkr token
         tokenBalances[1].isUnlocked = false;
         const wethTokenBalance = {
@@ -305,7 +305,7 @@ describe('getUnlockTokenStepIfNeeded', () => {
     });
     it('if the token is unlocked, should return null', async () => {
         // given
-        const lockedToken = tokenFactory.build({ decimals: 18, symbol: 'MKR' });
+        const lockedToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
         // unlock mkr token
         tokenBalances[1].isUnlocked = true;
         const wethTokenBalance = {

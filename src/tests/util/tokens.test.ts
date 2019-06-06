@@ -59,7 +59,7 @@ describe('unitsInTokenAmount', () => {
 describe('tokenSymbolToDisplayString', () => {
     it('should return weth token correctly formated', async () => {
         // given
-        const symbol = 'WETH';
+        const symbol = 'weth';
         // when
         const result = tokenSymbolToDisplayString(symbol);
 
@@ -70,7 +70,7 @@ describe('tokenSymbolToDisplayString', () => {
 
     it('should return generic token (no weth) in uppercase', async () => {
         // given
-        const symbol = 'ZRX';
+        const symbol = 'zrx';
         // when
         const result = tokenSymbolToDisplayString(symbol);
 

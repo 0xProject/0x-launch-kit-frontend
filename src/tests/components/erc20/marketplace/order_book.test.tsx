@@ -299,7 +299,7 @@ describe('OrderBookTable', () => {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
             decimals: 0,
             name: '0x',
-            symbol: 'ZRX',
+            symbol: 'zrx',
             primaryColor: '#ccc',
         };
 
@@ -380,7 +380,7 @@ describe('OrderBookTable', () => {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
             decimals: 0,
             name: '0x',
-            symbol: 'ZRX',
+            symbol: 'zrx',
             primaryColor: '#ccc',
         };
 

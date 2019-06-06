@@ -11,7 +11,7 @@ describe('OrderDetails', () => {
         return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(symbol)}`;
     };
     const getExpectedFeeText = (amount: number): string => {
-        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString('ZRX')}`;
+        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString('zrx')}`;
     };
     const getAmountTextFromWrapper = (wrapper: ShallowWrapper): string =>
         wrapper
@@ -25,8 +25,8 @@ describe('OrderDetails', () => {
             .text();
 
     const currencyPair = {
-        base: 'ZRX',
-        quote: 'WETH',
+        base: 'zrx',
+        quote: 'weth',
     };
 
     it('Calculates total cost for limit orders', () => {

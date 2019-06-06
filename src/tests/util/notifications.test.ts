@@ -22,22 +22,22 @@ describe('buildOrderFilledNotification', () => {
         {
             price: null,
             currencyPair: {
-                base: 'ZRX',
-                quote: 'WETH',
+                base: 'zrx',
+                quote: 'weth',
             },
         },
         {
             price: null,
             currencyPair: {
-                base: 'MKR',
-                quote: 'WETH',
+                base: 'mkr',
+                quote: 'weth',
             },
         },
         {
             price: null,
             currencyPair: {
-                base: 'ZRX',
-                quote: 'MKR',
+                base: 'zrx',
+                quote: 'mkr',
             },
         },
     ];

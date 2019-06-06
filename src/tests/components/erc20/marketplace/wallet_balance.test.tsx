@@ -104,8 +104,8 @@ describe('WalletBalance', () => {
         const baseToken = tokenFactory.build();
         const quoteToken = tokenFactory.build();
         const currencyPair = {
-            base: 'WETH',
-            quote: 'ZRX',
+            base: 'weth',
+            quote: 'zrx',
         };
         const ethAccount = 'This is a test';
 
