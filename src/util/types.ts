@@ -242,12 +242,44 @@ export type Notification = CancelOrderNotification | MarketNotification | LimitN
 
 export enum TokenSymbol {
     Weth = 'weth',
-    Zrx = 'zrx',
+    //  Stablecoins
     Dai = 'dai',
-    Mkr = 'mkr',
-    Rep = 'rep',
-    Dgd = 'dgd',
-    Mln = 'mln',
+    Pax = 'pax',
+    Tusd = 'tusd',
+    Usdc = 'usdc',
+    Usds = 'usds',
+    Usdt = 'usdt',
+    // ERC-20 Tokens
+    // Bat = 'bat',
+    // Bnt = 'bnt',
+    // Cvc = 'cvc',
+    // Dnt = 'dnt',
+    // Fun = 'fun',
+    // Gnt = 'gnt',
+    // Mana = 'mana',
+    // Mdx = 'mdx',
+    // Nmr = 'nmr',
+    // One = 'one',
+    // Poly = 'poly',
+    // Rep = 'rep',
+    // Rlc = 'rlc',
+    // Snt = 'snt',
+    // Storj = 'storj',
+    // Zap = 'zap',
+    Zrx = 'zrx',
+    // Wrapped Interoperable Assets
+    // Ada = 'ada',
+    // Bnb = 'bnb',
+    // Btc = 'btc',
+    // Doge = 'doge',
+    // Eos = 'eos',
+    // Etc = 'etc',
+    // Ltc = 'ltc',
+    // Trx = 'trx',
+    // Xlm = 'xlm',
+    // Xrp = 'xrp',
+    // Zil = 'zil',
+
 }
 
 export enum OrderType {
