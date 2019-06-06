@@ -54,19 +54,8 @@ const getCollectibleCards = (
         filteredItems = filteredItems.slice(0, limit);
     }
     return filteredItems.map((sortableCollectible, index) => {
-        const { name, image, color, tokenId, currentOwner } = sortableCollectible.collectible;
-        return (
-            <CollectibleCardContainer
-                color={color}
-                id={tokenId}
-                image={image}
-                key={index}
-                name={name}
-                onClick={onClick}
-                price={sortableCollectible.price}
-                currentOwner={currentOwner}
-            />
-        );
+        const { collectible, price } = sortableCollectible;
+        return <CollectibleCardContainer collectible={collectible} key={index} onClick={onClick} price={price} />;
     });
 };
 

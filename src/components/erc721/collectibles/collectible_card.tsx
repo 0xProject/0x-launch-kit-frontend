@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
 import { getEthAccount } from '../../../store/selectors';
 import { themeDimensions, themeFeatures } from '../../../themes/commons';
-import { StoreState } from '../../../util/types';
+import { Collectible, StoreState } from '../../../util/types';
 
 import { OwnerBadge } from './owner_badge';
 import { PriceBadge } from './price_badge';
@@ -52,13 +52,9 @@ const Title = styled.h2`
 const defaultHandleClick = (e: any) => undefined;
 
 interface OwnProps {
-    color: string;
-    id: string;
-    image: string;
-    name: string;
+    collectible: Collectible;
     price: BigNumber | null;
     onClick?: (e: any) => void;
-    currentOwner: string;
 }
 
 interface StateProps {
@@ -69,16 +65,17 @@ type Props = StateProps & OwnProps;
 
 class CollectibleCard extends React.Component<Props> {
     public render = () => {
-        const { id, name, price, image, currentOwner, ethAccount, color, onClick, ...restProps } = this.props;
+        const { collectible, price, ethAccount, onClick, ...restProps } = this.props;
+        const { currentOwner, tokenId, color, image, name } = collectible;
         const isOwner = currentOwner.toLowerCase() === ethAccount.toLowerCase();
         const ownerBadge = isOwner ? <OwnerBadge /> : null;
 
         return (
             <CollectibleCardWrapper
                 {...restProps}
-                id={id}
+                id={tokenId}
                 onClick={onClick || defaultHandleClick}
-                to={`${ERC721_APP_BASE_PATH}/collectible/${id}`}
+                to={`${ERC721_APP_BASE_PATH}/collectible/${tokenId}`}
             >
                 <ImageWrapper color={color} image={image}>
                     {ownerBadge}
