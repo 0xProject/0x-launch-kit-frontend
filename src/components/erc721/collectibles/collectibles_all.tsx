@@ -135,7 +135,6 @@ export class CollectiblesAll extends React.Component<Props> {
                     limit={MAX_ITEMS_TO_DISPLAY}
                     sortType={CollectibleSortType.NewestAdded}
                     isLoading={isLoading}
-                    mustShowCollectibleOwnerBadge={true}
                 />
                 <SubSectionTitleWrapper>
                     <SubSectionTitle>Most valued</SubSectionTitle>
@@ -152,7 +151,6 @@ export class CollectiblesAll extends React.Component<Props> {
                     limit={MAX_ITEMS_TO_DISPLAY}
                     sortType={CollectibleSortType.PriceHighToLow}
                     isLoading={isLoading}
-                    mustShowCollectibleOwnerBadge={true}
                 />
             </CenteredWrapper>
         );

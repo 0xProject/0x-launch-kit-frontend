@@ -59,7 +59,6 @@ interface OwnProps {
     price: BigNumber | null;
     onClick?: (e: any) => void;
     currentOwner: string;
-    mustShowCollectibleOwnerBadge?: boolean;
 }
 
 interface StateProps {
@@ -70,20 +69,9 @@ type Props = StateProps & OwnProps;
 
 class CollectibleCard extends React.Component<Props> {
     public render = () => {
-        const {
-            id,
-            name,
-            price,
-            image,
-            currentOwner,
-            mustShowCollectibleOwnerBadge,
-            ethAccount,
-            color,
-            onClick,
-            ...restProps
-        } = this.props;
+        const { id, name, price, image, currentOwner, ethAccount, color, onClick, ...restProps } = this.props;
         const isOwner = currentOwner.toLowerCase() === ethAccount.toLowerCase();
-        const ownerBadge = isOwner && mustShowCollectibleOwnerBadge ? <OwnerBadge /> : null;
+        const ownerBadge = isOwner ? <OwnerBadge /> : null;
 
         return (
             <CollectibleCardWrapper

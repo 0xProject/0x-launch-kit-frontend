@@ -47,7 +47,6 @@ const getCollectibleCards = (
     filterType: CollectibleFilterType,
     limit?: number,
     onClick?: (e: any) => void,
-    mustShowCollectibleOwnerBadge?: boolean,
 ) => {
     const sortedItems = getSortedCollectibles(collectibles, sortType);
     let filteredItems = sortedItems.filter(getFilterFunction(filterType));
@@ -65,7 +64,6 @@ const getCollectibleCards = (
                 name={name}
                 onClick={onClick}
                 price={sortableCollectible.price}
-                mustShowCollectibleOwnerBadge={mustShowCollectibleOwnerBadge}
                 currentOwner={currentOwner}
             />
         );
@@ -79,28 +77,11 @@ interface Props {
     limit?: number;
     isLoading?: boolean;
     onClick?: (e: any) => void;
-    mustShowCollectibleOwnerBadge?: boolean;
 }
 
 export const CollectiblesCardList = (props: Props) => {
-    const {
-        collectibles,
-        sortType,
-        filterType,
-        limit,
-        mustShowCollectibleOwnerBadge,
-        isLoading,
-        onClick,
-        ...restProps
-    } = props;
-    const collectibleCards = getCollectibleCards(
-        collectibles,
-        sortType,
-        filterType,
-        limit,
-        onClick,
-        mustShowCollectibleOwnerBadge,
-    );
+    const { collectibles, sortType, filterType, limit, isLoading, onClick, ...restProps } = props;
+    const collectibleCards = getCollectibleCards(collectibles, sortType, filterType, limit, onClick);
 
     if (isLoading) {
         return <Loading />;
