@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
-import { getAllCollectibles, getAllCollectiblesFetchStatus } from '../../../store/selectors';
+import { getAllCollectiblesFetchStatus, getUsersCollectiblesAvailableToList } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
@@ -159,7 +159,7 @@ export class CollectiblesAll extends React.Component<Props> {
 
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {
-        collectibles: getAllCollectibles(state),
+        collectibles: getUsersCollectiblesAvailableToList(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
     };
 };
