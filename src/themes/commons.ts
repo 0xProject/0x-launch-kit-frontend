@@ -24,6 +24,7 @@ export interface ThemeProperties {
     cardBackgroundColor: string;
     cardBorderColor: string;
     cardTitleColor: string;
+    cardTitleOwnerColor: string;
     chartColor: string;
     darkBlue: string;
     darkGray: string;

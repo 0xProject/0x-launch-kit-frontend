@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OwnerBadge OwnerBadge to match snapshot 1`] = `
+<div
+  className="sc-bdVaJa ksUms"
+>
+  <span
+    className="sc-bwzfXH hyHzmj"
+  >
+    You Own
+  </span>
+</div>
+`;
