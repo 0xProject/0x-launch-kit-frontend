@@ -9,6 +9,7 @@ const Badge = styled.div`
     display: flex;
     height: 31px;
     justify-content: center;
+    min-width: 84px;
     padding: 8px 12px;
     position: absolute;
     left: 10px;
@@ -17,11 +18,9 @@ const Badge = styled.div`
 
 const BadgeValue = styled.span`
     color: ${props => props.theme.componentsTheme.cardTitleOwnerColor};
-    font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 14px;
     font-weight: 400;
     line-height: 14px;
-    margin-right: 6px;
 `;
 
 export const OwnerBadge = () => {
