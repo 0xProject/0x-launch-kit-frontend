@@ -4,14 +4,14 @@ import React from 'react';
 
 import { CostValue, OrderDetails, Value } from '../../../../components/erc20/marketplace/order_details';
 import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../../../util/tokens';
-import { OrderSide, OrderType, TokenSymbol } from '../../../../util/types';
+import { OrderSide, OrderType } from '../../../../util/types';
 
 describe('OrderDetails', () => {
     const getExpectedTotalCostText = (amount: number, symbol: string): string => {
-        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(symbol as TokenSymbol)}`;
+        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(symbol)}`;
     };
     const getExpectedFeeText = (amount: number): string => {
-        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(TokenSymbol.Zrx)}`;
+        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString('ZRX')}`;
     };
     const getAmountTextFromWrapper = (wrapper: ShallowWrapper): string =>
         wrapper
@@ -25,15 +25,15 @@ describe('OrderDetails', () => {
             .text();
 
     const currencyPair = {
-        base: TokenSymbol.Zrx,
-        quote: TokenSymbol.Weth,
+        base: 'ZRX',
+        quote: 'WETH',
     };
 
     it('Calculates total cost for limit orders', () => {
         // given
         const makerAmount = unitsInTokenAmount('13', 18);
         const tokenPrice = new BigNumber(3);
-        const fees = () => {
+        const fees = async () => {
             return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
         };
 
@@ -116,6 +116,9 @@ describe('OrderDetails', () => {
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
+        const fees = async () => {
+            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
+        };
 
         // when
         const wrapper = shallow(
@@ -128,6 +131,7 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
+                onFetchTakerAndMakerFee={fees}
             />,
         );
 
@@ -195,6 +199,9 @@ describe('OrderDetails', () => {
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
+        const fees = async () => {
+            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
+        };
 
         // when
         const wrapper = shallow(
@@ -207,6 +214,7 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
+                onFetchTakerAndMakerFee={fees}
             />,
         );
 
@@ -272,6 +280,9 @@ describe('OrderDetails', () => {
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
+        const fees = async () => {
+            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
+        };
 
         // when
         const wrapper = shallow(
@@ -284,6 +295,7 @@ describe('OrderDetails', () => {
                 currencyPair={currencyPair}
                 openBuyOrders={[]}
                 openSellOrders={[sellOrder1, sellOrder2]}
+                onFetchTakerAndMakerFee={fees}
             />,
         );
 

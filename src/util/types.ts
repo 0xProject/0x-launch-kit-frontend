@@ -23,7 +23,7 @@ export interface Token {
     address: string;
     decimals: number;
     name: string;
-    symbol: TokenSymbol;
+    symbol: string;
     primaryColor: string;
 }
 
@@ -193,8 +193,8 @@ export interface OrderBook {
 }
 
 export interface CurrencyPair {
-    base: TokenSymbol;
-    quote: TokenSymbol;
+    base: string;
+    quote: string;
 }
 
 export interface Market {
@@ -247,16 +247,6 @@ export interface OrderFilledNotification extends BaseNotification {
 }
 
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
-
-export enum TokenSymbol {
-    Weth = 'weth',
-    Zrx = 'zrx',
-    Dai = 'dai',
-    Mkr = 'mkr',
-    Rep = 'rep',
-    Dgd = 'dgd',
-    Mln = 'mln',
-}
 
 export enum OrderType {
     Limit = 'Limit',

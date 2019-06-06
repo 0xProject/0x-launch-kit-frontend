@@ -1,14 +1,14 @@
 import queryString from 'query-string';
 import { getType } from 'typesafe-actions';
 
-import { MarketState, TokenSymbol } from '../../util/types';
+import { MarketState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
 const initialMarketState: MarketState = {
     currencyPair: {
-        base: (queryString.parse(queryString.extract(window.location.hash)).base as TokenSymbol) || TokenSymbol.Zrx,
-        quote: (queryString.parse(queryString.extract(window.location.hash)).quote as TokenSymbol) || TokenSymbol.Weth,
+        base: queryString.parse(queryString.extract(window.location.hash)).base as string,
+        quote: queryString.parse(queryString.extract(window.location.hash)).quote as string,
     },
     baseToken: null,
     quoteToken: null,

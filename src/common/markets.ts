@@ -1,12 +1,3 @@
-import { CurrencyPair, TokenSymbol } from '../util/types';
+import * as Config from '../../config.json';
 
-export const availableMarkets: CurrencyPair[] = [
-    {
-        base: TokenSymbol.Zrx,
-        quote: TokenSymbol.Weth,
-    },
-    {
-        base: TokenSymbol.Mkr,
-        quote: TokenSymbol.Weth,
-    },
-];
+export const availableMarkets = Config.pairs;

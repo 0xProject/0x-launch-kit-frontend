@@ -8,8 +8,7 @@ import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/select
 import { themeDimensions } from '../../../themes/commons';
 import { getColorBySymbol } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
-import { tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../../util/types';
+import { CurrencyPair, Market, StoreState, Token } from '../../../util/types';
 import { CardBase } from '../../common/card_base';
 import { Dropdown } from '../../common/dropdown';
 import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
@@ -227,7 +226,7 @@ const DropdownTokenIcon = styled(TokenIcon)`
 
 interface Filter {
     text: string;
-    value: null | TokenSymbol;
+    value: null | string;
 }
 const marketFilters: Filter[] = [
     {
@@ -236,11 +235,11 @@ const marketFilters: Filter[] = [
     },
     {
         text: 'ETH',
-        value: TokenSymbol.Weth,
+        value: 'WETH',
     },
     {
-        text: tokenSymbolToDisplayString(TokenSymbol.Dai),
-        value: TokenSymbol.Dai,
+        text: 'DAI',
+        value: 'DAI',
     },
 ];
 
