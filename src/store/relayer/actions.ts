@@ -4,12 +4,17 @@ import { createAction } from 'typesafe-actions';
 import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { RelayerException } from '../../exceptions/relayer_exception';
-import { cancelSignedOrder, getAllOrdersAsUIOrders, getUserOrdersAsUIOrders } from '../../services/orders';
+import {
+    cancelSignedOrder,
+    getAllOrdersAsUIOrders,
+    getAllOrdersAsUIOrdersWithoutOrdersInfo,
+    getUserOrdersAsUIOrders,
+} from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
 import { getLogger } from '../../util/logger';
 import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
-import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder } from '../../util/types';
+import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder, Web3State } from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
     getBaseToken,
@@ -18,6 +23,7 @@ import {
     getOpenBuyOrders,
     getOpenSellOrders,
     getQuoteToken,
+    getWeb3State,
 } from '../selectors';
 import { addNotifications } from '../ui/actions';
 
@@ -40,8 +46,16 @@ export const getAllOrders: ThunkCreator = () => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         const quoteToken = getQuoteToken(state) as Token;
+        const web3State = getWeb3State(state) as Web3State;
         try {
-            const uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken);
+            let uiOrders: UIOrder[] = [];
+            const isWeb3NotInstalled = [Web3State.Locked, Web3State.NotInstalled].includes(web3State);
+            // tslint:disable-next-line:prefer-conditional-expression
+            if (isWeb3NotInstalled) {
+                uiOrders = await getAllOrdersAsUIOrdersWithoutOrdersInfo(baseToken, quoteToken);
+            } else {
+                uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken);
+            }
             dispatch(setOrders(uiOrders));
         } catch (err) {
             logger.error(`getAllOrders: fetch orders from the relayer failed.`, err);

@@ -212,6 +212,20 @@ export const getUserCollectiblesAvailableToSell = createSelector(
     },
 );
 
+export const getUserCollectiblesOnSell = createSelector(
+    getUserCollectibles,
+    (userCollectibles): { [key: string]: Collectible } => {
+        const userCollectiblesOnSell: { [key: string]: Collectible } = {};
+        Object.keys(userCollectibles).forEach(tokenId => {
+            const collectibleIterator = userCollectibles[tokenId];
+            if (collectibleIterator.order) {
+                userCollectiblesOnSell[tokenId] = collectibleIterator;
+            }
+        });
+        return userCollectiblesOnSell;
+    },
+);
+
 export const getOtherUsersCollectibles = createSelector(
     getEthAccount,
     getAllCollectibles,
@@ -223,5 +237,13 @@ export const getOtherUsersCollectibles = createSelector(
             }
         });
         return userCollectibles;
+    },
+);
+
+export const getUsersCollectiblesAvailableToList = createSelector(
+    getOtherUsersCollectibles,
+    getUserCollectiblesOnSell,
+    (otherUsersCollectibles, userCollectiblesOnSell): { [key: string]: Collectible } => {
+        return { ...otherUsersCollectibles, ...userCollectiblesOnSell };
     },
 );

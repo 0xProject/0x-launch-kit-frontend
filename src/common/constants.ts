@@ -52,8 +52,6 @@ export const UPDATE_ETHER_PRICE_INTERVAL: number = process.env.REACT_APP_UPDATE_
 export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;
 
-export const ETH_GAS_STATION_API_BASE_URL = 'https://ethgasstation.info';
-
 export const GWEI_IN_WEI = new BigNumber(1000000000);
 
 export const ONE_MINUTE_MS = 1000 * 60;
