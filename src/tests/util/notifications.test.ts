@@ -117,8 +117,7 @@ describe('getTransactionHashFromNotification and getTransactionHashFromNotificat
                 side: 1,
                 timestamp: new Date('2019-04-17T19:13:38.362Z'),
             },
-            expectedUrl:
-                'https://kovan.etherscan.io/tx/0x1b74fa746dd333eabfbf5125b54882675e384d73f0240a0db580ad4e1b70bcb8',
+            expectedUrl: 'https://etherscan.io/tx/0x1b74fa746dd333eabfbf5125b54882675e384d73f0240a0db580ad4e1b70bcb8',
             expectedTxHash: '0x1b74fa746dd333eabfbf5125b54882675e384d73f0240a0db580ad4e1b70bcb8',
         },
         {
@@ -134,11 +133,9 @@ describe('getTransactionHashFromNotification and getTransactionHashFromNotificat
                     primaryColor: '#333333',
                 },
                 side: 0,
-                // tx: {},
                 timestamp: new Date('2019-04-17T19:15:17.580Z'),
             },
-            expectedUrl:
-                'https://kovan.etherscan.io/tx/0x5be9d8c576805c1c05a42af30f4c42eb087aa72e5a28d2dc2ead0fc8b30ee63a',
+            expectedUrl: 'https://etherscan.io/tx/0x5be9d8c576805c1c05a42af30f4c42eb087aa72e5a28d2dc2ead0fc8b30ee63a',
             expectedTxHash: '0x5be9d8c576805c1c05a42af30f4c42eb087aa72e5a28d2dc2ead0fc8b30ee63a',
         },
         {
@@ -156,8 +153,7 @@ describe('getTransactionHashFromNotification and getTransactionHashFromNotificat
                 side: 1,
                 timestamp: new Date('2019-04-02T01:36:52.000Z'),
             },
-            expectedUrl:
-                'https://kovan.etherscan.io/tx/0x9883d4efc12ed1b2cec08de856f324388f2fb899543fac709d5c20f2fc701dfb',
+            expectedUrl: 'https://etherscan.io/tx/0x9883d4efc12ed1b2cec08de856f324388f2fb899543fac709d5c20f2fc701dfb',
             expectedTxHash: '0x9883d4efc12ed1b2cec08de856f324388f2fb899543fac709d5c20f2fc701dfb',
         },
         {
@@ -176,8 +172,7 @@ describe('getTransactionHashFromNotification and getTransactionHashFromNotificat
                 side: 1,
                 timestamp: new Date('2019-04-17T11:32:14.771Z'),
             },
-            expectedUrl:
-                'https://kovan.etherscan.io/tx/0x1be151964ce6dd0a2d05fc43bfb7726998b541e1f97f0dfa8978da41f562bee8',
+            expectedUrl: 'https://etherscan.io/tx/0x1be151964ce6dd0a2d05fc43bfb7726998b541e1f97f0dfa8978da41f562bee8',
             expectedTxHash: '0x1be151964ce6dd0a2d05fc43bfb7726998b541e1f97f0dfa8978da41f562bee8',
         },
         {
@@ -193,11 +188,9 @@ describe('getTransactionHashFromNotification and getTransactionHashFromNotificat
                     primaryColor: '#333333',
                 },
                 side: 1,
-                // tx: {},
                 timestamp: new Date('2019-04-16T19:10:28.876Z'),
             },
-            expectedUrl:
-                'https://kovan.etherscan.io/tx/0xb0f540b4d996d05c84fc7acac3c339e85e7aa2f1e62e789facd2ae5fdabea813',
+            expectedUrl: 'https://etherscan.io/tx/0xb0f540b4d996d05c84fc7acac3c339e85e7aa2f1e62e789facd2ae5fdabea813',
             expectedTxHash: '0xb0f540b4d996d05c84fc7acac3c339e85e7aa2f1e62e789facd2ae5fdabea813',
         },
         {
@@ -215,8 +208,7 @@ describe('getTransactionHashFromNotification and getTransactionHashFromNotificat
                     primaryColor: '#3333ff',
                 },
             },
-            expectedUrl:
-                'https://kovan.etherscan.io/tx/0xb0f540b4d996d05c84fc7acac3c339e85e7aa2f1e62e789facd2ae5fdabea813',
+            expectedUrl: 'https://etherscan.io/tx/0xb0f540b4d996d05c84fc7acac3c339e85e7aa2f1e62e789facd2ae5fdabea813',
             expectedTxHash: '0xb0f540b4d996d05c84fc7acac3c339e85e7aa2f1e62e789facd2ae5fdabea813',
         },
     ];

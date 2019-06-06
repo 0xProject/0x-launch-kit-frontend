@@ -9,7 +9,7 @@ const dummyTokensMetaData: TokenMetaData[] = [
         symbol: TokenSymbol.Weth,
         name: 'Wrapped Ether',
         addresses: {
-            50: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
+            [NETWORK_ID]: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
         },
         primaryColor: '#ccc',
     },
@@ -18,7 +18,7 @@ const dummyTokensMetaData: TokenMetaData[] = [
         symbol: TokenSymbol.Zrx,
         name: '0x',
         addresses: {
-            50: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
+            [NETWORK_ID]: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         },
         primaryColor: '#ccc',
     },
@@ -190,7 +190,7 @@ describe('KnownTokens', () => {
     describe('getTokenBySymbol', () => {
         it('should return Token when the corresponding TokenMetada was present on init', () => {
             const knownTokens = new KnownTokens(dummyTokensMetaData);
-            expect(knownTokens.getTokenBySymbol('zrx')).toEqual(zrxToken);
+            expect(knownTokens.getTokenBySymbol(TokenSymbol.Zrx)).toEqual(zrxToken);
         });
 
         it('should throw the TokenMetada specified by the given symbol was not present on init', () => {
