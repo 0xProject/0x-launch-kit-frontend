@@ -23,18 +23,6 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
-        symbol: TokenSymbol.Dai,
-        name: 'Dai Stablecoin',
-        primaryColor: '#d6ba1b',
-        addresses: {
-            1: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
-            // 4: 'ROPSTEN ADDRESS',
-            // 42: 'KOVAN ADDRESS',
-            // 50: 'GANACHE ADDRESS',
-        },
-    },
-    {
-        decimals: 18,
         symbol: TokenSymbol.Pax,
         name: 'Paxos Standard',
         primaryColor: '#3ec97a',

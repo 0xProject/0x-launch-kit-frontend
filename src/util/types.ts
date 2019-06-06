@@ -241,9 +241,13 @@ export interface OrderFilledNotification extends BaseNotification {
 export type Notification = CancelOrderNotification | MarketNotification | LimitNotification | OrderFilledNotification;
 
 export enum TokenSymbol {
+    // Wrapped Quote Assets
+    // Wbnb = 'wbnb',
+    // Wbtc = 'wbtc',
     Weth = 'weth',
+    // Wxrp = 'wxrp',
     //  Stablecoins
-    Dai = 'dai',
+    // Dai = 'dai',
     Pax = 'pax',
     Tusd = 'tusd',
     Usdc = 'usdc',
