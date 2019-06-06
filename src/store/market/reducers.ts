@@ -1,14 +1,16 @@
 import queryString from 'query-string';
 import { getType } from 'typesafe-actions';
 
+import { availableMarkets } from '../../common/markets';
 import { MarketState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
 const initialMarketState: MarketState = {
     currencyPair: {
-        base: queryString.parse(queryString.extract(window.location.hash)).base as string,
-        quote: queryString.parse(queryString.extract(window.location.hash)).quote as string,
+        base: (queryString.parse(queryString.extract(window.location.hash)).base as string) || availableMarkets[0].base,
+        quote:
+            (queryString.parse(queryString.extract(window.location.hash)).quote as string) || availableMarkets[0].quote,
     },
     baseToken: null,
     quoteToken: null,

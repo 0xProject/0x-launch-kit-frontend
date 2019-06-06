@@ -1,4 +1,4 @@
-import * as Config from '../../config.json';
+import * as Config from '../config.json';
 
 export interface TokenMetaData {
     addresses: { [key: number]: string };

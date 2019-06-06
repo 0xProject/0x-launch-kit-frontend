@@ -235,11 +235,11 @@ const marketFilters: Filter[] = [
     },
     {
         text: 'ETH',
-        value: 'WETH',
+        value: 'weth',
     },
     {
         text: 'DAI',
-        value: 'DAI',
+        value: 'dai',
     },
 ];
 

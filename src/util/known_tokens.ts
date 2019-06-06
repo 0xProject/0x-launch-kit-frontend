@@ -21,7 +21,7 @@ export class KnownTokens {
         const symbolInLowerCaseScore = symbol.toLowerCase();
         const token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
         if (!token) {
-            if (symbolInLowerCaseScore === 'WETH') {
+            if (symbolInLowerCaseScore === 'weth') {
                 return this.getWethToken();
             }
             const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
@@ -109,11 +109,11 @@ export const getColorBySymbol = (symbol: string): string => {
 };
 
 export const isZrx = (token: string): boolean => {
-    return token === 'ZRX';
+    return token === 'zrx';
 };
 
 export const isWeth = (token: string): boolean => {
-    return token === 'WETH';
+    return token === 'weth';
 };
 
 export const isERC20AssetData = (assetData: string): boolean => {
