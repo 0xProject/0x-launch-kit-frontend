@@ -6,9 +6,9 @@ import styled, { css } from 'styled-components';
 import { setCollectiblesListFilterType, setCollectiblesListSortType } from '../../../store/actions';
 import {
     getAllCollectiblesFetchStatus,
-    getOtherUsersCollectibles,
     getRouterLocationSearch,
     getUserCollectibles,
+    getUsersCollectiblesAvailableToList,
 } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
@@ -148,7 +148,7 @@ export class CollectiblesList extends React.Component<Props, {}> {
 // "All Collectibles" and "My Collectibles" get different selectors
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {
-        collectibles: getOtherUsersCollectibles(state),
+        collectibles: getUsersCollectiblesAvailableToList(state),
         search: getRouterLocationSearch(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
     };

@@ -8,7 +8,7 @@ import { CollectibleFilterType, getFilterFunction } from '../../../util/filterab
 import { CollectibleSortType, getSortedCollectibles } from '../../../util/sortable_collectibles';
 import { Collectible } from '../../../util/types';
 
-import { CollectibleCard } from './collectible_card';
+import { CollectibleCardContainer } from './collectible_card';
 
 const CollectiblesListOverflow = styled.div`
     flex-grow: 1;
@@ -54,18 +54,8 @@ const getCollectibleCards = (
         filteredItems = filteredItems.slice(0, limit);
     }
     return filteredItems.map((sortableCollectible, index) => {
-        const { name, image, color, tokenId } = sortableCollectible.collectible;
-        return (
-            <CollectibleCard
-                color={color}
-                id={tokenId}
-                image={image}
-                key={index}
-                name={name}
-                onClick={onClick}
-                price={sortableCollectible.price}
-            />
-        );
+        const { collectible, price } = sortableCollectible;
+        return <CollectibleCardContainer collectible={collectible} key={index} onClick={onClick} price={price} />;
     });
 };
 
