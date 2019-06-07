@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
-import { getCurrencyPair, getNetworkId, getWeb3State } from '../../../store/selectors';
+import { getCurrencyPair, getWeb3State } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
@@ -30,7 +30,6 @@ import { OrderDetailsContainer } from './order_details';
 interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
-    networkId: number | null;
 }
 
 interface DispatchProps {
@@ -184,7 +183,7 @@ class BuySell extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { currencyPair, web3State, networkId } = this.props;
+        const { currencyPair, web3State } = this.props;
         const { makerAmount, price, tab, orderType, error } = this.state;
 
         const buySellInnerTabs = [
@@ -209,7 +208,7 @@ class BuySell extends React.Component<Props, State> {
         const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
         const btnText = error && error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
 
-        const decimals = networkId ? getKnownTokens(networkId).getTokenBySymbol(currencyPair.base).decimals : 18;
+        const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
 
         return (
             <>
@@ -414,7 +413,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
         currencyPair: getCurrencyPair(state),
-        networkId: getNetworkId(state),
     };
 };
 
