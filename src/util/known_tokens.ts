@@ -9,11 +9,9 @@ export class KnownTokens {
     private readonly _tokens: Token[] = [];
     private readonly _wethToken: Token;
 
-    constructor(networkId: number, knownTokensMetadata: TokenMetaData[]) {
-        this._tokens = mapTokensMetaDataToTokenByNetworkId(networkId, knownTokensMetadata).filter(
-            token => !isWeth(token.symbol),
-        );
-        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(networkId, knownTokensMetadata);
+    constructor(knownTokensMetadata: TokenMetaData[]) {
+        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
+        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
@@ -84,14 +82,9 @@ export class KnownTokens {
 }
 
 let knownTokens: KnownTokens;
-let currentNetworkId: number;
-export const getKnownTokens = (
-    networkId: number,
-    knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA,
-): KnownTokens => {
-    if (!knownTokens || currentNetworkId !== networkId) {
-        knownTokens = new KnownTokens(networkId, knownTokensMetadata);
-        currentNetworkId = networkId;
+export const getKnownTokens = (knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA): KnownTokens => {
+    if (!knownTokens) {
+        knownTokens = new KnownTokens(knownTokensMetadata);
     }
     return knownTokens;
 };

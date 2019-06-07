@@ -3,8 +3,6 @@ import { assetDataUtils, BigNumber } from '0x.js';
 import { CollectiblesMetadataGateway } from '../../services/collectibles_metadata_gateway';
 import { addressFactory, collectibleFactory } from '../../util/test-utils';
 
-const networkId = 50;
-
 describe('CollectibleMetadataGateway', () => {
     const mockedRelayer: any = {
         getSellCollectibleOrdersAsync: jest.fn().mockResolvedValue([]),
@@ -25,7 +23,7 @@ describe('CollectibleMetadataGateway', () => {
         mockedSource.fetchAllUserCollectiblesAsync.mockResolvedValue(userCollectibles);
         const gateway = new CollectiblesMetadataGateway(mockedRelayer, mockedSource);
         // when
-        const result = await gateway.fetchAllCollectibles(mockedAdd, networkId);
+        const result = await gateway.fetchAllCollectibles(mockedAdd);
         // then
         expect(result).toHaveLength(3);
         expect(mockedSource.fetchCollectiblesAsync).not.toBeCalled();
@@ -52,7 +50,7 @@ describe('CollectibleMetadataGateway', () => {
         mockedRelayer.getSellCollectibleOrdersAsync.mockResolvedValue([order1, order2]);
         const gateway = new CollectiblesMetadataGateway(mockedRelayer, mockedSource);
         // when
-        const result = await gateway.fetchAllCollectibles(mockedAdd, networkId);
+        const result = await gateway.fetchAllCollectibles(mockedAdd);
         // then
         expect(result).toHaveLength(3);
 
@@ -94,7 +92,7 @@ describe('CollectibleMetadataGateway', () => {
         mockedRelayer.getSellCollectibleOrdersAsync.mockResolvedValue([order1, order2, order3]);
         const gateway = new CollectiblesMetadataGateway(mockedRelayer, mockedSource);
         // when
-        const result = await gateway.fetchAllCollectibles(mockedAdd, networkId);
+        const result = await gateway.fetchAllCollectibles(mockedAdd);
         // then
         expect(result).toHaveLength(4);
 
@@ -106,7 +104,7 @@ describe('CollectibleMetadataGateway', () => {
         expect(result.find(collectible => collectible.tokenId === userCollectibles[2].tokenId).order).toBe(null);
         // @ts-ignore
         expect(result.find(collectible => collectible.tokenId === otherCollectibles[0].tokenId).order).toBe(order3);
-        expect(mockedSource.fetchCollectiblesAsync).toBeCalledWith([otherCollectibles[0].tokenId], networkId);
+        expect(mockedSource.fetchCollectiblesAsync).toBeCalledWith([otherCollectibles[0].tokenId]);
     });
 
     it('There are 21 orders to sale from other users, that should be fetched in three different chunks', async () => {
@@ -142,7 +140,7 @@ describe('CollectibleMetadataGateway', () => {
         mockedRelayer.getSellCollectibleOrdersAsync.mockResolvedValue(collectibleOrders);
         const gateway = new CollectiblesMetadataGateway(mockedRelayer, mockedSource);
         // when
-        await gateway.fetchAllCollectibles(mockedAdd, networkId);
+        await gateway.fetchAllCollectibles(mockedAdd);
         // then
         expect(mockedSource.fetchCollectiblesAsync).toBeCalledTimes(3);
     });
@@ -155,7 +153,7 @@ describe('CollectibleMetadataGateway', () => {
         const gateway = new CollectiblesMetadataGateway(mockedRelayer, mockedSource);
 
         // when
-        const result = await gateway.fetchAllCollectibles(mockedAdd, networkId);
+        const result = await gateway.fetchAllCollectibles(mockedAdd);
 
         // then
         expect(result).toHaveLength(0);
@@ -186,7 +184,7 @@ describe('CollectibleMetadataGateway', () => {
         const gateway = new CollectiblesMetadataGateway(mockedRelayer, mockedSource);
 
         // when
-        const result = await gateway.fetchAllCollectibles(mockedAdd, networkId);
+        const result = await gateway.fetchAllCollectibles(mockedAdd);
 
         // then
         expect(result).toHaveLength(2);

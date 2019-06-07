@@ -249,6 +249,7 @@ const InputEth = styled<any>(BigNumberInput)`
 const minEth = unitsInTokenAmount('0.05', ETH_DECIMALS);
 const minSlidervalue = '0.00';
 const PLACEHOLDER = '0.000';
+
 class WethModal extends React.Component<Props, State> {
     public state = {
         selectedWeth: this.props.wethBalance,

@@ -37,10 +37,8 @@ export const fetchMarketPriceEtherUpdate = createAction('market/PRICE_ETHER_fetc
 });
 
 export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
-    return async (dispatch, getState, { getWeb3Wrapper }) => {
-        const web3Wrapper = await getWeb3Wrapper();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const knownTokens = getKnownTokens(networkId);
+    return async (dispatch, getState) => {
+        const knownTokens = getKnownTokens();
 
         dispatch(
             setMarketTokens({
@@ -70,10 +68,8 @@ export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
 };
 
 export const fetchMarkets: ThunkCreator = () => {
-    return async (dispatch, getState, { getWeb3Wrapper }) => {
-        const web3Wrapper = await getWeb3Wrapper();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const knownTokens = getKnownTokens(networkId);
+    return async dispatch => {
+        const knownTokens = getKnownTokens();
         const relayer = getRelayer();
 
         const markets = await Promise.all(
