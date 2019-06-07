@@ -18,14 +18,6 @@ export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS
 
 export const ETH_DECIMALS = 18;
 
-export const ETH_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
-
-export const ZEROX_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/0x/';
-
-export const CACHE_CHECK_INTERVAL: number = process.env.REACT_APP_CACHE_CHECK_INTERVAL
-    ? Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10)
-    : 60000;
-
 export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
