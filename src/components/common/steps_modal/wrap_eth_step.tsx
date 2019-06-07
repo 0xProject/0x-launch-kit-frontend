@@ -16,7 +16,7 @@ import { InsufficientEthDepositBalanceException } from '../../../exceptions/insu
 import { UserDeniedTransactionSignatureException } from '../../../exceptions/user_denied_transaction_exception';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getEthBalance, getNetworkId, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
@@ -30,7 +30,6 @@ interface OwnProps {
 }
 interface StateProps {
     estimatedTxTimeMs: number;
-    networkId: number | null;
     step: StepWrapEth;
     ethBalance: BigNumber;
 }
@@ -52,15 +51,11 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, networkId, step } = this.props;
-
-        if (networkId === null) {
-            return null;
-        }
+        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
 
         const { context, currentWethBalance, newWethBalance } = step;
         const amount = newWethBalance.minus(currentWethBalance);
-        const wethToken = getKnownTokens(networkId).getWethToken();
+        const wethToken = getKnownTokens().getWethToken();
         const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toFixed(
             UI_DECIMALS_DISPLAYED_ON_STEP_MODALS,
         );
@@ -142,7 +137,6 @@ class WrapEthStep extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
-        networkId: getNetworkId(state),
         step: getStepsModalCurrentStep(state) as StepWrapEth,
         ethBalance: getEthBalance(state),
     };

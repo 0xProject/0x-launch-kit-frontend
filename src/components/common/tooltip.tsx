@@ -56,7 +56,7 @@ export const Tooltip: React.FC<Props> = props => {
     const tooltipIcon = iconType === IconType.Fill ? <InfoIconFull /> : <InfoIcon />;
 
     return (
-        <TooltipPopup data-class="reactTooltip" data-tip={props.description} data-multiline={true} {...restProps}>
+        <TooltipPopup data-class="reactTooltip" data-tip={description} data-multiline={true} {...restProps}>
             {tooltipIcon}
             <ReactTooltip />
         </TooltipPopup>

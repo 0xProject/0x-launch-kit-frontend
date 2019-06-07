@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
-import { getNetworkId, getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
+import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { getLogger } from '../../../util/logger';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
@@ -76,7 +76,6 @@ interface OwnProps {
 }
 
 interface StateProps {
-    networkId: number | null;
     openSellOrders: UIOrder[];
     openBuyOrders: UIOrder[];
 }
@@ -173,27 +172,20 @@ class OrderDetails extends React.Component<Props, State> {
     };
 
     private readonly _getFeeStringForRender = () => {
-        const { networkId } = this.props;
-        if (networkId === null) {
-            return '';
-        }
         const { feeInZrx } = this.state;
-        const zrxDecimals = getKnownTokens(networkId).getTokenBySymbol(TokenSymbol.Zrx).decimals;
+        const zrxDecimals = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx).decimals;
         return `${tokenAmountInUnits(feeInZrx, zrxDecimals)} ${tokenSymbolToDisplayString(TokenSymbol.Zrx)}`;
     };
 
     private readonly _getCostStringForRender = () => {
         const { canOrderBeFilled } = this.state;
-        const { networkId, orderType } = this.props;
-        if (networkId === null) {
-            return '';
-        }
+        const { orderType } = this.props;
         if (orderType === OrderType.Market && !canOrderBeFilled) {
             return `---`;
         }
 
         const { quote } = this.props.currencyPair;
-        const quoteTokenDecimals = getKnownTokens(networkId).getTokenBySymbol(quote).decimals;
+        const quoteTokenDecimals = getKnownTokens().getTokenBySymbol(quote).decimals;
         const { quoteTokenAmount } = this.state;
         return `${tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals)} ${tokenSymbolToDisplayString(quote)}`;
     };
@@ -201,7 +193,6 @@ class OrderDetails extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        networkId: getNetworkId(state),
         openSellOrders: getOpenSellOrders(state),
         openBuyOrders: getOpenBuyOrders(state),
     };
