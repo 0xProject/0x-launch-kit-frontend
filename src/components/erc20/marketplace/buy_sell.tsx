@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
-import { getCurrencyPair, getWeb3State } from '../../../store/selectors';
+import { getCurrencyPair, getOrderPriceSelected, getWeb3State } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import {
@@ -29,6 +29,7 @@ import { OrderDetailsContainer } from './order_details';
 interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
+    orderPriceSelected: BigNumber | null;
 }
 
 interface DispatchProps {
@@ -179,6 +180,15 @@ class BuySell extends React.Component<Props, State> {
             btnMsg: null,
             cardMsg: null,
         },
+    };
+
+    public componentDidUpdate = async (prevProps: Readonly<Props>) => {
+        const newProps = this.props;
+        if (newProps.orderPriceSelected !== prevProps.orderPriceSelected && this.state.orderType === OrderType.Limit) {
+            this.setState({
+                price: newProps.orderPriceSelected,
+            });
+        }
     };
 
     public render = () => {
@@ -409,6 +419,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         web3State: getWeb3State(state),
         currencyPair: getCurrencyPair(state),
+        orderPriceSelected: getOrderPriceSelected(state),
     };
 };
 
