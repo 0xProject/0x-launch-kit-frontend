@@ -272,101 +272,110 @@ export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAcc
 };
 
 export const initWallet: ThunkCreator<Promise<any>> = () => {
-    return async (dispatch, getState, { initializeWeb3Wrapper }) => {
+    return async (dispatch, getState) => {
         dispatch(setWeb3State(Web3State.Loading));
-        const web3Wrapper = await initializeWeb3Wrapper();
         const state = getState();
         const currentMarketPlace = getCurrentMarketPlace(state);
-        if (!web3Wrapper) {
+
+        try {
+            await dispatch(initWalletBeginCommon());
+
             if (currentMarketPlace === MARKETPLACES.ERC20) {
-                initializeAppNoMetamaskOrLocked();
+                dispatch(initWalletERC20());
+            } else {
+                dispatch(initWalletERC721());
             }
-        } else {
-            try {
-                const networkId = await web3Wrapper.getNetworkIdAsync();
+        } catch (error) {
+            // Web3Error
+            logger.error('There was an error when initializing the wallet', error);
+            dispatch(setWeb3State(Web3State.Error));
+        }
+    };
+};
 
-                if (networkId !== NETWORK_ID) {
-                    throw new Error('Wrong network id selected');
-                }
+const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
+    return async (dispatch, getState, { initializeWeb3Wrapper }) => {
+        const web3Wrapper = await initializeWeb3Wrapper();
 
-                const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+        if (web3Wrapper) {
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const knownTokens = getKnownTokens();
+            const wethToken = knownTokens.getWethToken();
+            const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-                const knownTokens = getKnownTokens();
+            await dispatch(
+                initializeBlockchainData({
+                    ethAccount,
+                    web3State: Web3State.Done,
+                    ethBalance,
+                    wethTokenBalance,
+                    tokenBalances: [],
+                }),
+            );
 
-                const wethToken = knownTokens.getWethToken();
+            dispatch(
+                initializeRelayerData({
+                    orders: [],
+                    userOrders: [],
+                }),
+            );
 
-                const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
+            dispatch(updateGasInfo());
 
-                const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            dispatch(updateMarketPriceEther());
 
-                dispatch(
-                    initializeBlockchainData({
-                        ethAccount,
-                        web3State: Web3State.Done,
-                        ethBalance,
-                        wethTokenBalance,
-                        tokenBalances: [],
-                    }),
-                );
-                dispatch(
-                    initializeRelayerData({
-                        orders: [],
-                        userOrders: [],
-                    }),
-                );
-                // tslint:disable-next-line:no-floating-promises
-                dispatch(updateGasInfo());
-                // tslint:disable-next-line:no-floating-promises
-                dispatch(updateMarketPriceEther());
-                // Inits wallet based on the current app
-                if (currentMarketPlace === MARKETPLACES.ERC20) {
-                    // tslint:disable-next-line:no-floating-promises
-                    dispatch(initWalletERC20(ethAccount));
-                } else {
-                    // tslint:disable-next-line:no-floating-promises
-                    dispatch(initWalletERC721(ethAccount));
-                }
-            } catch (error) {
-                // Web3Error
-                logger.error('There was an error fetching the account or networkId from web3', error);
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+            if (networkId !== NETWORK_ID) {
                 dispatch(setWeb3State(Web3State.Error));
             }
         }
     };
 };
 
-const initWalletERC20: ThunkCreator<Promise<any>> = (ethAccount: string) => {
-    return async (dispatch, getState) => {
-        const state = getState();
-        const knownTokens = getKnownTokens();
+const initWalletERC20: ThunkCreator<Promise<any>> = () => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
+        const web3Wrapper = await getWeb3Wrapper();
+        if (!web3Wrapper) {
+            dispatch(getOrderBook());
+            dispatch(initializeAppNoMetamaskOrLocked());
+        } else {
+            const state = getState();
+            const knownTokens = getKnownTokens();
+            const ethAccount = await getEthAccount(state);
 
-        const tokenBalances = await Promise.all(
-            knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-        );
-        const currencyPair = getCurrencyPair(state);
-        const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
-        const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+            const tokenBalances = await Promise.all(
+                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+            );
+            const currencyPair = getCurrencyPair(state);
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
-        dispatch(setMarketTokens({ baseToken, quoteToken }));
-        // tslint:disable-next-line:no-floating-promises
-        dispatch(getOrderbookAndUserOrders());
-        dispatch(setTokenBalances(tokenBalances));
-        try {
-            await dispatch(fetchMarkets());
-            // For executing this method (setConnectedUserNotifications) is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
-            // tslint:disable-next-line:no-floating-promises
-            dispatch(setConnectedUserNotifications(ethAccount));
-        } catch (error) {
-            // Relayer error
-            logger.error('The fetch orders from the relayer failed', error);
+            dispatch(setMarketTokens({ baseToken, quoteToken }));
+            dispatch(setTokenBalances(tokenBalances));
+
+            dispatch(getOrderbookAndUserOrders());
+
+            try {
+                await dispatch(fetchMarkets());
+                // For executing this method (setConnectedUserNotifications) is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+                dispatch(setConnectedUserNotifications(ethAccount));
+            } catch (error) {
+                // Relayer error
+                logger.error('The fetch markets from the relayer failed', error);
+            }
         }
     };
 };
 
-const initWalletERC721: ThunkCreator<Promise<any>> = (ethAccount: string) => {
-    return async dispatch => {
-        // tslint:disable-next-line:no-floating-promises
-        dispatch(getAllCollectibles(ethAccount));
+const initWalletERC721: ThunkCreator<Promise<any>> = () => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
+        const web3Wrapper = await getWeb3Wrapper();
+        if (web3Wrapper) {
+            const state = getState();
+            const ethAccount = await getEthAccount(state);
+            dispatch(getAllCollectibles(ethAccount));
+        }
     };
 };
 
@@ -482,10 +491,8 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
 
         dispatch(setMarketTokens({ baseToken, quoteToken }));
 
-        // tslint:disable-next-line:no-floating-promises
         dispatch(getOrderBook());
 
-        // tslint:disable-next-line:no-floating-promises
         dispatch(updateMarketPriceEther());
     };
 };
