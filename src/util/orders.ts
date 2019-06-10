@@ -5,7 +5,7 @@ import { ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
 import * as orderHelper from './orders';
-import { tomorrow } from './time_utils';
+import { getExpirationTimeOrdersFromConfig, tomorrow } from './time_utils';
 import { OrderSide, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {
@@ -111,7 +111,7 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
         takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
         makerAddress: account,
         takerAddress: ZERO_ADDRESS,
-        expirationTimeSeconds: tomorrow(),
+        expirationTimeSeconds: getExpirationTimeOrdersFromConfig(),
     };
 
     return orderHelper.getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);

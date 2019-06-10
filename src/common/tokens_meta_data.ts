@@ -66,7 +66,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
             50: '0x25b8fe1de9daf8ba351890744ff28cf7dfa8f5e3',
         },
     },
-    {
+    /*{
         decimals: 9,
         symbol: TokenSymbol.Dgd,
         name: 'DigixDao',
@@ -77,7 +77,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
             42: '0xA4f468c9c692eb6B4b8b06270dAe7A2CfeedcDe9',
             50: '0xcdb594a32b1cc3479d8746279712c39d18a07fc0',
         },
-    },
+    },*/
     {
         decimals: 18,
         symbol: TokenSymbol.Mln,
