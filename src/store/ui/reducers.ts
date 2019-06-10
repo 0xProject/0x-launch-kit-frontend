@@ -14,7 +14,7 @@ const initialUIState: UIState = {
     notifications: [],
     hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
-    orderSizeSelected: null,
+    orderPriceSelected: null,
 };
 
 export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
@@ -55,8 +55,8 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
     switch (action.type) {
         case getType(actions.setHasUnreadNotifications):
             return { ...state, hasUnreadNotifications: action.payload };
-        case getType(actions.setOrderSizeSelected):
-            return { ...state, orderSizeSelected: action.payload };
+        case getType(actions.setOrderPriceSelected):
+            return { ...state, orderPriceSelected: action.payload };
         case getType(actions.setNotifications):
             return { ...state, notifications: action.payload };
         case getType(actions.addNotifications): {
