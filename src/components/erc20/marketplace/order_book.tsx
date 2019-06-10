@@ -78,6 +78,13 @@ const GridRow = styled.div`
     grid-template-columns: 1fr 1fr 1fr;
 `;
 
+const GridRowInner = styled(GridRow)`
+    background-color: 'transparent';
+    &:hover {
+        background-color: ${props => props.theme.componentsTheme.rowOrderActive};
+    }
+`;
+
 const GridRowTop = styled(GridRow)`
     flex-grow: 0;
     flex-shrink: 0;
@@ -126,47 +133,68 @@ const BottomItems = styled(ItemsInnerContainer)`
     justify-content: flex-start;
 `;
 
-const orderToRow = (
-    order: OrderBookItem,
-    index: number,
-    count: number,
-    baseToken: Token,
-    priceColor: string,
-    mySizeOrders: OrderBookItem[] = [],
-    web3State?: Web3State,
-) => {
-    const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
-    const price = order.price.toString();
+interface OrderToRowProps {
+    order: OrderBookItem;
+    index: number;
+    count: number;
+    baseToken: Token;
+    priceColor: string;
+    mySizeOrders: OrderBookItem[];
+    web3State?: Web3State;
+}
 
-    const mySize = mySizeOrders.reduce((sumSize, mySizeItem) => {
-        if (mySizeItem.price.eq(order.price)) {
-            return sumSize.plus(mySizeItem.size);
-        }
-        return sumSize;
-    }, new BigNumber(0));
+interface State {
+    isHover: boolean;
+}
 
-    const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
-    const isMySizeEmpty = mySize.eq(new BigNumber(0));
-    const displayColor = isMySizeEmpty ? '#dedede' : undefined;
-    const mySizeRow =
-        web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-            <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }} id="mySize">
-                {isMySizeEmpty ? '-' : mySizeConverted}
-            </CustomTDLast>
-        ) : null;
+class OrderToRow extends React.Component<OrderToRowProps> {
+    public state: State = {
+        isHover: false,
+    };
 
-    return (
-        <GridRow key={index}>
-            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
-                <ShowNumberWithColors num={new BigNumber(size)} />
-            </CustomTD>
-            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
-                {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-            </CustomTD>
-            {mySizeRow}
-        </GridRow>
-    );
-};
+    public hoverOn = () => {
+        this.setState({ isHover: true });
+    };
+
+    public hoverOff = () => {
+        this.setState({ isHover: false });
+    };
+
+    public render = () => {
+        const { order, index, baseToken, priceColor, mySizeOrders = [], web3State } = this.props;
+        const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+        const price = order.price.toString();
+
+        const mySize = mySizeOrders.reduce((sumSize, mySizeItem) => {
+            if (mySizeItem.price.eq(order.price)) {
+                return sumSize.plus(mySizeItem.size);
+            }
+            return sumSize;
+        }, new BigNumber(0));
+
+        const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
+        const isMySizeEmpty = mySize.eq(new BigNumber(0));
+        const displayColor = isMySizeEmpty ? '#dedede' : undefined;
+        const mySizeRow =
+            web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
+                <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }} id="mySize">
+                    {isMySizeEmpty ? '-' : mySizeConverted}
+                </CustomTDLast>
+            ) : null;
+
+        return (
+            <GridRowInner key={index} onMouseEnter={this.hoverOn} onMouseLeave={this.hoverOff}>
+                <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
+                    <ShowNumberWithColors isHover={this.state.isHover} num={new BigNumber(size)} />
+                </CustomTD>
+                <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+                    {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+                </CustomTD>
+                {mySizeRow}
+            </GridRowInner>
+        );
+    };
+}
 
 class OrderBookTable extends React.Component<Props> {
     private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
@@ -231,17 +259,18 @@ class OrderBookTable extends React.Component<Props> {
                         />
                         <ItemsMainContainer>
                             <TopItems>
-                                {sellOrders.map((order, index) =>
-                                    orderToRow(
-                                        order,
-                                        index,
-                                        sellOrders.length,
-                                        baseToken,
-                                        getColor(order),
-                                        mySizeSellArray,
-                                        web3State,
-                                    ),
-                                )}
+                                {sellOrders.map((order, index) => (
+                                    <OrderToRow
+                                        key={index}
+                                        order={order}
+                                        index={index}
+                                        count={sellOrders.length}
+                                        baseToken={baseToken}
+                                        priceColor={getColor(order)}
+                                        mySizeOrders={mySizeSellArray}
+                                        web3State={web3State}
+                                    />
+                                ))}
                             </TopItems>
                             <GridRowSpreadContainer ref={this._spreadRowScrollable}>
                                 <CustomTDTitle as="div" styles={customTDTitleStyles}>
@@ -255,17 +284,18 @@ class OrderBookTable extends React.Component<Props> {
                                 </CustomTDLast>
                             </GridRowSpreadContainer>
                             <BottomItems>
-                                {buyOrders.map((order, index) =>
-                                    orderToRow(
-                                        order,
-                                        index,
-                                        buyOrders.length,
-                                        baseToken,
-                                        getColor(order),
-                                        mySizeBuyArray,
-                                        web3State,
-                                    ),
-                                )}
+                                {buyOrders.map((order, index) => (
+                                    <OrderToRow
+                                        key={index}
+                                        order={order}
+                                        index={index}
+                                        count={buyOrders.length}
+                                        baseToken={baseToken}
+                                        priceColor={getColor(order)}
+                                        mySizeOrders={mySizeBuyArray}
+                                        web3State={web3State}
+                                    />
+                                ))}
                             </BottomItems>
                         </ItemsMainContainer>
                     </ItemsScroll>
