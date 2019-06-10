@@ -17,6 +17,7 @@ import {
     getUserOrders,
     getWeb3State,
 } from '../../../store/selectors';
+import { setOrderPriceSelected } from '../../../store/ui/actions';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
@@ -80,6 +81,7 @@ const GridRow = styled.div`
 
 const GridRowInner = styled(GridRow)`
     background-color: 'transparent';
+    cursor: pointer;
     &:hover {
         background-color: ${props => props.theme.componentsTheme.rowOrderActive};
     }
@@ -133,7 +135,7 @@ const BottomItems = styled(ItemsInnerContainer)`
     justify-content: flex-start;
 `;
 
-interface OrderToRowProps {
+interface OrderToRowPropsOwn {
     order: OrderBookItem;
     index: number;
     count: number;
@@ -142,6 +144,12 @@ interface OrderToRowProps {
     mySizeOrders: OrderBookItem[];
     web3State?: Web3State;
 }
+
+interface OrderToRowDispatchProps {
+    onSetOrderPriceSelected: (orderPriceSelected: BigNumber) => Promise<any>;
+}
+
+type OrderToRowProps = OrderToRowPropsOwn & OrderToRowDispatchProps;
 
 interface State {
     isHover: boolean;
@@ -184,7 +192,11 @@ class OrderToRow extends React.Component<OrderToRowProps> {
 
         return (
             <GridRowInner key={index} onMouseEnter={this.hoverOn} onMouseLeave={this.hoverOff}>
-                <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
+                <CustomTD
+                    as="div"
+                    styles={{ tabular: true, textAlign: 'right' }}
+                    onClick={() => this._setOrderPriceSelected(order.price)}
+                >
                     <ShowNumberWithColors isHover={this.state.isHover} num={new BigNumber(size)} />
                 </CustomTD>
                 <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
@@ -194,7 +206,22 @@ class OrderToRow extends React.Component<OrderToRowProps> {
             </GridRowInner>
         );
     };
+
+    private readonly _setOrderPriceSelected = async (size: BigNumber) => {
+        await this.props.onSetOrderPriceSelected(size);
+    };
 }
+
+const mapOrderToRowDispatchToProps = (dispatch: any): OrderToRowDispatchProps => {
+    return {
+        onSetOrderPriceSelected: (orderPriceSelected: BigNumber) => dispatch(setOrderPriceSelected(orderPriceSelected)),
+    };
+};
+
+const OrderToRowContainer = connect(
+    null,
+    mapOrderToRowDispatchToProps,
+)(OrderToRow);
 
 class OrderBookTable extends React.Component<Props> {
     private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
@@ -260,7 +287,7 @@ class OrderBookTable extends React.Component<Props> {
                         <ItemsMainContainer>
                             <TopItems>
                                 {sellOrders.map((order, index) => (
-                                    <OrderToRow
+                                    <OrderToRowContainer
                                         key={index}
                                         order={order}
                                         index={index}
@@ -285,7 +312,7 @@ class OrderBookTable extends React.Component<Props> {
                             </GridRowSpreadContainer>
                             <BottomItems>
                                 {buyOrders.map((order, index) => (
-                                    <OrderToRow
+                                    <OrderToRowContainer
                                         key={index}
                                         order={order}
                                         index={index}
