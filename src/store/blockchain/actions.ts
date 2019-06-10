@@ -337,8 +337,8 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
     return async (dispatch, getState, { getWeb3Wrapper }) => {
         const web3Wrapper = await getWeb3Wrapper();
         if (!web3Wrapper) {
-            dispatch(getOrderBook());
             dispatch(initializeAppNoMetamaskOrLocked());
+            dispatch(getOrderBook());
         } else {
             const state = getState();
             const knownTokens = getKnownTokens();
@@ -375,6 +375,9 @@ const initWalletERC721: ThunkCreator<Promise<any>> = () => {
             const state = getState();
             const ethAccount = await getEthAccount(state);
             dispatch(getAllCollectibles(ethAccount));
+        } else {
+            dispatch(initializeAppNoMetamaskOrLocked());
+            dispatch(getAllCollectibles());
         }
     };
 };
@@ -491,7 +494,12 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
 
         dispatch(setMarketTokens({ baseToken, quoteToken }));
 
-        dispatch(getOrderBook());
+        const currentMarketPlace = getCurrentMarketPlace(state);
+        if (currentMarketPlace === MARKETPLACES.ERC20) {
+            dispatch(getOrderBook());
+        } else {
+            dispatch(getAllCollectibles());
+        }
 
         dispatch(updateMarketPriceEther());
     };
