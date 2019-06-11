@@ -49,12 +49,12 @@ exports[`OrderBookTable Check if my size renders an item with more than two deci
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-fBuWsC kwGDhd"
@@ -81,12 +81,12 @@ exports[`OrderBookTable Check if my size renders an item with more than two deci
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-dVhcbM kICZVG"
@@ -113,12 +113,12 @@ exports[`OrderBookTable Check if my size renders an item with more than two deci
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-fAjcbJ hRmYGJ"
@@ -145,12 +145,12 @@ exports[`OrderBookTable Check if my size renders an item with more than two deci
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-gisBJw bPPCsh"
@@ -177,12 +177,12 @@ exports[`OrderBookTable Check if my size renders an item with more than two deci
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-cHGsZl iyCOMG"
@@ -209,12 +209,12 @@ exports[`OrderBookTable Check if my size renders an item with more than two deci
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-kgAjT kXvHqg"
@@ -265,12 +265,12 @@ exports[`OrderBookTable Check if my size renders an item with more than two deci
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-ksYbfQ fVlPYy"
@@ -351,12 +351,12 @@ exports[`OrderBookTable Renders my size column with value 1`] = `
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-eHgmQL dPxpcD"
@@ -383,12 +383,12 @@ exports[`OrderBookTable Renders my size column with value 1`] = `
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-jWBwVP iUEkdW"
@@ -415,12 +415,12 @@ exports[`OrderBookTable Renders my size column with value 1`] = `
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-cMljjf fKSpyD"
@@ -471,12 +471,12 @@ exports[`OrderBookTable Renders my size column with value 1`] = `
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-jDwBTQ fvUbIf"
@@ -552,12 +552,12 @@ exports[`OrderBookTable Should not render my size column if the user does not ha
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-frDJqD dwYjGo"
@@ -578,12 +578,12 @@ exports[`OrderBookTable Should not render my size column if the user does not ha
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-hqyNC kMXIrR"
@@ -604,12 +604,12 @@ exports[`OrderBookTable Should not render my size column if the user does not ha
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-dNLxif dMzXPz"
@@ -654,12 +654,12 @@ exports[`OrderBookTable Should not render my size column if the user does not ha
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-uJMKN gGvEOz"
@@ -729,12 +729,12 @@ exports[`OrderBookTable Should not render my size column if the user rejected th
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-gGBfsJ gjvvyH"
@@ -755,12 +755,12 @@ exports[`OrderBookTable Should not render my size column if the user rejected th
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-fYxtnH igTHrv"
@@ -781,12 +781,12 @@ exports[`OrderBookTable Should not render my size column if the user rejected th
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-hEsumM flURld"
@@ -831,12 +831,12 @@ exports[`OrderBookTable Should not render my size column if the user rejected th
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-cIShpX kjZQlS"
@@ -911,12 +911,12 @@ exports[`OrderBookTable Should render a row of mySize with the total amount for 
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-iRbamj jAFnxN"
@@ -943,12 +943,12 @@ exports[`OrderBookTable Should render a row of mySize with the total amount for 
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-gipzik jsUTZA"
@@ -975,12 +975,12 @@ exports[`OrderBookTable Should render a row of mySize with the total amount for 
           </div>
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-Rmtcm dTnZHf"
@@ -1031,12 +1031,12 @@ exports[`OrderBookTable Should render a row of mySize with the total amount for 
         >
           <div
             className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >
             <div
               className="sc-jTzLTM gYeEqk"
-              onClick={[Function]}
             >
               <span
                 className="sc-hzDkRC gWNJWs"
