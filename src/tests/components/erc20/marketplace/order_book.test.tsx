@@ -9,11 +9,10 @@ import renderer from 'react-test-renderer';
 import configureMockStore from 'redux-mock-store';
 import { ThemeProvider } from 'styled-components';
 
-import { OrderBookTable, OrderBookTableWithTheme } from '../../../../components/erc20/marketplace/order_book';
+import { OrderBookTableWithTheme } from '../../../../components/erc20/marketplace/order_book';
 import { DefaultTheme } from '../../../../themes/default_theme';
 import { openOrder, tokenFactory } from '../../../../util/test-utils';
 import { OrderSide, TokenSymbol, Web3State } from '../../../../util/types';
-import { mountWithTheme } from '../../../util/test_with_theme';
 
 const mockStore = configureMockStore([]);
 
@@ -229,13 +228,6 @@ describe('OrderBookTable', () => {
             size: new BigNumber(2),
             price: new BigNumber('0.5'),
         });
-
-        const resultExpected1 = '1.1235';
-        const resultExpected2 = '1.1235';
-        const resultExpected3 = '1.1235';
-        const resultExpected4 = '1.1234';
-        const resultExpected5 = '1.123';
-        const resultExpected6 = '1.12';
 
         const userOrders = [userOrder1];
 

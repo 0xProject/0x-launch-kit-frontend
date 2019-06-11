@@ -195,6 +195,7 @@ class OrderToRow extends React.Component<OrderToRowProps> {
                 key={index}
                 onMouseEnter={this.hoverOn}
                 onMouseLeave={this.hoverOff}
+                // tslint:disable-next-line jsx-no-lambda
                 onClick={() => this._setOrderPriceSelected(order.price)}
             >
                 <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
