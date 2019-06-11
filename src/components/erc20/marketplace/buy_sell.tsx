@@ -271,7 +271,7 @@ class BuySell extends React.Component<Props, State> {
                         <Button
                             disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                             icon={error && error.btnMsg ? ButtonIcons.Warning : undefined}
-                            onClick={tab === OrderSide.Buy ? this.buy : this.sell}
+                            onClick={this.submit}
                             variant={
                                 error && error.btnMsg
                                     ? ButtonVariant.Error
@@ -303,59 +303,17 @@ class BuySell extends React.Component<Props, State> {
         this.setState({ price });
     };
 
-    public buy = async () => {
+    public submit = async () => {
+        const orderSide = this.state.tab;
         const makerAmount = this.state.makerAmount || new BigNumber(0);
         const price = this.state.price || new BigNumber(0);
 
         const { makerFee, takerFee } = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
         if (this.state.orderType === OrderType.Limit) {
-            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Buy, makerFee);
+            await this.props.onSubmitLimitOrder(makerAmount, price, orderSide, makerFee);
         } else {
             try {
-                await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Buy, takerFee);
-            } catch (error) {
-                this.setState(
-                    {
-                        error: {
-                            btnMsg: 'Error',
-                            cardMsg: error.message,
-                        },
-                    },
-                    () => {
-                        // After a timeout both error message and button gets cleared
-                        setTimeout(() => {
-                            this.setState({
-                                error: {
-                                    ...this.state.error,
-                                    btnMsg: null,
-                                },
-                            });
-                        }, TIMEOUT_BTN_ERROR);
-                        setTimeout(() => {
-                            this.setState({
-                                error: {
-                                    ...this.state.error,
-                                    cardMsg: null,
-                                },
-                            });
-                        }, TIMEOUT_CARD_ERROR);
-                    },
-                );
-            }
-        }
-        this._reset();
-    };
-
-    public sell = async () => {
-        const makerAmount = this.state.makerAmount || new BigNumber(0);
-        const price = this.state.price || new BigNumber(0);
-
-        const { makerFee, takerFee } = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
-        if (this.state.orderType === OrderType.Limit) {
-            await this.props.onSubmitLimitOrder(makerAmount, price, OrderSide.Sell, makerFee);
-        } else {
-            try {
-                await this.props.onSubmitMarketOrder(makerAmount, OrderSide.Sell, takerFee);
+                await this.props.onSubmitMarketOrder(makerAmount, orderSide, takerFee);
             } catch (error) {
                 this.setState(
                     {
