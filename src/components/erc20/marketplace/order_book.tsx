@@ -191,12 +191,13 @@ class OrderToRow extends React.Component<OrderToRowProps> {
             ) : null;
 
         return (
-            <GridRowInner key={index} onMouseEnter={this.hoverOn} onMouseLeave={this.hoverOff}>
-                <CustomTD
-                    as="div"
-                    styles={{ tabular: true, textAlign: 'right' }}
-                    onClick={() => this._setOrderPriceSelected(order.price)}
-                >
+            <GridRowInner
+                key={index}
+                onMouseEnter={this.hoverOn}
+                onMouseLeave={this.hoverOff}
+                onClick={() => this._setOrderPriceSelected(order.price)}
+            >
+                <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                     <ShowNumberWithColors isHover={this.state.isHover} num={new BigNumber(size)} />
                 </CustomTD>
                 <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
