@@ -4,8 +4,10 @@ import { OrderConfigRequest } from '@0x/connect';
 import { ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
+import { getKnownTokens } from './known_tokens';
 import * as orderHelper from './orders';
 import { tomorrow } from './time_utils';
+import { unitsInTokenAmount } from './tokens';
 import { OrderSide, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {
@@ -103,12 +105,17 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
     const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseTokenAddress);
     const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteTokenAddress);
 
+    const quoteTokenDecimals = getKnownTokens().getTokenByAddress(quoteTokenAddress).decimals;
+    const quoteTokenAmountInBaseUnits = unitsInTokenAmount(price.toString(), quoteTokenDecimals);
+
+    const isBuy = side === OrderSide.Buy;
+
     const orderConfigRequest: OrderConfigRequest = {
         exchangeAddress,
-        makerAssetData: side === OrderSide.Buy ? quoteTokenAssetData : baseTokenAssetData,
-        takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
-        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
-        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
+        makerAssetData: isBuy ? quoteTokenAssetData : baseTokenAssetData,
+        takerAssetData: isBuy ? baseTokenAssetData : quoteTokenAssetData,
+        makerAssetAmount: isBuy ? quoteTokenAmountInBaseUnits : amount,
+        takerAssetAmount: isBuy ? amount : quoteTokenAmountInBaseUnits,
         makerAddress: account,
         takerAddress: ZERO_ADDRESS,
         expirationTimeSeconds: tomorrow(),
