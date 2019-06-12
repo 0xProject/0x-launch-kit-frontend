@@ -3,6 +3,7 @@ import { HttpClient, OrderConfigRequest, OrderConfigResponse, SignedOrder } from
 import { RateLimit } from 'async-sema';
 
 import { RELAYER_URL } from '../common/constants';
+import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
 import { Token } from '../util/types';
 
 export class Relayer {
@@ -52,8 +53,9 @@ export class Relayer {
             const lowestPriceAsk = asks.records[0];
 
             const { makerAssetAmount, takerAssetAmount } = lowestPriceAsk.order;
-
-            return takerAssetAmount.div(makerAssetAmount);
+            const takerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(takerAssetAmount, quoteToken.decimals);
+            const makerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(makerAssetAmount, baseToken.decimals);
+            return takerAssetAmountInUnits.div(makerAssetAmountInUnits);
         }
 
         return null;

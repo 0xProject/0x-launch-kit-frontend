@@ -7,7 +7,7 @@ import { getRelayer } from '../services/relayer';
 import { getKnownTokens } from './known_tokens';
 import * as orderHelper from './orders';
 import { tomorrow } from './time_utils';
-import { unitsInTokenAmount } from './tokens';
+import { tokenAmountInUnitsToBigNumber, unitsInTokenAmount } from './tokens';
 import { OrderSide, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {
@@ -170,7 +170,15 @@ export const buildMarketOrders = (
         }
 
         if (side === OrderSide.Buy) {
-            amounts[i] = amounts[i].multipliedBy(order.price);
+            // @TODO: cache maker/taker info (decimals)
+            const makerAssetContractAddress = assetDataUtils.decodeERC20AssetData(order.rawOrder.makerAssetData)
+                .tokenAddress;
+            const makerTokenDecimals = getKnownTokens().getTokenByAddress(makerAssetContractAddress).decimals;
+            const takerAssetContractAddress = assetDataUtils.decodeERC20AssetData(order.rawOrder.takerAssetData)
+                .tokenAddress;
+            const takerTokenDecimals = getKnownTokens().getTokenByAddress(takerAssetContractAddress).decimals;
+            const buyAmount = tokenAmountInUnitsToBigNumber(amounts[i], makerTokenDecimals);
+            amounts[i] = unitsInTokenAmount(buyAmount.multipliedBy(order.price).toString(), takerTokenDecimals);
         }
     }
     const canBeFilled = filledAmount.eq(amount);
