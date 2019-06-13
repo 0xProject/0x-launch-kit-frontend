@@ -1,15 +1,19 @@
 import { BigNumber, OrderInfo, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
-import { makeOrder, tokenFactory, uiOrder } from '../../util/test-utils';
-import { OrderSide, UIOrder } from '../../util/types';
+import { getKnownTokens } from '../../util/known_tokens';
+import { makeOrder, uiOrder } from '../../util/test-utils';
+import { OrderSide, TokenSymbol, UIOrder } from '../../util/types';
 import { mergeByPrice, ordersToUIOrders } from '../../util/ui_orders';
 
 describe('ordersToUIOrders', () => {
+    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
+    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+
     it('should convert a sell Order to a UIOrder', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18 });
-        const quoteToken = tokenFactory.build({ decimals: 18 });
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
         const orders: SignedOrder[] = [
             makeOrder({
                 makerAssetAmount: '1',
@@ -43,8 +47,8 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a buy Order to a UIOrder', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18 });
-        const quoteToken = tokenFactory.build({ decimals: 18 });
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
         const orders: SignedOrder[] = [
             makeOrder({
                 makerAssetAmount: '100',
@@ -78,8 +82,8 @@ describe('ordersToUIOrders', () => {
 
     it('should convert buy and sell Orders to UIOrders', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18 });
-        const quoteToken = tokenFactory.build({ decimals: 18 });
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
         const orders: SignedOrder[] = [
             makeOrder({
                 makerAssetAmount: '1',
@@ -132,8 +136,8 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a partially filled sell Order to a UIOrder', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18 });
-        const quoteToken = tokenFactory.build({ decimals: 18 });
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
         const orders: SignedOrder[] = [
             makeOrder({
                 makerAssetAmount: '1',
@@ -167,8 +171,8 @@ describe('ordersToUIOrders', () => {
 
     it('should convert a partially filled buy Order to a UIOrder', async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18 });
-        const quoteToken = tokenFactory.build({ decimals: 18 });
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
         const orders: SignedOrder[] = [
             makeOrder({
                 makerAssetAmount: '100',
@@ -202,8 +206,8 @@ describe('ordersToUIOrders', () => {
 
     it("should throw if orders length and ordersInfo length don't match", async () => {
         // given
-        const baseToken = tokenFactory.build({ decimals: 18 });
-        const quoteToken = tokenFactory.build({ decimals: 18 });
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
         const orders: SignedOrder[] = [
             makeOrder({
                 makerAssetAmount: '1',
