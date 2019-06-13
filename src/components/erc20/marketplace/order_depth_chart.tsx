@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AreaSeries, FlexibleWidthXYPlot, LineSeries, XAxis, YAxis } from 'react-vis';
+import { AreaSeries, Crosshair, FlexibleWidthXYPlot, LineSeries, XAxis, YAxis } from 'react-vis';
 import 'react-vis/dist/style.css';
 import styled, { withTheme } from 'styled-components';
 
@@ -16,10 +16,13 @@ import {
 } from '../../../store/selectors';
 import { Theme } from '../../../themes/commons';
 import { hexToRgba } from '../../../util/color_utils';
+import { lerp } from '../../../util/lerp';
 import { OrderBook, OrderBookItem, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
+import { getDepthChartStyle } from '../common/chart/depth_chart_style';
+import { ChartDimensions, Cord, OrderSide } from '../common/chart/types';
 
 interface StateProps {
     orderBook: OrderBook;
@@ -33,42 +36,34 @@ interface StateProps {
 
 interface OwnProps {
     theme: Theme;
+    dimension?: ChartDimensions;
 }
-
-interface Cords {
-    x: number;
-    y: number;
-}
+type Props = OwnProps & StateProps;
 
 interface DepthChartData {
     midMarketPrice: BigNumber;
-    bidLine: Cords[];
-    askLine: Cords[];
-}
-
-interface OrderDepthChartMetadata {
-    midMarketPrice: BigNumber;
     minPrice: BigNumber;
     maxPrice: BigNumber;
+    bidLine: Cord[];
+    askLine: Cord[];
 }
 
-type Props = OwnProps & StateProps;
+interface HoverCordWithMetadata extends Cord {
+    price: number;
+    volume: number;
+    cost: number;
+    orderSide: OrderSide;
+}
 
 const DEFAULT_XY_PLOT_PROPS = {
     height: 200,
+    width: 0,
     margin: { left: 2, right: 2, top: 10, bottom: 40 },
 };
 
-enum LineType {
-    Bid,
-    Ask,
-}
-
-enum AreaAxesType {
-    Price,
-    VolumeRight,
-    VolumeLeft,
-}
+const GraphContentWrapper = styled.div`
+    position: relative;
+`;
 
 const MidMarketPriceIndicatorWell = styled.div`
     padding: 0.5rem;
@@ -77,12 +72,7 @@ const MidMarketPriceIndicatorWell = styled.div`
     margin: auto;
     right: 0;
     left: 0;
-    top: 1rem;
-    background-color: ${props => props.theme.componentsTheme.simplifiedTextBoxColor};
-    border-color: ${props => props.theme.componentsTheme.cardBorderColor};
-    border-style: solid;
-    border-radius: 3px;
-    border-width: 1px;
+    top: 0;
     text-align: center;
 `;
 
@@ -112,19 +102,24 @@ const MidMarketPriceCard = (props: MidMarketPriceCardProps) => {
 };
 
 class OrderDepthChart extends React.Component<Props> {
+
     public state = {
         bound: new BigNumber(0.00008),
-        midMarketPrice: new BigNumber(0),
+        hoverCord: null as Cord | null,
     };
+
+    private readonly _graphContentWrapper: React.RefObject<HTMLDivElement>;
+    private readonly _crossHairs: React.RefObject<HTMLDivElement>;
 
     constructor(props: Props) {
         super(props);
+        this._graphContentWrapper = React.createRef();
+        this._crossHairs = React.createRef();
     }
 
     public render = () => {
-        const { orderBook, baseToken, quoteToken, web3State } = this.props;
+        const { orderBook, baseToken, quoteToken, web3State, theme } = this.props;
         const { sellOrders, buyOrders } = orderBook;
-
         let content: React.ReactNode;
 
         if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
@@ -137,91 +132,88 @@ class OrderDepthChart extends React.Component<Props> {
                 baseToken,
                 quoteToken,
             );
-
+            const bidChartStyle = getDepthChartStyle(theme, OrderSide.Bid);
+            const askChartStyle = getDepthChartStyle(theme, OrderSide.Ask);
+            //const hoverMetadata = this._generateHoverMetadata(askLine, bidLine);
             content = (
-                <>
+                <GraphContentWrapper key={'order-depth-chart'} ref={this._graphContentWrapper} onMouseMove={this._onMouseMoveInGraphContent}>
                     <MidMarketPriceCard price={midMarketPrice.toNumber()} />
                     <FlexibleWidthXYPlot {...DEFAULT_XY_PLOT_PROPS}>
-                        <AreaSeries data={askLine} {...this._generateAreaSeriesStyle(LineType.Ask)} />
-                        <AreaSeries data={bidLine} {...this._generateAreaSeriesStyle(LineType.Bid)} />
-                        <LineSeries data={askLine} {...this._generateLineSeriesStyle(LineType.Ask)} />
-                        <LineSeries data={bidLine} {...this._generateLineSeriesStyle(LineType.Bid)} />
-                        <XAxis {...this._generateAreaAxesStyle(AreaAxesType.Price)} />
-                        <YAxis {...this._generateAreaAxesStyle(AreaAxesType.VolumeRight)} />
-                        <YAxis {...this._generateAreaAxesStyle(AreaAxesType.VolumeLeft)} />
+                        <AreaSeries data={askLine} {...askChartStyle.areaSeries} />
+                        <AreaSeries data={bidLine} {...bidChartStyle.areaSeries} />
+                        <LineSeries data={askLine} {...askChartStyle.lineSeries}/>
+                        <LineSeries data={bidLine} {...bidChartStyle.lineSeries} />
+                        <XAxis {...askChartStyle.axesBottom} />
+                        <YAxis {...askChartStyle.axesLeft} />
+                        <YAxis {...askChartStyle.axesRight} />
                     </FlexibleWidthXYPlot>
-                </>
+                </GraphContentWrapper>
             );
         }
         return <Card title="Depth Chart">{content}</Card>;
     };
 
-    private readonly _generateAreaAxesStyle = (type: AreaAxesType): object => {
-        const { theme } = this.props;
+    private readonly _onMouseMoveInGraphContent = (e: any) => {
+        const rect = (this._graphContentWrapper.current as any as HTMLDivElement).getBoundingClientRect();
+        const x = e.clientX - rect.left - DEFAULT_XY_PLOT_PROPS.margin.left;
+        const y = e.clientY - rect.top - DEFAULT_XY_PLOT_PROPS.margin.top;
+        const dimensions = this.props.dimension || {...DEFAULT_XY_PLOT_PROPS, ...{ width: rect.width }};
+        this.setState({ hoverCord: { x, y }});
+    }
 
-        const style = {
-            tick: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.2 },
-            text: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.7 },
-            line: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.2 },
-        };
+    // private readonly _generateHoverMetadata = (askLine: Cord[], bidLine: Cord[]): HoverMetadata => {
+    //     if (!!this._graphContentWrapper.current) {
+    //         const rect = (this._graphContentWrapper.current as any as HTMLDivElement).getBoundingClientRect();
+    //         let volume = 0;
+    //         let price = 0;
+    //         let lineType = LineType.Ask;
+    //         const highestBidPrice = bidLine[bidLine.length - 1].x;
+    //         const lowestAskPrice = askLine[0].x;
+    //         const minPrice = bidLine[0].x;
+    //         const maxPrice = askLine[askLine.length - 1].x;
+    //         const largestVolume = Math.max(bidLine[0].y, askLine[askLine.length - 1].y);
 
-        if (type === AreaAxesType.VolumeRight) {
-            return {
-                style,
-                tickSizeOuter: 0,
-                tickSizeInner: 6,
-                tickPadding: -16,
-                orientation: 'right',
-            };
-        } else if (type === AreaAxesType.VolumeLeft) {
-            return {
-                style,
-                tickSizeOuter: 0,
-                tickSizeInner: 6,
-                tickPadding: -16,
-                orientation: 'left',
-            };
-        } else {
-            return {
-                style,
-                tickSizeOuter: 6,
-                tickSizeInner: 0,
-            };
-        }
-    };
+    //         const hoveredValueX = lerp(minPrice, maxPrice, this.state.hoveredValueX / rect.width);
 
-    private readonly _generateAreaSeriesStyle = (type: LineType): object => {
-        const { theme } = this.props;
-        if (type === LineType.Ask) {
-            return {
-                color: hexToRgba(theme.componentsTheme.red, 0),
-                fill: hexToRgba(theme.componentsTheme.red, 0.2),
-            };
-        } else {
-            return {
-                color: hexToRgba(theme.componentsTheme.green, 0),
-                fill: hexToRgba(theme.componentsTheme.green, 0.2),
-            };
-        }
-    };
+    //         if (hoveredValueX <= highestBidPrice) {
+    //             const bidLineDifferences = bidLine.map(c => Math.abs(c.x - hoveredValueX));
+    //             const closestCordIndex = bidLineDifferences.indexOf(Math.min.apply(null, bidLineDifferences));
+    //             const c = (bidLine[closestCordIndex] as any as Cords);
+    //             volume = c.y;
+    //             price = c.x;
+    //             lineType = LineType.Bid;
+    //         }
 
-    private readonly _generateLineSeriesStyle = (type: LineType): object => {
-        const { theme } = this.props;
-        if (type === LineType.Ask) {
-            return {
-                color: hexToRgba(theme.componentsTheme.red, 1),
-            };
-        } else {
-            return {
-                color: hexToRgba(theme.componentsTheme.green, 1),
-            };
-        }
-    };
+    //         if (hoveredValueX >= lowestAskPrice) {
+    //             const askLineDifferences = askLine.map(c => Math.abs(c.x - hoveredValueX));
+    //             const closestCordIndex = askLineDifferences.indexOf(Math.min.apply(null, askLineDifferences));
+    //             const c = (askLine[closestCordIndex] as any as Cords);
+    //             volume = c.y;
+    //             price = c.x;
+    //             lineType = LineType.Ask;
+    //         }
 
-    private readonly _generateDepthChartMetadata = (
+    //         const contentHeight = DEFAULT_XY_PLOT_PROPS.height - DEFAULT_XY_PLOT_PROPS.margin.top - DEFAULT_XY_PLOT_PROPS.margin.bottom;
+
+    //         const y = lerp(0, contentHeight, volume / largestVolume);
+    //         const x = lerp(0, rect.width, (price - minPrice) / (maxPrice - minPrice));
+
+    //         return {
+    //             x,
+    //             y,
+    //             price: x,
+    //             volume,
+    //             cost: x * y,
+    //             lineType,
+    //         };
+    //     }
+    //     return DEFAULT_HOVERED_VALUE;
+    // }
+
+    private readonly _generateDepthChartBounds = (
         orderBook: OrderBook,
         bound: BigNumber,
-    ): OrderDepthChartMetadata => {
+    ): Partial<DepthChartData> => {
         const highestBidPrice = orderBook.buyOrders[0].price;
         const lowestAskPrice = orderBook.sellOrders[orderBook.sellOrders.length - 1].price;
 
@@ -243,44 +235,41 @@ class OrderDepthChart extends React.Component<Props> {
     ): DepthChartData => {
         const { decimals } = quoteToken || { decimals: 18 };
         const { bound } = this.state;
-        const { midMarketPrice, minPrice, maxPrice } = this._generateDepthChartMetadata(orderBook, bound);
+        const partialDepthChartData = this._generateDepthChartBounds(orderBook, bound);
+        const minPrice = partialDepthChartData.minPrice as any as BigNumber;
+        const maxPrice = partialDepthChartData.maxPrice as any as BigNumber;
+        const midMarketPrice = partialDepthChartData.midMarketPrice as any as BigNumber;
 
-        const filteredBuyOrder = orderBook.buyOrders.filter((value: OrderBookItem) =>
+        const filteredBuyOrder = orderBook.buyOrders.slice(0).filter((value: OrderBookItem) =>
             value.price.isGreaterThanOrEqualTo(minPrice),
         );
-        const filteredAskOrder = orderBook.sellOrders
-            .reverse()
-            .filter((value: OrderBookItem) => value.price.isLessThanOrEqualTo(maxPrice));
+        const filteredAskOrder = orderBook.sellOrders.slice(0).reverse().filter((value: OrderBookItem) =>
+            value.price.isLessThanOrEqualTo(maxPrice),
+        );
 
-        const bidLine = filteredBuyOrder
-            .reduce(
-                (
-                    a: { aggVolume: number; line: Cords[] },
-                    c: OrderBookItem,
-                    i: number,
-                ): { aggVolume: number; line: Cords[] } => {
-                    const newAcc = { ...a };
-                    const { price: priceInBigNumber, size: sizeInBigNUmber } = c;
-                    const price = priceInBigNumber.toNumber();
-                    const newAggVolumeDelta = priceInBigNumber.multipliedBy(sizeInBigNUmber).toNumber();
-                    const newAggVolume = a.aggVolume + newAggVolumeDelta / Math.pow(10, decimals);
-                    newAcc.line = newAcc.line.concat([{ x: price, y: a.aggVolume }, { x: price, y: newAggVolume }]);
-                    newAcc.aggVolume = newAggVolume;
-                    return newAcc;
-                },
-                {
-                    aggVolume: 0,
-                    line: [] as Cords[],
-                },
-            )
-            .line.reverse();
+        const bidLine = this._generateDepthChartLine(filteredBuyOrder, decimals).reverse();
 
-        const askLine = filteredAskOrder.reduce(
+        const askLine = this._generateDepthChartLine(filteredAskOrder, decimals);
+
+        const scaledBidLine: Cord[] = [{ x: minPrice.toNumber(), y: bidLine[0].y }].concat(bidLine);
+        const scaledAskLine: Cord[]  = askLine.concat([{ x: maxPrice.toNumber(), y: askLine[askLine.length - 1].y }]);
+
+        return {
+            bidLine: scaledBidLine,
+            askLine: scaledAskLine,
+            midMarketPrice,
+            minPrice,
+            maxPrice,
+        };
+    };
+
+    private readonly _generateDepthChartLine = (line: OrderBookItem[], decimals: number): Cord[] => {
+        return line.reduce(
             (
-                a: { aggVolume: number; line: Cords[] },
+                a: { aggVolume: number; line: Cord[] },
                 c: OrderBookItem,
                 i: number,
-            ): { aggVolume: number; line: Cords[] } => {
+            ): { aggVolume: number; line: Cord[] } => {
                 const newAcc = { ...a };
                 const { price: priceInBigNumber, size: sizeInBigNUmber } = c;
                 const price = priceInBigNumber.toNumber();
@@ -292,18 +281,9 @@ class OrderDepthChart extends React.Component<Props> {
             },
             {
                 aggVolume: 0,
-                line: [] as Cords[],
+                line: [] as Cord[],
             },
         ).line;
-
-        const scaledBidLine = [{ x: minPrice.toNumber(), y: bidLine[0].y }].concat(bidLine);
-        const scaledAskLine = askLine.concat([{ x: maxPrice.toNumber(), y: askLine[askLine.length - 1].y }]);
-
-        return {
-            bidLine: scaledBidLine,
-            askLine: scaledAskLine,
-            midMarketPrice,
-        };
     };
 }
 
