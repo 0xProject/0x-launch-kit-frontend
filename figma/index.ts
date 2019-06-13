@@ -45,3 +45,4 @@ const updateStyleMetadata = async () => {
 
 // tslint:disable-next-line: no-floating-promises
 setUpAndRunWatcher();
+//updateStyleMetadata();
