@@ -1,8 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../themes/commons';
-
 interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
 }
@@ -11,9 +9,9 @@ const MainScrollable = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: -${themeDimensions.mainPadding};
+    margin: -${props => props.theme.dimensions.mainPadding};
     overflow: auto;
-    padding: ${themeDimensions.mainPadding};
+    padding: ${props => props.theme.dimensions.mainPadding};
 `;
 
 export const MainScrollableWrapper: React.FC<Props> = props => {

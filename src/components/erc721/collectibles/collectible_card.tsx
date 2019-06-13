@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
 import { getEthAccount } from '../../../store/selectors';
-import { themeDimensions, themeFeatures } from '../../../themes/commons';
+import { themeFeatures } from '../../../themes/commons';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { OwnerBadge } from './owner_badge';
@@ -14,7 +14,7 @@ import { PriceBadge } from './price_badge';
 
 const CollectibleCardWrapper = styled(Link)`
     background: ${props => props.theme.componentsTheme.cardBackgroundColor};
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     box-sizing: border-box;
     cursor: pointer;

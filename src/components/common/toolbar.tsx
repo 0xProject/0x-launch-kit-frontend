@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
 import { getWeb3State } from '../../store/selectors';
-import { themeBreakPoints, themeDimensions } from '../../themes/commons';
+import { themeBreakPoints } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
 import { StoreState, Web3State } from '../../util/types';
 
@@ -42,9 +42,9 @@ const ToolbarWrapper = styled.div`
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
-    height: ${themeDimensions.toolbarHeight};
+    height: ${props => props.theme.dimensions.toolbarHeight};
     justify-content: space-between;
-    padding: 0 ${themeDimensions.horizontalPadding};
+    padding: 0 ${props => props.theme.dimensions.horizontalPadding};
     position: sticky;
     top: 0;
     z-index: 123;

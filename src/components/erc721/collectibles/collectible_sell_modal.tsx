@@ -7,7 +7,7 @@ import styled, { css, withTheme } from 'styled-components';
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
-import { Theme, themeDimensions } from '../../../themes/commons';
+import { Theme } from '../../../themes/commons';
 import { todayInSeconds, tomorrow } from '../../../util/time_utils';
 import { ButtonVariant, Collectible, OrderSide, StoreState } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
@@ -86,7 +86,7 @@ const CollectibleImage = styled.div<ImageProps>`
     background-position: 50% 50%;
     background-repeat: no-repeat;
     background-size: contain;
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.borderColor};
     flex-grow: 0;
     flex-shrink: 0;
@@ -157,14 +157,14 @@ const FormRow = styled.div`
 `;
 
 const FieldContainer = styled.div`
-    height: ${themeDimensions.fieldHeight};
+    height: ${props => props.theme.dimensions.fieldHeight};
     margin-bottom: 25px;
     position: relative;
 `;
 
 const InputStyle = css`
     background-color: ${props => props.theme.componentsTheme.textInputBackgroundColor};
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.textInputBorderColor};
     color: ${props => props.theme.componentsTheme.textInputTextColor};
     font-feature-settings: 'tnum' 1;
@@ -183,7 +183,7 @@ const BigInputNumberStyled = styled<any>(BigNumberInput)`
 
 const SelectStyled = styled.select`
     ${InputStyle}
-    height: ${themeDimensions.fieldHeight};
+    height: ${props => props.theme.dimensions.fieldHeight};
     padding-right: 14px;
 `;
 

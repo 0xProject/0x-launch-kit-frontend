@@ -1,8 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../themes/commons';
-
 import { CardBase } from './card_base';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -15,7 +13,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const CardWrapper = styled(CardBase)`
     display: flex;
     flex-direction: column;
-    margin-bottom: ${themeDimensions.verticalSeparationSm};
+    margin-bottom: ${props => props.theme.dimensions.verticalSeparationSm};
     max-height: 100%;
 
     &:last-child {
@@ -30,7 +28,7 @@ const CardHeader = styled.div`
     flex-grow: 0;
     flex-shrink: 0;
     justify-content: space-between;
-    padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
+    padding: ${props => props.theme.dimensions.verticalPadding} ${props => props.theme.dimensions.horizontalPadding};
 `;
 
 const CardTitle = styled.h1`
@@ -47,7 +45,7 @@ const CardBody = styled.div<{ minHeightBody?: string }>`
     margin: 0;
     min-height: ${props => props.minHeightBody};
     overflow-x: auto;
-    padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
+    padding: ${props => props.theme.dimensions.verticalPadding} ${props => props.theme.dimensions.horizontalPadding};
     position: relative;
 `;
 

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { themeBreakPoints, themeDimensions } from '../../themes/commons';
+import { themeBreakPoints } from '../../themes/commons';
 
 interface TableStyleProps {
     borderBottom?: boolean;
@@ -29,12 +29,12 @@ export const Table = styled.table<TableProps>`
             : 'none'};
     border-top: ${props =>
         props.styles && props.styles.borderTop ? `1px solid ${props.theme.componentsTheme.tableBorderColor}` : 'none'};
-    margin-left: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
-    margin-right: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
+    margin-left: ${props => (props.fitInCard ? `-${props.theme.dimensions.horizontalPadding}` : '0')};
+    margin-right: ${props => (props.fitInCard ? `-${props.theme.dimensions.horizontalPadding}` : '0')};
     min-width: ${props => (props.isResponsive ? 'fit-content' : '0')};
     width: ${props =>
         props.fitInCard
-            ? `calc(100% + ${themeDimensions.horizontalPadding} + ${themeDimensions.horizontalPadding})`
+            ? `calc(100% + ${props.theme.dimensions.horizontalPadding} + ${props.theme.dimensions.horizontalPadding})`
             : '100%'};
 
     @media (min-width: ${themeBreakPoints.xl}) {
@@ -63,7 +63,7 @@ export const TH = styled.th<TableTDProps>`
     font-weight: 500;
     letter-spacing: 0.5px;
     line-height: 1.2;
-    padding: 0 ${themeDimensions.horizontalPadding} 5px 0;
+    padding: 0 ${props => props.theme.dimensions.horizontalPadding} 5px 0;
     text-align: ${props =>
         props.styles && props.styles.textAlign && props.styles.textAlign.length ? props.styles.textAlign : 'left'};
     text-transform: uppercase;
@@ -86,7 +86,7 @@ export const CustomTD = styled.td<TableTDProps>`
     font-size: 14px;
     font-weight: ${props => (props.styles && props.styles.fontWeight ? props.styles.fontWeight : 'normal')};
     line-height: ${props => (props.styles && props.styles.lineWeight ? props.styles.lineWeight : '1.2')};
-    padding: 5px ${themeDimensions.horizontalPadding} 5px 0;
+    padding: 5px ${props => props.theme.dimensions.horizontalPadding} 5px 0;
     text-align: ${props =>
         props.styles && props.styles.textAlign && props.styles.textAlign.length ? props.styles.textAlign : 'left'};
 
@@ -98,14 +98,14 @@ export const CustomTD = styled.td<TableTDProps>`
 export const CustomTDFirst = styled(CustomTD)`
     &,
     &:last-child {
-        padding-left: ${themeDimensions.horizontalPadding};
+        padding-left: ${props => props.theme.dimensions.horizontalPadding};
     }
 `;
 
 export const CustomTDLast = styled(CustomTD)`
     &,
     &:last-child {
-        padding-right: ${themeDimensions.horizontalPadding};
+        padding-right: ${props => props.theme.dimensions.horizontalPadding};
     }
 `;
 
@@ -118,13 +118,13 @@ export const CustomTDTitle = styled(CustomTD)`
 export const THFirst = styled(TH)`
     &,
     &:last-child {
-        padding-left: ${themeDimensions.horizontalPadding};
+        padding-left: ${props => props.theme.dimensions.horizontalPadding};
     }
 `;
 
 export const THLast = styled(TH)`
     &,
     &:last-child {
-        padding-right: ${themeDimensions.horizontalPadding};
+        padding-right: ${props => props.theme.dimensions.horizontalPadding};
     }
 `;

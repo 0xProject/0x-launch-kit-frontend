@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 
-import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
+import { themeBreakPoints } from '../../../themes/commons';
 
 export const Content = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    padding: ${themeDimensions.mainPadding};
+    padding: ${props => props.theme.dimensions.mainPadding};
 
     @media (min-width: ${themeBreakPoints.xl}) {
         flex-direction: row;
-        height: calc(100% - ${themeDimensions.footerHeight});
+        height: calc(100% - ${props => props.theme.dimensions.footerHeight});
     }
 `;

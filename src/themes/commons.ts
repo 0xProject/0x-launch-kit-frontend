@@ -1,6 +1,7 @@
 export interface Theme {
     componentsTheme: ThemeProperties;
     modalTheme: ThemeModalStyle;
+    dimensions: ThemeDimensions;
 }
 
 export interface ThemeProperties {
@@ -120,7 +121,20 @@ export interface ThemeMetaData {
     theme: Theme;
 }
 
-export const themeDimensions = {
+export interface ThemeDimensions {
+    borderRadius: string;
+    fieldHeight: string;
+    footerHeight: string;
+    horizontalPadding: string;
+    mainPadding: string;
+    sidebarWidth: string;
+    toolbarHeight: string;
+    verticalPadding: string;
+    verticalSeparation: string;
+    verticalSeparationSm: string;
+}
+
+export const defaultThemeDimensions = {
     borderRadius: '4px',
     fieldHeight: '46px',
     footerHeight: '38px',

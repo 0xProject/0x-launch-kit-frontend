@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { themeBreakPoints, themeDimensions } from '../themes/commons';
+import { themeBreakPoints } from '../themes/commons';
 
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
@@ -23,7 +23,7 @@ const ContentScroll = styled.div`
     flex-grow: 1;
 
     @media (min-width: ${themeBreakPoints.xl}) {
-        height: calc(100% - ${themeDimensions.toolbarHeight});
+        height: calc(100% - ${props => props.theme.dimensions.toolbarHeight});
         overflow: auto;
     }
 `;

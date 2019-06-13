@@ -1,4 +1,4 @@
-import { ThemeModalStyle, ThemeProperties } from './commons';
+import { defaultThemeDimensions, ThemeDimensions, ThemeModalStyle, ThemeProperties } from './commons';
 import customThemeJson from './custom_theme.json';
 import { DefaultTheme } from './default_theme';
 
@@ -114,15 +114,22 @@ const darkThemeColors: ThemeProperties = {
     topbarSeparatorColor: '#5A5A5A',
 };
 
-const themeJsonToThemeProperties = (themeJson: object) => {
-    console.log(themeJson);
+// TODO: fill these out to dynamically generate the right stuff given the theme json
+const themeJsonToThemeProperties = (themeJson: object): ThemeProperties => {
     return darkThemeColors;
+};
+const themeJsonToThemeModalStyle = (themeJson: object): ThemeModalStyle => {
+    return modalThemeStyle;
+};
+const themeJsonToThemeDimensions = (themeJson: object): ThemeDimensions => {
+    return defaultThemeDimensions;
 };
 
 export class CustomTheme extends DefaultTheme {
     constructor() {
         super();
         this.componentsTheme = themeJsonToThemeProperties(customThemeJson);
-        this.modalTheme = modalThemeStyle;
+        this.modalTheme = themeJsonToThemeModalStyle(customThemeJson);
+        this.dimensions = themeJsonToThemeDimensions(customThemeJson);
     }
 }

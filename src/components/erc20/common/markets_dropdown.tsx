@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import { changeMarket, goToHome } from '../../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
-import { themeDimensions } from '../../../themes/commons';
 import { getColorBySymbol } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
@@ -77,7 +76,7 @@ const MarketsFilters = styled.div`
     display: flex;
     justify-content: space-between;
     min-height: ${rowHeight};
-    padding: 8px 8px 8px ${themeDimensions.horizontalPadding};
+    padding: 8px 8px 8px ${props => props.theme.dimensions.horizontalPadding};
 `;
 
 const MarketsFiltersLabel = styled.h2`
@@ -125,7 +124,7 @@ const SearchWrapper = styled.div`
 
 const SearchField = styled.input`
     background: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.marketsSearchFieldBorderColor};
     color: ${props => props.theme.componentsTheme.marketsSearchFieldTextColor};
     font-size: 13px;
@@ -177,8 +176,8 @@ const TRStyled = styled(TR)<MarketRowProps>`
     }
 
     &:last-child > td {
-        border-bottom-left-radius: ${themeDimensions.borderRadius};
-        border-bottom-right-radius: ${themeDimensions.borderRadius};
+        border-bottom-left-radius: ${props => props.theme.dimensions.borderRadius};
+        border-bottom-right-radius: ${props => props.theme.dimensions.borderRadius};
         border-bottom: none;
     }
 `;

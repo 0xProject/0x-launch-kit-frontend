@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 import { ETH_DECIMALS } from '../../../common/constants';
 import { getEthAccount, getEthBalance } from '../../../store/selectors';
-import { themeDimensions } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { StoreState } from '../../../util/types';
 import { WalletWethBalanceContainer } from '../../account';
@@ -24,7 +23,7 @@ const connectToWallet = () => {
 };
 
 const WalletConnectionWrapper = styled(CardBase)`
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     box-shadow: ${props => props.theme.componentsTheme.boxShadow};
     overflow: hidden;
     width: 350px;
@@ -33,12 +32,12 @@ const WalletConnectionWrapper = styled(CardBase)`
 const DropdownHeader = styled.div`
     align-items: center;
     background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
-    border-top-left-radius: ${themeDimensions.borderRadius};
-    border-top-right-radius: ${themeDimensions.borderRadius};
+    border-top-left-radius: ${props => props.theme.dimensions.borderRadius};
+    border-top-right-radius: ${props => props.theme.dimensions.borderRadius};
     color: ${props => props.theme.componentsTheme.cardTitleColor};
     display: flex;
     justify-content: space-between;
-    padding: 12px ${themeDimensions.horizontalPadding};
+    padding: 12px ${props => props.theme.dimensions.horizontalPadding};
 `;
 
 const DropdownHeaderTitle = styled.div`

@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions, themeFeatures } from '../../../themes/commons';
+import { themeFeatures } from '../../../themes/commons';
 
 import { PriceBadge } from './price_badge';
 
@@ -16,7 +16,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const CollectibleAssetWrapper = styled.div`
     background: ${props => props.theme.componentsTheme.cardBackgroundColor};
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     box-sizing: border-box;
     cursor: pointer;
@@ -33,8 +33,8 @@ const ImageWrapper = styled.div<{ color: string; image: string }>`
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
-    border-top-left-radius: ${themeDimensions.borderRadius};
-    border-top-right-radius: ${themeDimensions.borderRadius};
+    border-top-left-radius: ${props => props.theme.dimensions.borderRadius};
+    border-top-right-radius: ${props => props.theme.dimensions.borderRadius};
     height: 272px;
 `;
 

@@ -1,8 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../themes/commons';
-
 import { LockIcon } from './icons/lock_icon';
 import { MetamaskSideIcon } from './icons/metamask_side_icon';
 import { SadIcon } from './icons/sad_icon';
@@ -33,7 +31,7 @@ export enum FontSize {
 const ErrorCardContainer = styled.div<ErrorProps>`
     align-items: center;
     background-color: ${props => props.theme.componentsTheme.errorCardBackground};
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.errorCardBorder};
     color: ${props => props.theme.componentsTheme.errorCardText};
     display: flex;

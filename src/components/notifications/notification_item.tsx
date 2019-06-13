@@ -2,7 +2,6 @@ import React from 'react';
 import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
-import { themeDimensions } from '../../themes/commons';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
 import { tokenAmountInUnits } from '../../util/tokens';
@@ -33,11 +32,11 @@ const notificationWrapperMixin = css<StyledIsActive>`
     border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
     display: flex;
     justify-content: space-between;
-    padding: 20px ${themeDimensions.horizontalPadding};
+    padding: 20px ${props => props.theme.dimensions.horizontalPadding};
 
     &:last-child {
-        border-bottom-left-radius: ${themeDimensions.borderRadius};
-        border-bottom-right-radius: ${themeDimensions.borderRadius};
+        border-bottom-left-radius: ${props => props.theme.dimensions.borderRadius};
+        border-bottom-right-radius: ${props => props.theme.dimensions.borderRadius};
         border-bottom: none;
     }
 `;

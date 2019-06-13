@@ -1,4 +1,4 @@
-import { Theme, ThemeModalStyle, ThemeProperties } from './commons';
+import { defaultThemeDimensions, Theme, ThemeDimensions, ThemeModalStyle, ThemeProperties } from './commons';
 
 const modalThemeStyle: ThemeModalStyle = {
     content: {
@@ -115,8 +115,10 @@ const lightThemeColors: ThemeProperties = {
 export class DefaultTheme implements Theme {
     public componentsTheme: ThemeProperties;
     public modalTheme: ThemeModalStyle;
+    public dimensions: ThemeDimensions;
     constructor() {
         this.componentsTheme = lightThemeColors;
         this.modalTheme = modalThemeStyle;
+        this.dimensions = defaultThemeDimensions;
     }
 }

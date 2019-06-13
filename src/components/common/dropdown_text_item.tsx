@@ -1,8 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../themes/commons';
-
 interface Props extends HTMLAttributes<HTMLDivElement> {
     active?: boolean;
     onClick?: any;
@@ -18,20 +16,20 @@ export const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
     font-size: 14px;
     font-weight: normal;
     line-height: 1.3;
-    padding: 12px ${themeDimensions.horizontalPadding};
+    padding: 12px ${props => props.theme.dimensions.horizontalPadding};
 
     &:hover {
         background-color: ${props => props.theme.componentsTheme.rowActive};
     }
 
     &:first-child {
-        border-top-left-radius: ${themeDimensions.borderRadius};
-        border-top-right-radius: ${themeDimensions.borderRadius};
+        border-top-left-radius: ${props => props.theme.dimensions.borderRadius};
+        border-top-right-radius: ${props => props.theme.dimensions.borderRadius};
     }
 
     &:last-child {
-        border-bottom-left-radius: ${themeDimensions.borderRadius};
-        border-bottom-right-radius: ${themeDimensions.borderRadius};
+        border-bottom-left-radius: ${props => props.theme.dimensions.borderRadius};
+        border-bottom-right-radius: ${props => props.theme.dimensions.borderRadius};
         border-bottom: none;
     }
 `;

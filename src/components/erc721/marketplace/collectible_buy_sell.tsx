@@ -6,7 +6,6 @@ import { ETH_DECIMALS } from '../../../common/constants';
 import { cancelOrderCollectible, selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { startBuyCollectibleSteps } from '../../../store/ui/actions';
-import { themeDimensions } from '../../../themes/commons';
 import { getCollectiblePrice } from '../../../util/collectibles';
 import { getEndDateStringFromTimeInSeconds } from '../../../util/time_utils';
 import { tokenAmountInUnits } from '../../../util/tokens';
@@ -22,7 +21,7 @@ interface ImageProps {
 }
 
 const BuySellWrapper = styled.div`
-    margin-bottom: ${themeDimensions.verticalSeparationSm};
+    margin-bottom: ${props => props.theme.dimensions.verticalSeparationSm};
     width: ${buySellWrapperWidth};
 `;
 
@@ -32,9 +31,9 @@ const Image = styled.div<ImageProps>`
     background-position: 50% 50%;
     background-repeat: no-repeat;
     background-size: contain;
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     height: ${buySellWrapperWidth};
-    margin-bottom: ${themeDimensions.verticalSeparationSm};
+    margin-bottom: ${props => props.theme.dimensions.verticalSeparationSm};
     width: ${buySellWrapperWidth};
 `;
 

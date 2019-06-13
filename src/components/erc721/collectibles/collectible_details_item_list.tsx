@@ -1,7 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeDimensions } from '../../../themes/commons';
 import { ChevronRight } from '../../common/icons/chevron_right_icon';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -31,7 +30,7 @@ const ImageWrapper = styled.div<{ color: string; image: string }>`
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     height: 72px;
     margin-right: 15px;

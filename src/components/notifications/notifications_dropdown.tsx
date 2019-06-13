@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { setHasUnreadNotifications } from '../../store/actions';
 import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
-import { themeDimensions } from '../../themes/commons';
 import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
@@ -63,7 +62,7 @@ const NotificationDropdownTitle = styled.h1`
     font-weight: 600;
     line-height: 1.2;
     margin: 0;
-    padding: 15px ${themeDimensions.horizontalPadding};
+    padding: 15px ${props => props.theme.dimensions.horizontalPadding};
 `;
 
 const NoNotifications = styled.div`

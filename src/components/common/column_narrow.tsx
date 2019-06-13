@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-import { themeBreakPoints, themeDimensions } from '../../themes/commons';
+import { themeBreakPoints } from '../../themes/commons';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
@@ -15,8 +15,8 @@ const ColumnNarrowWrapper = styled.div`
     width: 100%;
 
     @media (min-width: ${themeBreakPoints.xl}) {
-        min-width: ${themeDimensions.sidebarWidth};
-        width: ${themeDimensions.sidebarWidth};
+        min-width: ${props => props.theme.dimensions.sidebarWidth};
+        width: ${props => props.theme.dimensions.sidebarWidth};
     }
 
     &:first-child {

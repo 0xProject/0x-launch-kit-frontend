@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getCurrencyPair, getWeb3State } from '../../../store/selectors';
-import { themeDimensions } from '../../../themes/commons';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import {
     ButtonIcons,
@@ -52,13 +51,13 @@ interface State {
 }
 
 const BuySellWrapper = styled(CardBase)`
-    margin-bottom: ${themeDimensions.verticalSeparationSm};
+    margin-bottom: ${props => props.theme.dimensions.verticalSeparationSm};
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 20px ${themeDimensions.horizontalPadding};
+    padding: 20px ${props => props.theme.dimensions.horizontalPadding};
 `;
 
 const TabsContainer = styled.div`
@@ -91,7 +90,7 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     width: 50%;
 
     &:first-child {
-        border-top-left-radius: ${themeDimensions.borderRadius};
+        border-top-left-radius: ${props => props.theme.dimensions.borderRadius};
     }
 
     &:last-child {
@@ -99,7 +98,7 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
         border-left-style: solid;
         border-left-width: 1px;
         border-right: none;
-        border-top-right-radius: ${themeDimensions.borderRadius};
+        border-top-right-radius: ${props => props.theme.dimensions.borderRadius};
     }
 `;
 
@@ -123,14 +122,14 @@ const InnerTabs = styled(CardTabSelector)`
 `;
 
 const FieldContainer = styled.div`
-    height: ${themeDimensions.fieldHeight};
+    height: ${props => props.theme.dimensions.fieldHeight};
     margin-bottom: 25px;
     position: relative;
 `;
 
 const BigInputNumberStyled = styled<any>(BigNumberInput)`
     background-color: ${props => props.theme.componentsTheme.textInputBackgroundColor};
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.textInputBorderColor};
     color: ${props => props.theme.componentsTheme.textInputTextColor};
     font-feature-settings: 'tnum' 1;

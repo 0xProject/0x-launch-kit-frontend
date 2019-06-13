@@ -5,7 +5,7 @@ import styled, { withTheme } from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
 import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
-import { Theme, themeDimensions } from '../../themes/commons';
+import { Theme } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -43,7 +43,7 @@ interface State {
 }
 
 const Content = styled.div`
-    margin: 0 -${themeDimensions.horizontalPadding};
+    margin: 0 -${props => props.theme.dimensions.horizontalPadding};
     position: relative;
 `;
 
@@ -52,7 +52,7 @@ const Row = styled.div`
     border-bottom: solid 1px ${props => props.theme.componentsTheme.tableBorderColor};
     display: flex;
     justify-content: space-between;
-    padding: 15px ${themeDimensions.horizontalPadding};
+    padding: 15px ${props => props.theme.dimensions.horizontalPadding};
     position: relative;
 
     &:first-child {

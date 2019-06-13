@@ -1,4 +1,4 @@
-import { ThemeModalStyle, ThemeProperties } from './commons';
+import { defaultThemeDimensions, ThemeModalStyle, ThemeProperties } from './commons';
 import { DefaultTheme } from './default_theme';
 
 const modalThemeStyle: ThemeModalStyle = {
@@ -118,5 +118,6 @@ export class DarkTheme extends DefaultTheme {
         super();
         this.componentsTheme = darkThemeColors;
         this.modalTheme = modalThemeStyle;
+        this.dimensions = defaultThemeDimensions;
     }
 }

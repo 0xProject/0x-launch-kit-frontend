@@ -2,7 +2,6 @@ import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 import { WarningSmallIcon } from '../../components/common/icons/warning_small_icon';
-import { themeDimensions } from '../../themes/commons';
 import { ButtonIcons, ButtonVariant } from '../../util/types';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
@@ -47,7 +46,7 @@ const StyledButton = styled.button<{ variant?: ButtonVariant }>`
             : ''}
 
     align-items: center;
-    border-radius: ${themeDimensions.borderRadius};
+    border-radius: ${props => props.theme.dimensions.borderRadius};
     border: none;
     color: ${props => props.theme.componentsTheme.buttonTextColor};
     cursor: pointer;
