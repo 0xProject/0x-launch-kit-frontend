@@ -29,7 +29,7 @@ const modalThemeStyle: ThemeModalStyle = {
 };
 
 const darkThemeColors: ThemeProperties = {
-    background: '#FF6534',
+    background: '#000',
     backgroundERC721: '#000',
     borderColor: '#5A5A5A',
     boxShadow: '0 10px 10px rgba(0, 0, 0, 0.1)',
