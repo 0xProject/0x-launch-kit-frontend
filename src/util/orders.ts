@@ -105,8 +105,13 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
     const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseTokenAddress);
     const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteTokenAddress);
 
+    const baseTokenDecimals = getKnownTokens().getTokenByAddress(baseTokenAddress).decimals;
+    const baseTokenAmountInUnits = tokenAmountInUnitsToBigNumber(amount, baseTokenDecimals);
+
+    const quoteTokenAmountInUnits = baseTokenAmountInUnits.multipliedBy(price);
+
     const quoteTokenDecimals = getKnownTokens().getTokenByAddress(quoteTokenAddress).decimals;
-    const quoteTokenAmountInBaseUnits = unitsInTokenAmount(price.toString(), quoteTokenDecimals);
+    const quoteTokenAmountInBaseUnits = unitsInTokenAmount(quoteTokenAmountInUnits.toString(), quoteTokenDecimals);
 
     const isBuy = side === OrderSide.Buy;
 
@@ -171,12 +176,8 @@ export const buildMarketOrders = (
 
         if (side === OrderSide.Buy) {
             // @TODO: cache maker/taker info (decimals)
-            const makerAssetContractAddress = assetDataUtils.decodeERC20AssetData(order.rawOrder.makerAssetData)
-                .tokenAddress;
-            const makerTokenDecimals = getKnownTokens().getTokenByAddress(makerAssetContractAddress).decimals;
-            const takerAssetContractAddress = assetDataUtils.decodeERC20AssetData(order.rawOrder.takerAssetData)
-                .tokenAddress;
-            const takerTokenDecimals = getKnownTokens().getTokenByAddress(takerAssetContractAddress).decimals;
+            const makerTokenDecimals = getKnownTokens().getTokenByAssetData(order.rawOrder.makerAssetData).decimals;
+            const takerTokenDecimals = getKnownTokens().getTokenByAssetData(order.rawOrder.takerAssetData).decimals;
             const buyAmount = tokenAmountInUnitsToBigNumber(amounts[i], makerTokenDecimals);
             amounts[i] = unitsInTokenAmount(buyAmount.multipliedBy(order.price).toString(), takerTokenDecimals);
         }
