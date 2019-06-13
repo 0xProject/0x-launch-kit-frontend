@@ -28,21 +28,35 @@ export interface Rgba {
     b: number;
     a: number;
 }
-export interface FigmaFills {
+export interface FigmaColors {
     blendMode: string;
     type: string;
     color: Rgba;
 }
 
 export interface FigmaStylizedObject extends FigmaObject {
-    fills: FigmaFills[];
+    fills: FigmaColors[];
+    cornerRadius?: number;
+    strokeWeight?: number;
+    strokes: FigmaColors[];
+    effects?: Effect[];
 }
 
 export interface StyleAttribute {
     type: string;
-    value: string | number | null;
+    value: string | object | number | null;
 }
 
 export interface StyleMetadata {
     [attribute: string]: StyleAttribute;
+}
+
+export interface Effect {
+    type: string;
+}
+
+export interface DropshadowEffect extends Effect {
+    color: Rgba;
+    offset: any;
+    radius: number;
 }
