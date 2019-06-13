@@ -19,7 +19,11 @@ interface CrosshairProps {
 const setCoordinateWithMarginInDisplaySpace = (parentChartDimensions: ChartDimensions, cord: Cord): Cord => {
     return {
         x: cord.x + parentChartDimensions.margin.left,
-        y: parentChartDimensions.height - parentChartDimensions.margin.top - parentChartDimensions.margin.bottom - cord.y,
+        y:
+            parentChartDimensions.height -
+            parentChartDimensions.margin.top -
+            parentChartDimensions.margin.bottom -
+            cord.y,
     };
 };
 
@@ -81,15 +85,19 @@ const CrosshairCardLabelRow = styled.div`
 
 export const Crosshair = (props: CrosshairProps) => {
     const cord = setCoordinateWithMarginInDisplaySpace(props.parentChartDimensions, props.cord);
-    const updatedProps = {...props, ...{ cord }};
-    return <>
-        <CrosshairLine {...updatedProps}/>
-        <CrosshairWell {...updatedProps}>
-            <CrosshairWellTitle {...updatedProps}>{props.price} ${props.unit}</CrosshairWellTitle>
-            <CrosshairCardLabelRow>
-                <CrosshairWellLabel>Volume: {props.volume}</CrosshairWellLabel>
-                <CrosshairWellLabel>Cost: {props.cost}</CrosshairWellLabel>
-            </CrosshairCardLabelRow>
-        </CrosshairWell>
-    </>;
+    const updatedProps = { ...props, ...{ cord } };
+    return (
+        <>
+            <CrosshairLine {...updatedProps} />
+            <CrosshairWell {...updatedProps}>
+                <CrosshairWellTitle {...updatedProps}>
+                    {props.price} ${props.unit}
+                </CrosshairWellTitle>
+                <CrosshairCardLabelRow>
+                    <CrosshairWellLabel>Volume: {props.volume}</CrosshairWellLabel>
+                    <CrosshairWellLabel>Cost: {props.cost}</CrosshairWellLabel>
+                </CrosshairCardLabelRow>
+            </CrosshairWell>
+        </>
+    );
 };

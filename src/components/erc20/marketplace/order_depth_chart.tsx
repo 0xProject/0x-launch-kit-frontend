@@ -102,7 +102,6 @@ const MidMarketPriceCard = (props: MidMarketPriceCardProps) => {
 };
 
 class OrderDepthChart extends React.Component<Props> {
-
     public state = {
         bound: new BigNumber(0.00008),
         hoverCord: null as Cord | null,
@@ -136,12 +135,16 @@ class OrderDepthChart extends React.Component<Props> {
             const askChartStyle = getDepthChartStyle(theme, OrderSide.Ask);
             //const hoverMetadata = this._generateHoverMetadata(askLine, bidLine);
             content = (
-                <GraphContentWrapper key={'order-depth-chart'} ref={this._graphContentWrapper} onMouseMove={this._onMouseMoveInGraphContent}>
+                <GraphContentWrapper
+                    key={'order-depth-chart'}
+                    ref={this._graphContentWrapper}
+                    onMouseMove={this._onMouseMoveInGraphContent}
+                >
                     <MidMarketPriceCard price={midMarketPrice.toNumber()} />
                     <FlexibleWidthXYPlot {...DEFAULT_XY_PLOT_PROPS}>
                         <AreaSeries data={askLine} {...askChartStyle.areaSeries} />
                         <AreaSeries data={bidLine} {...bidChartStyle.areaSeries} />
-                        <LineSeries data={askLine} {...askChartStyle.lineSeries}/>
+                        <LineSeries data={askLine} {...askChartStyle.lineSeries} />
                         <LineSeries data={bidLine} {...bidChartStyle.lineSeries} />
                         <XAxis {...askChartStyle.axesBottom} />
                         <YAxis {...askChartStyle.axesLeft} />
@@ -154,12 +157,12 @@ class OrderDepthChart extends React.Component<Props> {
     };
 
     private readonly _onMouseMoveInGraphContent = (e: any) => {
-        const rect = (this._graphContentWrapper.current as any as HTMLDivElement).getBoundingClientRect();
+        const rect = ((this._graphContentWrapper.current as any) as HTMLDivElement).getBoundingClientRect();
         const x = e.clientX - rect.left - DEFAULT_XY_PLOT_PROPS.margin.left;
         const y = e.clientY - rect.top - DEFAULT_XY_PLOT_PROPS.margin.top;
-        const dimensions = this.props.dimension || {...DEFAULT_XY_PLOT_PROPS, ...{ width: rect.width }};
-        this.setState({ hoverCord: { x, y }});
-    }
+        const dimensions = this.props.dimension || { ...DEFAULT_XY_PLOT_PROPS, ...{ width: rect.width } };
+        this.setState({ hoverCord: { x, y } });
+    };
 
     // private readonly _generateHoverMetadata = (askLine: Cord[], bidLine: Cord[]): HoverMetadata => {
     //     if (!!this._graphContentWrapper.current) {
@@ -210,10 +213,7 @@ class OrderDepthChart extends React.Component<Props> {
     //     return DEFAULT_HOVERED_VALUE;
     // }
 
-    private readonly _generateDepthChartBounds = (
-        orderBook: OrderBook,
-        bound: BigNumber,
-    ): Partial<DepthChartData> => {
+    private readonly _generateDepthChartBounds = (orderBook: OrderBook, bound: BigNumber): Partial<DepthChartData> => {
         const highestBidPrice = orderBook.buyOrders[0].price;
         const lowestAskPrice = orderBook.sellOrders[orderBook.sellOrders.length - 1].price;
 
@@ -236,23 +236,24 @@ class OrderDepthChart extends React.Component<Props> {
         const { decimals } = quoteToken || { decimals: 18 };
         const { bound } = this.state;
         const partialDepthChartData = this._generateDepthChartBounds(orderBook, bound);
-        const minPrice = partialDepthChartData.minPrice as any as BigNumber;
-        const maxPrice = partialDepthChartData.maxPrice as any as BigNumber;
-        const midMarketPrice = partialDepthChartData.midMarketPrice as any as BigNumber;
+        const minPrice = (partialDepthChartData.minPrice as any) as BigNumber;
+        const maxPrice = (partialDepthChartData.maxPrice as any) as BigNumber;
+        const midMarketPrice = (partialDepthChartData.midMarketPrice as any) as BigNumber;
 
-        const filteredBuyOrder = orderBook.buyOrders.slice(0).filter((value: OrderBookItem) =>
-            value.price.isGreaterThanOrEqualTo(minPrice),
-        );
-        const filteredAskOrder = orderBook.sellOrders.slice(0).reverse().filter((value: OrderBookItem) =>
-            value.price.isLessThanOrEqualTo(maxPrice),
-        );
+        const filteredBuyOrder = orderBook.buyOrders
+            .slice(0)
+            .filter((value: OrderBookItem) => value.price.isGreaterThanOrEqualTo(minPrice));
+        const filteredAskOrder = orderBook.sellOrders
+            .slice(0)
+            .reverse()
+            .filter((value: OrderBookItem) => value.price.isLessThanOrEqualTo(maxPrice));
 
         const bidLine = this._generateDepthChartLine(filteredBuyOrder, decimals).reverse();
 
         const askLine = this._generateDepthChartLine(filteredAskOrder, decimals);
 
         const scaledBidLine: Cord[] = [{ x: minPrice.toNumber(), y: bidLine[0].y }].concat(bidLine);
-        const scaledAskLine: Cord[]  = askLine.concat([{ x: maxPrice.toNumber(), y: askLine[askLine.length - 1].y }]);
+        const scaledAskLine: Cord[] = askLine.concat([{ x: maxPrice.toNumber(), y: askLine[askLine.length - 1].y }]);
 
         return {
             bidLine: scaledBidLine,

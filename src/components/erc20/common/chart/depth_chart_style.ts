@@ -1,7 +1,7 @@
 import { Theme } from '../../../../themes/commons';
 import { hexToRgba } from '../../../../util/color_utils';
 
-import { OrderSide} from './types';
+import { OrderSide } from './types';
 
 interface SVGStyle {
     stroke?: string;
@@ -50,9 +50,8 @@ export const getDepthChartStyle = (theme: Theme, orderSide: OrderSide): DepthCha
         lineSeries: {
             color: hexToRgba(accentColor, 1),
         },
-        axesLeft: { ...axesDefaultStyle, ...{ orientation: 'left'} },
-        axesRight: { ...axesDefaultStyle, ...{ orientation: 'right'} },
-        axesBottom: { ...axesDefaultStyle, ...{ tickPadding: 8} },
+        axesLeft: { ...axesDefaultStyle, ...{ orientation: 'left' } },
+        axesRight: { ...axesDefaultStyle, ...{ orientation: 'right' } },
+        axesBottom: { ...axesDefaultStyle, ...{ tickPadding: 8 } },
     };
 };
-
