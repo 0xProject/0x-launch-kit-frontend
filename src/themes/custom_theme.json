@@ -1,1 +1,1 @@
-{"bid":{"type":"color","value":"#2e9f54"},"ask":{"type":"color","value":"#e54d4d"}}
+{"buy":{"type":"color","value":"#3cb34f"},"background":{"type":"color","value":"#fff7ab"},"primaryText":{"type":"color","value":"#ffffff"},"secondaryText":{"type":"color","value":"#999999"},"supplementaryText":{"type":"color","value":"#5a5a5a"},"foreground":{"type":"color","value":"#ff0000"},"sell":{"type":"color","value":"#ff6534"}}

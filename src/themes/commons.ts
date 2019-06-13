@@ -4,6 +4,21 @@ export interface Theme {
     dimensions: ThemeDimensions;
 }
 
+export interface FigmaThemeInfo {
+    buy: ColorAttribute;
+    background: ColorAttribute;
+    primaryText: ColorAttribute;
+    secondaryText: ColorAttribute;
+    supplementaryText: ColorAttribute;
+    foreground: ColorAttribute;
+    sell: ColorAttribute;
+}
+
+export interface ColorAttribute {
+    type: 'color';
+    value: string;
+}
+
 export interface ThemeProperties {
     background: string;
     backgroundERC721: string;

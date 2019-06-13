@@ -1,4 +1,4 @@
-import { defaultThemeDimensions, ThemeDimensions, ThemeModalStyle, ThemeProperties } from './commons';
+import { defaultThemeDimensions, FigmaThemeInfo, ThemeDimensions, ThemeModalStyle, ThemeProperties } from './commons';
 import customThemeJson from './custom_theme.json';
 import { DefaultTheme } from './default_theme';
 
@@ -115,21 +115,32 @@ const darkThemeColors: ThemeProperties = {
 };
 
 // TODO: fill these out to dynamically generate the right stuff given the theme json
-const themeJsonToThemeProperties = (themeJson: object): ThemeProperties => {
-    return darkThemeColors;
+const figmaThemeInfoToThemeProperties = (figmaThemeInfo: FigmaThemeInfo): ThemeProperties => {
+    const partialThemeProperties: Partial<ThemeProperties> = {
+        background: figmaThemeInfo.background.value,
+        cardBackgroundColor: figmaThemeInfo.foreground.value,
+        dropdownBackgroundColor: figmaThemeInfo.foreground.value,
+        ethSliderThumbColor: figmaThemeInfo.foreground.value,
+        stepsProgressCheckMarkColor: figmaThemeInfo.foreground.value,
+        topbarBackgroundColor: figmaThemeInfo.foreground.value,
+    };
+    return { ...darkThemeColors, ...partialThemeProperties };
 };
-const themeJsonToThemeModalStyle = (themeJson: object): ThemeModalStyle => {
+const figmaThemeInfoToThemeModalStyle = (figmaThemeInfo: FigmaThemeInfo): ThemeModalStyle => {
     return modalThemeStyle;
 };
-const themeJsonToThemeDimensions = (themeJson: object): ThemeDimensions => {
-    return defaultThemeDimensions;
+const figmaThemeInfoToThemeDimensions = (figmaThemeInfo: FigmaThemeInfo): ThemeDimensions => {
+    const partialThemeDimensions: Partial<ThemeDimensions> = {};
+    return { ...defaultThemeDimensions, ...partialThemeDimensions };
 };
 
 export class CustomTheme extends DefaultTheme {
     constructor() {
         super();
-        this.componentsTheme = themeJsonToThemeProperties(customThemeJson);
-        this.modalTheme = themeJsonToThemeModalStyle(customThemeJson);
-        this.dimensions = themeJsonToThemeDimensions(customThemeJson);
+        const figmaThemeInfo: FigmaThemeInfo = customThemeJson as any;
+        console.log('Figma Theme Info', figmaThemeInfo);
+        this.componentsTheme = figmaThemeInfoToThemeProperties(figmaThemeInfo);
+        this.modalTheme = figmaThemeInfoToThemeModalStyle(figmaThemeInfo);
+        this.dimensions = figmaThemeInfoToThemeDimensions(figmaThemeInfo);
     }
 }
