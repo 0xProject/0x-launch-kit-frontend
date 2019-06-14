@@ -1,8 +1,9 @@
 @import url('https://rsms.me/inter/inter.css');
 @import url('https://rsms.me/inter/inter-ui.css');
+@import url('https://fonts.googleapis.com/css?family=Merriweather|Montserrat|Roboto|Space+Mono|Ubuntu');
 
 html {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter UI', sans-serif;
 }
 
 @supports (font-variation-settings: normal) {
