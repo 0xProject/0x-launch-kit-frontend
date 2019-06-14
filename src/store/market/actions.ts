@@ -72,21 +72,33 @@ export const fetchMarkets: ThunkCreator = () => {
         const knownTokens = getKnownTokens();
         const relayer = getRelayer();
 
-        const markets = await Promise.all(
-            availableMarkets.map(async market => {
-                const baseToken = knownTokens.getTokenBySymbol(market.base);
-                const quoteToken = knownTokens.getTokenBySymbol(market.quote);
+        let markets: any[] = await Promise.all(
+            availableMarkets.map(async availableMarket => {
+                try {
+                    const baseToken = knownTokens.getTokenBySymbol(availableMarket.base);
+                    const quoteToken = knownTokens.getTokenBySymbol(availableMarket.quote);
 
-                const price = await relayer.getCurrencyPairPriceAsync(baseToken, quoteToken);
+                    const price = await relayer.getCurrencyPairPriceAsync(baseToken, quoteToken);
 
-                return {
-                    currencyPair: market,
-                    price,
-                };
+                    return {
+                        currencyPair: availableMarket,
+                        price,
+                    };
+                } catch (err) {
+                    return null;
+                }
             }),
         );
 
-        dispatch(setMarkets(markets));
+        markets = markets.filter(
+            (value: any): Market => {
+                return value && value.currencyPair;
+            },
+        );
+
+        if (markets && markets.length > 0) {
+            dispatch(setMarkets(markets));
+        }
         return markets;
     };
 };
