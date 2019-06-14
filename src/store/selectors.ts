@@ -89,6 +89,7 @@ export const getOpenOrders = createSelector(
     (orders, web3State) => {
         switch (web3State) {
             case Web3State.NotInstalled:
+            case Web3State.Error:
             case Web3State.Locked: {
                 return orders;
             }

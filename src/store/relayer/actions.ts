@@ -49,9 +49,9 @@ export const getAllOrders: ThunkCreator = () => {
         const web3State = getWeb3State(state) as Web3State;
         try {
             let uiOrders: UIOrder[] = [];
-            const isWeb3NotInstalled = [Web3State.Locked, Web3State.NotInstalled].includes(web3State);
+            const isWeb3NotDoneState = [Web3State.Locked, Web3State.NotInstalled, Web3State.Error].includes(web3State);
             // tslint:disable-next-line:prefer-conditional-expression
-            if (isWeb3NotInstalled) {
+            if (isWeb3NotDoneState) {
                 uiOrders = await getAllOrdersAsUIOrdersWithoutOrdersInfo(baseToken, quoteToken);
             } else {
                 uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken);
@@ -69,9 +69,15 @@ export const getUserOrders: ThunkCreator = () => {
         const baseToken = getBaseToken(state) as Token;
         const quoteToken = getQuoteToken(state) as Token;
         const ethAccount = getEthAccount(state);
+        const web3State = getWeb3State(state) as Web3State;
+
         try {
-            const myUIOrders = await getUserOrdersAsUIOrders(baseToken, quoteToken, ethAccount);
-            dispatch(setUserOrders(myUIOrders));
+            const isWeb3DoneState = web3State === Web3State.Done;
+            // tslint:disable-next-line:prefer-conditional-expression
+            if (isWeb3DoneState) {
+                const myUIOrders = await getUserOrdersAsUIOrders(baseToken, quoteToken, ethAccount);
+                dispatch(setUserOrders(myUIOrders));
+            }
         } catch (err) {
             logger.error(`getUserOrders: fetch orders from the relayer failed.`, err);
         }

@@ -19,7 +19,7 @@ export class CollectiblesMetadataGateway {
         this._source = source;
     }
 
-    public fetchAllCollectibles = async (userAddress: string): Promise<Collectible[]> => {
+    public fetchAllCollectibles = async (userAddress?: string): Promise<Collectible[]> => {
         const knownTokens = getKnownTokens();
 
         const wethAddress = knownTokens.getWethToken().address;
@@ -40,17 +40,20 @@ export class CollectiblesMetadataGateway {
         }, {});
 
         // Step 2: Get all the user's collectibles and add the order
-        const userCollectibles = await this._source.fetchAllUserCollectiblesAsync(userAddress);
-        const collectiblesWithOrders: Collectible[] = userCollectibles.map(collectible => {
-            if (tokenIdToOrder[collectible.tokenId]) {
-                return {
-                    ...collectible,
-                    order: tokenIdToOrder[collectible.tokenId],
-                };
-            }
+        let collectiblesWithOrders: Collectible[] = [];
+        if (userAddress) {
+            const userCollectibles = await this._source.fetchAllUserCollectiblesAsync(userAddress);
+            collectiblesWithOrders = userCollectibles.map(collectible => {
+                if (tokenIdToOrder[collectible.tokenId]) {
+                    return {
+                        ...collectible,
+                        order: tokenIdToOrder[collectible.tokenId],
+                    };
+                }
 
-            return collectible;
-        });
+                return collectible;
+            });
+        }
 
         // Step 3: Get collectibles that are not from the user
         let collectiblesFetched: any[] = [];
