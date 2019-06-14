@@ -12,11 +12,24 @@ export interface FigmaThemeInfo {
     supplementaryText: ColorAttribute;
     foreground: ColorAttribute;
     sell: ColorAttribute;
+    defaultCard: CardAttribute;
 }
 
 export interface ColorAttribute {
     type: 'color';
     value: string;
+}
+
+export interface CardAttribute {
+    type: 'card';
+    value: CardAttributeValue;
+}
+
+export interface CardAttributeValue {
+    borderRadius: number;
+    borderWidth: number;
+    borderColor: string;
+    boxShadow: string;
 }
 
 export interface ThemeProperties {

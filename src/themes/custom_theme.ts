@@ -166,7 +166,9 @@ const figmaThemeInfoToThemeModalStyle = (figmaThemeInfo: FigmaThemeInfo): ThemeM
     return modalThemeStyle;
 };
 const figmaThemeInfoToThemeDimensions = (figmaThemeInfo: FigmaThemeInfo): ThemeDimensions => {
-    const partialThemeDimensions: Partial<ThemeDimensions> = {};
+    const partialThemeDimensions: Partial<ThemeDimensions> = {
+        borderRadius: `${figmaThemeInfo.defaultCard.value.borderRadius}px`,
+    };
     return { ...defaultThemeDimensions, ...partialThemeDimensions };
 };
 
