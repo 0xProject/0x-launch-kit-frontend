@@ -512,6 +512,9 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
         if (currentMarketPlace === MARKETPLACES.ERC20) {
             // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderBook());
+
+            // tslint:disable-next-line:no-floating-promises
+            await dispatch(fetchMarkets());
         } else {
             // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());
