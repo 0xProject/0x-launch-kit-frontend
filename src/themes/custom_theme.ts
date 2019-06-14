@@ -174,8 +174,13 @@ const figmaThemeInfoToThemeModalStyle = (figmaThemeInfo: FigmaThemeInfo): ThemeM
     return modalThemeStyle;
 };
 const figmaThemeInfoToThemeDimensions = (figmaThemeInfo: FigmaThemeInfo): ThemeDimensions => {
+    const figmaBorderRadius = figmaThemeInfo.defaultCard.value.borderRadius;
+    const figmaBorderWidth = figmaThemeInfo.defaultCard.value.borderWidth;
+    const borderRadiusString = figmaBorderRadius ? `${figmaBorderRadius}px` : undefined;
+    const borderWidthString = figmaBorderWidth ? `${figmaBorderWidth}px` : undefined;
     const partialThemeDimensions: Partial<ThemeDimensions> = {
-        borderRadius: `${figmaThemeInfo.defaultCard.value.borderRadius}px`,
+        borderRadius: borderRadiusString,
+        borderWidth: borderWidthString,
     };
     return { ...defaultThemeDimensions, ...partialThemeDimensions };
 };
