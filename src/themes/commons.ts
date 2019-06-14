@@ -13,8 +13,13 @@ export interface FigmaThemeInfo {
     foreground: ColorAttribute;
     sell: ColorAttribute;
     defaultCard: CardAttribute;
+    defaultFont: FontAttribute;
 }
 
+export interface FontAttribute {
+    type: 'font';
+    value: string;
+}
 export interface ColorAttribute {
     type: 'color';
     value: string;

@@ -167,7 +167,7 @@ const figmaThemeInfoToThemeProperties = (figmaThemeInfo: FigmaThemeInfo): ThemeP
         tableBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
         textInputBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
         topbarBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
-        fontName: 'Monaco', // TODO: hook this up to info from figma
+        fontName: figmaThemeInfo.defaultFont.value,
     };
     return { ...darkThemeColors, ...partialThemeProperties };
 };
