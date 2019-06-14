@@ -27,6 +27,11 @@ const getCardStyles = (stylizer: FigmaStylizedObject): object => {
     };
 };
 
+const getFontStyles = (stylizer: FigmaStylizedObject): string => {
+    const { fontFamily } = stylizer.style as any;
+    return fontFamily;
+};
+
 export const getValueForTypeExt = (stylizer: FigmaStylizedObject, type: string): number | string | object | null => {
     switch (type) {
         case 'color':
@@ -36,7 +41,7 @@ export const getValueForTypeExt = (stylizer: FigmaStylizedObject, type: string):
             }
             return null;
         case 'card': return getCardStyles(stylizer);
-        case 'font':
+        case 'font': return getFontStyles(stylizer);
         default: return null;
     }
 };

@@ -1,3 +1,4 @@
+import { any } from "prop-types";
 
 export interface FigmaObject {
     name: string;
@@ -40,6 +41,7 @@ export interface FigmaStylizedObject extends FigmaObject {
     strokeWeight?: number;
     strokes: FigmaColors[];
     effects?: Effect[];
+    style?: any;
 }
 
 export interface StyleAttribute {
