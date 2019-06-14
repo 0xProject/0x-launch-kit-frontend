@@ -18,7 +18,7 @@ const STYLE_METADATA_OUTPUT_DIR = path.resolve(__dirname, '..', '..', 'src', 'th
 
 let styleMetadataCacheStr = '';
 
-const RUN_INTERVAL_MS = 2000;
+const RUN_INTERVAL_MS = 10000;
 
 const setUpAndRunWatcher = async () => {
     const filePath = path.resolve(STYLE_METADATA_OUTPUT_DIR, STYLE_METADATA_FILENAME);
