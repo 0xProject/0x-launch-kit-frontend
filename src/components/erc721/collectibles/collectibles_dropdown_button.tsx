@@ -16,6 +16,7 @@ const DropdownButtonContainer = styled.div`
 `;
 
 const Text = styled.span`
+    color: ${props => props.theme.componentsTheme.logoERC721TextColor};
     margin: 0 10px;
 `;
 
