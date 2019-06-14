@@ -9,6 +9,13 @@ const SHADOW_KEY = 'DROP_SHADOW';
 
 const getCardStyles = (stylizer: FigmaStylizedObject): object => {
     const rect = _.find(stylizer.children, (c: FigmaObject) => c.name === STYLIZER_SOURCE_NAME) as any as FigmaStylizedObject;
+    console.log(rect);
+    return {
+    };
+};
+
+const getTileStyles = (stylizer: FigmaStylizedObject): object => {
+    const rect = _.find(stylizer.children, (c: FigmaObject) => c.name === STYLIZER_SOURCE_NAME) as any as FigmaStylizedObject;
     const stroke = rect.strokes[0] as any as FigmaColors;
     const dropShadow = _.find(rect.effects, (e: Effect) => e.type === SHADOW_KEY) as any as Effect;
     let borderColor: string | null = null;
@@ -42,6 +49,7 @@ export const getValueForTypeExt = (stylizer: FigmaStylizedObject, type: string):
             return null;
         case 'card': return getCardStyles(stylizer);
         case 'font': return getFontStyles(stylizer);
+        case 'tile': return getTileStyles(stylizer);
         default: return null;
     }
 };

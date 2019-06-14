@@ -19,7 +19,7 @@ export const FILE_PAGE_NAME = 'Launch kit configurator';
 
 export const STLE_FRAME_NAME = 'Style Guide ERC20';
 
-export const VALID_STYLE_ATTRIBUTE_EXTS = ['.color', '.card', '.font'];
+export const VALID_STYLE_ATTRIBUTE_EXTS = ['.color', '.card', '.font', '.tile'];
 
 export const STYLIZER_NAME = 'stylizer';
 
