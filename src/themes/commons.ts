@@ -14,6 +14,12 @@ export interface FigmaThemeInfo {
     sell: ColorAttribute;
     defaultCard: CardAttribute;
     defaultFont: FontAttribute;
+    defaultBackgroundTile: BackgroundTileAttribute;
+}
+
+export interface BackgroundTileAttribute {
+    type: 'tile';
+    value: string;
 }
 
 export interface FontAttribute {
@@ -122,6 +128,7 @@ export interface ThemeProperties {
     topbarBorderColor: string;
     topbarSeparatorColor: string;
     fontName: string;
+    backgroundImageUrl?: string;
 }
 
 export interface ThemeModalStyle {

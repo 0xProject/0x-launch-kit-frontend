@@ -9,6 +9,8 @@ import { StepsModalContainer } from './common/steps_modal/steps_modal';
 const General = styled.div`
     font-family: ${props => props.theme.componentsTheme.fontName};
     background: ${props => props.theme.componentsTheme.background};
+    background-image: url(${props => props.theme.componentsTheme.backgroundImageUrl});
+    background-repeat: repeat;
     display: flex;
     flex-direction: column;
     min-height: 100%;

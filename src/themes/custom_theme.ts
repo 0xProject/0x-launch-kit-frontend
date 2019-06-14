@@ -168,6 +168,7 @@ const figmaThemeInfoToThemeProperties = (figmaThemeInfo: FigmaThemeInfo): ThemeP
         textInputBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
         topbarBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
         fontName: figmaThemeInfo.defaultFont.value,
+        backgroundImageUrl: figmaThemeInfo.defaultBackgroundTile.value,
     };
     return { ...darkThemeColors, ...partialThemeProperties };
 };
