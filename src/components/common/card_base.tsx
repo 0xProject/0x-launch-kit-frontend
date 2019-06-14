@@ -8,6 +8,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 const CardWrapper = styled.div`
     background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
     border-radius: ${props => props.theme.dimensions.borderRadius};
+    box-shadow: ${props => props.theme.dimensions.boxShadow};
     border: ${props => props.theme.dimensions.borderWidth} solid ${props => props.theme.componentsTheme.cardBorderColor};
 `;
 

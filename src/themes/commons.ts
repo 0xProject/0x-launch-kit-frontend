@@ -152,6 +152,7 @@ export interface ThemeMetaData {
 export interface ThemeDimensions {
     borderRadius: string;
     borderWidth: string;
+    boxShadow: string;
     fieldHeight: string;
     footerHeight: string;
     horizontalPadding: string;
@@ -166,6 +167,7 @@ export interface ThemeDimensions {
 export const defaultThemeDimensions = {
     borderRadius: '4px',
     borderWidth: 'medium',
+    boxShadow: '0 0 0 rgba(0,0,0,0)',
     fieldHeight: '46px',
     footerHeight: '38px',
     horizontalPadding: '16px',

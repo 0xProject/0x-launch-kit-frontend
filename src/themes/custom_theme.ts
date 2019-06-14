@@ -176,11 +176,13 @@ const figmaThemeInfoToThemeModalStyle = (figmaThemeInfo: FigmaThemeInfo): ThemeM
 const figmaThemeInfoToThemeDimensions = (figmaThemeInfo: FigmaThemeInfo): ThemeDimensions => {
     const figmaBorderRadius = figmaThemeInfo.defaultCard.value.borderRadius;
     const figmaBorderWidth = figmaThemeInfo.defaultCard.value.borderWidth;
+    const figmaBoxShadow = figmaThemeInfo.defaultCard.value.boxShadow;
     const borderRadiusString = figmaBorderRadius ? `${figmaBorderRadius}px` : undefined;
     const borderWidthString = figmaBorderWidth ? `${figmaBorderWidth}px` : undefined;
     const partialThemeDimensions: Partial<ThemeDimensions> = {
         borderRadius: borderRadiusString,
         borderWidth: borderWidthString,
+        boxShadow: figmaBoxShadow,
     };
     return { ...defaultThemeDimensions, ...partialThemeDimensions };
 };
