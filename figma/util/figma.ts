@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 
 import { FIGMA_TYPES, FIGMAIFY_ERRORS, FILE_PAGE_NAME, STLE_FRAME_NAME, STYLIZER_NAME,  VALID_STYLE_ATTRIBUTE_EXTS} from '../constants';
-import { FigmaDocument, FigmaFrame, FigmaGroup, FigmaStylizedObject, StyleMetadata, FigmaPage, FigmaObject } from '../types';
+import { FigmaDocument, FigmaFrame, FigmaGlobalMetadata, FigmaGroup, FigmaObject, FigmaPage, FigmaStylizedObject, StyleMetadata } from '../types';
 
 import { getValueForTypeExt } from './stylizer';
 
@@ -42,7 +42,7 @@ export const hasValidAttributeSuffix = (name: string): boolean => {
     }, true);
 };
 
-export const getStyleMetadata = (frame: FigmaFrame): StyleMetadata => {
+export const getStyleMetadata = (frame: FigmaFrame, globalMetadata: FigmaGlobalMetadata): StyleMetadata => {
     const validStyleGroups: FigmaGroup[] = _.filter(frame.children, (f: FigmaGroup) => f.type === FIGMA_TYPES.GROUP && hasValidAttributeSuffix(f.name));
     // tslint:disable-next-line: no-inferred-empty-object-type
     const styleMetadata: StyleMetadata = _.reduce(validStyleGroups, (a: StyleMetadata, g: FigmaGroup): StyleMetadata => {
@@ -53,7 +53,7 @@ export const getStyleMetadata = (frame: FigmaFrame): StyleMetadata => {
         if (!!stylizer) {
             newAcc[key] = {
                 type,
-                value: getValueForTypeExt(stylizer, type),
+                value: getValueForTypeExt(stylizer, globalMetadata, type),
             };
         }
         return newAcc;

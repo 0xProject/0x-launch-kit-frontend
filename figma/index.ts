@@ -5,9 +5,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
 
-import { fetchFileTreeAsync } from './api';
+import { fetchFileTreeAsync, fetchFileImagesAsync } from './api';
 import { FIGMA_LAUNCH_KIT_URL_KEY } from './constants';
 import { getFileKeyFromFigmaUrl, getStyleGuideFrame, getStyleMetadata } from './util/figma';
+import { FigmaGlobalMetadata } from './types';
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile);
@@ -31,8 +32,10 @@ const updateStyleMetadata = async () => {
     console.log('fetching latest metadata from figma...');
     const fileKey = getFileKeyFromFigmaUrl(FIGMA_URL);
     const response = await fetchFileTreeAsync(fileKey);
+    const imageResponse = await fetchFileImagesAsync(fileKey);
+    const globalMetadata: FigmaGlobalMetadata = { images: imageResponse.images as any as { [key: string]: string }};
     const styleFrame = getStyleGuideFrame(response.document);
-    const styleMetadata = getStyleMetadata(styleFrame);
+    const styleMetadata = getStyleMetadata(styleFrame, globalMetadata);
     const filePath = path.resolve(STYLE_METADATA_OUTPUT_DIR, STYLE_METADATA_FILENAME);
     const styleMetadataStr = JSON.stringify(styleMetadata);
     if (styleMetadataStr !== styleMetadataCacheStr) {
@@ -44,5 +47,5 @@ const updateStyleMetadata = async () => {
 };
 
 // tslint:disable-next-line: no-floating-promises
-setUpAndRunWatcher();
-//updateStyleMetadata();
+//setUpAndRunWatcher();
+updateStyleMetadata();

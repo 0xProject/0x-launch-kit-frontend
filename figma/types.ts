@@ -15,6 +15,7 @@ export interface FigmaPage extends FigmaObject {
 
 export interface FigmaResponse {
     document: FigmaDocument;
+    images?: any;
 }
 
 export interface FigmaFrame extends FigmaObject {
@@ -33,6 +34,12 @@ export interface FigmaColors {
     blendMode: string;
     type: string;
     color: Rgba;
+}
+
+export interface FigmaImage {
+    blendMode: string;
+    type: string;
+    imageRef: string;
 }
 
 export interface FigmaStylizedObject extends FigmaObject {
@@ -61,4 +68,10 @@ export interface DropshadowEffect extends Effect {
     color: Rgba;
     offset: any;
     radius: number;
+}
+
+export interface FigmaGlobalMetadata {
+    images: {
+        [key: string]: string;
+    };
 }
