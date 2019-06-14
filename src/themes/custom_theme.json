@@ -1,18 +1,1 @@
-{
-    "buy": { "type": "color", "value": "#00c6a3" },
-    "background": { "type": "color", "value": "#ffffff" },
-    "primaryText": { "type": "color", "value": "#ffffff" },
-    "secondaryText": { "type": "color", "value": "#e0e0e0" },
-    "supplementaryText": { "type": "color", "value": "#b2bfff" },
-    "foreground": { "type": "color", "value": "#1c1e2d" },
-    "sell": { "type": "color", "value": "#d84f3f" },
-    "defaultCard": {
-        "type": "card",
-        "value": {
-            "borderRadius": 22,
-            "borderWidth": 10,
-            "borderColor": "#b2bfff",
-            "boxShadow": "0px 4px 4px rgba(0, 0, 0, 64)"
-        }
-    }
-}
+{"buy":{"type":"color","value":"#00c6a3"},"background":{"type":"color","value":"#171926"},"primaryText":{"type":"color","value":"#ffffff"},"secondaryText":{"type":"color","value":"#e0e0e0"},"supplementaryText":{"type":"color","value":"#21263b"},"foreground":{"type":"color","value":"#1c1e2d"},"sell":{"type":"color","value":"#d84f3f"},"defaultCard":{"type":"card","value":{"borderWidth":1,"borderColor":"#21263b","boxShadow":"0px 4px 4px rgba(0, 0, 0, 64)"}}}

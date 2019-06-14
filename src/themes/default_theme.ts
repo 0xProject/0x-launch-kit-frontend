@@ -110,6 +110,7 @@ const lightThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#fff',
     topbarBorderColor: '#dedede',
     topbarSeparatorColor: '#dedede',
+    fontName: 'Inter',
 };
 
 export class DefaultTheme implements Theme {

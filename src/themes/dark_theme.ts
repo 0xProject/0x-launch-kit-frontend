@@ -111,6 +111,7 @@ const darkThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
+    fontName: 'Inter',
 };
 
 export class DarkTheme extends DefaultTheme {
