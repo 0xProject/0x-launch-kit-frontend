@@ -40,6 +40,11 @@ export class KnownTokens {
         return token;
     };
 
+    public getTokenByAssetData = (assetData: string): Token => {
+        const tokenAddress = assetDataUtils.decodeERC20AssetData(assetData).tokenAddress;
+        return this.getTokenByAddress(tokenAddress);
+    };
+
     public isKnownAddress = (address: string): boolean => {
         try {
             this.getTokenByAddress(address);

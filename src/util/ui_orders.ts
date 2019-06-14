@@ -3,6 +3,8 @@ import { SignedOrder } from '@0x/connect';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../common/constants';
 
+import { getKnownTokens } from './known_tokens';
+import { tokenAmountInUnitsToBigNumber } from './tokens';
 import { OrderBookItem, OrderSide, Token, UIOrder } from './types';
 
 export const ordersToUIOrders = (orders: SignedOrder[], baseToken: Token, ordersInfo?: OrderInfo[]): UIOrder[] => {
@@ -58,15 +60,23 @@ const ordersToUIOrdersWithOrdersInfo = (
         const orderInfo = ordersInfo[i];
 
         const side = order.takerAssetData === selectedTokenEncoded ? OrderSide.Buy : OrderSide.Sell;
-        const size = side === OrderSide.Sell ? order.makerAssetAmount : order.takerAssetAmount;
-        const filled =
-            side === OrderSide.Sell
-                ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).multipliedBy(order.makerAssetAmount)
-                : orderInfo.orderTakerAssetFilledAmount;
-        const price =
-            side === OrderSide.Sell
-                ? order.takerAssetAmount.div(order.makerAssetAmount)
-                : order.makerAssetAmount.div(order.takerAssetAmount);
+        const isSell = side === OrderSide.Sell;
+        const size = isSell ? order.makerAssetAmount : order.takerAssetAmount;
+
+        const makerAssetAddress = assetDataUtils.decodeERC20AssetData(order.makerAssetData).tokenAddress;
+        const makerAssetTokenDecimals = getKnownTokens().getTokenByAddress(makerAssetAddress).decimals;
+        const makerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(order.makerAssetAmount, makerAssetTokenDecimals);
+
+        const takerAssetAddress = assetDataUtils.decodeERC20AssetData(order.takerAssetData).tokenAddress;
+        const takerAssetTokenDecimals = getKnownTokens().getTokenByAddress(takerAssetAddress).decimals;
+        const takerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(order.takerAssetAmount, takerAssetTokenDecimals);
+
+        const filled = isSell
+            ? orderInfo.orderTakerAssetFilledAmount.div(order.takerAssetAmount).multipliedBy(order.makerAssetAmount)
+            : orderInfo.orderTakerAssetFilledAmount;
+        const price = isSell
+            ? takerAssetAmountInUnits.div(makerAssetAmountInUnits)
+            : makerAssetAmountInUnits.div(takerAssetAmountInUnits);
         const status = orderInfo.orderStatus;
 
         return {

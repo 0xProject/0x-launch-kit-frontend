@@ -225,7 +225,7 @@ class WalletBalance extends React.Component<Props, State> {
             const quoteBalanceString = isWeth(quoteToken.symbol)
                 ? tokenAmountInUnits(totalEthBalance, quoteTokenBalance.token.decimals)
                 : tokenAmountInUnits(quoteTokenBalance.balance, quoteTokenBalance.token.decimals);
-            const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, quoteTokenBalance.token.decimals);
+            const baseBalanceString = tokenAmountInUnits(baseTokenBalance.balance, baseTokenBalance.token.decimals);
             const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />
             ) : null;
