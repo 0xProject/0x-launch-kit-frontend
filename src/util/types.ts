@@ -65,6 +65,7 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
+    readonly orderPriceSelected: BigNumber | null;
 }
 
 export interface MarketState {

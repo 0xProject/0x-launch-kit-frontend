@@ -89,6 +89,7 @@ const darkThemeColors: ThemeProperties = {
     numberDecimalsColor: '#5A5A5A',
     red: '#FF6534',
     rowActive: '#1B1B1B',
+    rowOrderActive: '#5A5A5A',
     simplifiedTextBoxColor: '#1B1B1B',
     stepsProgressCheckMarkColor: '#202123',
     stepsProgressStartingDotColor: '#fff',

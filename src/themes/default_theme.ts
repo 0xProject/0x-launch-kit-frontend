@@ -88,6 +88,7 @@ const lightThemeColors: ThemeProperties = {
     numberDecimalsColor: '#dedede',
     red: '#FF6534',
     rowActive: '#FBFDFF',
+    rowOrderActive: '#dedede',
     simplifiedTextBoxColor: '#F9F9F9',
     stepsProgressCheckMarkColor: '#fff',
     stepsProgressStartingDotColor: '#000',

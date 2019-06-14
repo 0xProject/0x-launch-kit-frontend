@@ -65,6 +65,7 @@ export interface ThemeProperties {
     numberDecimalsColor: string;
     red: string;
     rowActive: string;
+    rowOrderActive: string;
     simplifiedTextBoxColor: string;
     stepsProgressCheckMarkColor: string;
     stepsProgressStartingDotColor: string;

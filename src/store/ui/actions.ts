@@ -41,6 +41,10 @@ export const setNotifications = createAction('ui/NOTIFICATIONS_set', resolve => 
     return (notifications: Notification[]) => resolve(notifications);
 });
 
+export const setOrderPriceSelected = createAction('ui/ORDER_PRICE_SELECTED_set', resolve => {
+    return (orderPriceSelected: BigNumber) => resolve(orderPriceSelected);
+});
+
 export const setStepsModalPendingSteps = createAction('ui/steps_modal/PENDING_STEPS_set', resolve => {
     return (pendingSteps: Step[]) => resolve(pendingSteps);
 });
