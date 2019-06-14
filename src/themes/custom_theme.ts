@@ -112,9 +112,9 @@ const darkThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#202123',
     topbarBorderColor: '#000',
     topbarSeparatorColor: '#5A5A5A',
+    fontName: 'Inter',
 };
 
-// TODO: fill these out to dynamically generate the right stuff given the theme json
 const figmaThemeInfoToThemeProperties = (figmaThemeInfo: FigmaThemeInfo): ThemeProperties => {
     const partialThemeProperties: Partial<ThemeProperties> = {
         background: figmaThemeInfo.background.value,
@@ -167,6 +167,7 @@ const figmaThemeInfoToThemeProperties = (figmaThemeInfo: FigmaThemeInfo): ThemeP
         tableBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
         textInputBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
         topbarBorderColor: figmaThemeInfo.defaultCard.value.borderColor,
+        fontName: 'Monaco', // TODO: hook this up to info from figma
     };
     return { ...darkThemeColors, ...partialThemeProperties };
 };

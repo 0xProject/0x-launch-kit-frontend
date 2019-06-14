@@ -116,6 +116,7 @@ export interface ThemeProperties {
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
+    fontName: string;
 }
 
 export interface ThemeModalStyle {

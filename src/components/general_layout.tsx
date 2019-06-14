@@ -7,6 +7,7 @@ import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
 
 const General = styled.div`
+    font-family: ${props => props.theme.componentsTheme.fontName};
     background: ${props => props.theme.componentsTheme.background};
     display: flex;
     flex-direction: column;
