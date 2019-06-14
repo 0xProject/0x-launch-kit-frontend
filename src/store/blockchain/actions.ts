@@ -1,3 +1,4 @@
+// tslint:disable:max-file-line-count
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
@@ -281,8 +282,10 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
             await dispatch(initWalletBeginCommon());
 
             if (currentMarketPlace === MARKETPLACES.ERC20) {
+                // tslint:disable-next-line:no-floating-promises
                 dispatch(initWalletERC20());
             } else {
+                // tslint:disable-next-line:no-floating-promises
                 dispatch(initWalletERC721());
             }
         } catch (error) {
@@ -320,9 +323,10 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
                     userOrders: [],
                 }),
             );
-
+            // tslint:disable-next-line:no-floating-promises
             dispatch(updateGasInfo());
 
+            // tslint:disable-next-line:no-floating-promises
             dispatch(updateMarketPriceEther());
 
             const networkId = await web3Wrapper.getNetworkIdAsync();
@@ -337,12 +341,15 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
     return async (dispatch, getState, { getWeb3Wrapper }) => {
         const web3Wrapper = await getWeb3Wrapper();
         if (!web3Wrapper) {
+            // tslint:disable-next-line:no-floating-promises
             dispatch(initializeAppNoMetamaskOrLocked());
+
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderBook());
         } else {
             const state = getState();
             const knownTokens = getKnownTokens();
-            const ethAccount = await getEthAccount(state);
+            const ethAccount = getEthAccount(state);
 
             const tokenBalances = await Promise.all(
                 knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
@@ -354,11 +361,13 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(setTokenBalances(tokenBalances));
 
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderbookAndUserOrders());
 
             try {
                 await dispatch(fetchMarkets());
                 // For executing this method (setConnectedUserNotifications) is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
+                // tslint:disable-next-line:no-floating-promises
                 dispatch(setConnectedUserNotifications(ethAccount));
             } catch (error) {
                 // Relayer error
@@ -373,10 +382,14 @@ const initWalletERC721: ThunkCreator<Promise<any>> = () => {
         const web3Wrapper = await getWeb3Wrapper();
         if (web3Wrapper) {
             const state = getState();
-            const ethAccount = await getEthAccount(state);
+            const ethAccount = getEthAccount(state);
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles(ethAccount));
         } else {
+            // tslint:disable-next-line:no-floating-promises
             dispatch(initializeAppNoMetamaskOrLocked());
+
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());
         }
     };
@@ -492,15 +505,19 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
             }),
         );
 
+        // tslint:disable-next-line:no-floating-promises
         dispatch(setMarketTokens({ baseToken, quoteToken }));
 
         const currentMarketPlace = getCurrentMarketPlace(state);
         if (currentMarketPlace === MARKETPLACES.ERC20) {
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderBook());
         } else {
+            // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());
         }
 
+        // tslint:disable-next-line:no-floating-promises
         dispatch(updateMarketPriceEther());
     };
 };
