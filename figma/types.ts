@@ -39,7 +39,8 @@ export interface FigmaColors {
 export interface FigmaImage {
     blendMode: string;
     type: string;
-    imageRef: string;
+    imageRef?: string;
+    color?: Rgba;
 }
 
 export interface FigmaStylizedObject extends FigmaObject {

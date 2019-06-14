@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 import { STYLIZER_SOURCE_NAME } from '../constants';
-import { DropshadowEffect, Effect, FigmaGlobalMetadata, FigmaColors, FigmaImage, FigmaObject, FigmaStylizedObject } from '../types';
+import { DropshadowEffect, Effect, FigmaGlobalMetadata, FigmaColors, FigmaImage, FigmaObject, FigmaStylizedObject, Rgba } from '../types';
 
 import { convertDropShadowToBoxShadow, getHexString } from './css';
 
@@ -30,7 +30,11 @@ const getCardStyles = (stylizer: FigmaStylizedObject): object => {
 const getTileStyles = (stylizer: FigmaStylizedObject, globalMetadata: FigmaGlobalMetadata): string => {
     const rect = _.find(stylizer.children, (c: FigmaObject) => c.name === STYLIZER_SOURCE_NAME) as any as FigmaStylizedObject;
     const fill = rect.fills[0] as any as FigmaImage;
-    return globalMetadata.images[fill.imageRef];
+    if (!!fill.imageRef) {
+        return globalMetadata.images[fill.imageRef];
+    } else {
+        return getHexString(fill.color as any as Rgba);
+    }
 };
 
 const getFontStyles = (stylizer: FigmaStylizedObject): string => {
