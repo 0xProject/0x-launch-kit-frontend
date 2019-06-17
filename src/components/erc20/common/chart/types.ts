@@ -15,7 +15,6 @@ export interface Margin {
 }
 
 export interface ChartDimensions {
-    width: number;
     height: number;
     margin: Margin;
 }
