@@ -16,9 +16,12 @@ import {
 } from '../../../store/selectors';
 import { Theme } from '../../../themes/commons';
 import { lerp } from '../../../util/lerp';
+import { clamp } from '../../../util/clamp';
 import { OrderBook, OrderBookItem, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
+import { ZoomInIcon } from '../../common/icons/zoom_in';
+import { ZoomOutIcon } from '../../common/icons/zoom_out';
 import { LoadingWrapper } from '../../common/loading';
 import { Crosshair, CrosshairProps } from '../common/chart/crosshair';
 import { getDepthChartStyle } from '../common/chart/depth_chart_style';
@@ -43,6 +46,8 @@ interface OwnProps {
 type Props = OwnProps & StateProps;
 
 const ORDER_DEPTH_CHART_KEY = 'order-depth-chart';
+const DEFAULT_DEPTH_CHART_BOUNDS_PERCENTAGE = 0.6;
+const DEFAULT_DEPTH_CHART_BOUNDS_PERCENTAGE_DELTA = 0.1;
 const DEFAULT_TICK_WIDTH_IN_PX = 150;
 const DEFAULT_TICK_TOTAL = 8;
 const DEFAULT_DIMENSION: ChartDimensions = {
@@ -54,6 +59,7 @@ interface DepthChartData {
     midMarketPrice: BigNumber;
     minPrice: BigNumber;
     maxPrice: BigNumber;
+    bound: BigNumber;
     bidLine: Cord[];
     askLine: Cord[];
 }
@@ -62,9 +68,16 @@ const GraphContentWrapper = styled.div`
     position: relative;
 `;
 
+const ActionWrapper = styled.div`
+    display: flex;
+    color: ${props => props.theme.componentsTheme.textLight};
+`;
+
+const ActionIconWrapper = styled.div``;
+
 class OrderDepthChart extends React.Component<Props> {
     public state = {
-        bound: new BigNumber(0.0001),
+        boundPercentage: DEFAULT_DEPTH_CHART_BOUNDS_PERCENTAGE,
         hoverCord: null as Cord | null,
     };
 
@@ -116,8 +129,35 @@ class OrderDepthChart extends React.Component<Props> {
                     </FlexibleWidthXYPlot>
                 </GraphContentWrapper>
             );
+            return (
+                <Card title="Depth Chart" action={this._renderAction()}>
+                    {content}
+                </Card>
+            );
         }
         return <Card title="Depth Chart">{content}</Card>;
+    };
+
+    private readonly _renderAction = () => {
+        return (
+            <ActionWrapper>
+                <ActionIconWrapper
+                    onClick={this._changeBoundPercentageBy.bind(this, DEFAULT_DEPTH_CHART_BOUNDS_PERCENTAGE_DELTA * -1)}
+                >
+                    <ZoomOutIcon />
+                </ActionIconWrapper>
+                <ActionIconWrapper
+                    onClick={this._changeBoundPercentageBy.bind(this, DEFAULT_DEPTH_CHART_BOUNDS_PERCENTAGE_DELTA)}
+                >
+                    <ZoomInIcon />
+                </ActionIconWrapper>
+            </ActionWrapper>
+        );
+    };
+
+    private readonly _changeBoundPercentageBy = (delta: number) => {
+        const { boundPercentage } = this.state;
+        this.setState({ boundPercentage: clamp(0.1, 1, boundPercentage + delta) });
     };
 
     private readonly _getXAxisTickTotal = () => {
@@ -207,7 +247,7 @@ class OrderDepthChart extends React.Component<Props> {
         }
     };
 
-    private readonly _generateDepthChartBounds = (orderBook: OrderBook, bound: BigNumber): Partial<DepthChartData> => {
+    private readonly _generateDepthChartBounds = (orderBook: OrderBook): Partial<DepthChartData> => {
         const highestBidPrice = orderBook.buyOrders[0].price;
         const lowestAskPrice = orderBook.sellOrders[orderBook.sellOrders.length - 1].price;
 
@@ -215,7 +255,10 @@ class OrderDepthChart extends React.Component<Props> {
 
         const midMarketPrice = highestBidPrice.plus(midMarketPriceDiff);
 
+        const bound = midMarketPrice.multipliedBy(this.state.boundPercentage);
+
         return {
+            bound,
             midMarketPrice,
             minPrice: midMarketPrice.minus(bound),
             maxPrice: midMarketPrice.plus(bound),
@@ -228,8 +271,7 @@ class OrderDepthChart extends React.Component<Props> {
         quoteToken: Token | null,
     ): DepthChartData => {
         const { decimals } = quoteToken || { decimals: 18 };
-        const { bound } = this.state;
-        const partialDepthChartData = this._generateDepthChartBounds(orderBook, bound);
+        const partialDepthChartData = this._generateDepthChartBounds(orderBook);
         const minPrice = (partialDepthChartData.minPrice as any) as BigNumber;
         const maxPrice = (partialDepthChartData.maxPrice as any) as BigNumber;
         const midMarketPrice = (partialDepthChartData.midMarketPrice as any) as BigNumber;
@@ -246,10 +288,19 @@ class OrderDepthChart extends React.Component<Props> {
 
         const askLine = this._generateDepthChartLine(filteredAskOrder, decimals);
 
-        const scaledBidLine: Cord[] = [{ x: minPrice.toNumber(), y: bidLine[0].y }].concat(bidLine);
-        const scaledAskLine: Cord[] = askLine.concat([{ x: maxPrice.toNumber(), y: askLine[askLine.length - 1].y }]);
+        let scaledAskLine: Cord[];
+        let scaledBidLine: Cord[];
+
+        if (!bidLine.length || !askLine.length) {
+            scaledAskLine = [];
+            scaledBidLine = [];
+        } else {
+            scaledBidLine = [{ x: minPrice.toNumber(), y: bidLine[0].y }].concat(bidLine);
+            scaledAskLine = askLine.concat([{ x: maxPrice.toNumber(), y: askLine[askLine.length - 1].y }]);
+        }
 
         return {
+            bound: (partialDepthChartData.bound as any) as BigNumber,
             bidLine: scaledBidLine,
             askLine: scaledAskLine,
             midMarketPrice,
