@@ -47,6 +47,18 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
+        symbol: TokenSymbol.Dai,
+        name: 'Dai',
+        primaryColor: '#DEA349',
+        addresses: {
+            [Network.Mainnet]: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
+            [Network.Rinkeby]: '0x6f2d6ff85efca691aad23d549771160a12f0a0fc',
+            [Network.Kovan]: '0xc4375b7de8af5a38a93548eb8453a498222c4ff2',
+            [Network.Ganache]: '',
+        },
+    },
+    {
+        decimals: 18,
         symbol: TokenSymbol.Rep,
         name: 'Augur',
         primaryColor: '#512D80',
