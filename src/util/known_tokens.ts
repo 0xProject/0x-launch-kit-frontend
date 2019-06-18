@@ -1,9 +1,12 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
+import { getLogger } from '../util/logger';
 
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
 import { Token, TokenSymbol } from './types';
+
+const logger = getLogger('Tokens::known_tokens .ts');
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
@@ -21,7 +24,9 @@ export class KnownTokens {
             if (symbolInLowerCaseScore === TokenSymbol.Weth) {
                 return this.getWethToken();
             }
-            throw new Error(`Token with symbol ${symbol} not found in known tokens`);
+            const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
+            logger.log(errorMessage);
+            throw new Error(errorMessage);
         }
         return token;
     };
