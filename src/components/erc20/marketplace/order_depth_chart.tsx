@@ -43,10 +43,11 @@ interface OwnProps {
 type Props = OwnProps & StateProps;
 
 const ORDER_DEPTH_CHART_KEY = 'order-depth-chart';
-
+const DEFAULT_TICK_WIDTH_IN_PX = 150;
+const DEFAULT_TICK_TOTAL = 8;
 const DEFAULT_DIMENSION: ChartDimensions = {
     height: 200,
-    margin: { left: 2, right: 2, top: 10, bottom: 40 },
+    margin: { left: 2, right: 2, top: 10, bottom: 20 },
 };
 
 interface DepthChartData {
@@ -63,7 +64,7 @@ const GraphContentWrapper = styled.div`
 
 class OrderDepthChart extends React.Component<Props> {
     public state = {
-        bound: new BigNumber(0.00008),
+        bound: new BigNumber(0.0001),
         hoverCord: null as Cord | null,
     };
 
@@ -105,14 +106,40 @@ class OrderDepthChart extends React.Component<Props> {
                         <AreaSeries data={bidLine} {...bidChartStyle.areaSeries} />
                         <LineSeries data={askLine} {...askChartStyle.lineSeries} />
                         <LineSeries data={bidLine} {...bidChartStyle.lineSeries} />
-                        <XAxis {...askChartStyle.axesBottom} />
-                        <YAxis {...askChartStyle.axesLeft} />
-                        <YAxis {...askChartStyle.axesRight} />
+                        <XAxis
+                            {...askChartStyle.axesBottom}
+                            tickTotal={this._getXAxisTickTotal()}
+                            tickFormat={this._getXAxisTickFormatter}
+                        />
+                        <YAxis {...askChartStyle.axesLeft} tickFormat={this._getYAxisTickFormatter} />
+                        <YAxis {...askChartStyle.axesRight} tickFormat={this._getYAxisTickFormatter} />
                     </FlexibleWidthXYPlot>
                 </GraphContentWrapper>
             );
         }
         return <Card title="Depth Chart">{content}</Card>;
+    };
+
+    private readonly _getXAxisTickTotal = () => {
+        if (!!this._graphContentWrapper.current) {
+            const rect = ((this._graphContentWrapper.current as any) as HTMLDivElement).getBoundingClientRect();
+            return Math.floor(rect.width / DEFAULT_TICK_WIDTH_IN_PX);
+        }
+        return DEFAULT_TICK_TOTAL;
+    };
+
+    private readonly _getYAxisTickFormatter = (value: number): string => {
+        if (value === 0) {
+            return '';
+        }
+        if (value > 999) {
+            return `${(value / 1000).toPrecision(2)}k`;
+        }
+        return value.toPrecision(3);
+    };
+
+    private readonly _getXAxisTickFormatter = (value: number): string => {
+        return value.toPrecision(3);
     };
 
     private readonly _onMouseMoveInGraphContent = (e: any) => {

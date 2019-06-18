@@ -5,6 +5,7 @@ import { OrderSide } from './types';
 
 interface SVGStyle {
     stroke?: string;
+    strokeWidth?: number;
     opacity?: number;
     color?: string;
     fill?: string;
@@ -34,13 +35,13 @@ export const getDepthChartStyle = (theme: Theme, orderSide: OrderSide): DepthCha
     const accentColor = orderSide === OrderSide.Ask ? theme.componentsTheme.red : theme.componentsTheme.green;
     const axesDefaultStyle: AxesStyle = {
         style: {
-            tick: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.2 },
-            text: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.7 },
-            line: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.2 },
+            tick: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.1 },
+            text: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.5 },
+            line: { stroke: theme.componentsTheme.textColorCommon, opacity: 0.1 },
         },
         tickSizeOuter: 0,
-        tickSizeInner: 6,
-        tickPadding: -16,
+        tickSizeInner: 4,
+        tickPadding: -32,
     };
     return {
         areaSeries: {
@@ -48,6 +49,7 @@ export const getDepthChartStyle = (theme: Theme, orderSide: OrderSide): DepthCha
             fill: hexToRgba(accentColor, 0.2),
         },
         lineSeries: {
+            strokeWidth: 1,
             color: hexToRgba(accentColor, 1),
         },
         axesLeft: { ...axesDefaultStyle, ...{ orientation: 'left' } },

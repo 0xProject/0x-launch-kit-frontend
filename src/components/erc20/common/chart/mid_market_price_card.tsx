@@ -31,7 +31,7 @@ const MidMarketPriceLabel = styled.p`
 export const MidMarketPriceCard = (props: MidMarketPriceCardProps) => {
     return (
         <MidMarketPriceIndicatorWell>
-            <MidMarketPriceText>{props.price}</MidMarketPriceText>
+            <MidMarketPriceText>{props.price.toString().slice(0, 12)}</MidMarketPriceText>
             <MidMarketPriceLabel>Mid market price</MidMarketPriceLabel>
         </MidMarketPriceIndicatorWell>
     );

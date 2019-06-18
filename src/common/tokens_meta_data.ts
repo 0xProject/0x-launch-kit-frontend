@@ -35,6 +35,19 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
+        symbol: TokenSymbol.Dai,
+        name: 'Dai',
+        primaryColor: '#DEA349',
+        addresses: {
+            // TODO: add addresses for testnet Dai
+            [Network.Mainnet]: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
+            [Network.Rinkeby]: '0x8080c7e4b81ecf23aa6f877cfbfd9b0c228c6ffa',
+            [Network.Kovan]: '0x2002d3812f58e35f0ea1ffbf80a75a38c32175fa',
+            [Network.Ganache]: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
+        },
+    },
+    {
+        decimals: 18,
         symbol: TokenSymbol.Mkr,
         name: 'Maker',
         primaryColor: '#68CCBB',
