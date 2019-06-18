@@ -32,6 +32,15 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
     },
     {
         decimals: 18,
+        symbol: TokenSymbol.Kubo,
+        name: 'KuboCoin',
+        primaryColor: '#020202',
+        addresses: {
+            1: '0x53d61fd3758f17e25e16b9389aa1f01e6c0c47db',
+        },
+    },
+    {
+        decimals: 18,
         symbol: TokenSymbol.Zrx,
         name: '0x',
         primaryColor: '#333333',
@@ -88,6 +97,15 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
             4: '0x521c0941300a18a4edc697368f43a6a870be1f3d',
             42: '0x17e394D1Df6cE29d042195Ea38411A98ff3Ead94',
             50: '0x1e2f9e10d02a6b8f8f69fcbf515e75039d2ea30d',
+        },
+    },
+    {
+        decimals: 18,
+        symbol: TokenSymbol.Ftm,
+        name: 'Fantom',
+        primaryColor: '#020202',
+        addresses: {
+            1: '0x4e15361fd6b4bb609fa63c81a2be19d873717870',
         },
     },
 ];

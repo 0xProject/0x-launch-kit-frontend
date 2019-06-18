@@ -242,10 +242,10 @@ const marketFilters: Filter[] = [
         text: 'ETH',
         value: TokenSymbol.Weth,
     },
-    {
+  /*  {
         text: tokenSymbolToDisplayString(TokenSymbol.Dai),
         value: TokenSymbol.Dai,
-    },
+    },*/
 ];
 
 class MarketsDropdown extends React.Component<Props, State> {

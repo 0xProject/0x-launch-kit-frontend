@@ -5,7 +5,7 @@ import { ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
 import * as orderHelper from './orders';
-import { getExpirationTimeOrdersFromConfig, tomorrow } from './time_utils';
+import { getExpirationTimeOrdersFromConfig } from './time_utils';
 import { OrderSide, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {

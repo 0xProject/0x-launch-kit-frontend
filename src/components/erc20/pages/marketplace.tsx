@@ -5,10 +5,11 @@ import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
 import { Content } from '../common/content_wrapper';
 import { BuySellContainer } from '../marketplace/buy_sell';
+import GoogleADS from '../../common/google';
 import { OrderBookTableContainer } from '../marketplace/order_book';
 import { OrderHistoryContainer } from '../marketplace/order_history';
 import { WalletBalanceContainer } from '../marketplace/wallet_balance';
-import GoogleADS from '../../common/google';
+
 
 
 class Marketplace extends React.PureComponent {

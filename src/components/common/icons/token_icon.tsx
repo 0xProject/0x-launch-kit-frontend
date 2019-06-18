@@ -11,8 +11,10 @@ import { ReactComponent as DaiTokenIcon } from '../../../assets/icons/dai.svg';
 import { ReactComponent as DgdTokenIcon } from '../../../assets/icons/dgd.svg';
 import { ReactComponent as DgxTokenIcon } from '../../../assets/icons/dgx.svg';
 import { ReactComponent as DntTokenIcon } from '../../../assets/icons/dnt.svg';
+import { ReactComponent as FtmTokenIcon } from '../../../assets/icons/ftm.svg';
 import { ReactComponent as FunTokenIcon } from '../../../assets/icons/fun.svg';
 import { ReactComponent as GnoTokenIcon } from '../../../assets/icons/gno.svg';
+import { ReactComponent as KuboTokenIcon } from '../../../assets/icons/kubo.svg';
 import { ReactComponent as LinkTokenIcon } from '../../../assets/icons/link.svg';
 import { ReactComponent as LptTokenIcon } from '../../../assets/icons/lpt.svg';
 import { ReactComponent as ManaTokenIcon } from '../../../assets/icons/mana.svg';
@@ -26,11 +28,12 @@ import { ReactComponent as ReqTokenIcon } from '../../../assets/icons/req.svg';
 import { ReactComponent as SaltTokenIcon } from '../../../assets/icons/salt.svg';
 import { ReactComponent as SntTokenIcon } from '../../../assets/icons/snt.svg';
 import { ReactComponent as SpankTokenIcon } from '../../../assets/icons/spank.svg';
+import { ReactComponent as VsfTokenIcon } from '../../../assets/icons/vsf.svg';
 import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
 import { ReactComponent as WethTokenIcon } from '../../../assets/icons/weth.svg';
 import { ReactComponent as ZilTokenIcon } from '../../../assets/icons/zil.svg';
 import { ReactComponent as ZrxTokenIcon } from '../../../assets/icons/zrx.svg';
-import { ReactComponent as VsfTokenIcon } from '../../../assets/icons/vsf.svg';
+
 import { Theme } from '../../../themes/commons';
 
 interface Props {
@@ -71,6 +74,8 @@ const TokenIcons = {
     ZilTokenIcon,
     ZrxTokenIcon,
     VsfTokenIcon,
+    KuboTokenIcon,
+    FtmTokenIcon
 };
 
 const IconContainer = styled.div<{ color: string; isInline?: boolean }>`

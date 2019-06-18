@@ -249,6 +249,8 @@ export enum TokenSymbol {
     Dgd = 'dgd',
     Mln = 'mln',
     Vsf = 'vsf',
+    Kubo = 'kubo',
+    Ftm = 'ftm',
 }
 
 export enum OrderType {

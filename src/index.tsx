@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
 import 'sanitize.css';
 
-import { DEFAULT_BASE_PATH, ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH, LOGGER_ID } from './common/constants';
+import { DEFAULT_BASE_PATH, ERC20_APP_BASE_PATH, /*ERC721_APP_BASE_PATH,*/ LOGGER_ID } from './common/constants';
 import { AppContainer } from './components/app';
 import { Erc20App } from './components/erc20/erc20_app';
 //import { Erc721App } from './components/erc721/erc721_app';
