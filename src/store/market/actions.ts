@@ -8,8 +8,11 @@ import { availableMarkets } from '../../common/markets';
 import { getMarketPriceEther } from '../../services/markets';
 import { getRelayer } from '../../services/relayer';
 import { getKnownTokens } from '../../util/known_tokens';
+import { getLogger } from '../../util/logger';
 import { CurrencyPair, Market, StoreState, ThunkCreator, Token } from '../../util/types';
 import { getOrderbookAndUserOrders } from '../actions';
+
+const logger = getLogger('Market::Actions');
 
 export const setMarketTokens = createAction('market/MARKET_TOKENS_set', resolve => {
     return ({ baseToken, quoteToken }: { baseToken: Token; quoteToken: Token }) => resolve({ baseToken, quoteToken });
@@ -85,6 +88,9 @@ export const fetchMarkets: ThunkCreator = () => {
                         price,
                     };
                 } catch (err) {
+                    logger.error(
+                        `Failed to get price of currency pair ${availableMarket.base}/${availableMarket.quote}`,
+                    );
                     return null;
                 }
             }),
