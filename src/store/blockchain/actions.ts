@@ -1,8 +1,10 @@
 // tslint:disable:max-file-line-count
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import retry from 'async-retry';
 import { createAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT } from '../../common/constants';
+import { ConvertBalanceMustNotBeEqualException } from '../../exceptions/convert_balance_must_not_be_equal_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
@@ -32,6 +34,7 @@ import {
     getCurrencyPair,
     getCurrentMarketPlace,
     getEthAccount,
+    getEthBalance,
     getGasPriceInWei,
     getMarkets,
     getTokenBalances,
@@ -145,6 +148,7 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
         const gasPrice = getGasPriceInWei(state);
         const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
+        const ethBalanceFromState = getEthBalance(state);
 
         const web3Wrapper = await getWeb3Wrapper();
         const wethAddress = getKnownTokens().getWethToken().address;
@@ -167,22 +171,38 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                 getTransactionOptions(gasPrice),
             );
         } else {
-            return;
+            throw new ConvertBalanceMustNotBeEqualException();
         }
 
-        web3Wrapper.awaitTransactionSuccessAsync(tx).then(async () => {
-            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-            dispatch(setEthBalance(ethBalance));
+        const getBalanceInWei = async (): Promise<any> =>
+            retry(
+                async () => {
+                    await web3Wrapper.awaitTransactionSuccessAsync(tx);
+                    const ethBalanceRetry = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
-            const newWethTokenBalance = wethTokenBalance
-                ? {
-                      ...wethTokenBalance,
-                      balance: newWethBalance,
-                  }
-                : null;
+                    if (ethBalanceFromState.isEqualTo(ethBalanceRetry)) {
+                        throw new Error('Retry await until new ethBalance was mined');
+                    }
 
-            dispatch(setWethTokenBalance(newWethTokenBalance));
-        });
+                    return ethBalanceRetry;
+                },
+                {
+                    retries: 5,
+                },
+            );
+
+        const ethBalanceFromBlockchain = await getBalanceInWei();
+
+        dispatch(setEthBalance(ethBalanceFromBlockchain));
+
+        const newWethTokenBalance = wethTokenBalance
+            ? {
+                  ...wethTokenBalance,
+                  balance: newWethBalance,
+              }
+            : null;
+
+        dispatch(setWethTokenBalance(newWethTokenBalance));
 
         return tx;
     };
