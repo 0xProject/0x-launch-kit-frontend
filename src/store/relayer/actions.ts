@@ -17,6 +17,7 @@ import { getLogger } from '../../util/logger';
 import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder, Web3State } from '../../util/types';
+import { updateTokenBalances } from '../blockchain/actions';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
     getBaseToken,
@@ -211,6 +212,8 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
             // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderbookAndUserOrders());
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(updateTokenBalances());
             dispatch(
                 addNotifications([
                     {

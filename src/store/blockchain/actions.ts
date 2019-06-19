@@ -7,7 +7,7 @@ import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
-import { tokenToTokenBalance } from '../../services/tokens';
+import { getTokenBalance, tokenToTokenBalance } from '../../services/tokens';
 import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
@@ -185,6 +185,27 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
         });
 
         return tx;
+    };
+};
+
+export const updateTokenBalances: ThunkCreator<Promise<any>> = () => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const knownTokens = getKnownTokens();
+
+        const tokenBalances = await Promise.all(
+            knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+        );
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(setTokenBalances(tokenBalances));
+
+        const web3Wrapper = await getWeb3Wrapper();
+        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+        const wethToken = knownTokens.getWethToken();
+        const wethBalance = await getTokenBalance(wethToken, ethAccount);
+        dispatch(setEthBalance(ethBalance));
+        dispatch(setWethBalance(wethBalance));
     };
 };
 
