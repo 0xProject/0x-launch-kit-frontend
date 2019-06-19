@@ -129,7 +129,8 @@ class WrapEthStep extends React.Component<Props, State> {
                 errorCaption = `You have ${currentEthAmount} ETH but you need ${ethNeeded} ETH to make this operation`;
             } else if (err instanceof ConvertBalanceMustNotBeEqualException) {
                 exception = err;
-                errorCaption = err.toString();
+                errorCaption =
+                    'An unexpected error happened: tryed to wrap ETH so that the resulting ETH amount stays the same';
             }
             this.setState({ errorCaption });
             onError(exception);

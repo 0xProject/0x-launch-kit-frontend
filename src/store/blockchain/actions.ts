@@ -171,16 +171,17 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                 getTransactionOptions(gasPrice),
             );
         } else {
-            throw new ConvertBalanceMustNotBeEqualException();
+            throw new ConvertBalanceMustNotBeEqualException(wethBalance, newWethBalance);
         }
+        await web3Wrapper.awaitTransactionSuccessAsync(tx);
 
         const getBalanceInWei = async (): Promise<any> =>
             retry(
                 async () => {
-                    await web3Wrapper.awaitTransactionSuccessAsync(tx);
                     const ethBalanceRetry = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
                     if (ethBalanceFromState.isEqualTo(ethBalanceRetry)) {
+                        // retry() function needs this to signal the retry
                         throw new Error('Retry await until new ethBalance was mined');
                     }
 
@@ -190,9 +191,7 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                     retries: 5,
                 },
             );
-
         const ethBalanceFromBlockchain = await getBalanceInWei();
-
         dispatch(setEthBalance(ethBalanceFromBlockchain));
 
         const newWethTokenBalance = wethTokenBalance
@@ -201,7 +200,6 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                   balance: newWethBalance,
               }
             : null;
-
         dispatch(setWethTokenBalance(newWethTokenBalance));
 
         return tx;
