@@ -230,10 +230,7 @@ interface Filter {
     value: null | TokenSymbol;
 }
 const marketFilters: Filter[] = [
-    {
-        text: 'ALL',
-        value: null,
-    },
+    
     {
         text: tokenSymbolToDisplayString(TokenSymbol.Vsf),
         value: TokenSymbol.Vsf,
@@ -241,6 +238,10 @@ const marketFilters: Filter[] = [
     {
         text: 'ETH',
         value: TokenSymbol.Weth,
+    },
+    {
+        text: 'ALL',
+        value: null,
     },
   /*  {
         text: tokenSymbolToDisplayString(TokenSymbol.Dai),

@@ -6,7 +6,35 @@ export const availableMarkets: CurrencyPair[] = [
         quote: TokenSymbol.Weth,
     },
     {
-        base: TokenSymbol.Zrx,
+        base: TokenSymbol.Kubo,
+        quote: TokenSymbol.Vsf,
+    },
+    {
+        base: TokenSymbol.Kubo,
+        quote: TokenSymbol.Weth,
+    },
+    {
+        base: TokenSymbol.Sntvt,
+        quote: TokenSymbol.Vsf,
+    },
+    {
+        base: TokenSymbol.Sntvt,
+        quote: TokenSymbol.Weth,
+    },
+    {
+        base: TokenSymbol.Ethplo,
+        quote: TokenSymbol.Vsf,
+    },
+    {
+        base: TokenSymbol.Ethplo,
+        quote: TokenSymbol.Weth,
+    },
+    {
+        base: TokenSymbol.Ftm,
+        quote: TokenSymbol.Vsf,
+    },
+    {
+        base: TokenSymbol.Ftm,
         quote: TokenSymbol.Weth,
     },
     {
@@ -30,19 +58,16 @@ export const availableMarkets: CurrencyPair[] = [
         quote: TokenSymbol.Vsf,
     },
     {
-        base: TokenSymbol.Kubo,
+        base: TokenSymbol.Zrx,
+        quote: TokenSymbol.Weth,
+    },
+    
+  /*  {
+        base: TokenSymbol.Bomb,
         quote: TokenSymbol.Vsf,
     },
     {
-        base: TokenSymbol.Kubo,
+        base: TokenSymbol.Bomb,
         quote: TokenSymbol.Weth,
-    },
-    {
-        base: TokenSymbol.Ftm,
-        quote: TokenSymbol.Vsf,
-    },
-    {
-        base: TokenSymbol.Ftm,
-        quote: TokenSymbol.Weth,
-    },
+    },*/
 ];

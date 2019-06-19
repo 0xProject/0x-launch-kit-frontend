@@ -1,5 +1,6 @@
 import { BigNumber, ContractWrappers } from '0x.js';
 
+import { NETWORK_ID } from '../common/constants';
 import { Token, TokenBalance } from '../util/types';
 
 import { getContractWrappers } from './contract_wrappers';
@@ -26,7 +27,6 @@ export const tokenToTokenBalance = async (token: Token, address: string): Promis
 
 export const getTokenBalance = async (token: Token, address: string): Promise<BigNumber> => {
     const web3Wrapper = await getWeb3Wrapper();
-    const networkId = await web3Wrapper.getNetworkIdAsync();
-    const contractWrappers = new ContractWrappers(web3Wrapper.getProvider(), { networkId });
+    const contractWrappers = new ContractWrappers(web3Wrapper.getProvider(), { networkId: NETWORK_ID });
     return contractWrappers.erc20Token.getBalanceAsync(token.address, address);
 };

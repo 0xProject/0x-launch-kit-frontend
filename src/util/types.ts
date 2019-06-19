@@ -12,6 +12,13 @@ export interface TabItem {
     text: string;
 }
 
+export enum Network {
+    Mainnet = 1,
+    Rinkeby = 4,
+    Kovan = 42,
+    Ganache = 50,
+}
+
 export interface Token {
     address: string;
     decimals: number;
@@ -47,7 +54,6 @@ export interface BlockchainState {
     readonly ethBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
     readonly gasInfo: GasInfo;
-    readonly networkId: number | null;
 }
 
 export interface RelayerState {
@@ -59,6 +65,7 @@ export interface UIState {
     readonly notifications: Notification[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
+    readonly orderPriceSelected: BigNumber | null;
 }
 
 export interface MarketState {
@@ -251,6 +258,9 @@ export enum TokenSymbol {
     Vsf = 'vsf',
     Kubo = 'kubo',
     Ftm = 'ftm',
+    Bomb = 'bomb',
+    Ethplo = 'ethplo',
+    Sntvt = 'sntvt',
 }
 
 export enum OrderType {
@@ -296,8 +306,8 @@ export interface CollectiblesState {
 }
 
 export interface CollectibleMetadataSource {
-    fetchAllUserCollectiblesAsync(userAddress: string, networkId: number): Promise<Collectible[]>;
-    fetchCollectiblesAsync(tokenIds: string[], networkId: number): Promise<Collectible[]>;
+    fetchAllUserCollectiblesAsync(userAddress: string): Promise<Collectible[]>;
+    fetchCollectiblesAsync(tokenIds: string[]): Promise<Collectible[]>;
 }
 
 export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;

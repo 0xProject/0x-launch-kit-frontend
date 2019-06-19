@@ -1,30 +1,22 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
-import { getNetworkId } from '../../store/selectors';
 import { themeDimensions } from '../../themes/commons';
 import { CancelablePromise, makeCancelable } from '../../util/cancelable_promises';
 import { getEtherscanUrlForNotificationTx } from '../../util/notifications';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { Notification, NotificationKind, OrderSide, StoreState } from '../../util/types';
+import { Notification, NotificationKind, OrderSide } from '../../util/types';
 import { NotificationCancelIcon } from '../common/icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../common/icons/notification_checkmark_icon';
 import { Interval } from '../common/interval';
 import { PendingTime } from '../common/pending_time';
 import { Spinner } from '../common/spinner';
 
-interface OwnProps {
+interface Props {
     item: Notification;
     estimatedTxTimeMs: number;
 }
-
-interface StateProps {
-    networkId: number | null;
-}
-
-type Props = StateProps & OwnProps;
 
 interface State {
     pending: boolean;
@@ -138,7 +130,7 @@ class NotificationItem extends React.Component<Props, State> {
         ) : (
             <NotificationWrapperMarketOrCancel
                 active={this.state.pending}
-                href={getEtherscanUrlForNotificationTx(this.props.networkId, item)}
+                href={getEtherscanUrlForNotificationTx(item)}
                 target="_blank"
             >
                 {notificationBody}
@@ -205,12 +197,4 @@ class NotificationItem extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        networkId: getNetworkId(state),
-    };
-};
-
-const NotificationItemContainer = connect(mapStateToProps)(NotificationItem);
-
-export { NotificationItem, NotificationItemContainer };
+export { NotificationItem };

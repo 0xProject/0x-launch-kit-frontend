@@ -6,11 +6,13 @@ import { ReactComponent as AgiTokenIcon } from '../../../assets/icons/agi.svg';
 import { ReactComponent as AntTokenIcon } from '../../../assets/icons/ant.svg';
 import { ReactComponent as AstTokenIcon } from '../../../assets/icons/ast.svg';
 import { ReactComponent as BatTokenIcon } from '../../../assets/icons/bat.svg';
+import { ReactComponent as BombTokenIcon } from '../../../assets/icons/bomb.svg';
 import { ReactComponent as CvcTokenIcon } from '../../../assets/icons/cvc.svg';
 import { ReactComponent as DaiTokenIcon } from '../../../assets/icons/dai.svg';
 import { ReactComponent as DgdTokenIcon } from '../../../assets/icons/dgd.svg';
 import { ReactComponent as DgxTokenIcon } from '../../../assets/icons/dgx.svg';
 import { ReactComponent as DntTokenIcon } from '../../../assets/icons/dnt.svg';
+import { ReactComponent as EthploTokenIcon } from '../../../assets/icons/ethplo.svg';
 import { ReactComponent as FtmTokenIcon } from '../../../assets/icons/ftm.svg';
 import { ReactComponent as FunTokenIcon } from '../../../assets/icons/fun.svg';
 import { ReactComponent as GnoTokenIcon } from '../../../assets/icons/gno.svg';
@@ -27,6 +29,7 @@ import { ReactComponent as RepTokenIcon } from '../../../assets/icons/rep.svg';
 import { ReactComponent as ReqTokenIcon } from '../../../assets/icons/req.svg';
 import { ReactComponent as SaltTokenIcon } from '../../../assets/icons/salt.svg';
 import { ReactComponent as SntTokenIcon } from '../../../assets/icons/snt.svg';
+import { ReactComponent as SntvtTokenIcon } from '../../../assets/icons/sntvt.svg';
 import { ReactComponent as SpankTokenIcon } from '../../../assets/icons/spank.svg';
 import { ReactComponent as VsfTokenIcon } from '../../../assets/icons/vsf.svg';
 import { ReactComponent as WaxTokenIcon } from '../../../assets/icons/wax.svg';
@@ -49,11 +52,14 @@ const TokenIcons = {
     AntTokenIcon,
     AstTokenIcon,
     BatTokenIcon,
+    BombTokenIcon,
     CvcTokenIcon,
     DaiTokenIcon,
     DgdTokenIcon,
     DgxTokenIcon,
     DntTokenIcon,
+    EthploTokenIcon,
+    FtmTokenIcon,
     WethTokenIcon,
     FunTokenIcon,
     GnoTokenIcon,
@@ -68,6 +74,7 @@ const TokenIcons = {
     RepTokenIcon,
     ReqTokenIcon,
     SaltTokenIcon,
+    SntvtTokenIcon,
     SntTokenIcon,
     SpankTokenIcon,
     WaxTokenIcon,
@@ -75,7 +82,6 @@ const TokenIcons = {
     ZrxTokenIcon,
     VsfTokenIcon,
     KuboTokenIcon,
-    FtmTokenIcon
 };
 
 const IconContainer = styled.div<{ color: string; isInline?: boolean }>`

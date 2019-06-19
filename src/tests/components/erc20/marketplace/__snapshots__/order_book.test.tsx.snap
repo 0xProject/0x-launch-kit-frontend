@@ -1,0 +1,1069 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrderBookTable Check if my size renders an item with more than two decimals 1`] = `
+<div
+  className="sc-kpOJdX kUlmMq sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Orderbook
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-dxgOiQ sc-jKJlTe kauRMH"
+    >
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Trade size
+      </div>
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Price (
+        MOCK6
+        )
+      </div>
+      <div
+        className="sc-VigVT sc-chPdSV ePzcBE"
+      >
+        My Size
+      </div>
+    </div>
+    <div
+      className="sc-hMqMXs iwcMlS"
+      onScroll={[Function]}
+    >
+      <div
+        className="sc-kEYyzF fKDJln"
+      >
+        <div
+          className="sc-kkGfuU sc-iAyFgw daOdFJ"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-fBuWsC kwGDhd"
+              >
+                1.1235
+              </span>
+              <span
+                className="sc-fMiknA fWien"
+              >
+                
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG dwncel"
+              id="mySize"
+            >
+              1.0000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-dVhcbM kICZVG"
+              >
+                1.1235
+              </span>
+              <span
+                className="sc-eqIVtm LdBiZ"
+              >
+                
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0200000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-fAjcbJ hRmYGJ"
+              >
+                1.1235
+              </span>
+              <span
+                className="sc-caSCKo rrezN"
+              >
+                
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-gisBJw bPPCsh"
+              >
+                1.1234
+              </span>
+              <span
+                className="sc-kjoXOD coUgfy"
+              >
+                
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-cHGsZl iyCOMG"
+              >
+                1.123
+              </span>
+              <span
+                className="sc-TOsTZ kBTbna"
+              >
+                0
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-kgAjT kXvHqg"
+              >
+                1.12
+              </span>
+              <span
+                className="sc-cJSrbW imkuMm"
+              >
+                00
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+        </div>
+        <div
+          className="sc-kgoBCf sc-kGXeez jmVvb"
+        >
+          <div
+            className="sc-jTzLTM sc-cSHVUG kdXjDv"
+          >
+            Spread
+          </div>
+          <div
+            className="sc-jTzLTM kcTCzl"
+          >
+            0.0300000
+          </div>
+          <div
+            className="sc-jTzLTM sc-jzJRlG fnqkDA"
+          >
+            3.00
+            %
+          </div>
+        </div>
+        <div
+          className="sc-kkGfuU sc-hSdWYo dhGrlp"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-ksYbfQ fVlPYy"
+              >
+                2
+              </span>
+              <span
+                className="sc-hmzhuo hAdYWW"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM eTqOuf"
+            >
+              0.5000000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`OrderBookTable Renders my size column with value 1`] = `
+<div
+  className="sc-kpOJdX kUlmMq sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Orderbook
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-dxgOiQ sc-jKJlTe kauRMH"
+    >
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Trade size
+      </div>
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Price (
+        MOCK2
+        )
+      </div>
+      <div
+        className="sc-VigVT sc-chPdSV ePzcBE"
+      >
+        My Size
+      </div>
+    </div>
+    <div
+      className="sc-hMqMXs iwcMlS"
+      onScroll={[Function]}
+    >
+      <div
+        className="sc-kEYyzF fKDJln"
+      >
+        <div
+          className="sc-kkGfuU sc-iAyFgw daOdFJ"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-eHgmQL dPxpcD"
+              >
+                1
+              </span>
+              <span
+                className="sc-cvbbAY bvjWlU"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG dwncel"
+              id="mySize"
+            >
+              1.0000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-jWBwVP iUEkdW"
+              >
+                1
+              </span>
+              <span
+                className="sc-brqgnP hIEAPA"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0200000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-cMljjf fKSpyD"
+              >
+                4
+              </span>
+              <span
+                className="sc-jAaTju fAkqWE"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+        </div>
+        <div
+          className="sc-kgoBCf sc-kGXeez jmVvb"
+        >
+          <div
+            className="sc-jTzLTM sc-cSHVUG kdXjDv"
+          >
+            Spread
+          </div>
+          <div
+            className="sc-jTzLTM kcTCzl"
+          >
+            0.0300000
+          </div>
+          <div
+            className="sc-jTzLTM sc-jzJRlG fnqkDA"
+          >
+            3.00
+            %
+          </div>
+        </div>
+        <div
+          className="sc-kkGfuU sc-hSdWYo dhGrlp"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-jDwBTQ fvUbIf"
+              >
+                2
+              </span>
+              <span
+                className="sc-gPEVay hknufd"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM eTqOuf"
+            >
+              0.5000000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`OrderBookTable Should not render my size column if the user does not have metamask 1`] = `
+<div
+  className="sc-kpOJdX kUlmMq sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Orderbook
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-dxgOiQ sc-jKJlTe kauRMH"
+    >
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Trade size
+      </div>
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Price (
+        zrx
+        )
+      </div>
+    </div>
+    <div
+      className="sc-hMqMXs iwcMlS"
+      onScroll={[Function]}
+    >
+      <div
+        className="sc-kEYyzF fKDJln"
+      >
+        <div
+          className="sc-kkGfuU sc-iAyFgw daOdFJ"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-frDJqD dwYjGo"
+              >
+                1
+              </span>
+              <span
+                className="sc-kvZOFW gSNEEv"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-hqyNC kMXIrR"
+              >
+                1
+              </span>
+              <span
+                className="sc-jbKcbu iQDXnV"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-dNLxif dMzXPz"
+              >
+                4
+              </span>
+              <span
+                className="sc-jqCOkK fYUDXS"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+          </div>
+        </div>
+        <div
+          className="sc-kgoBCf sc-kGXeez jmVvb"
+        >
+          <div
+            className="sc-jTzLTM sc-cSHVUG kdXjDv"
+          >
+            Spread
+          </div>
+          <div
+            className="sc-jTzLTM kcTCzl"
+          >
+            0.0300000
+          </div>
+          <div
+            className="sc-jTzLTM sc-jzJRlG fnqkDA"
+          >
+            3.00
+            %
+          </div>
+        </div>
+        <div
+          className="sc-kkGfuU sc-hSdWYo dhGrlp"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-uJMKN gGvEOz"
+              >
+                2
+              </span>
+              <span
+                className="sc-bbmXgH kPOpfp"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM eTqOuf"
+            >
+              0.5000000
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`OrderBookTable Should not render my size column if the user rejected the metamask permissions 1`] = `
+<div
+  className="sc-kpOJdX kUlmMq sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Orderbook
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-dxgOiQ sc-jKJlTe kauRMH"
+    >
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Trade size
+      </div>
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Price (
+        zrx
+        )
+      </div>
+    </div>
+    <div
+      className="sc-hMqMXs iwcMlS"
+      onScroll={[Function]}
+    >
+      <div
+        className="sc-kEYyzF fKDJln"
+      >
+        <div
+          className="sc-kkGfuU sc-iAyFgw daOdFJ"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-gGBfsJ gjvvyH"
+              >
+                1
+              </span>
+              <span
+                className="sc-jnlKLf hUZhox"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-fYxtnH igTHrv"
+              >
+                1
+              </span>
+              <span
+                className="sc-tilXH gaRzoJ"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-hEsumM flURld"
+              >
+                4
+              </span>
+              <span
+                className="sc-ktHwxA fBHFKN"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+          </div>
+        </div>
+        <div
+          className="sc-kgoBCf sc-kGXeez jmVvb"
+        >
+          <div
+            className="sc-jTzLTM sc-cSHVUG kdXjDv"
+          >
+            Spread
+          </div>
+          <div
+            className="sc-jTzLTM kcTCzl"
+          >
+            0.0300000
+          </div>
+          <div
+            className="sc-jTzLTM sc-jzJRlG fnqkDA"
+          >
+            3.00
+            %
+          </div>
+        </div>
+        <div
+          className="sc-kkGfuU sc-hSdWYo dhGrlp"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-cIShpX kjZQlS"
+              >
+                2
+              </span>
+              <span
+                className="sc-kafWEX dmXPxV"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM eTqOuf"
+            >
+              0.5000000
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`OrderBookTable Should render a row of mySize with the total amount for one order 1`] = `
+<div
+  className="sc-kpOJdX kUlmMq sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Orderbook
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-dxgOiQ sc-jKJlTe kauRMH"
+    >
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Trade size
+      </div>
+      <div
+        className="sc-VigVT jFeuG"
+      >
+        Price (
+        MOCK4
+        )
+      </div>
+      <div
+        className="sc-VigVT sc-chPdSV ePzcBE"
+      >
+        My Size
+      </div>
+    </div>
+    <div
+      className="sc-hMqMXs iwcMlS"
+      onScroll={[Function]}
+    >
+      <div
+        className="sc-kEYyzF fKDJln"
+      >
+        <div
+          className="sc-kkGfuU sc-iAyFgw daOdFJ"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-iRbamj jAFnxN"
+              >
+                1
+              </span>
+              <span
+                className="sc-jlyJG djZUoc"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG dwncel"
+              id="mySize"
+            >
+              2.0000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-gipzik jsUTZA"
+              >
+                1
+              </span>
+              <span
+                className="sc-csuQGl fVQmcy"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.5000000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG dwncel"
+              id="mySize"
+            >
+              2.0000
+            </div>
+          </div>
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-Rmtcm dTnZHf"
+              >
+                4
+              </span>
+              <span
+                className="sc-bRBYWo bCgeXn"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM kLxUPS"
+            >
+              1.0100000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+        </div>
+        <div
+          className="sc-kgoBCf sc-kGXeez jmVvb"
+        >
+          <div
+            className="sc-jTzLTM sc-cSHVUG kdXjDv"
+          >
+            Spread
+          </div>
+          <div
+            className="sc-jTzLTM kcTCzl"
+          >
+            0.0300000
+          </div>
+          <div
+            className="sc-jTzLTM sc-jzJRlG fnqkDA"
+          >
+            3.00
+            %
+          </div>
+        </div>
+        <div
+          className="sc-kkGfuU sc-hSdWYo dhGrlp"
+        >
+          <div
+            className="sc-dxgOiQ sc-ckVGcZ fdRenD"
+            onClick={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="sc-jTzLTM gYeEqk"
+            >
+              <span
+                className="sc-hzDkRC gWNJWs"
+              >
+                2
+              </span>
+              <span
+                className="sc-jhAzac eZYpSN"
+              >
+                .0000
+              </span>
+            </div>
+            <div
+              className="sc-jTzLTM eTqOuf"
+            >
+              0.5000000
+            </div>
+            <div
+              className="sc-jTzLTM sc-jzJRlG fYJJdT"
+              id="mySize"
+            >
+              -
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,19 +1,20 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
+import { getLogger } from '../util/logger';
 
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
 import { Token, TokenSymbol } from './types';
+
+const logger = getLogger('Tokens::known_tokens .ts');
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
     private readonly _wethToken: Token;
 
-    constructor(networkId: number, knownTokensMetadata: TokenMetaData[]) {
-        this._tokens = mapTokensMetaDataToTokenByNetworkId(networkId, knownTokensMetadata).filter(
-            token => !isWeth(token.symbol),
-        );
-        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(networkId, knownTokensMetadata);
+    constructor(knownTokensMetadata: TokenMetaData[]) {
+        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
+        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
@@ -23,7 +24,9 @@ export class KnownTokens {
             if (symbolInLowerCaseScore === TokenSymbol.Weth) {
                 return this.getWethToken();
             }
-            throw new Error(`Token with symbol ${symbol} not found in known tokens`);
+            const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
+            logger.log(errorMessage);
+            throw new Error(errorMessage);
         }
         return token;
     };
@@ -40,6 +43,11 @@ export class KnownTokens {
             throw new Error(`Token with address ${address} not found in known tokens`);
         }
         return token;
+    };
+
+    public getTokenByAssetData = (assetData: string): Token => {
+        const tokenAddress = assetDataUtils.decodeERC20AssetData(assetData).tokenAddress;
+        return this.getTokenByAddress(tokenAddress);
     };
 
     public isKnownAddress = (address: string): boolean => {
@@ -84,14 +92,9 @@ export class KnownTokens {
 }
 
 let knownTokens: KnownTokens;
-let currentNetworkId: number;
-export const getKnownTokens = (
-    networkId: number,
-    knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA,
-): KnownTokens => {
-    if (!knownTokens || currentNetworkId !== networkId) {
-        knownTokens = new KnownTokens(networkId, knownTokensMetadata);
-        currentNetworkId = networkId;
+export const getKnownTokens = (knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA): KnownTokens => {
+    if (!knownTokens) {
+        knownTokens = new KnownTokens(knownTokensMetadata);
     }
     return knownTokens;
 };

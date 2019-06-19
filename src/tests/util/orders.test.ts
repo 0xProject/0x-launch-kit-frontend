@@ -1,15 +1,21 @@
 import { assetDataUtils, BigNumber, Order } from '0x.js';
 
+import { getKnownTokens } from '../../util/known_tokens';
 import * as utilOrders from '../../util/orders';
 import { addressFactory, uiOrder } from '../../util/test-utils';
-import { OrderSide } from '../../util/types';
+import { OrderSide, TokenSymbol } from '../../util/types';
 
 describe('buildLimitOrder', () => {
+    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
+    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+
     it('should build a buy order', async () => {
         // given
         const account = addressFactory.build().address;
-        const baseTokenAddress = addressFactory.build().address;
-        const quoteTokenAddress = addressFactory.build().address;
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
+        const baseTokenAddress = baseToken.address;
+        const quoteTokenAddress = quoteToken.address;
         const exchangeAddress = addressFactory.build().address;
         const amount = new BigNumber('100');
         const price = new BigNumber(0.1);
@@ -56,8 +62,10 @@ describe('buildLimitOrder', () => {
     it('should build a sell order', async () => {
         // given
         const account = addressFactory.build().address;
-        const baseTokenAddress = addressFactory.build().address;
-        const quoteTokenAddress = addressFactory.build().address;
+        const baseToken = ZrxToken;
+        const quoteToken = WethToken;
+        const baseTokenAddress = baseToken.address;
+        const quoteTokenAddress = quoteToken.address;
         const exchangeAddress = addressFactory.build().address;
         const amount = new BigNumber('100');
         const price = new BigNumber(0.1);
@@ -101,14 +109,46 @@ describe('buildLimitOrder', () => {
         expect(order.takerAssetData).toEqual(assetDataUtils.encodeERC20AssetData(quoteTokenAddress));
     });
 });
+
 describe('buildMarketOrders', () => {
+    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
+    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+
+    const baseToken = ZrxToken;
+    const quoteToken = WethToken;
+    const baseTokenAddress = baseToken.address;
+    const quoteTokenAddress = quoteToken.address;
+    const basicRawOrder = {
+        makerAssetData: assetDataUtils.encodeERC20AssetData(baseTokenAddress),
+        takerAssetData: assetDataUtils.encodeERC20AssetData(quoteTokenAddress),
+    };
     it('should fill one order and partially fill another', () => {
+        const rawOrder1 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(3),
+            takerAssetAmount: new BigNumber(3),
+        };
+        const uiOrder1 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('1.0'),
+            size: new BigNumber(3),
+            rawOrder: rawOrder1,
+        });
+        const rawOrder2 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(4),
+            takerAssetAmount: new BigNumber(4),
+        };
+        const uiOrder2 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('1.0'),
+            size: new BigNumber(4),
+            rawOrder: rawOrder2,
+        });
+
         // given
         const amount = new BigNumber(5);
-        const orders = [
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.0'), size: new BigNumber(3) }),
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.0'), size: new BigNumber(4) }),
-        ];
+        const orders = [uiOrder1, uiOrder2];
 
         // when
         const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
@@ -120,13 +160,32 @@ describe('buildMarketOrders', () => {
 
     it('should take price into account', () => {
         // given
-        const amount = new BigNumber(5);
-        const orders = [
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.0'), size: new BigNumber(3) }),
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('2.0'), size: new BigNumber(4) }),
-        ];
+        const rawOrder1 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(3),
+            takerAssetAmount: new BigNumber(3),
+        };
+        const uiOrder1 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('1.0'),
+            size: new BigNumber(3),
+            rawOrder: rawOrder1,
+        });
+        const rawOrder2 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(8),
+            takerAssetAmount: new BigNumber(4),
+        };
+        const uiOrder2 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('2.0'),
+            size: new BigNumber(4),
+            rawOrder: rawOrder2,
+        });
+        const orders = [uiOrder1, uiOrder2];
 
         // when
+        const amount = new BigNumber(5);
         const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
@@ -134,35 +193,73 @@ describe('buildMarketOrders', () => {
         expect(amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
     });
 
-    it('should sort buy orders before filling them', () => {
+    it('should sort sell orders before filling them', () => {
         // given
-        const amount = new BigNumber(5);
-        const orders = [
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('2.0'), size: new BigNumber(4) }),
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.0'), size: new BigNumber(3) }),
-        ];
+        const rawOrder1 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(4),
+            takerAssetAmount: new BigNumber(2),
+        };
+        const uiOrder1 = uiOrder({
+            side: OrderSide.Sell,
+            price: new BigNumber('2.0'),
+            size: new BigNumber(4),
+            rawOrder: rawOrder1,
+        });
+        const rawOrder2 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(3),
+            takerAssetAmount: new BigNumber(3),
+        };
+        const uiOrder2 = uiOrder({
+            side: OrderSide.Sell,
+            price: new BigNumber('1.0'),
+            size: new BigNumber(3),
+            rawOrder: rawOrder2,
+        });
+        const orders = [uiOrder1, uiOrder2];
 
         // when
+        const amount = new BigNumber(5);
         const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
-        expect(ordersToFill).toEqual([orders[1].rawOrder, orders[0].rawOrder]);
+        expect(ordersToFill).toEqual([rawOrder2, rawOrder1]);
         expect(amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
     });
 
-    it('should sort sell orders before filling them', () => {
+    it('should sort buy orders before filling them', () => {
         // given
-        const amount = new BigNumber(5);
-        const orders = [
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.0'), size: new BigNumber(3) }),
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('2.0'), size: new BigNumber(4) }),
-        ];
+        const rawOrder1 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(3),
+            takerAssetAmount: new BigNumber(3),
+        };
+        const uiOrder1 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('1.0'),
+            size: new BigNumber(3),
+            rawOrder: rawOrder1,
+        });
+        const rawOrder2 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(4),
+            takerAssetAmount: new BigNumber(2),
+        };
+        const uiOrder2 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('2.0'),
+            size: new BigNumber(4),
+            rawOrder: rawOrder2,
+        });
+        const orders = [uiOrder1, uiOrder2];
 
         // when
+        const amount = new BigNumber(5);
         const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
-        expect(ordersToFill).toEqual([orders[1].rawOrder, orders[0].rawOrder]);
+        expect(ordersToFill).toEqual([rawOrder2, rawOrder1]);
         expect(amounts).toEqual([new BigNumber(4), new BigNumber(1)]);
     });
 
@@ -214,13 +311,32 @@ describe('buildMarketOrders', () => {
 
     it('should round amounts up', () => {
         // given
-        const amount = new BigNumber(5);
-        const orders = [
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('1.01'), size: new BigNumber(3) }),
-            uiOrder({ side: OrderSide.Buy, price: new BigNumber('2.0'), size: new BigNumber(4) }),
-        ];
+        const rawOrder1 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(3),
+            takerAssetAmount: new BigNumber('2,97029703'),
+        };
+        const uiOrder1 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('1.01'),
+            size: new BigNumber(3),
+            rawOrder: rawOrder1,
+        });
+        const rawOrder2 = {
+            ...basicRawOrder,
+            makerAssetAmount: new BigNumber(4),
+            takerAssetAmount: new BigNumber(2),
+        };
+        const uiOrder2 = uiOrder({
+            side: OrderSide.Buy,
+            price: new BigNumber('2.0'),
+            size: new BigNumber(4),
+            rawOrder: rawOrder2,
+        });
+        const orders = [uiOrder1, uiOrder2];
 
         // when
+        const amount = new BigNumber(5);
         const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
@@ -228,10 +344,16 @@ describe('buildMarketOrders', () => {
         expect(amounts).toEqual([new BigNumber(4), new BigNumber(4)]);
     });
 });
+
 describe('sumTakerAssetFillableOrders', () => {
+    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
+    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+
     const account = addressFactory.build().address;
-    const baseTokenAddress = addressFactory.build().address;
-    const quoteTokenAddress = addressFactory.build().address;
+    const baseToken = ZrxToken;
+    const quoteToken = WethToken;
+    const baseTokenAddress = baseToken.address;
+    const quoteTokenAddress = quoteToken.address;
     const exchangeAddress = addressFactory.build().address;
     // The check is the same on both scenarios, we will abstract it into a function here
     const getSumAndCheckExpectation = async (

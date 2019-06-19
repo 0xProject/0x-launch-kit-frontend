@@ -8,8 +8,11 @@ import { availableMarkets } from '../../common/markets';
 import { getMarketPriceEther } from '../../services/markets';
 import { getRelayer } from '../../services/relayer';
 import { getKnownTokens } from '../../util/known_tokens';
+import { getLogger } from '../../util/logger';
 import { CurrencyPair, Market, StoreState, ThunkCreator, Token } from '../../util/types';
 import { getOrderbookAndUserOrders } from '../actions';
+
+const logger = getLogger('Market::Actions');
 
 export const setMarketTokens = createAction('market/MARKET_TOKENS_set', resolve => {
     return ({ baseToken, quoteToken }: { baseToken: Token; quoteToken: Token }) => resolve({ baseToken, quoteToken });
@@ -37,10 +40,8 @@ export const fetchMarketPriceEtherUpdate = createAction('market/PRICE_ETHER_fetc
 });
 
 export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
-    return async (dispatch, getState, { getWeb3Wrapper }) => {
-        const web3Wrapper = await getWeb3Wrapper();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const knownTokens = getKnownTokens(networkId);
+    return async (dispatch, getState) => {
+        const knownTokens = getKnownTokens();
 
         dispatch(
             setMarketTokens({
@@ -70,27 +71,40 @@ export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
 };
 
 export const fetchMarkets: ThunkCreator = () => {
-    return async (dispatch, getState, { getWeb3Wrapper }) => {
-        const web3Wrapper = await getWeb3Wrapper();
-        const networkId = await web3Wrapper.getNetworkIdAsync();
-        const knownTokens = getKnownTokens(networkId);
+    return async dispatch => {
+        const knownTokens = getKnownTokens();
         const relayer = getRelayer();
 
-        const markets = await Promise.all(
-            availableMarkets.map(async market => {
-                const baseToken = knownTokens.getTokenBySymbol(market.base);
-                const quoteToken = knownTokens.getTokenBySymbol(market.quote);
+        let markets: any[] = await Promise.all(
+            availableMarkets.map(async availableMarket => {
+                try {
+                    const baseToken = knownTokens.getTokenBySymbol(availableMarket.base);
+                    const quoteToken = knownTokens.getTokenBySymbol(availableMarket.quote);
 
-                const price = await relayer.getCurrencyPairPriceAsync(baseToken, quoteToken);
+                    const price = await relayer.getCurrencyPairPriceAsync(baseToken, quoteToken);
 
-                return {
-                    currencyPair: market,
-                    price,
-                };
+                    return {
+                        currencyPair: availableMarket,
+                        price,
+                    };
+                } catch (err) {
+                    logger.error(
+                        `Failed to get price of currency pair ${availableMarket.base}/${availableMarket.quote}`,
+                    );
+                    return null;
+                }
             }),
         );
 
-        dispatch(setMarkets(markets));
+        markets = markets.filter(
+            (value: any): Market => {
+                return value && value.currencyPair;
+            },
+        );
+
+        if (markets && markets.length > 0) {
+            dispatch(setMarkets(markets));
+        }
         return markets;
     };
 };

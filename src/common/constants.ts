@@ -1,15 +1,12 @@
 import { BigNumber } from '0x.js';
 
+import { Network } from '../util/types';
+
 export const ERC20_APP_BASE_PATH = '/erc20';
 export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
 
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
-
-export const MAINNET_ID = 1;
-
-export const ETHERSCAN_MAINNET_URL = 'https://etherscan.io/tx/';
-export const ETHERSCAN_KOVAN_URL = 'https://kovan.etherscan.io/tx/';
 
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
@@ -21,17 +18,9 @@ export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS
 
 export const ETH_DECIMALS = 18;
 
-export const ETH_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
-
-export const ZEROX_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/0x/';
-
-export const CACHE_CHECK_INTERVAL: number = process.env.REACT_APP_CACHE_CHECK_INTERVAL
-    ? Number.parseInt(process.env.REACT_APP_CACHE_CHECK_INTERVAL as string, 10)
-    : 60000;
-
 export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
-export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
+export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 0;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
 
 export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
@@ -81,3 +70,7 @@ export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
     Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;
 
 export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
+
+export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || Network.Mainnet;
+
+export const NETWORK_NAME: string = Network[NETWORK_ID];

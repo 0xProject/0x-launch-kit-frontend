@@ -6,22 +6,31 @@ import { padRightSplitted } from '../../util/number_utils';
 
 interface ShowNumberWithColorsProps {
     num: BigNumber;
+    isHover?: boolean;
+}
+
+interface SpanRightProps {
+    isHover?: boolean;
 }
 
 class ShowNumberWithColors extends React.Component<ShowNumberWithColorsProps, {}> {
     public render = () => {
-        const { num } = this.props;
+        const { num, isHover } = this.props;
         const numSplitted = padRightSplitted(num);
         const SpanLeft = styled.span`
             color: ${props => props.theme.componentsTheme.textColorCommon};
         `;
-        const SpanRight = styled.span`
-            color: ${props => props.theme.componentsTheme.numberDecimalsColor};
+        const SpanRight = styled.span<SpanRightProps>`
+            color: ${props =>
+                props.isHover
+                    ? props.theme.componentsTheme.textColorCommon
+                    : props.theme.componentsTheme.numberDecimalsColor};
         `;
+
         return (
             <>
                 <SpanLeft>{numSplitted.num}</SpanLeft>
-                <SpanRight>{numSplitted.diff}</SpanRight>
+                <SpanRight isHover={isHover}>{numSplitted.diff}</SpanRight>
             </>
         );
     };

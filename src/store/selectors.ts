@@ -25,6 +25,7 @@ export const getWethBalance = (state: StoreState) =>
     state.blockchain.wethTokenBalance ? state.blockchain.wethTokenBalance.balance : new BigNumber(0);
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
+export const getOrderPriceSelected = (state: StoreState) => state.ui.orderPriceSelected;
 export const getNotifications = (state: StoreState) => state.ui.notifications;
 export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnreadNotifications;
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
@@ -37,7 +38,6 @@ export const getMarkets = (state: StoreState) => state.market.markets;
 export const getEthInUsd = (state: StoreState) => state.market.ethInUsd;
 export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.gasPriceInWei;
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;
-export const getNetworkId = (state: StoreState) => state.blockchain.networkId;
 export const getAllCollectibles = (state: StoreState) => state.collectibles.allCollectibles;
 export const getAllCollectiblesFetchStatus = (state: StoreState) => state.collectibles.allCollectiblesFetchStatus;
 export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
@@ -90,6 +90,7 @@ export const getOpenOrders = createSelector(
     (orders, web3State) => {
         switch (web3State) {
             case Web3State.NotInstalled:
+            case Web3State.Error:
             case Web3State.Locked: {
                 return orders;
             }
