@@ -1,7 +1,7 @@
 // tslint:disable:max-file-line-count
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import retry from 'async-retry';
-import { createAction } from 'typesafe-actions';
+import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT } from '../../common/constants';
 import { ConvertBalanceMustNotBeEqualException } from '../../exceptions/convert_balance_must_not_be_equal_exception';
@@ -44,6 +44,12 @@ import {
 import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
 const logger = getLogger('Blockchain::Actions');
+
+export const convertBalanceStateAsync = createAsyncAction(
+    'blockchain/CONVERT_BALANCE_STATE_fetch_request',
+    'blockchain/CONVERT_BALANCE_STATE_fetch_success',
+    'blockchain/CONVERT_BALANCE_STATE_fetch_failure',
+)<void, void, void>();
 
 export const initializeBlockchainData = createAction('blockchain/init', resolve => {
     return (blockchainData: Partial<BlockchainState>) => resolve(blockchainData);
@@ -143,6 +149,8 @@ export const updateTokenBalancesOnToggleTokenLock: ThunkCreator = (token: Token,
 
 export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: BigNumber) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        dispatch(convertBalanceStateAsync.request());
+
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
@@ -171,6 +179,7 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
                 getTransactionOptions(gasPrice),
             );
         } else {
+            dispatch(convertBalanceStateAsync.failure());
             throw new ConvertBalanceMustNotBeEqualException();
         }
 
@@ -203,6 +212,8 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
             : null;
 
         dispatch(setWethTokenBalance(newWethTokenBalance));
+
+        dispatch(convertBalanceStateAsync.success());
 
         return tx;
     };

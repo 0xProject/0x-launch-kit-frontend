@@ -21,6 +21,7 @@ export const getTokenBalances = (state: StoreState) => state.blockchain.tokenBal
 export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
 export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
 export const getWethTokenBalance = (state: StoreState) => state.blockchain.wethTokenBalance;
+export const getConvertBalanceState = (state: StoreState) => state.blockchain.convertBalanceState;
 export const getWethBalance = (state: StoreState) =>
     state.blockchain.wethTokenBalance ? state.blockchain.wethTokenBalance.balance : new BigNumber(0);
 export const getOrders = (state: StoreState) => state.relayer.orders;
