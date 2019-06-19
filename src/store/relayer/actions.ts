@@ -1,6 +1,7 @@
 import { BigNumber, SignedOrder } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
+import { ZERO_ADDRESS } from '../../common/constants';
 import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { RelayerException } from '../../exceptions/relayer_exception';
@@ -11,6 +12,7 @@ import {
     getUserOrdersAsUIOrders,
 } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
+import { isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
@@ -165,7 +167,8 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
 
-        const orders = side === OrderSide.Buy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+        const isBuy = side === OrderSide.Buy;
+        const orders = isBuy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
         const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
@@ -176,16 +179,34 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
         if (canBeFilled) {
             const baseToken = getBaseToken(state) as Token;
-
+            const quoteToken = getQuoteToken(state) as Token;
             const contractWrappers = await getContractWrappers();
-            const web3Wrapper = await getWeb3Wrapper();
-            const txHash = await contractWrappers.exchange.batchFillOrdersAsync(
-                ordersToFill,
-                amounts,
-                ethAccount,
-                getTransactionOptions(gasPrice),
-            );
 
+            let txHash;
+            if (isBuy && isWeth(quoteToken.symbol)) {
+                const ethAmount = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+                    return total.plus(currentValue);
+                }, new BigNumber(0));
+                txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+                    ordersToFill,
+                    amount,
+                    ethAccount,
+                    ethAmount,
+                    [],
+                    0,
+                    ZERO_ADDRESS,
+                    getTransactionOptions(gasPrice),
+                );
+            } else {
+                txHash = await contractWrappers.exchange.batchFillOrdersAsync(
+                    ordersToFill,
+                    amounts,
+                    ethAccount,
+                    getTransactionOptions(gasPrice),
+                );
+            }
+
+            const web3Wrapper = await getWeb3Wrapper();
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
             // tslint:disable-next-line:no-floating-promises
