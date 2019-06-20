@@ -153,16 +153,19 @@ export const createBuySellMarketSteps = (
     const tokenToUnlock = isBuy ? quoteToken : baseToken;
 
     const unlockTokenStep = getUnlockTokenStepIfNeeded(tokenToUnlock, tokenBalances, wethTokenBalance);
-    // Unlock token step should be added if it is a buy and
+    // Unlock token step should be added if it:
+    // 1) it's a sell, or
+    const isSell = unlockTokenStep && side === OrderSide.Sell;
+    // 2) is a buy and
     // base token is not weth and is locked, or
     // base token is weth, is locked and there is not enouth plain ETH to fill the order
-    if (
+    const isBuyWithWethConditions =
         isBuy &&
         unlockTokenStep &&
         (!isWeth(tokenToUnlock.symbol) ||
-            (isWeth(tokenToUnlock.symbol) && ethBalance.isLessThan(amount.multipliedBy(price))))
-    ) {
-        buySellMarketFlow.push(unlockTokenStep);
+            (isWeth(tokenToUnlock.symbol) && ethBalance.isLessThan(amount.multipliedBy(price))));
+    if (isSell || isBuyWithWethConditions) {
+        buySellMarketFlow.push(unlockTokenStep as Step);
     }
 
     // unlock zrx (for fees) if the taker fee is positive
