@@ -387,6 +387,9 @@ class WethModal extends React.Component<Props, State> {
         if (this.props.onRequestClose) {
             this.props.onRequestClose(e);
         }
+        this.setState({
+            selectedWeth: this.props.wethBalance,
+        });
     };
 
     private readonly _setMinEth: React.ReactEventHandler<HTMLAnchorElement> = e => {

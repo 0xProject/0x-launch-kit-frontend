@@ -12,10 +12,10 @@ import {
     UNEXPECTED_ERROR,
     USER_DENIED_TRANSACTION_SIGNATURE_ERR,
 } from '../../../exceptions/common';
+import { ConvertBalanceMustNotBeEqualException } from '../../../exceptions/convert_balance_must_not_be_equal_exception';
 import { InsufficientEthDepositBalanceException } from '../../../exceptions/insufficient_eth_deposit_balance_exception';
 import { UserDeniedTransactionSignatureException } from '../../../exceptions/user_denied_transaction_exception';
-import { getWeb3Wrapper } from '../../../services/web3_wrapper';
-import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
+import { stepsModalAdvanceStep, updateTokenBalances, updateWethBalance } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
@@ -36,6 +36,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateWeth: (newWethBalance: BigNumber) => Promise<any>;
+    updateTokenBalances: (txHash: string) => Promise<any>;
     advanceStep: () => void;
 }
 
@@ -105,13 +106,12 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     private readonly _convertWeth = async ({ onLoading, onDone, onError }: any) => {
-        const { step, advanceStep, ethBalance } = this.props;
+        const { step, advanceStep, ethBalance, updateWeth } = this.props;
         const { currentWethBalance, newWethBalance } = step;
         try {
-            const web3Wrapper = await getWeb3Wrapper();
-            const convertTxHash = await this.props.updateWeth(newWethBalance);
+            const convertTxHash = await updateWeth(newWethBalance);
             onLoading();
-            await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
+            await this.props.updateTokenBalances(convertTxHash);
             onDone();
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
@@ -122,11 +122,17 @@ class WrapEthStep extends React.Component<Props, State> {
                 exception = new UserDeniedTransactionSignatureException();
                 errorCaption = USER_DENIED_TRANSACTION_SIGNATURE_ERR;
             } else if (err.toString().includes(INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT)) {
-                const amount = newWethBalance.minus(currentWethBalance);
+                const amount = currentWethBalance.isGreaterThanOrEqualTo(newWethBalance)
+                    ? currentWethBalance.minus(newWethBalance)
+                    : newWethBalance.minus(currentWethBalance);
                 const currentEthAmount = tokenAmountInUnits(ethBalance, ETH_DECIMALS);
                 const ethNeeded = tokenAmountInUnits(amount, ETH_DECIMALS);
                 exception = new InsufficientEthDepositBalanceException(currentEthAmount, ethNeeded);
                 errorCaption = `You have ${currentEthAmount} ETH but you need ${ethNeeded} ETH to make this operation`;
+            } else if (err instanceof ConvertBalanceMustNotBeEqualException) {
+                exception = err;
+                errorCaption =
+                    'An unexpected error happened: tryed to wrap ETH so that the resulting ETH amount stays the same';
             }
             this.setState({ errorCaption });
             onError(exception);
@@ -147,6 +153,7 @@ const WrapEthStepContainer = connect(
     (dispatch: any) => {
         return {
             updateWeth: (newWethBalance: BigNumber) => dispatch(updateWethBalance(newWethBalance)),
+            updateTokenBalances: (txHash: string) => dispatch(updateTokenBalances(txHash)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },
