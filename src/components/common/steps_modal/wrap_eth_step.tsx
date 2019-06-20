@@ -15,7 +15,12 @@ import {
 import { ConvertBalanceMustNotBeEqualException } from '../../../exceptions/convert_balance_must_not_be_equal_exception';
 import { InsufficientEthDepositBalanceException } from '../../../exceptions/insufficient_eth_deposit_balance_exception';
 import { UserDeniedTransactionSignatureException } from '../../../exceptions/user_denied_transaction_exception';
-import { stepsModalAdvanceStep, updateTokenBalances, updateWethBalance } from '../../../store/actions';
+import {
+    convertBalanceStateAsync,
+    stepsModalAdvanceStep,
+    updateTokenBalances,
+    updateWethBalance,
+} from '../../../store/actions';
 import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
@@ -37,6 +42,7 @@ interface StateProps {
 interface DispatchProps {
     updateWeth: (newWethBalance: BigNumber) => Promise<any>;
     updateTokenBalances: (txHash: string) => Promise<any>;
+    convertBalanceState: { request: () => void; success: () => void; failure: () => void };
     advanceStep: () => void;
 }
 
@@ -106,12 +112,15 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     private readonly _convertWeth = async ({ onLoading, onDone, onError }: any) => {
-        const { step, advanceStep, ethBalance, updateWeth } = this.props;
+        const { step, advanceStep, ethBalance, updateWeth, convertBalanceState } = this.props;
         const { currentWethBalance, newWethBalance } = step;
+        const updateBalances = this.props.updateTokenBalances;
         try {
             const convertTxHash = await updateWeth(newWethBalance);
             onLoading();
-            await this.props.updateTokenBalances(convertTxHash);
+            convertBalanceState.request();
+            await updateBalances(convertTxHash);
+            convertBalanceState.success();
             onDone();
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
@@ -134,6 +143,11 @@ class WrapEthStep extends React.Component<Props, State> {
                 errorCaption =
                     'An unexpected error happened: tryed to wrap ETH so that the resulting ETH amount stays the same';
             }
+
+            // Enable convert button: some conditions are dealt with exceptions and we don't
+            // want to leave the button disabled
+            convertBalanceState.success();
+
             this.setState({ errorCaption });
             onError(exception);
         }
@@ -155,6 +169,11 @@ const WrapEthStepContainer = connect(
             updateWeth: (newWethBalance: BigNumber) => dispatch(updateWethBalance(newWethBalance)),
             updateTokenBalances: (txHash: string) => dispatch(updateTokenBalances(txHash)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
+            convertBalanceState: {
+                request: () => dispatch(convertBalanceStateAsync.request()),
+                success: () => dispatch(convertBalanceStateAsync.success()),
+                failure: () => dispatch(convertBalanceStateAsync.failure()),
+            },
         };
     },
 )(WrapEthStep);

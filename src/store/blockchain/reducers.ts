@@ -2,7 +2,7 @@ import { BigNumber } from '0x.js';
 import { getType } from 'typesafe-actions';
 
 import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE } from '../../common/constants';
-import { BlockchainState, Web3State } from '../../util/types';
+import { BlockchainState, ConvertBalanceState, Web3State } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
@@ -16,6 +16,7 @@ const initialBlockchainState: BlockchainState = {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
     },
+    convertBalanceState: ConvertBalanceState.Success,
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -42,6 +43,12 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             };
         case getType(actions.setEthBalance):
             return { ...state, ethBalance: action.payload };
+        case getType(actions.convertBalanceStateAsync.request):
+            return { ...state, convertBalanceState: ConvertBalanceState.Request };
+        case getType(actions.convertBalanceStateAsync.failure):
+            return { ...state, convertBalanceState: ConvertBalanceState.Failure };
+        case getType(actions.convertBalanceStateAsync.success):
+            return { ...state, convertBalanceState: ConvertBalanceState.Success };
         case getType(actions.initializeBlockchainData):
             return {
                 ...state,
