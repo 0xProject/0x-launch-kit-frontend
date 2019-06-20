@@ -1,9 +1,8 @@
-import { getTokenBalance, tokenToTokenBalance } from '../services/tokens';
 import { getWeb3Wrapper } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
 import { MARKETPLACES } from '../util/types';
 
-import { setEthBalance, setTokenBalances, setWethBalance, updateGasInfo } from './blockchain/actions';
+import { updateGasInfo, updateTokenBalances } from './blockchain/actions';
 import { getAllCollectibles } from './collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
@@ -22,14 +21,7 @@ export const updateStore = () => {
         const state = getState();
         const web3Wrapper = await getWeb3Wrapper();
         const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-        const knownTokens = getKnownTokens();
-        const wethToken = knownTokens.getWethToken();
-        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
-        const wethBalance = await getTokenBalance(wethToken, ethAccount);
-
-        // Generals update for both apps
-        dispatch(setEthBalance(ethBalance));
-        dispatch(setWethBalance(wethBalance));
+        dispatch(updateTokenBalances());
         dispatch(updateGasInfo());
         dispatch(updateMarketPriceEther());
 
@@ -54,16 +46,12 @@ export const updateERC20Store = (ethAccount: string) => {
         const state = getState();
         try {
             const knownTokens = getKnownTokens();
-            const tokenBalances = await Promise.all(
-                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-            );
             const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
-            dispatch(setTokenBalances(tokenBalances));
             await dispatch(fetchMarkets());
         } catch (error) {
             const knownTokens = getKnownTokens();
