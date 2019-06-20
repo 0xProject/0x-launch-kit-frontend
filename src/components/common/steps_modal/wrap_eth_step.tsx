@@ -15,7 +15,7 @@ import {
 import { ConvertBalanceMustNotBeEqualException } from '../../../exceptions/convert_balance_must_not_be_equal_exception';
 import { InsufficientEthDepositBalanceException } from '../../../exceptions/insufficient_eth_deposit_balance_exception';
 import { UserDeniedTransactionSignatureException } from '../../../exceptions/user_denied_transaction_exception';
-import { stepsModalAdvanceStep, updateWethBalance } from '../../../store/actions';
+import { stepsModalAdvanceStep, updateTokenBalances, updateWethBalance } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
@@ -36,6 +36,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateWeth: (newWethBalance: BigNumber) => Promise<any>;
+    updateTokenBalances: (txHash: string) => Promise<any>;
     advanceStep: () => void;
 }
 
@@ -108,8 +109,9 @@ class WrapEthStep extends React.Component<Props, State> {
         const { step, advanceStep, ethBalance, updateWeth } = this.props;
         const { currentWethBalance, newWethBalance } = step;
         try {
+            const convertTxHash = await updateWeth(newWethBalance);
             onLoading();
-            await updateWeth(newWethBalance);
+            await this.props.updateTokenBalances(convertTxHash);
             onDone();
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
@@ -129,7 +131,8 @@ class WrapEthStep extends React.Component<Props, State> {
                 errorCaption = `You have ${currentEthAmount} ETH but you need ${ethNeeded} ETH to make this operation`;
             } else if (err instanceof ConvertBalanceMustNotBeEqualException) {
                 exception = err;
-                errorCaption = err.toString();
+                errorCaption =
+                    'An unexpected error happened: tryed to wrap ETH so that the resulting ETH amount stays the same';
             }
             this.setState({ errorCaption });
             onError(exception);
@@ -150,6 +153,7 @@ const WrapEthStepContainer = connect(
     (dispatch: any) => {
         return {
             updateWeth: (newWethBalance: BigNumber) => dispatch(updateWethBalance(newWethBalance)),
+            updateTokenBalances: (txHash: string) => dispatch(updateTokenBalances(txHash)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },

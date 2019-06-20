@@ -1,6 +1,5 @@
 // tslint:disable:max-file-line-count
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
-import retry from 'async-retry';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT } from '../../common/constants';
@@ -9,13 +8,13 @@ import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
-import { tokenToTokenBalance } from '../../services/tokens';
+import { getTokenBalance, tokenToTokenBalance } from '../../services/tokens';
 import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
-import { getTransactionOptions } from '../../util/transactions';
+import { getBlockNumberFromTransactionHash, getTransactionOptions } from '../../util/transactions';
 import {
     BlockchainState,
     Collectible,
@@ -34,7 +33,6 @@ import {
     getCurrencyPair,
     getCurrentMarketPlace,
     getEthAccount,
-    getEthBalance,
     getGasPriceInWei,
     getMarkets,
     getTokenBalances,
@@ -148,74 +146,57 @@ export const updateTokenBalancesOnToggleTokenLock: ThunkCreator = (token: Token,
 };
 
 export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: BigNumber) => {
-    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
-        dispatch(convertBalanceStateAsync.request());
-
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const contractWrappers = await getContractWrappers();
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
-        const wethTokenBalance = getWethTokenBalance(state);
         const wethBalance = getWethBalance(state);
-        const ethBalanceFromState = getEthBalance(state);
-
-        const web3Wrapper = await getWeb3Wrapper();
         const wethAddress = getKnownTokens().getWethToken().address;
 
-        const contractWrappers = await getContractWrappers();
-
-        let tx: string;
+        let txHash: string;
         if (wethBalance.isLessThan(newWethBalance)) {
-            tx = await contractWrappers.etherToken.depositAsync(
+            txHash = await contractWrappers.etherToken.depositAsync(
                 wethAddress,
                 newWethBalance.minus(wethBalance),
                 ethAccount,
                 getTransactionOptions(gasPrice),
             );
         } else if (wethBalance.isGreaterThan(newWethBalance)) {
-            tx = await contractWrappers.etherToken.withdrawAsync(
+            txHash = await contractWrappers.etherToken.withdrawAsync(
                 wethAddress,
                 wethBalance.minus(newWethBalance),
                 ethAccount,
                 getTransactionOptions(gasPrice),
             );
         } else {
-            dispatch(convertBalanceStateAsync.failure());
-            throw new ConvertBalanceMustNotBeEqualException();
+            throw new ConvertBalanceMustNotBeEqualException(wethBalance, newWethBalance);
         }
 
-        const getBalanceInWei = async (): Promise<any> =>
-            retry(
-                async () => {
-                    await web3Wrapper.awaitTransactionSuccessAsync(tx);
-                    const ethBalanceRetry = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+        return txHash;
+    };
+};
 
-                    if (ethBalanceFromState.isEqualTo(ethBalanceRetry)) {
-                        throw new Error('Retry await until new ethBalance was mined');
-                    }
+export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string) => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const knownTokens = getKnownTokens();
 
-                    return ethBalanceRetry;
-                },
-                {
-                    retries: 5,
-                },
-            );
+        const tokenBalances = await Promise.all(
+            knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
+        );
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(setTokenBalances(tokenBalances));
 
-        const ethBalanceFromBlockchain = await getBalanceInWei();
-
-        dispatch(setEthBalance(ethBalanceFromBlockchain));
-
-        const newWethTokenBalance = wethTokenBalance
-            ? {
-                  ...wethTokenBalance,
-                  balance: newWethBalance,
-              }
-            : null;
-
-        dispatch(setWethTokenBalance(newWethTokenBalance));
-
-        dispatch(convertBalanceStateAsync.success());
-
-        return tx;
+        const web3Wrapper = await getWeb3Wrapper();
+        const blockNumber = await getBlockNumberFromTransactionHash(txHash);
+        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, blockNumber);
+        const wethToken = knownTokens.getWethToken();
+        const wethBalance = await getTokenBalance(wethToken, ethAccount);
+        dispatch(setEthBalance(ethBalance));
+        dispatch(setWethBalance(wethBalance));
+        return ethBalance;
     };
 };
 
