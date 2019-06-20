@@ -188,6 +188,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const ethBalance = selectors.getEthBalance(state);
         const totalEthBalance = selectors.getTotalEthBalance(state);
         const quoteTokenBalance = selectors.getQuoteTokenBalance(state);
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
@@ -216,12 +217,16 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
                 throw new InsufficientTokenBalanceException(baseToken.symbol);
             }
         } else {
-            // When buying, user should have enough QUOTE token
-            const ifWethQuoteTokenAndNotEnoughBalance =
+            // When buying and
+            // if quote token is weth, should have enough ETH + WETH balance, or
+            // if quote token is not weth, should have enough quote token balance
+            const ifEthAndWethNotEnoughBalance =
                 isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount);
             const ifOtherQuoteTokenAndNotEnoughBalance =
-                quoteTokenBalance && quoteTokenBalance.balance.isLessThan(totalFilledAmount);
-            if (ifWethQuoteTokenAndNotEnoughBalance || ifOtherQuoteTokenAndNotEnoughBalance) {
+                !isWeth(quoteToken.symbol) &&
+                quoteTokenBalance &&
+                quoteTokenBalance.balance.isLessThan(totalFilledAmount);
+            if (ifEthAndWethNotEnoughBalance || ifOtherQuoteTokenAndNotEnoughBalance) {
                 throw new InsufficientTokenBalanceException(quoteToken.symbol);
             }
         }
@@ -231,6 +236,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             quoteToken,
             tokenBalances,
             wethTokenBalance,
+            ethBalance,
             amount,
             side,
             price,

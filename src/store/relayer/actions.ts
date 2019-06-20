@@ -22,6 +22,7 @@ import { getAllCollectibles } from '../collectibles/actions';
 import {
     getBaseToken,
     getEthAccount,
+    getEthBalance,
     getGasPriceInWei,
     getOpenBuyOrders,
     getOpenSellOrders,
@@ -183,16 +184,21 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
             const quoteToken = getQuoteToken(state) as Token;
             const contractWrappers = await getContractWrappers();
 
+            // Check if the order is fillable using the forwarder
+            const ethBalance = getEthBalance(state) as BigNumber;
+            const ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+                return total.plus(currentValue);
+            }, new BigNumber(0));
+            const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
+            const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
+
             let txHash;
-            if (isBuy && isWeth(quoteToken.symbol)) {
-                const ethAmount = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
-                    return total.plus(currentValue);
-                }, new BigNumber(0));
+            if (isMarketBuyForwarder) {
                 txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
                     ordersToFill,
                     amount,
                     ethAccount,
-                    ethAmount,
+                    ethAmountRequired,
                     [],
                     0,
                     ZERO_ADDRESS,
