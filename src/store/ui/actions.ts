@@ -188,6 +188,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const ethBalance = selectors.getEthBalance(state);
         const totalEthBalance = selectors.getTotalEthBalance(state);
         const quoteTokenBalance = selectors.getQuoteTokenBalance(state);
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
@@ -210,18 +211,22 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
 
         const price = totalFilledAmount.div(amount);
 
-        // Case 1: the operation is SELL -> user should have enough BASE Token
         if (side === OrderSide.Sell) {
+            // When selling, user should have enough BASE Token
             if (baseTokenBalance && baseTokenBalance.balance.isLessThan(totalFilledAmount)) {
                 throw new InsufficientTokenBalanceException(baseToken.symbol);
             }
         } else {
-            // Case 2: the quote token is wETH and the user does not have enough to wrap and pay orders
-            if (isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount)) {
-                throw new InsufficientTokenBalanceException(quoteToken.symbol);
-            }
-            // Case 3: the operation is BUY -> user should have enough QUOTE token and the quoteToken is not wETH
-            if (quoteTokenBalance && quoteTokenBalance.balance.isLessThan(totalFilledAmount)) {
+            // When buying and
+            // if quote token is weth, should have enough ETH + WETH balance, or
+            // if quote token is not weth, should have enough quote token balance
+            const ifEthAndWethNotEnoughBalance =
+                isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount);
+            const ifOtherQuoteTokenAndNotEnoughBalance =
+                !isWeth(quoteToken.symbol) &&
+                quoteTokenBalance &&
+                quoteTokenBalance.balance.isLessThan(totalFilledAmount);
+            if (ifEthAndWethNotEnoughBalance || ifOtherQuoteTokenAndNotEnoughBalance) {
                 throw new InsufficientTokenBalanceException(quoteToken.symbol);
             }
         }
@@ -231,6 +236,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             quoteToken,
             tokenBalances,
             wethTokenBalance,
+            ethBalance,
             amount,
             side,
             price,
