@@ -64,6 +64,7 @@ export interface RelayerState {
 
 export interface UIState {
     readonly notifications: Notification[];
+    readonly fills: Fill[];
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
     readonly orderPriceSelected: BigNumber | null;
@@ -207,6 +208,17 @@ export enum NotificationKind {
     Market = 'Market',
     Limit = 'Limit',
     OrderFilled = 'OrderFilled',
+}
+
+export interface Fill {
+    id: string;
+    amountQuote: BigNumber;
+    amountBase: BigNumber;
+    tokenQuote: Token;
+    tokenBase: Token;
+    side: OrderSide;
+    price: string;
+    timestamp: Date;
 }
 
 interface BaseNotification {

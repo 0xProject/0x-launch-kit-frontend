@@ -12,6 +12,7 @@ const initialStepsModalState: StepsModalState = {
 
 const initialUIState: UIState = {
     notifications: [],
+    fills: [],
     hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
     orderPriceSelected: null,
@@ -73,6 +74,24 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
                     ...state,
                     notifications: [...newNotifications, ...state.notifications],
                     hasUnreadNotifications: true,
+                };
+            } else {
+                return state;
+            }
+        }
+        case getType(actions.setFills):
+            return { ...state, fills: action.payload };
+        case getType(actions.addFills): {
+            const newFills = action.payload.filter(fill => {
+                const doesAlreadyExist = state.fills
+                    .some(f => f.id === fill.id);
+                return !doesAlreadyExist;
+            });
+
+            if (newFills.length) {
+                return {
+                    ...state,
+                    fills: [...newFills, ...state.fills],
                 };
             } else {
                 return state;

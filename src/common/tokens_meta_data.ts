@@ -36,7 +36,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         name: 'KuboCoin',
         primaryColor: '#020202',
         addresses: {
-            1: '0x53d61fd3758f17e25e16b9389aa1f01e6c0c47db',
+            1: '0x4f76E85d067e219779A863ff18577846b3152F1F',
         },
     },
     {

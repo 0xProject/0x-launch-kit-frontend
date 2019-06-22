@@ -16,6 +16,7 @@ import {
 } from '../../util/steps_modals_generation';
 import {
     Collectible,
+    Fill,
     Notification,
     NotificationKind,
     OrderSide,
@@ -39,6 +40,14 @@ export const addNotifications = createAction('ui/NOTIFICATIONS_add', resolve => 
 
 export const setNotifications = createAction('ui/NOTIFICATIONS_set', resolve => {
     return (notifications: Notification[]) => resolve(notifications);
+});
+
+export const addFills = createAction('ui/FILLS_add', resolve => {
+    return (newFills: Fill[]) => resolve(newFills);
+});
+
+export const setFills = createAction('ui/FILLS_set', resolve => {
+    return (fills: Fill[]) => resolve(fills);
 });
 
 export const setOrderPriceSelected = createAction('ui/ORDER_PRICE_SELECTED_set', resolve => {

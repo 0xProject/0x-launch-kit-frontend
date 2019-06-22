@@ -1,11 +1,12 @@
 import { BigNumber } from '0x.js';
 
-import { NETWORK_ID, NOTIFICATIONS_LIMIT } from '../common/constants';
-import { Notification } from '../util/types';
+import { FILLS_LIMIT, NETWORK_ID, NOTIFICATIONS_LIMIT  } from '../common/constants';
+import { Fill, Notification } from '../util/types';
 
-const addPrefix = (key: string) => `0x-launch-kit-frontend.${key}`;
+const addPrefix = (key: string) => `VeriDex.${key}`;
 
 const notificationsKey = addPrefix('notifications');
+const fillsKey = addPrefix('fills');
 const hasUnreadNotificationsKey = addPrefix('hasUnreadNotifications');
 const lastBlockCheckedKey = addPrefix('lastBlockChecked');
 const adBlockMessageShownKey = addPrefix('adBlockMessageShown');
@@ -65,6 +66,9 @@ export class LocalStorage {
         return [];
     }
 
+
+
+
     public saveHasUnreadNotifications(hasUnreadNotifications: boolean, account: string): void {
         const currentStatuses = JSON.parse(this._storage.getItem(hasUnreadNotificationsKey) || '{}');
         const newStatuses = {
@@ -85,6 +89,56 @@ export class LocalStorage {
         }
         return false;
     }
+    public getFills(account: string): Fill[] {
+        const currentFills = JSON.parse(
+            this._storage.getItem(fillsKey) || '{}',
+            (key: string, value: string) => {
+                if (key === 'amountQuote' || key === 'amountBase') {
+                    return new BigNumber(value);
+                }
+                if (key === 'timestamp') {
+                    return new Date(value);
+                }
+                if (key === 'tx') {
+                    return Promise.resolve();
+                }
+                return value;
+            },
+        );
+        console.log(currentFills);
+        if (currentFills[NETWORK_ID] && currentFills[NETWORK_ID][account]) {
+            return currentFills[NETWORK_ID][account];
+        }
+        return [];
+    }
+    
+    public saveFills(fills: Fill[], account: string): void {
+        const currentFills = JSON.parse(this._storage.getItem(fillsKey) || '{}');
+        const newFills = {
+            ...currentFills,
+            [NETWORK_ID]: {
+                ...currentFills[NETWORK_ID],
+                [account]: fills,
+            },
+        };
+        // Sort array by timestamp property
+        newFills[NETWORK_ID][account] = newFills[NETWORK_ID][account].sort(
+                (a: Fill, b: Fill) => {
+                    const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
+                    const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
+                    return bTimestamp - aTimestamp;
+                },
+        );
+        // Limit number of fills
+        if (newFills[NETWORK_ID][account].length > FILLS_LIMIT) {
+            newFills[NETWORK_ID][account].length = FILLS_LIMIT;
+        }
+
+        this._storage.setItem(fillsKey, JSON.stringify(newFills));
+    }
+
+
+
 
     public saveLastBlockChecked(lastBlockChecked: number, account: string): void {
         const currentBlocks = JSON.parse(this._storage.getItem(lastBlockCheckedKey) || '{}');

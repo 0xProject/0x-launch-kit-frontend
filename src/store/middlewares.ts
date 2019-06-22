@@ -4,7 +4,8 @@ import { getType } from 'typesafe-actions';
 import { LocalStorage } from '../services/local_storage';
 
 import * as actions from './actions';
-import { getEthAccount, getHasUnreadNotifications, getNotifications } from './selectors';
+import { getEthAccount, getHasUnreadNotifications, getNotifications, getFills } from './selectors';
+import { FEE_RECIPIENT } from '../common/constants';
 
 const localStorage = new LocalStorage(window.localStorage);
 
@@ -31,6 +32,27 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
 
             break;
         }
+        case getType(actions.addFills): {
+            const state = getState();
+            const ethAccount = FEE_RECIPIENT;
+            const fills = getFills(state);
+    
+            localStorage.saveFills(fills, ethAccount);
+    
+            break;
+        }
+        case getType(actions.setFills): {
+            const state = getState();
+            const ethAccount = FEE_RECIPIENT;
+            const fills = getFills(state);
+            localStorage.saveFills(fills, ethAccount);
+
+            break;
+        }
+
+
+
+
         default:
             return result;
     }

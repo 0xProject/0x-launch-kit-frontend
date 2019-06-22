@@ -28,6 +28,7 @@ export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
 export const getOrderPriceSelected = (state: StoreState) => state.ui.orderPriceSelected;
 export const getNotifications = (state: StoreState) => state.ui.notifications;
+export const getFills = (state: StoreState) => state.ui.fills;
 export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnreadNotifications;
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
