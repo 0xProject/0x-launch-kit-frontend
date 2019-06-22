@@ -142,16 +142,30 @@ export const createBuySellMarketSteps = (
     quoteToken: Token,
     tokenBalances: TokenBalance[],
     wethTokenBalance: TokenBalance,
+    ethBalance: BigNumber,
     amount: BigNumber,
     side: OrderSide,
     price: BigNumber,
     takerFee: BigNumber,
 ): Step[] => {
     const buySellMarketFlow: Step[] = [];
-    const tokenToUnlock = side === OrderSide.Buy ? quoteToken : baseToken;
+    const isBuy = side === OrderSide.Buy;
+    const tokenToUnlock = isBuy ? quoteToken : baseToken;
+
     const unlockTokenStep = getUnlockTokenStepIfNeeded(tokenToUnlock, tokenBalances, wethTokenBalance);
-    if (unlockTokenStep) {
-        buySellMarketFlow.push(unlockTokenStep);
+    // Unlock token step should be added if it:
+    // 1) it's a sell, or
+    const isSell = unlockTokenStep && side === OrderSide.Sell;
+    // 2) is a buy and
+    // base token is not weth and is locked, or
+    // base token is weth, is locked and there is not enouth plain ETH to fill the order
+    const isBuyWithWethConditions =
+        isBuy &&
+        unlockTokenStep &&
+        (!isWeth(tokenToUnlock.symbol) ||
+            (isWeth(tokenToUnlock.symbol) && ethBalance.isLessThan(amount.multipliedBy(price))));
+    if (isSell || isBuyWithWethConditions) {
+        buySellMarketFlow.push(unlockTokenStep as Step);
     }
 
     // unlock zrx (for fees) if the taker fee is positive
@@ -163,8 +177,8 @@ export const createBuySellMarketSteps = (
     }
 
     // wrap the necessary ether if necessary
-    if (isWeth(quoteToken.symbol) && wethTokenBalance.balance.isLessThan(amount)) {
-        const wrapEthStep = getWrapEthStepIfNeeded(amount, price, side, wethTokenBalance);
+    if (isWeth(quoteToken.symbol)) {
+        const wrapEthStep = getWrapEthStepIfNeeded(amount, price, side, wethTokenBalance, ethBalance);
         if (wrapEthStep) {
             buySellMarketFlow.push(wrapEthStep);
         }
@@ -220,21 +234,33 @@ export const getWrapEthStepIfNeeded = (
     price: BigNumber,
     side: OrderSide,
     wethTokenBalance: TokenBalance,
+    ethBalance?: BigNumber,
 ): StepWrapEth | null => {
     // Weth needed only when creating a buy order
     if (side === OrderSide.Sell) {
         return null;
     }
 
-    const wethAmount = amount.multipliedBy(price);
+    const wethAmountNeeded = amount.multipliedBy(price);
+
+    // If we have enough WETH, we don't need to wrap
+    if (wethTokenBalance.balance.isGreaterThan(wethAmountNeeded)) {
+        return null;
+    }
+
+    // Weth needed only if not enough plain ETH to use forwarder
+    if (ethBalance && ethBalance.isGreaterThan(wethAmountNeeded)) {
+        return null;
+    }
+
     const wethBalance = wethTokenBalance.balance;
-    const deltaWeth = wethBalance.minus(wethAmount);
+    const deltaWeth = wethBalance.minus(wethAmountNeeded);
     // Need to wrap eth only if weth balance is not enough
     if (deltaWeth.isLessThan(0)) {
         return {
             kind: StepKind.WrapEth,
             currentWethBalance: wethBalance,
-            newWethBalance: wethAmount,
+            newWethBalance: wethAmountNeeded,
             context: 'order',
         };
     } else {

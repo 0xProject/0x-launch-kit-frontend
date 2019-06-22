@@ -4,10 +4,16 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
-import { getEthBalance, getEthInUsd, getWeb3State, getWethBalance } from '../../store/selectors';
+import {
+    getConvertBalanceState,
+    getEthBalance,
+    getEthInUsd,
+    getWeb3State,
+    getWethBalance,
+} from '../../store/selectors';
 import { Theme, themeDimensions } from '../../themes/commons';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Web3State } from '../../util/types';
+import { ConvertBalanceState, StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { LoadingWrapper } from '../common/loading';
@@ -20,6 +26,7 @@ interface StateProps {
     ethInUsd: BigNumber | null;
     web3State: Web3State;
     wethBalance: BigNumber;
+    convertBalanceState: ConvertBalanceState;
 }
 
 interface DispatchProps {
@@ -155,7 +162,16 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
     };
 
     public render = () => {
-        const { ethBalance, web3State, wethBalance, ethInUsd, theme, inDropdown, className } = this.props;
+        const {
+            ethBalance,
+            web3State,
+            wethBalance,
+            ethInUsd,
+            theme,
+            inDropdown,
+            className,
+            convertBalanceState,
+        } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.plus(wethBalance);
         const formattedEth = tokenAmountInUnits(ethBalance, 18);
@@ -163,6 +179,8 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         const formattedTotalEth = tokenAmountInUnits(totalEth, 18);
 
         let content: React.ReactNode;
+
+        const isButtonConvertDisable = convertBalanceState !== ConvertBalanceState.Success;
 
         if (web3State === Web3State.Loading) {
             content = <LoadingWrapper />;
@@ -173,7 +191,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <Label>ETH</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
-                    <Button onClick={this.openModal}>
+                    <Button disabled={isButtonConvertDisable} onClick={this.openModal}>
                         <ButtonLabel>Convert</ButtonLabel>
                         <ArrowUpDownIcon />
                     </Button>
@@ -263,6 +281,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         wethBalance: getWethBalance(state),
         web3State: getWeb3State(state),
         ethInUsd: getEthInUsd(state),
+        convertBalanceState: getConvertBalanceState(state),
     };
 };
 
