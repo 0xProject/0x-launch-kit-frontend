@@ -22,6 +22,14 @@ export const availableMarkets: CurrencyPair[] = [
         quote: TokenSymbol.Weth,
     },
     {
+        base: TokenSymbol.Nuke,
+        quote: TokenSymbol.Vsf,
+    },
+    {
+        base: TokenSymbol.Nuke,
+        quote: TokenSymbol.Weth,
+    },
+    {
         base: TokenSymbol.Ethplo,
         quote: TokenSymbol.Vsf,
     },

@@ -262,6 +262,7 @@ export enum TokenSymbol {
     Bomb = 'bomb',
     Ethplo = 'ethplo',
     Sntvt = 'sntvt',
+    Nuke = 'nuke',
 }
 
 export enum OrderType {

@@ -19,6 +19,7 @@ import { ReactComponent as GnoTokenIcon } from '../../../assets/icons/gno.svg';
 import { ReactComponent as KuboTokenIcon } from '../../../assets/icons/kubo.svg';
 import { ReactComponent as LinkTokenIcon } from '../../../assets/icons/link.svg';
 import { ReactComponent as LptTokenIcon } from '../../../assets/icons/lpt.svg';
+import { ReactComponent as NukeTokenIcon } from '../../../assets/icons/nuke.svg';
 import { ReactComponent as ManaTokenIcon } from '../../../assets/icons/mana.svg';
 import { ReactComponent as MkrTokenIcon } from '../../../assets/icons/mkr.svg';
 import { ReactComponent as MlnTokenIcon } from '../../../assets/icons/mln.svg';
@@ -65,6 +66,7 @@ const TokenIcons = {
     GnoTokenIcon,
     LinkTokenIcon,
     LptTokenIcon,
+    NukeTokenIcon,
     ManaTokenIcon,
     MkrTokenIcon,
     MlnTokenIcon,

@@ -40,12 +40,12 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         },
     },
     {
-        decimals: 6,
-        symbol: TokenSymbol.Ethplo,
-        name: 'ETHplode',
-        primaryColor: '#1b95e0',
+        decimals: 18,
+        symbol: TokenSymbol.Nuke,
+        name: 'Half Life',
+        primaryColor: '#fb3520',
         addresses: {
-            [Network.Mainnet]: '0xe0c6ce3e73029f201e5c0bedb97f67572a93711c',
+            [Network.Mainnet]: '0xc58c0Fca06908E66540102356f2E91edCaEB8D81',
         },
     },
     {
@@ -55,6 +55,15 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         primaryColor: '#fe2e57',
         addresses: {
             [Network.Mainnet]: '0x7865af71cf0b288b4e7f654f4f7851eb46a2b7f8',
+        },
+    },
+    {
+        decimals: 6,
+        symbol: TokenSymbol.Ethplo,
+        name: 'ETHplode',
+        primaryColor: '#1b95e0',
+        addresses: {
+            [Network.Mainnet]: '0xe0c6ce3e73029f201e5c0bedb97f67572a93711c',
         },
     },
     {

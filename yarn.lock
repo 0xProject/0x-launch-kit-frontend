@@ -10448,11 +10448,6 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-adsense@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/react-adsense/-/react-adsense-0.0.6.tgz#0ceaaba47280e89c346ec68a38a2aa0b56d55208"
-  integrity sha512-B1NOJFkURbW+1Gi5J7IxXkIsZ9dAI8MFQpEYfrbfsh7ZdVgOeCcrxjV/3tWpjLiAXCDqVy7yJVn+WecSn7WMow==
-
 react-app-polyfill@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-app-polyfill/-/react-app-polyfill-1.0.0.tgz#735c725c1d4261b710cb200c498789c8b80e0f74"
