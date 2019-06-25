@@ -3,11 +3,11 @@ import { assetDataUtils, BigNumber, Order } from '0x.js';
 import { getKnownTokens } from '../../util/known_tokens';
 import * as utilOrders from '../../util/orders';
 import { addressFactory, uiOrder } from '../../util/test-utils';
-import { OrderSide, TokenSymbol } from '../../util/types';
+import { OrderSide } from '../../util/types';
 
 describe('buildLimitOrder', () => {
-    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
-    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+    const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
+    const WethToken = getKnownTokens().getTokenBySymbol('weth');
 
     it('should build a buy order', async () => {
         // given
@@ -111,8 +111,8 @@ describe('buildLimitOrder', () => {
 });
 
 describe('buildMarketOrders', () => {
-    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
-    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+    const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
+    const WethToken = getKnownTokens().getTokenBySymbol('weth');
 
     const baseToken = ZrxToken;
     const quoteToken = WethToken;
@@ -346,8 +346,8 @@ describe('buildMarketOrders', () => {
 });
 
 describe('sumTakerAssetFillableOrders', () => {
-    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
-    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+    const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
+    const WethToken = getKnownTokens().getTokenBySymbol('weth');
 
     const account = addressFactory.build().address;
     const baseToken = ZrxToken;

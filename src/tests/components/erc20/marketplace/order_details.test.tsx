@@ -40,7 +40,6 @@ describe('OrderDetails', () => {
         // when
         const wrapper = shallow(
             <OrderDetails
-                networkId={50}
                 orderSide={OrderSide.Sell}
                 orderType={OrderType.Limit}
                 tokenAmount={makerAmount}
@@ -123,7 +122,6 @@ describe('OrderDetails', () => {
         // when
         const wrapper = shallow(
             <OrderDetails
-                networkId={50}
                 orderType={OrderType.Market}
                 orderSide={OrderSide.Buy}
                 tokenAmount={makerAmount}
@@ -206,7 +204,6 @@ describe('OrderDetails', () => {
         // when
         const wrapper = shallow(
             <OrderDetails
-                networkId={50}
                 orderType={OrderType.Market}
                 orderSide={OrderSide.Buy}
                 tokenAmount={makerAmount}
@@ -287,7 +284,6 @@ describe('OrderDetails', () => {
         // when
         const wrapper = shallow(
             <OrderDetails
-                networkId={50}
                 orderType={OrderType.Market}
                 orderSide={OrderSide.Buy}
                 tokenAmount={makerAmount}
