@@ -6,8 +6,8 @@ import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import { changeMarket, goToHome } from '../../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
+import { getKnownTokens } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
-import { getTokenMetaDataFromSymbol, tokenToTokenMetaData } from '../../../util/token_meta_data';
 import { CurrencyPair, Market, StoreState, Token } from '../../../util/types';
 import { CardBase } from '../../common/card_base';
 import { Dropdown } from '../../common/dropdown';
@@ -254,7 +254,7 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     public render = () => {
         const { currencyPair, baseToken, ...restProps } = this.props;
-        const baseTokenMetaData = baseToken && tokenToTokenMetaData(baseToken);
+        const baseTokenMetaData = baseToken && getKnownTokens().getTokenMetaDataBySymbol(baseToken.symbol);
 
         const header = (
             <MarketsDropdownHeader>
@@ -368,7 +368,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                             market.currencyPair.quote === currencyPair.quote;
                         const setSelectedMarket = () => this._setSelectedMarket(market.currencyPair);
 
-                        const tokenMetaData = getTokenMetaDataFromSymbol(market.currencyPair.base);
+                        const tokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(market.currencyPair.base);
 
                         const baseSymbol = market.currencyPair.base.toUpperCase();
                         const quoteSymbol = market.currencyPair.quote.toUpperCase();

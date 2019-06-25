@@ -32,10 +32,6 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
         );
 };
 
-export const tokenToTokenMetaData = (token: Token): TokenMetaData => {
-    return getTokenMetaDataFromSymbol(token.symbol);
-};
-
 export const getTokenMetaDataFromSymbol = (symbol: string): TokenMetaData => {
     return KNOWN_TOKENS_META_DATA.filter(tokenMetaData => tokenMetaData.symbol === symbol)[0];
 };

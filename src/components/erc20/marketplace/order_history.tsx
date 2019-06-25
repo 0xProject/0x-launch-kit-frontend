@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
+import { getKnownTokens } from '../../../util/known_tokens';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
@@ -30,12 +31,15 @@ const SideTD = styled(CustomTD)<{ side: OrderSide }>`
 
 const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
     const sideLabel = order.side === OrderSide.Sell ? 'Sell' : 'Buy';
-    const size = tokenAmountInUnits(order.size, baseToken.decimals);
+    const baseTokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(baseToken.symbol);
+    const size = tokenAmountInUnits(order.size, baseToken.decimals, baseTokenMetaData.displayDecimals);
     let filled = null;
     let status = '--';
     let isOrderFillable = false;
 
-    order.filled ? (filled = tokenAmountInUnits(order.filled, baseToken.decimals)) : (filled = null);
+    order.filled
+        ? (filled = tokenAmountInUnits(order.filled, baseTokenMetaData.decimals, baseTokenMetaData.displayDecimals))
+        : (filled = null);
     if (order.status) {
         isOrderFillable = order.status === OrderStatus.Fillable;
         status = isOrderFillable ? 'Open' : 'Filled';

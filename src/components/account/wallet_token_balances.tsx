@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
 import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
-import { tokenToTokenMetaData } from '../../util/token_meta_data';
+import { getKnownTokens } from '../../util/known_tokens';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -131,7 +131,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
         const wethToken = wethTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
-        const wethTokenMetaData = tokenToTokenMetaData(wethToken);
+        const wethTokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(wethToken.symbol);
         const formattedTotalEthBalance = tokenAmountInUnits(
             totalEth,
             wethTokenMetaData.decimals,
@@ -167,7 +167,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const tokensRows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
-            const tokenMetaData = tokenToTokenMetaData(token);
+            const tokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(token.symbol);
             const formattedBalance = tokenAmountInUnits(balance, tokenMetaData.decimals, tokenMetaData.displayDecimals);
             const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
 

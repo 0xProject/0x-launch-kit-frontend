@@ -3,7 +3,11 @@ import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 import { getLogger } from '../util/logger';
 
-import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
+import {
+    getTokenMetaDataFromSymbol,
+    getWethTokenFromTokensMetaDataByNetworkId,
+    mapTokensMetaDataToTokenByNetworkId,
+} from './token_meta_data';
 import { Token } from './types';
 
 const logger = getLogger('Tokens::known_tokens .ts');
@@ -16,6 +20,9 @@ export class KnownTokens {
         this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
     }
+    public getTokenMetaDataBySymbol = (symbol: string): TokenMetaData => {
+        return getTokenMetaDataFromSymbol(symbol);
+    };
 
     public getTokenBySymbol = (symbol: string): Token => {
         const symbolInLowerCaseScore = symbol.toLowerCase();
