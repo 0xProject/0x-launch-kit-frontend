@@ -25,6 +25,7 @@ export interface Token {
     name: string;
     symbol: string;
     primaryColor: string;
+    icon?: string;
 }
 
 export interface TokenBalance {

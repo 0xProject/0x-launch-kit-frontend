@@ -83,6 +83,7 @@ export const tokenFactory = Factory.Sync.makeFactory<Token>({
     primaryColor: '#ff0000',
     // @ts-ignore
     symbol: Factory.each(i => `MOCK${i}`),
+    icon: '',
 });
 
 export const tokenMetaDataFactory = Factory.Sync.makeFactory<TokenMetaData>({
@@ -94,6 +95,7 @@ export const tokenMetaDataFactory = Factory.Sync.makeFactory<TokenMetaData>({
     primaryColor: '#ff0000',
     // @ts-ignore
     symbol: Factory.each(i => `MOCK${i}`),
+    icon: '',
 });
 
 export const tokenBalanceFactory = Factory.Sync.makeFactory<TokenBalance>({

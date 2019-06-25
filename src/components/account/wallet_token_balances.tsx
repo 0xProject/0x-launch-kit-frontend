@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
 import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
+import { tokenToTokenMetaData } from '../../util/token_meta_data';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -130,13 +131,22 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
         const wethToken = wethTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
-        const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals);
+        const wethTokenMetaData = tokenToTokenMetaData(wethToken);
+        const formattedTotalEthBalance = tokenAmountInUnits(
+            totalEth,
+            wethTokenMetaData.decimals,
+            wethTokenMetaData.displayDecimals,
+        );
         const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
 
         const totalEthRow = (
             <TR>
                 <TokenTD>
-                    <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
+                    <TokenIconStyled
+                        symbol={wethToken.symbol}
+                        primaryColor={wethToken.primaryColor}
+                        icon={wethToken.icon}
+                    />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>
                     <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
@@ -157,13 +167,14 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const tokensRows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
-            const formattedBalance = tokenAmountInUnits(balance, token.decimals);
+            const tokenMetaData = tokenToTokenMetaData(token);
+            const formattedBalance = tokenAmountInUnits(balance, tokenMetaData.decimals, tokenMetaData.displayDecimals);
             const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
 
             return (
                 <TR key={symbol}>
                     <TokenTD>
-                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} />
+                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} />
                     </TokenTD>
                     <CustomTDTokenName styles={{ borderBottom: true }}>
                         <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
