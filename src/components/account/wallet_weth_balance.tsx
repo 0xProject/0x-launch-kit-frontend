@@ -175,22 +175,10 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.plus(wethBalance);
-        const wethTokenMetadata = getKnownTokens().getTokenMetaDataBySymbol('weth');
-        const formattedEth = tokenAmountInUnits(
-            ethBalance,
-            wethTokenMetadata.decimals,
-            wethTokenMetadata.displayDecimals,
-        );
-        const formattedWeth = tokenAmountInUnits(
-            wethBalance,
-            wethTokenMetadata.decimals,
-            wethTokenMetadata.displayDecimals,
-        );
-        const formattedTotalEth = tokenAmountInUnits(
-            totalEth,
-            wethTokenMetadata.decimals,
-            wethTokenMetadata.displayDecimals,
-        );
+        const wethToken = getKnownTokens().getWethToken();
+        const formattedEth = tokenAmountInUnits(ethBalance, wethToken.decimals, wethToken.displayDecimals);
+        const formattedWeth = tokenAmountInUnits(wethBalance, wethToken.decimals, wethToken.displayDecimals);
+        const formattedTotalEth = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
 
         let content: React.ReactNode;
 

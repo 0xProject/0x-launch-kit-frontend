@@ -6,17 +6,21 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
-import { TokenBalance, Web3State } from '../../../util/types';
+import { Token, TokenBalance, Web3State } from '../../../util/types';
 import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
 
 const noop = () => ({});
 const ZERO = new BigNumber(0);
+const tokenDefaults = {
+    displayDecimals: 2,
+    primaryColor: 'white',
+    decimals: 18,
+};
 const wethTokenBalance = {
     balance: ZERO,
     token: {
-        primaryColor: 'white',
+        ...tokenDefaults,
         address: '0x100',
-        decimals: 18,
         symbol: 'WETH',
         name: 'wETH',
     },
@@ -29,9 +33,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
                     symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
@@ -40,9 +43,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
                     symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
@@ -51,9 +53,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
                     symbol: 'MOCK3',
                     name: 'MOCK3',
                 },
@@ -81,9 +82,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
                     symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
@@ -92,9 +92,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
                     symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
@@ -103,9 +102,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
                     symbol: 'MOCK3',
                     name: 'MOCK3',
                 },
@@ -132,9 +130,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
                     symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
@@ -143,9 +140,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
                     symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
@@ -154,9 +150,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
                     symbol: 'MOCK3',
                     name: 'MOCK3',
                 },
@@ -191,9 +186,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
                     symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
@@ -202,9 +196,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
                     symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
@@ -213,9 +206,8 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
                     symbol: 'MOCK3',
                     name: 'MOCK3',
                 },

@@ -173,11 +173,11 @@ class OrderDetails extends React.Component<Props, State> {
 
     private readonly _getFeeStringForRender = () => {
         const { feeInZrx } = this.state;
-        const feeTokenMetaData = getKnownTokens().getTokenMetaDataBySymbol('zrx');
+        const feeToken = getKnownTokens().getTokenBySymbol('zrx');
         return `${tokenAmountInUnits(
             feeInZrx,
-            feeTokenMetaData.decimals,
-            feeTokenMetaData.displayDecimals,
+            feeToken.decimals,
+            feeToken.displayDecimals,
         )} ${tokenSymbolToDisplayString('ZRX')}`;
     };
 
@@ -189,12 +189,12 @@ class OrderDetails extends React.Component<Props, State> {
         }
 
         const { quote } = this.props.currencyPair;
-        const quoteTokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(quote);
+        const quoteToken = getKnownTokens().getTokenBySymbol(quote);
         const { quoteTokenAmount } = this.state;
         return `${tokenAmountInUnits(
             quoteTokenAmount,
-            quoteTokenMetaData.decimals,
-            quoteTokenMetaData.displayDecimals,
+            quoteToken.decimals,
+            quoteToken.displayDecimals,
         )} ${tokenSymbolToDisplayString(quote)}`;
     };
 }

@@ -26,6 +26,7 @@ export interface Token {
     symbol: string;
     primaryColor: string;
     icon?: string;
+    displayDecimals: number;
 }
 
 export interface TokenBalance {

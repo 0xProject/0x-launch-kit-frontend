@@ -254,17 +254,16 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     public render = () => {
         const { currencyPair, baseToken, ...restProps } = this.props;
-        const baseTokenMetaData = baseToken && getKnownTokens().getTokenMetaDataBySymbol(baseToken.symbol);
 
         const header = (
             <MarketsDropdownHeader>
                 <MarketsDropdownHeaderText>
-                    {baseTokenMetaData ? (
+                    {baseToken ? (
                         <DropdownTokenIcon
-                            symbol={baseTokenMetaData.symbol}
-                            primaryColor={baseTokenMetaData.primaryColor}
+                            symbol={baseToken.symbol}
+                            primaryColor={baseToken.primaryColor}
                             isInline={true}
-                            icon={baseTokenMetaData.icon}
+                            icon={baseToken.icon}
                         />
                     ) : null}
                     {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
@@ -368,7 +367,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                             market.currencyPair.quote === currencyPair.quote;
                         const setSelectedMarket = () => this._setSelectedMarket(market.currencyPair);
 
-                        const tokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(market.currencyPair.base);
+                        const token = getKnownTokens().getTokenBySymbol(market.currencyPair.base);
 
                         const baseSymbol = market.currencyPair.base.toUpperCase();
                         const quoteSymbol = market.currencyPair.quote.toUpperCase();
@@ -378,9 +377,9 @@ class MarketsDropdown extends React.Component<Props, State> {
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
                                     <TokenIconAndLabel>
                                         <TokenIcon
-                                            symbol={market.currencyPair.base}
-                                            primaryColor={tokenMetaData.primaryColor}
-                                            icon={tokenMetaData.icon}
+                                            symbol={token.symbol}
+                                            primaryColor={token.primaryColor}
+                                            icon={token.icon}
                                         />
                                         <TokenLabel>
                                             {baseSymbol} / {quoteSymbol}

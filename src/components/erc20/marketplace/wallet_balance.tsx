@@ -16,7 +16,7 @@ import {
     getWeb3State,
 } from '../../../store/selectors';
 import { errorsWallet } from '../../../util/error_messages';
-import { getKnownTokens, isWeth } from '../../../util/known_tokens';
+import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
 import { Button } from '../../common/button';
@@ -222,18 +222,16 @@ class WalletBalance extends React.Component<Props, State> {
         } = this.props;
 
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
-            const quoteTokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(quoteToken.symbol);
-            const baseTokenMetaData = getKnownTokens().getTokenMetaDataBySymbol(baseTokenBalance.token.symbol);
             const quoteTokenBalanceAmount = isWeth(quoteToken.symbol) ? totalEthBalance : quoteTokenBalance.balance;
             const quoteBalanceString = tokenAmountInUnits(
                 quoteTokenBalanceAmount,
-                quoteTokenMetaData.decimals,
-                quoteTokenMetaData.displayDecimals,
+                quoteToken.decimals,
+                quoteToken.displayDecimals,
             );
             const baseBalanceString = tokenAmountInUnits(
                 baseTokenBalance.balance,
-                baseTokenMetaData.decimals,
-                baseTokenMetaData.displayDecimals,
+                baseTokenBalance.token.decimals,
+                baseTokenBalance.token.displayDecimals,
             );
             const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />

@@ -4,14 +4,18 @@ import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_dat
 import { Token } from './types';
 
 export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
-    const tokenMetadata = tokensMetaData.find(tokenMetaData => tokenMetaData.symbol === 'weth') as TokenMetaData;
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'weth');
+    if (!tokenMetaData) {
+        throw new Error('WETH Token MetaData not found');
+    }
     return {
-        address: tokenMetadata.addresses[NETWORK_ID],
-        symbol: tokenMetadata.symbol,
-        decimals: tokenMetadata.decimals,
-        name: tokenMetadata.name,
-        primaryColor: tokenMetadata.primaryColor,
-        icon: tokenMetadata.icon,
+        address: tokenMetaData.addresses[NETWORK_ID],
+        symbol: tokenMetaData.symbol,
+        decimals: tokenMetaData.decimals,
+        name: tokenMetaData.name,
+        primaryColor: tokenMetaData.primaryColor,
+        icon: tokenMetaData.icon,
+        displayDecimals: tokenMetaData.displayDecimals || 2,
     };
 };
 
@@ -27,6 +31,7 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                     name: tokenMetaData.name,
                     primaryColor: tokenMetaData.primaryColor,
                     icon: tokenMetaData.icon,
+                    displayDecimals: tokenMetaData.displayDecimals || 2,
                 };
             },
         );
