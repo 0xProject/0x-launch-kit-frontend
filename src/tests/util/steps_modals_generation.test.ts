@@ -12,10 +12,14 @@ import { unitsInTokenAmount } from '../../util/tokens';
 import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, TokenBalance } from '../../util/types';
 
 const ZERO = new BigNumber(0);
-const wethToken = {
+const tokenDefaults = {
     primaryColor: 'white',
-    address: '0x100',
     decimals: 18,
+    displayDecimals: 2,
+};
+const wethToken = {
+    ...tokenDefaults,
+    address: '0x100',
     symbol: 'WETH',
     name: 'wETH',
 };
@@ -24,9 +28,8 @@ const tokenBalances: TokenBalance[] = [
     {
         balance: new BigNumber(1),
         token: {
-            primaryColor: 'white',
+            ...tokenDefaults,
             address: '0x1',
-            decimals: 18,
             symbol: 'zrx',
             name: 'Zrx',
         },
@@ -35,9 +38,8 @@ const tokenBalances: TokenBalance[] = [
     {
         balance: new BigNumber(1),
         token: {
-            primaryColor: 'white',
+            ...tokenDefaults,
             address: '0x2',
-            decimals: 18,
             symbol: 'mkr',
             name: 'Mkr',
         },
@@ -46,9 +48,8 @@ const tokenBalances: TokenBalance[] = [
     {
         balance: new BigNumber(1),
         token: {
-            primaryColor: 'white',
+            ...tokenDefaults,
             address: '0x3',
-            decimals: 18,
             symbol: 'rep',
             name: 'Augur',
         },
@@ -57,9 +58,8 @@ const tokenBalances: TokenBalance[] = [
     {
         balance: new BigNumber(1),
         token: {
-            primaryColor: 'white',
+            ...tokenDefaults,
             address: '0x3',
-            decimals: 18,
             symbol: 'dgd',
             name: 'Digi',
         },
@@ -68,9 +68,8 @@ const tokenBalances: TokenBalance[] = [
     {
         balance: new BigNumber(1),
         token: {
-            primaryColor: 'white',
+            ...tokenDefaults,
             address: '0x3',
-            decimals: 18,
             symbol: 'mln',
             name: 'Melon',
         },
