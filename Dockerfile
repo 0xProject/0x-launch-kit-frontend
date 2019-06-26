@@ -6,7 +6,8 @@ RUN apk update && \
     apk upgrade && \
     apk add --no-cache --virtual build-dependencies bash git openssh python make g++ && \
     yarn --no-cache && \
-    apk del build-dependencies
+    apk del build-dependencies && \
+    yarn cache clean
 COPY . .
 RUN yarn build
 
