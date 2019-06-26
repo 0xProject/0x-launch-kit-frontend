@@ -6,7 +6,7 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
-import { Token, TokenBalance, Web3State } from '../../../util/types';
+import { TokenBalance, Web3State } from '../../../util/types';
 import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
 
 const noop = () => ({});
