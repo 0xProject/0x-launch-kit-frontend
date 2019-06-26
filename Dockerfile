@@ -13,6 +13,7 @@ FROM  node:8-alpine as react-build
 WORKDIR /app
 COPY --from=yarn-install /app/node_modules /app/node_modules
 COPY . .
+RUN yarn build
 
 # Stage 2 - the production environment
 FROM nginx:alpine
