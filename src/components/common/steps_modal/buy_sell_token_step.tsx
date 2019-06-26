@@ -6,7 +6,7 @@ import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
-import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
+import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';

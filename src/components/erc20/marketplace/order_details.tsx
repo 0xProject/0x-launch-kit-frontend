@@ -119,6 +119,8 @@ class OrderDetails extends React.Component<Props, State> {
     public render = () => {
         const fee = this._getFeeStringForRender();
         const cost = this._getCostStringForRender();
+        const { orderSide } = this.props;
+        const costText = orderSide === OrderSide.Sell ? 'Total' : 'Cost';
         return (
             <>
                 <LabelContainer>
@@ -129,7 +131,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>{fee}</Value>
                 </Row>
                 <Row>
-                    <CostLabel>Cost</CostLabel>
+                    <CostLabel>{costText}</CostLabel>
                     <CostValue>{cost}</CostValue>
                 </Row>
             </>
