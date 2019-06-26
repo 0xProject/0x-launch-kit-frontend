@@ -32,7 +32,7 @@ const Label = styled.label`
 
 const TokenIconContainer = (props: Props) => {
     const { symbol, primaryColor, theme, icon, ...restProps } = props;
-    const fallBack = <Label> {symbol && symbol.toUpperCase()}</Label>;
+    const fallBack = <Label>{symbol && symbol.toUpperCase()}</Label>;
     const Icon =
         // tslint:disable-next-line:jsx-no-lambda
         icon ? <ReactSVG src={icon as string} fallback={() => fallBack} /> : fallBack;

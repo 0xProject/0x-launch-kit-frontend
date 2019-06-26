@@ -29,6 +29,8 @@ const wethToken: Token = {
     decimals: dummyTokensMetaData[0].decimals,
     name: dummyTokensMetaData[0].name,
     primaryColor: '#ccc',
+    displayDecimals: 2,
+    icon: undefined,
 };
 const zrxToken: Token = {
     address: dummyTokensMetaData[1].addresses[NETWORK_ID],
@@ -36,6 +38,8 @@ const zrxToken: Token = {
     decimals: dummyTokensMetaData[1].decimals,
     name: dummyTokensMetaData[1].name,
     primaryColor: '#ccc',
+    displayDecimals: 2,
+    icon: undefined,
 };
 
 const fillEvent1 = {
