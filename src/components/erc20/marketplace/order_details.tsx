@@ -1,4 +1,5 @@
 import { BigNumber } from '0x.js';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -6,12 +7,9 @@ import styled from 'styled-components';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
-import { getLogger } from '../../../util/logger';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, UIOrder } from '../../../util/types';
-
-const logger = getLogger('OrderDetails');
 
 const Row = styled.div`
     align-items: center;
@@ -146,7 +144,12 @@ class OrderDetails extends React.Component<Props, State> {
 
         if (orderType === OrderType.Limit) {
             const { tokenAmount, tokenPrice, onFetchTakerAndMakerFee } = this.props;
-            const quoteTokenAmount = tokenAmount.multipliedBy(tokenPrice);
+            const { quote, base } = currencyPair;
+            const quoteToken = getKnownTokens().getTokenBySymbol(quote);
+            const baseToken = getKnownTokens().getTokenBySymbol(base);
+            const priceInQuoteBaseUnits = Web3Wrapper.toBaseUnitAmount(tokenPrice, quoteToken.decimals);
+            const baseTokenAmountInUnits = Web3Wrapper.toUnitAmount(tokenAmount, baseToken.decimals);
+            const quoteTokenAmount = baseTokenAmountInUnits.multipliedBy(priceInQuoteBaseUnits);
             const { makerFee } = await onFetchTakerAndMakerFee(tokenAmount, tokenPrice, orderSide);
             this.setState({
                 feeInZrx: makerFee,
@@ -164,7 +167,7 @@ class OrderDetails extends React.Component<Props, State> {
             );
             const feeInZrx = ordersToFill.reduce((sum, order) => sum.plus(order.takerFee), new BigNumber(0));
             const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, ordersToFill, amountToPayForEachOrder);
-            logger.info('quoteTokenAmount', quoteTokenAmount.toString());
+
             this.setState({
                 feeInZrx,
                 quoteTokenAmount,
@@ -193,11 +196,8 @@ class OrderDetails extends React.Component<Props, State> {
         const { quote } = this.props.currencyPair;
         const quoteToken = getKnownTokens().getTokenBySymbol(quote);
         const { quoteTokenAmount } = this.state;
-        return `${tokenAmountInUnits(
-            quoteTokenAmount,
-            quoteToken.decimals,
-            quoteToken.displayDecimals,
-        )} ${tokenSymbolToDisplayString(quote)}`;
+        const costAmount = tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals, quoteToken.displayDecimals);
+        return `${costAmount} ${tokenSymbolToDisplayString(quote)}`;
     };
 }
 
