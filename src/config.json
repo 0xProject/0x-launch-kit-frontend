@@ -30,6 +30,18 @@
         },
         {
             "decimals": 18,
+            "symbol": "dai",
+            "name": "Dai",
+            "primaryColor": "#DEA349",
+            "addresses": {
+                "1": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+                "4": "0x6f2d6ff85efca691aad23d549771160a12f0a0fc",
+                "42": "0xc4375b7de8af5a38a93548eb8453a498222c4ff2",
+                "50": ""
+            }
+        },
+        {
+            "decimals": 18,
             "symbol": "mkr",
             "name": "Maker",
             "primaryColor": "#68CCBB",

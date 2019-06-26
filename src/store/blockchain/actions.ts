@@ -8,13 +8,13 @@ import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
 import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
-import { getTokenBalance, tokenToTokenBalance } from '../../services/tokens';
+import { tokensToTokenBalances, tokenToTokenBalance } from '../../services/tokens';
 import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
-import { getBlockNumberFromTransactionHash, getTransactionOptions } from '../../util/transactions';
+import { getTransactionOptions } from '../../util/transactions';
 import {
     BlockchainState,
     Collectible,
@@ -182,20 +182,19 @@ export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string)
         const state = getState();
         const ethAccount = getEthAccount(state);
         const knownTokens = getKnownTokens();
+        const wethToken = knownTokens.getWethToken();
 
-        const tokenBalances = await Promise.all(
-            knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-        );
-        // tslint:disable-next-line:no-floating-promises
+        const allTokenBalances = await tokensToTokenBalances([...knownTokens.getTokens(), wethToken], ethAccount);
+        const wethBalance = allTokenBalances.find(b => b.token.symbol === wethToken.symbol);
+        const tokenBalances = allTokenBalances.filter(b => b.token.symbol !== wethToken.symbol);
         dispatch(setTokenBalances(tokenBalances));
 
         const web3Wrapper = await getWeb3Wrapper();
-        const blockNumber = await getBlockNumberFromTransactionHash(txHash);
-        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, blockNumber);
-        const wethToken = knownTokens.getWethToken();
-        const wethBalance = await getTokenBalance(wethToken, ethAccount);
+        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+        if (wethBalance) {
+            dispatch(setWethBalance(wethBalance.balance));
+        }
         dispatch(setEthBalance(ethBalance));
-        dispatch(setWethBalance(wethBalance));
         return ethBalance;
     };
 };
@@ -362,10 +361,8 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
             const state = getState();
             const knownTokens = getKnownTokens();
             const ethAccount = getEthAccount(state);
+            const tokenBalances = await tokensToTokenBalances(knownTokens.getTokens(), ethAccount);
 
-            const tokenBalances = await Promise.all(
-                knownTokens.getTokens().map(token => tokenToTokenBalance(token, ethAccount)),
-            );
             const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);

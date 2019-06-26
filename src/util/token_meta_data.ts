@@ -1,5 +1,5 @@
 import { NETWORK_ID } from '../common/constants';
-import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
+import { TokenMetaData } from '../common/tokens_meta_data';
 
 import { Token } from './types';
 
@@ -35,8 +35,4 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                 };
             },
         );
-};
-
-export const getTokenMetaDataFromSymbol = (symbol: string): TokenMetaData => {
-    return KNOWN_TOKENS_META_DATA.filter(tokenMetaData => tokenMetaData.symbol === symbol)[0];
 };

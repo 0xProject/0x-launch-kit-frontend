@@ -21,7 +21,7 @@ export class Config {
     constructor() {
         this._validator = new Validator();
         for (const schema of schemas) {
-            this._validator.addSchema(schema as any, schema.id);
+            this._validator.addSchema(schema, schema.id);
         }
         this._validator.validate(configFile, configSchema, { throwError: true });
         this._config = configFile;

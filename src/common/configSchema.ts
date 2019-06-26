@@ -1,4 +1,6 @@
-export const configSchema = {
+import { Schema } from 'jsonschema';
+
+export const configSchema: Schema = {
     id: '/configSchema',
     properties: {
         tokens: { type: 'array', items: { $ref: '/tokenMetaDataSchema' } },
@@ -8,7 +10,7 @@ export const configSchema = {
     type: 'object',
 };
 
-export const schemas = [
+export const schemas: Schema[] = [
     {
         id: '/addressSchema',
         type: 'string',
