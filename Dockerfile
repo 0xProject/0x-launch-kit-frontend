@@ -1,13 +1,12 @@
-# Pull the smallest available image
-FROM node:8-alpine as node-alpine-build
-RUN apk update && apk upgrade && \
-    apk add --no-cache --virtual build-dependencies bash git openssh python make g++
-
 # Stage 1
-FROM node-alpine-build as react-build
+FROM  node:8-alpine
 WORKDIR /app
 COPY package.json yarn.lock ./
-RUN yarn && apk del build-dependencies
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache --virtual build-dependencies bash git openssh python make g++ && \
+    yarn --no-cache && \
+    apk del build-dependencies
 COPY . .
 RUN yarn build
 
