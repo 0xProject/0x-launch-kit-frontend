@@ -28,3 +28,9 @@ yarn-error.log*
 #Firebase Deployment files
 .firebaserc
 /.firebase
+
+#Trading View library
+src/charting_library
+src/datafeeds
+public/charting_library
+public/datafeeds
