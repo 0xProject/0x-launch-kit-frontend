@@ -7,10 +7,9 @@ RUN apk update && apk upgrade && \
 FROM node-alpine-build as react-build
 WORKDIR /app
 COPY package.json yarn.lock ./
-RUN yarn
+RUN yarn && apk del build-dependencies
 COPY . .
 RUN yarn build
-RUN apk del build-dependencies
 
 # Stage 2 - the production environment
 FROM nginx:alpine
