@@ -15,7 +15,10 @@ import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
-
+const DexTradesList = styled(Card)`
+    max-height: 320px;
+    overflow: auto;
+`;
 
 
 interface StateProps {
@@ -113,7 +116,7 @@ class OrderFills extends React.Component<Props> {
             }
         }
 
-        return <Card title="Last DEX Trades">{content}</Card>;
+        return <DexTradesList title="Last DEX Trades">{content}</DexTradesList>;
     };
 }
 

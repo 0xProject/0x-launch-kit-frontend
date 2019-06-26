@@ -26,6 +26,7 @@ import { CardTabSelector } from '../../common/card_tab_selector';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
 import { OrderDetailsContainer } from './order_details';
+import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 
 interface StateProps {
     web3State: Web3State;
@@ -211,8 +212,8 @@ class BuySell extends React.Component<Props, State> {
 
         const isMakerAmountEmpty = makerAmount === null || makerAmount.isZero();
         const isPriceEmpty = price === null || price.isZero();
-
-        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty);
+        const isPriceMin = price === null || price.isLessThan(new BigNumber(1).div(new BigNumber(10)).pow(UI_DECIMALS_DISPLAYED_PRICE_ETH));
+        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty || isPriceMin);
         const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
         const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
@@ -266,8 +267,8 @@ class BuySell extends React.Component<Props, State> {
                                         min={new BigNumber(0)}
                                         onChange={this.updatePrice}
                                         value={price}
-                                        placeholder={'0.00000001'}
-                                        valueFixedDecimals={8}
+                                        placeholder={'0.0000001'}
+                                        valueFixedDecimals={7}
                                     />
                                     <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
                                 </FieldContainer>

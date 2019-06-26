@@ -66,8 +66,7 @@ export const subscribeToFillEventsByFeeRecipient = ({
             fillEventCallback(logEvent.log);
         },
     );
-        console.log(fromBlock);
-        console.log(toBlock);
+
     exchange
         .getLogsAsync<ExchangeFillEventArgs>(
             ExchangeEvents.Fill,
