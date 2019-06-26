@@ -6,7 +6,7 @@ import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
-import { tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
+import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
@@ -44,9 +44,10 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
         const isBuy = step.side === OrderSide.Buy;
-        const amountOfTokenString = `${tokenAmountInUnitsToBigNumber(
+        const amountOfTokenString = `${tokenAmountInUnits(
             step.amount,
             step.token.decimals,
+            step.token.displayDecimals,
         ).toString()} ${tokenSymbol}`;
 
         const title = 'Order setup';
@@ -99,9 +100,10 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const { quoteToken } = this.props;
         const quoteTokenSymbol = tokenSymbolToDisplayString(quoteToken.symbol);
         const { amountInReturn } = this.state;
-        return `${tokenAmountInUnitsToBigNumber(
+        return `${tokenAmountInUnits(
             amountInReturn || new BigNumber(0),
             quoteToken.decimals,
+            quoteToken.displayDecimals,
         ).toString()} ${quoteTokenSymbol}`;
     };
 }
