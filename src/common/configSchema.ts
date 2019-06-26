@@ -1,0 +1,60 @@
+export const configSchema = {
+    id: '/configSchema',
+    properties: {
+        tokens: { type: 'array', items: { $ref: '/tokenMetaDataSchema' } },
+        pairs: { type: 'array', items: { $ref: '/pairSchema' } },
+    },
+    required: ['tokens', 'pairs'],
+    type: 'object',
+};
+
+export const schemas = [
+    {
+        id: '/addressSchema',
+        type: 'string',
+        pattern: '^0x[0-9a-f]{40}$',
+    },
+    {
+        id: '/wholeNumberSchema',
+        anyOf: [
+            {
+                type: 'string',
+                pattern: '^\\d+$',
+            },
+            {
+                type: 'integer',
+            },
+        ],
+    },
+    {
+        id: '/pairSchema',
+        properties: {
+            base: { type: 'string' },
+            quote: { type: 'string' },
+        },
+        required: ['base', 'quote'],
+        type: 'object',
+    },
+    {
+        id: '/tokenMetaDataSchema',
+        properties: {
+            symbol: { type: 'string' },
+            name: { type: 'string' },
+            icon: { type: 'string' },
+            primaryColor: { type: 'string' },
+            decimals: { $ref: '/wholeNumberSchema' },
+            displayDecimals: { $ref: '/wholeNumberSchema' },
+        },
+        required: ['decimals', 'symbol', 'name', 'addresses'],
+        type: 'object',
+    },
+    {
+        id: '/configSchema',
+        properties: {
+            tokens: { type: 'array', items: { $ref: '/tokenMetaDataSchema' } },
+            pairs: { type: 'array', items: { $ref: '/pairSchema' } },
+        },
+        required: ['tokens', 'pairs'],
+        type: 'object',
+    },
+];

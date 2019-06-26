@@ -1,3 +1,3 @@
-import * as Config from '../config.json';
+import { Config } from './config';
 
-export const availableMarkets = Config.pairs;
+export const availableMarkets = Config.getConfig().pairs;

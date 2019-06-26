@@ -13,6 +13,7 @@
         "connected-react-router": "^6.2.2",
         "history": "^4.7.2",
         "http-proxy-middleware": "^0.19.1",
+        "jsonschema": "^1.2.4",
         "logdown": "^3.2.8",
         "query-string": "^6.4.0",
         "react": "^16.8.6",

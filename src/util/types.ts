@@ -4,6 +4,7 @@ import { RouterState } from 'connected-react-router';
 import { ActionCreator, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
+import { TokenMetaData } from '../common/tokens_meta_data';
 import { ExtraArgument } from '../store/index';
 
 export interface TabItem {
@@ -318,4 +319,9 @@ export enum ButtonVariant {
 
 export enum ButtonIcons {
     Warning = 'warning',
+}
+
+export interface ConfigFile {
+    tokens: TokenMetaData[];
+    pairs: CurrencyPair[];
 }

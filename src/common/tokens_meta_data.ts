@@ -1,4 +1,4 @@
-import * as Config from '../config.json';
+import { Config } from './config';
 
 export interface TokenMetaData {
     addresses: { [key: number]: string };
@@ -9,4 +9,4 @@ export interface TokenMetaData {
     icon?: string;
     displayDecimals?: number;
 }
-export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = Config.tokens;
+export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = Config.getConfig().tokens;
