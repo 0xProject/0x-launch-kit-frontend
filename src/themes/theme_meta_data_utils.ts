@@ -25,10 +25,23 @@ export const getThemeByMarketplace = (marketplace: MARKETPLACES): Theme => {
     const themeBase =
         marketplace === MARKETPLACES.ERC20 ? getThemeByName(ERC20_THEME_NAME) : getThemeByName(ERC721_THEME_NAME);
     const themeConfig = Config.getConfig().theme;
-    return themeConfig
+    const componentsTheme = themeConfig
+        ? { ...themeBase.componentsTheme, ...themeConfig.componentsTheme }
+        : themeBase.componentsTheme;
+    const modalTheme = themeConfig
         ? {
-              componentsTheme: { ...themeBase.componentsTheme, ...themeConfig.componentsTheme },
-              modalTheme: { ...themeBase.modalTheme, ...themeConfig.modalTheme },
+              content: {
+                  ...themeBase.modalTheme.content,
+                  ...(themeConfig.modalTheme && themeConfig.modalTheme.content),
+              },
+              overlay: {
+                  ...themeBase.modalTheme.overlay,
+                  ...(themeConfig.modalTheme && themeConfig.modalTheme.overlay),
+              },
           }
-        : themeBase;
+        : themeBase.modalTheme;
+    return {
+        componentsTheme,
+        modalTheme,
+    };
 };
