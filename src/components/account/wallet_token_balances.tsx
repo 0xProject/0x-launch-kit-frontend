@@ -130,13 +130,17 @@ class WalletTokenBalances extends React.PureComponent<Props> {
 
         const wethToken = wethTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
-        const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals);
+        const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
         const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
 
         const totalEthRow = (
             <TR>
                 <TokenTD>
-                    <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} />
+                    <TokenIconStyled
+                        symbol={wethToken.symbol}
+                        primaryColor={wethToken.primaryColor}
+                        icon={wethToken.icon}
+                    />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>
                     <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
@@ -157,13 +161,13 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const tokensRows = tokenBalances.map((tokenBalance, index) => {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
-            const formattedBalance = tokenAmountInUnits(balance, token.decimals);
+            const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
             const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
 
             return (
                 <TR key={symbol}>
                     <TokenTD>
-                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} />
+                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} />
                     </TokenTD>
                     <CustomTDTokenName styles={{ borderBottom: true }}>
                         <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}

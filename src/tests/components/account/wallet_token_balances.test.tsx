@@ -6,18 +6,22 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
-import { TokenBalance, TokenSymbol, Web3State } from '../../../util/types';
+import { TokenBalance, Web3State } from '../../../util/types';
 import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
 
 const noop = () => ({});
 const ZERO = new BigNumber(0);
+const tokenDefaults = {
+    displayDecimals: 2,
+    primaryColor: 'white',
+    decimals: 18,
+};
 const wethTokenBalance = {
     balance: ZERO,
     token: {
-        primaryColor: 'white',
+        ...tokenDefaults,
         address: '0x100',
-        decimals: 18,
-        symbol: 'WETH' as TokenSymbol,
+        symbol: 'WETH',
         name: 'wETH',
     },
     isUnlocked: true,
@@ -29,10 +33,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
-                    symbol: 'MOCK1' as TokenSymbol,
+                    symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
                 isUnlocked: true,
@@ -40,10 +43,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
-                    symbol: 'MOCK2' as TokenSymbol,
+                    symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
                 isUnlocked: true,
@@ -51,10 +53,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
-                    symbol: 'MOCK3' as TokenSymbol,
+                    symbol: 'MOCK3',
                     name: 'MOCK3',
                 },
                 isUnlocked: true,
@@ -81,10 +82,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
-                    symbol: 'MOCK1' as TokenSymbol,
+                    symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
                 isUnlocked: true,
@@ -92,10 +92,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
-                    symbol: 'MOCK2' as TokenSymbol,
+                    symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
                 isUnlocked: false,
@@ -103,10 +102,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
-                    symbol: 'MOCK3' as TokenSymbol,
+                    symbol: 'MOCK3',
                     name: 'MOCK3',
                 },
                 isUnlocked: true,
@@ -132,10 +130,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
-                    symbol: 'MOCK1' as TokenSymbol,
+                    symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
                 isUnlocked: true,
@@ -143,10 +140,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
-                    symbol: 'MOCK2' as TokenSymbol,
+                    symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
                 isUnlocked: false,
@@ -154,10 +150,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
-                    symbol: 'MOCK3' as TokenSymbol,
+                    symbol: 'MOCK3',
                     name: 'MOCK3',
                 },
                 isUnlocked: true,
@@ -191,10 +186,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x1',
-                    decimals: 18,
-                    symbol: 'MOCK1' as TokenSymbol,
+                    symbol: 'MOCK1',
                     name: 'MOCK1',
                 },
                 isUnlocked: true,
@@ -202,10 +196,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x2',
-                    decimals: 18,
-                    symbol: 'MOCK2' as TokenSymbol,
+                    symbol: 'MOCK2',
                     name: 'MOCK2',
                 },
                 isUnlocked: false,
@@ -213,10 +206,9 @@ describe('WalletTokenBalances', () => {
             {
                 balance: new BigNumber(1),
                 token: {
-                    primaryColor: 'white',
+                    ...tokenDefaults,
                     address: '0x3',
-                    decimals: 18,
-                    symbol: 'MOCK3' as TokenSymbol,
+                    symbol: 'MOCK3',
                     name: 'MOCK3',
                 },
                 isUnlocked: true,

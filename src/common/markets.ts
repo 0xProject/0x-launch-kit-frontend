@@ -1,12 +1,11 @@
-import { CurrencyPair, TokenSymbol } from '../util/types';
+import { Filter } from '../util/types';
 
-export const availableMarkets: CurrencyPair[] = [
-    {
-        base: TokenSymbol.Zrx,
-        quote: TokenSymbol.Weth,
-    },
-    {
-        base: TokenSymbol.Mkr,
-        quote: TokenSymbol.Weth,
-    },
-];
+import { Config } from './config';
+
+export const availableMarkets = Config.getConfig().pairs;
+const allFilter = {
+    text: 'ALL',
+    value: null,
+};
+const suppliedMarketFilters = Config.getConfig().marketFilters;
+export const marketFilters: Filter[] = suppliedMarketFilters ? [allFilter, ...suppliedMarketFilters] : [];

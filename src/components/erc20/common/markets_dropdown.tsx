@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
+import { marketFilters } from '../../../common/markets';
 import { changeMarket, goToHome } from '../../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
-import { getColorBySymbol } from '../../../util/known_tokens';
+import { getKnownTokens } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
-import { tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, Market, StoreState, Token, TokenSymbol } from '../../../util/types';
+import { CurrencyPair, Filter, Market, StoreState, Token } from '../../../util/types';
 import { CardBase } from '../../common/card_base';
 import { Dropdown } from '../../common/dropdown';
 import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
@@ -225,25 +225,6 @@ const DropdownTokenIcon = styled(TokenIcon)`
     vertical-align: top;
 `;
 
-interface Filter {
-    text: string;
-    value: null | TokenSymbol;
-}
-const marketFilters: Filter[] = [
-    {
-        text: 'ALL',
-        value: null,
-    },
-    {
-        text: 'ETH',
-        value: TokenSymbol.Weth,
-    },
-    {
-        text: tokenSymbolToDisplayString(TokenSymbol.Dai),
-        value: TokenSymbol.Dai,
-    },
-];
-
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
         selectedFilter: marketFilters[0],
@@ -264,6 +245,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                             symbol={baseToken.symbol}
                             primaryColor={baseToken.primaryColor}
                             isInline={true}
+                            icon={baseToken.icon}
                         />
                     ) : null}
                     {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
@@ -349,7 +331,9 @@ class MarketsDropdown extends React.Component<Props, State> {
         }
 
         const filteredMarkets =
-            selectedFilter.value === null ? markets : filterMarketsByTokenSymbol(markets, selectedFilter.value);
+            selectedFilter == null || selectedFilter.value === null
+                ? markets
+                : filterMarketsByTokenSymbol(markets, selectedFilter.value);
         const searchedMarkets = filterMarketsByString(filteredMarkets, search);
 
         return (
@@ -367,7 +351,7 @@ class MarketsDropdown extends React.Component<Props, State> {
                             market.currencyPair.quote === currencyPair.quote;
                         const setSelectedMarket = () => this._setSelectedMarket(market.currencyPair);
 
-                        const primaryColor = getColorBySymbol(market.currencyPair.base);
+                        const token = getKnownTokens().getTokenBySymbol(market.currencyPair.base);
 
                         const baseSymbol = market.currencyPair.base.toUpperCase();
                         const quoteSymbol = market.currencyPair.quote.toUpperCase();
@@ -376,7 +360,11 @@ class MarketsDropdown extends React.Component<Props, State> {
                             <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
                                     <TokenIconAndLabel>
-                                        <TokenIcon symbol={market.currencyPair.base} primaryColor={primaryColor} />
+                                        <TokenIcon
+                                            symbol={token.symbol}
+                                            primaryColor={token.primaryColor}
+                                            icon={token.icon}
+                                        />
                                         <TokenLabel>
                                             {baseSymbol} / {quoteSymbol}
                                         </TokenLabel>

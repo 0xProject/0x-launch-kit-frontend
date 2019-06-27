@@ -3,12 +3,12 @@ import { SignedOrder } from '@0x/connect';
 
 import { getKnownTokens } from '../../util/known_tokens';
 import { makeOrder, uiOrder } from '../../util/test-utils';
-import { OrderSide, TokenSymbol, UIOrder } from '../../util/types';
+import { OrderSide, UIOrder } from '../../util/types';
 import { mergeByPrice, ordersToUIOrders } from '../../util/ui_orders';
 
 describe('ordersToUIOrders', () => {
-    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
-    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+    const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
+    const WethToken = getKnownTokens().getTokenBySymbol('weth');
 
     it('should convert a sell Order to a UIOrder', async () => {
         // given

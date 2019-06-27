@@ -1,22 +1,31 @@
-import { BigNumber, ContractWrappers } from '0x.js';
+import { assetDataUtils, BigNumber } from '0x.js';
 
-import { NETWORK_ID } from '../common/constants';
 import { Token, TokenBalance } from '../util/types';
 
 import { getContractWrappers } from './contract_wrappers';
-import { getWeb3Wrapper } from './web3_wrapper';
 
-const MAX_UINT = new BigNumber('115792089237316195423570985008687907853269984665640564039457584007913129639935');
-
+export const tokensToTokenBalances = async (tokens: Token[], address: string): Promise<TokenBalance[]> => {
+    const contractWrappers = await getContractWrappers();
+    const assetDatas = tokens.map(t => assetDataUtils.encodeERC20AssetData(t.address));
+    const balancesAndAllowances = await contractWrappers.orderValidator.getBalancesAndAllowancesAsync(
+        address,
+        assetDatas,
+    );
+    const tokenBalances = balancesAndAllowances.map((b, i) => ({
+        token: tokens[i],
+        balance: b.balance,
+        isUnlocked: b.allowance.isGreaterThan(0),
+    }));
+    return tokenBalances;
+};
 export const tokenToTokenBalance = async (token: Token, address: string): Promise<TokenBalance> => {
     const contractWrappers = await getContractWrappers();
 
-    const [balance, allowance] = await Promise.all([
-        getTokenBalance(token, address),
-        contractWrappers.erc20Token.getProxyAllowanceAsync(token.address, address),
-    ]);
+    const assetData = assetDataUtils.encodeERC20AssetData(token.address);
+    const balanceAndAllowance = await contractWrappers.orderValidator.getBalanceAndAllowanceAsync(address, assetData);
+    const { balance, allowance } = balanceAndAllowance;
 
-    const isUnlocked = allowance.eq(MAX_UINT);
+    const isUnlocked = allowance.isGreaterThan(0);
 
     return {
         token,
@@ -26,7 +35,6 @@ export const tokenToTokenBalance = async (token: Token, address: string): Promis
 };
 
 export const getTokenBalance = async (token: Token, address: string): Promise<BigNumber> => {
-    const web3Wrapper = await getWeb3Wrapper();
-    const contractWrappers = new ContractWrappers(web3Wrapper.getProvider(), { networkId: NETWORK_ID });
+    const contractWrappers = await getContractWrappers();
     return contractWrappers.erc20Token.getBalanceAsync(token.address, address);
 };

@@ -16,7 +16,6 @@ import {
     OrderSide,
     OrderType,
     StoreState,
-    TokenSymbol,
     Web3State,
 } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
@@ -162,7 +161,7 @@ const TokenText = styled.span`
     text-align: right;
 `;
 
-const BigInputNumberTokenLabel = (props: { tokenSymbol: TokenSymbol }) => (
+const BigInputNumberTokenLabel = (props: { tokenSymbol: string }) => (
     <TokenContainer>
         <TokenText>{tokenSymbolToDisplayString(props.tokenSymbol)}</TokenText>
     </TokenContainer>

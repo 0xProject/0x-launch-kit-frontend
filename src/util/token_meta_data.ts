@@ -1,18 +1,21 @@
-import { NETWORK_ID } from '../common/constants';
+import { NETWORK_ID, UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION } from '../common/constants';
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { Token, TokenSymbol } from './types';
+import { Token } from './types';
 
 export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
-    const tokenMetadata = tokensMetaData.find(
-        tokenMetaData => tokenMetaData.symbol === TokenSymbol.Weth,
-    ) as TokenMetaData;
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'weth');
+    if (!tokenMetaData) {
+        throw new Error('WETH Token MetaData not found');
+    }
     return {
-        address: tokenMetadata.addresses[NETWORK_ID],
-        symbol: tokenMetadata.symbol,
-        decimals: tokenMetadata.decimals,
-        name: tokenMetadata.name,
-        primaryColor: tokenMetadata.primaryColor,
+        address: tokenMetaData.addresses[NETWORK_ID],
+        symbol: tokenMetaData.symbol,
+        decimals: tokenMetaData.decimals,
+        name: tokenMetaData.name,
+        primaryColor: tokenMetaData.primaryColor,
+        icon: tokenMetaData.icon,
+        displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
     };
 };
 
@@ -27,6 +30,8 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                     decimals: tokenMetaData.decimals,
                     name: tokenMetaData.name,
                     primaryColor: tokenMetaData.primaryColor,
+                    icon: tokenMetaData.icon,
+                    displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
                 };
             },
         );
