@@ -6,6 +6,7 @@ import { ThunkAction } from 'redux-thunk';
 
 import { TokenMetaData } from '../common/tokens_meta_data';
 import { ExtraArgument } from '../store/index';
+import { ThemeModalStyle, ThemeProperties } from '../themes/commons';
 
 export interface TabItem {
     active: boolean;
@@ -326,8 +327,20 @@ export interface Filter {
     value: null | string;
 }
 
+export interface PartialTheme {
+    componentsTheme?: Partial<ThemeProperties>;
+    modalTheme?: Partial<ThemeModalStyle>;
+}
+
+export interface GeneralConfig {
+    title?: string;
+    icon?: string;
+}
+
 export interface ConfigFile {
     tokens: TokenMetaData[];
     pairs: CurrencyPair[];
     marketFilters?: Filter[];
+    theme?: PartialTheme;
+    general?: GeneralConfig;
 }

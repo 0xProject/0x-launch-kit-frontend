@@ -1,4 +1,4 @@
-import { NETWORK_ID } from '../common/constants';
+import { NETWORK_ID, UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION } from '../common/constants';
 import { TokenMetaData } from '../common/tokens_meta_data';
 
 import { Token } from './types';
@@ -15,7 +15,7 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenM
         name: tokenMetaData.name,
         primaryColor: tokenMetaData.primaryColor,
         icon: tokenMetaData.icon,
-        displayDecimals: tokenMetaData.displayDecimals || 2,
+        displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
     };
 };
 
@@ -31,7 +31,7 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                     name: tokenMetaData.name,
                     primaryColor: tokenMetaData.primaryColor,
                     icon: tokenMetaData.icon,
-                    displayDecimals: tokenMetaData.displayDecimals || 2,
+                    displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
                 };
             },
         );
