@@ -29,6 +29,15 @@ export const schemas: Schema[] = [
         ],
     },
     {
+        id: '/marketFilterSchema',
+        properties: {
+            text: { type: 'string' },
+            valute: { type: 'string' },
+        },
+        required: ['text', 'value'],
+        type: 'object',
+    },
+    {
         id: '/pairSchema',
         properties: {
             base: { type: 'string' },
@@ -55,6 +64,7 @@ export const schemas: Schema[] = [
         properties: {
             tokens: { type: 'array', items: { $ref: '/tokenMetaDataSchema' } },
             pairs: { type: 'array', items: { $ref: '/pairSchema' } },
+            marketFilters: { type: 'array', items: { $ref: '/marketFilterSchema' } },
         },
         required: ['tokens', 'pairs'],
         type: 'object',
