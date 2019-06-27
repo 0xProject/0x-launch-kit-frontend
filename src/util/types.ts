@@ -321,7 +321,13 @@ export enum ButtonIcons {
     Warning = 'warning',
 }
 
+export interface Filter {
+    text: string;
+    value: null | string;
+}
+
 export interface ConfigFile {
     tokens: TokenMetaData[];
     pairs: CurrencyPair[];
+    marketFilters?: Filter[];
 }

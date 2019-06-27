@@ -1,7 +1,7 @@
 import { Validator } from 'jsonschema';
 
 import configFile from '../config.json';
-import { ConfigFile } from '../util/types.js';
+import { ConfigFile } from '../util/types';
 
 import { configSchema, schemas } from './configSchema';
 

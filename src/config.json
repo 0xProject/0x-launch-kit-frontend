@@ -126,5 +126,15 @@
             "base": "rep",
             "quote": "weth"
         }
+    ],
+    "marketFilters": [
+        {
+            "text": "ETH",
+            "value": "weth"
+        },
+        {
+            "text": "DAI",
+            "value": "dai"
+        }
     ]
 }

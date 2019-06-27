@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
+import { marketFilters } from '../../../common/markets';
 import { changeMarket, goToHome } from '../../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
-import { CurrencyPair, Market, StoreState, Token } from '../../../util/types';
+import { CurrencyPair, Filter, Market, StoreState, Token } from '../../../util/types';
 import { CardBase } from '../../common/card_base';
 import { Dropdown } from '../../common/dropdown';
 import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
@@ -224,25 +225,6 @@ const DropdownTokenIcon = styled(TokenIcon)`
     vertical-align: top;
 `;
 
-interface Filter {
-    text: string;
-    value: null | string;
-}
-const marketFilters: Filter[] = [
-    {
-        text: 'ALL',
-        value: null,
-    },
-    {
-        text: 'ETH',
-        value: 'weth',
-    },
-    {
-        text: 'DAI',
-        value: 'dai',
-    },
-];
-
 class MarketsDropdown extends React.Component<Props, State> {
     public readonly state: State = {
         selectedFilter: marketFilters[0],
@@ -349,7 +331,9 @@ class MarketsDropdown extends React.Component<Props, State> {
         }
 
         const filteredMarkets =
-            selectedFilter.value === null ? markets : filterMarketsByTokenSymbol(markets, selectedFilter.value);
+            selectedFilter == null || selectedFilter.value === null
+                ? markets
+                : filterMarketsByTokenSymbol(markets, selectedFilter.value);
         const searchedMarkets = filterMarketsByString(filteredMarkets, search);
 
         return (
