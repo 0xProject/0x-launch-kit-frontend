@@ -25,6 +25,7 @@ export interface Token {
     name: string;
     symbol: TokenSymbol;
     primaryColor: string;
+    id?: string;
 }
 
 export interface TokenBalance {
@@ -75,6 +76,7 @@ export interface MarketState {
     readonly baseToken: Token | null;
     readonly quoteToken: Token | null;
     readonly ethInUsd: BigNumber | null;
+    readonly quoteInUsd?: BigNumber | null;
     readonly markets: Market[] | null;
 }
 

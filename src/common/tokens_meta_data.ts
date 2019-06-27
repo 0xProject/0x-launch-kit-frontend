@@ -6,6 +6,8 @@ export interface TokenMetaData {
     decimals: number;
     name: string;
     primaryColor: string;
+    // id used by CoinmarketCap eg: verisafe
+    id?: string;
 }
 
 export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
@@ -20,6 +22,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
             [Network.Kovan]: '0xd0a1e359811322d97991e03f863a0c30c2cf029c',
             [Network.Ganache]: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
         },
+        id: 'ethereum',
     },
     {
         decimals: 18,
@@ -29,6 +32,7 @@ export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = [
         addresses: {
             [Network.Mainnet]: '0xac9ce326e95f51b5005e9fe1dd8085a01f18450c',
         },
+        id: 'verisafe',
     },
     {
         decimals: 18,

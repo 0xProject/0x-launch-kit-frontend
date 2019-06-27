@@ -4,7 +4,7 @@ import { MARKETPLACES } from '../util/types';
 
 import { updateGasInfo, updateTokenBalances } from './blockchain/actions';
 import { getAllCollectibles } from './collectibles/actions';
-import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from './market/actions';
+import { fetchMarkets, setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair, getCurrentMarketPlace } from './selectors';
 
@@ -29,6 +29,7 @@ export const updateStore = () => {
         const currentMarketPlace = getCurrentMarketPlace(state);
         if (currentMarketPlace === MARKETPLACES.ERC20) {
             dispatch(updateERC20Store(ethAccount));
+            dispatch(updateMarketPriceQuote());
         } else {
             dispatch(updateERC721Store(ethAccount));
         }
