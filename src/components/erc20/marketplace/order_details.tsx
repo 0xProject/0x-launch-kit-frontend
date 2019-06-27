@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
-import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
+import { getOpenBuyOrders, getOpenSellOrders, getQuoteInUsd } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { getLogger } from '../../../util/logger';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
@@ -78,6 +78,7 @@ interface OwnProps {
 interface StateProps {
     openSellOrders: UIOrder[];
     openBuyOrders: UIOrder[];
+    qouteInUSD: BigNumber | undefined | null;
 }
 
 interface DispatchProps {
@@ -119,6 +120,7 @@ class OrderDetails extends React.Component<Props, State> {
     public render = () => {
         const fee = this._getFeeStringForRender();
         const cost = this._getCostStringForRender();
+        const costLabel = this._getCostLabelStringForRender();
         return (
             <>
                 <LabelContainer>
@@ -129,7 +131,7 @@ class OrderDetails extends React.Component<Props, State> {
                     <Value>{fee}</Value>
                 </Row>
                 <Row>
-                    <CostLabel>Cost</CostLabel>
+                    <CostLabel>{costLabel}</CostLabel>
                     <CostValue>{cost}</CostValue>
                 </Row>
             </>
@@ -179,7 +181,7 @@ class OrderDetails extends React.Component<Props, State> {
 
     private readonly _getCostStringForRender = () => {
         const { canOrderBeFilled } = this.state;
-        const { orderType } = this.props;
+        const { orderType, qouteInUSD } = this.props;
         if (orderType === OrderType.Market && !canOrderBeFilled) {
             return `---`;
         }
@@ -187,7 +189,21 @@ class OrderDetails extends React.Component<Props, State> {
         const { quote } = this.props.currencyPair;
         const quoteTokenDecimals = getKnownTokens().getTokenBySymbol(quote).decimals;
         const { quoteTokenAmount } = this.state;
-        return `${tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals)} ${tokenSymbolToDisplayString(quote)}`;
+        const quoteTokenAmountUnits = tokenAmountInUnits(quoteTokenAmount, quoteTokenDecimals);
+        if (qouteInUSD) {
+         const quotePriceAmountUSD = new BigNumber(quoteTokenAmountUnits).multipliedBy(qouteInUSD);
+         return `${quoteTokenAmountUnits} ${tokenSymbolToDisplayString(quote)} (${quotePriceAmountUSD.toFixed(2)} $)`;
+        } else {
+           return `${quoteTokenAmountUnits} ${tokenSymbolToDisplayString(quote)}`;
+        }
+    };
+    private readonly _getCostLabelStringForRender = () => {
+        const { qouteInUSD } = this.props;
+        if (qouteInUSD) {
+         return `Cost (USD)`;
+        } else {
+         return `Cost`;
+        }
     };
 }
 
@@ -195,6 +211,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         openSellOrders: getOpenSellOrders(state),
         openBuyOrders: getOpenBuyOrders(state),
+        qouteInUSD: getQuoteInUsd(state),
     };
 };
 

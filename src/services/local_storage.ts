@@ -105,7 +105,7 @@ export class LocalStorage {
                 return value;
             },
         );
-        console.log(currentFills);
+      
         if (currentFills[NETWORK_ID] && currentFills[NETWORK_ID][account]) {
             return currentFills[NETWORK_ID][account];
         }

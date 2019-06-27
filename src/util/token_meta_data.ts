@@ -7,13 +7,24 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenM
     const tokenMetadata = tokensMetaData.find(
         tokenMetaData => tokenMetaData.symbol === TokenSymbol.Weth,
     ) as TokenMetaData;
-    return {
-        address: tokenMetadata.addresses[NETWORK_ID],
-        symbol: tokenMetadata.symbol,
-        decimals: tokenMetadata.decimals,
-        name: tokenMetadata.name,
-        primaryColor: tokenMetadata.primaryColor,
-    };
+    if (tokenMetadata.id) {
+        return {
+            address: tokenMetadata.addresses[NETWORK_ID],
+            symbol: tokenMetadata.symbol,
+            decimals: tokenMetadata.decimals,
+            name: tokenMetadata.name,
+            primaryColor: tokenMetadata.primaryColor,
+            id: tokenMetadata.id,
+        };
+    } else {
+        return {
+            address: tokenMetadata.addresses[NETWORK_ID],
+            symbol: tokenMetadata.symbol,
+            decimals: tokenMetadata.decimals,
+            name: tokenMetadata.name,
+            primaryColor: tokenMetadata.primaryColor,
+        };
+    }
 };
 
 export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaData[]): Token[] => {
@@ -21,13 +32,24 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
         .filter(tokenMetaData => tokenMetaData.addresses[NETWORK_ID])
         .map(
             (tokenMetaData): Token => {
-                return {
-                    address: tokenMetaData.addresses[NETWORK_ID],
-                    symbol: tokenMetaData.symbol,
-                    decimals: tokenMetaData.decimals,
-                    name: tokenMetaData.name,
-                    primaryColor: tokenMetaData.primaryColor,
-                };
+                if (tokenMetaData.id) {
+                    return {
+                        address: tokenMetaData.addresses[NETWORK_ID],
+                        symbol: tokenMetaData.symbol,
+                        decimals: tokenMetaData.decimals,
+                        name: tokenMetaData.name,
+                        primaryColor: tokenMetaData.primaryColor,
+                        id: tokenMetaData.id,
+                    };
+                } else {
+                    return {
+                        address: tokenMetaData.addresses[NETWORK_ID],
+                        symbol: tokenMetaData.symbol,
+                        decimals: tokenMetaData.decimals,
+                        name: tokenMetaData.name,
+                        primaryColor: tokenMetaData.primaryColor,
+                    };
+                }
             },
         );
 };
