@@ -29,7 +29,7 @@ import {
     Web3State,
 } from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
-import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
+import { fetchMarkets, setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,
@@ -464,6 +464,8 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
                 // Relayer error
                 logger.error('The fetch markets from the relayer failed', error);
             }
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(updateMarketPriceQuote());
         }
     };
 };
@@ -606,6 +608,7 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
 
             // tslint:disable-next-line:no-floating-promises
             await dispatch(fetchMarkets());
+           
         } else {
             // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());

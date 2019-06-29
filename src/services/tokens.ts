@@ -6,7 +6,6 @@ import { Token, TokenBalance } from '../util/types';
 import { getContractWrappers } from './contract_wrappers';
 import { getWeb3Wrapper } from './web3_wrapper';
 
-const MAX_UINT = new BigNumber('115792089237316195423570985008687907853269984665640564039457584007913129639935');
 
 export const tokenToTokenBalance = async (token: Token, address: string): Promise<TokenBalance> => {
     const contractWrappers = await getContractWrappers();
@@ -16,7 +15,7 @@ export const tokenToTokenBalance = async (token: Token, address: string): Promis
         contractWrappers.erc20Token.getProxyAllowanceAsync(token.address, address),
     ]);
 
-    const isUnlocked = allowance.eq(MAX_UINT);
+    const isUnlocked = allowance.gt(0);
 
     return {
         token,
