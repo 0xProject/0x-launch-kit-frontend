@@ -3,11 +3,11 @@ import { assetDataUtils, BigNumber, Order } from '0x.js';
 import { getKnownTokens } from '../../util/known_tokens';
 import * as utilOrders from '../../util/orders';
 import { addressFactory, uiOrder } from '../../util/test-utils';
-import { OrderSide, TokenSymbol } from '../../util/types';
+import { OrderSide } from '../../util/types';
 
 describe('buildLimitOrder', () => {
-    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
-    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+    const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
+    const WethToken = getKnownTokens().getTokenBySymbol('weth');
 
     it('should build a buy order', async () => {
         // given
@@ -34,7 +34,7 @@ describe('buildLimitOrder', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber('100'),
             takerAssetData: assetDataUtils.encodeERC20AssetData(baseTokenAddress),
-        });
+        } as any);
 
         // when
         const order = await utilOrders.buildLimitOrder(
@@ -85,7 +85,7 @@ describe('buildLimitOrder', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber('10'),
             takerAssetData: assetDataUtils.encodeERC20AssetData(quoteTokenAddress),
-        });
+        } as any);
 
         const order = await utilOrders.buildLimitOrder(
             {
@@ -111,8 +111,8 @@ describe('buildLimitOrder', () => {
 });
 
 describe('buildMarketOrders', () => {
-    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
-    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+    const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
+    const WethToken = getKnownTokens().getTokenBySymbol('weth');
 
     const baseToken = ZrxToken;
     const quoteToken = WethToken;
@@ -346,8 +346,8 @@ describe('buildMarketOrders', () => {
 });
 
 describe('sumTakerAssetFillableOrders', () => {
-    const ZrxToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Zrx);
-    const WethToken = getKnownTokens().getTokenBySymbol(TokenSymbol.Weth);
+    const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
+    const WethToken = getKnownTokens().getTokenBySymbol('weth');
 
     const account = addressFactory.build().address;
     const baseToken = ZrxToken;
@@ -385,7 +385,7 @@ describe('sumTakerAssetFillableOrders', () => {
                     takerAddress: '0x0000000000000000000000000000000000000000',
                     takerAssetAmount: new BigNumber('10'),
                     takerAssetData: assetDataUtils.encodeERC20AssetData(quoteTokenAddress),
-                });
+                } as any);
                 return utilOrders.buildLimitOrder(
                     {
                         account,

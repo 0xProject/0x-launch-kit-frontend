@@ -17,13 +17,7 @@ export const buildFill = (
     let quoteTokenAddress: string;
     let baseToken: Token;
     let quoteToken: Token;
-  /*  quoteTokenAddress = OrderSide.Sell
-        ? assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress
-        : assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress;
 
-    baseTokenAddress = OrderSide.Sell
-        ? assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress
-        : assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress;*/
 
     quoteTokenAddress = side === OrderSide.Buy
         ? assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress
@@ -36,6 +30,7 @@ export const buildFill = (
 
     baseToken = knownTokens.getTokenByAddress(baseTokenAddress);
     quoteToken = knownTokens.getTokenByAddress(quoteTokenAddress);
+   
     const amountQuote = side === OrderSide.Buy ? args.takerAssetFilledAmount : args.makerAssetFilledAmount;
     const amountBase = side === OrderSide.Buy ? args.makerAssetFilledAmount : args.takerAssetFilledAmount;
 

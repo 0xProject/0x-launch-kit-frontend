@@ -41,9 +41,7 @@ export const getOrderSideFromFillEvent = (
     const makerTokenAddress = assetDataUtils.decodeERC20AssetData(makerAssetData).tokenAddress;
     const takerTokenAddress = assetDataUtils.decodeERC20AssetData(takerAssetData).tokenAddress;
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethToken.address);
-
-    let orderSide: OrderSide = OrderSide.Sell;
-
+    let orderSide: OrderSide = OrderSide.Buy;
     // Fallback in case there are not markets
     if (!markets) {
         orderSide = makerAssetData === wethAssetData ? OrderSide.Buy : OrderSide.Sell;
@@ -53,12 +51,12 @@ export const getOrderSideFromFillEvent = (
             const quoteSymbol = market.currencyPair.quote;
             const baseToken = knownTokens.getTokenBySymbol(baseSymbol);
             const quoteToken = knownTokens.getTokenBySymbol(quoteSymbol);
-
-            if (makerTokenAddress === baseToken.address && takerTokenAddress === quoteToken.address) {
+            // Make sure all the address's are at lower case
+            if (makerTokenAddress.toLowerCase() === baseToken.address.toLowerCase() && takerTokenAddress.toLowerCase() === quoteToken.address.toLowerCase()) {
                 // This is a sell order --> fill event is a buy
                 orderSide = OrderSide.Buy;
                 break;
-            } else if (makerTokenAddress === quoteToken.address && takerTokenAddress === baseToken.address) {
+            } else if (makerTokenAddress.toLowerCase() === quoteToken.address.toLowerCase() && takerTokenAddress.toLowerCase() === baseToken.address.toLowerCase()) {
                 // This is a buy order --> fill event is a sell
                 orderSide = OrderSide.Sell;
                 break;

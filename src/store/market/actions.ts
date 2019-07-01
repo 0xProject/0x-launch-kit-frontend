@@ -117,7 +117,10 @@ export const fetchMarkets: ThunkCreator = () => {
                     logger.error(
                         `Failed to get price of currency pair ${availableMarket.base}/${availableMarket.quote}`,
                     );
-                    return null;
+                    return {
+                        currencyPair: availableMarket,
+                        price: null,
+                    };
                 }
             }),
         );

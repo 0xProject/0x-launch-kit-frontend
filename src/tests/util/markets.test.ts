@@ -1,32 +1,31 @@
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
-import { TokenSymbol } from '../../util/types';
 
 const marketExamples = {
     zrxWeth: {
         currencyPair: {
-            base: TokenSymbol.Zrx,
-            quote: TokenSymbol.Weth,
+            base: 'zrx',
+            quote: 'weth',
         },
         price: null,
     },
     wethZrx: {
         currencyPair: {
-            base: TokenSymbol.Weth,
-            quote: TokenSymbol.Zrx,
+            base: 'weth',
+            quote: 'zrx',
         },
         price: null,
     },
     daiMkr: {
         currencyPair: {
-            base: TokenSymbol.Dai,
-            quote: TokenSymbol.Mkr,
+            base: 'dai',
+            quote: 'mkr',
         },
         price: null,
     },
     daiWeth: {
         currencyPair: {
-            base: TokenSymbol.Dai,
-            quote: TokenSymbol.Weth,
+            base: 'dai',
+            quote: 'weth',
         },
         price: null,
     },
@@ -36,18 +35,18 @@ const { zrxWeth, wethZrx, daiMkr, daiWeth } = marketExamples;
 describe('filterMarketsByTokenSymbol', () => {
     it('should return [] when the are no CurrencyPair with the given TokenSymbol', async () => {
         const markets = [zrxWeth, wethZrx, daiWeth];
-        expect(filterMarketsByTokenSymbol(markets, TokenSymbol.Mkr)).toMatchObject([]);
-        expect(filterMarketsByTokenSymbol([], TokenSymbol.Mkr)).toMatchObject([]);
+        expect(filterMarketsByTokenSymbol(markets, 'mkr')).toMatchObject([]);
+        expect(filterMarketsByTokenSymbol([], 'mkr')).toMatchObject([]);
     });
     it('should return an array with results that have the given TokenSymbol as base or quote in their market.currencyPair', async () => {
         let markets = [zrxWeth, wethZrx, daiMkr];
         let expectedResult = [zrxWeth, wethZrx];
-        expect(filterMarketsByTokenSymbol(markets, TokenSymbol.Zrx)).toMatchObject(expectedResult);
-        expect(filterMarketsByTokenSymbol(markets, TokenSymbol.Weth)).toMatchObject(expectedResult);
+        expect(filterMarketsByTokenSymbol(markets, 'zrx')).toMatchObject(expectedResult);
+        expect(filterMarketsByTokenSymbol(markets, 'weth')).toMatchObject(expectedResult);
 
         markets = [zrxWeth, wethZrx, daiMkr, daiWeth];
         expectedResult = [zrxWeth, wethZrx, daiWeth];
-        expect(filterMarketsByTokenSymbol(markets, TokenSymbol.Weth)).toMatchObject(expectedResult);
+        expect(filterMarketsByTokenSymbol(markets, 'weth')).toMatchObject(expectedResult);
     });
 });
 

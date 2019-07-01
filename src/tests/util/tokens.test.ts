@@ -1,7 +1,6 @@
 import { BigNumber } from '0x.js';
 
 import { tokenAmountInUnits, tokenSymbolToDisplayString, unitsInTokenAmount } from '../../util/tokens';
-import { TokenSymbol } from '../../util/types';
 
 describe('tokenAmountInUnits', () => {
     it('should format the token amount', async () => {
@@ -60,7 +59,7 @@ describe('unitsInTokenAmount', () => {
 describe('tokenSymbolToDisplayString', () => {
     it('should return weth token correctly formated', async () => {
         // given
-        const symbol = TokenSymbol.Weth;
+        const symbol = 'weth';
         // when
         const result = tokenSymbolToDisplayString(symbol);
 
@@ -71,7 +70,7 @@ describe('tokenSymbolToDisplayString', () => {
 
     it('should return generic token (no weth) in uppercase', async () => {
         // given
-        const symbol = TokenSymbol.Zrx;
+        const symbol = 'zrx';
         // when
         const result = tokenSymbolToDisplayString(symbol);
 

@@ -5,9 +5,11 @@ exports[`TokenIcon TokenIcon MLN to match snapshot 1`] = `
   className="sc-bdVaJa erQgzz"
   color="#232332"
 >
-  <svg>
-    mln.svg
-  </svg>
+  <label
+    className="sc-bwzfXH jgqeEE"
+  >
+    MLN
+  </label>
 </div>
 `;
 
@@ -16,9 +18,11 @@ exports[`TokenIcon TokenIcon ZRX to match snapshot 1`] = `
   className="sc-bdVaJa erQgzz"
   color="#232332"
 >
-  <svg>
-    zrx.svg
-  </svg>
+  <label
+    className="sc-bwzfXH jgqeEE"
+  >
+    ZRX
+  </label>
 </div>
 `;
 

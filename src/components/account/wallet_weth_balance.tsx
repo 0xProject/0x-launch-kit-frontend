@@ -12,6 +12,7 @@ import {
     getWethBalance,
 } from '../../store/selectors';
 import { Theme, themeDimensions } from '../../themes/commons';
+import { getKnownTokens } from '../../util/known_tokens';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { ConvertBalanceState, StoreState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -174,9 +175,10 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         } = this.props;
         const { isSubmitting } = this.state;
         const totalEth = ethBalance.plus(wethBalance);
-        const formattedEth = tokenAmountInUnits(ethBalance, 18);
-        const formattedWeth = tokenAmountInUnits(wethBalance, 18);
-        const formattedTotalEth = tokenAmountInUnits(totalEth, 18);
+        const wethToken = getKnownTokens().getWethToken();
+        const formattedEth = tokenAmountInUnits(ethBalance, wethToken.decimals, wethToken.displayDecimals);
+        const formattedWeth = tokenAmountInUnits(wethBalance, wethToken.decimals, wethToken.displayDecimals);
+        const formattedTotalEth = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
 
         let content: React.ReactNode;
 

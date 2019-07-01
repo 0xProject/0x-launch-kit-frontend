@@ -30,12 +30,13 @@ const SideTD = styled(CustomTD)<{ side: OrderSide }>`
 
 const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
     const sideLabel = order.side === OrderSide.Sell ? 'Sell' : 'Buy';
-    const size = tokenAmountInUnits(order.size, baseToken.decimals);
-    let filled = null;
+    const size = tokenAmountInUnits(order.size, baseToken.decimals, baseToken.displayDecimals);
     let status = '--';
     let isOrderFillable = false;
 
-    order.filled ? (filled = tokenAmountInUnits(order.filled, baseToken.decimals)) : (filled = null);
+    const filled = order.filled
+        ? tokenAmountInUnits(order.filled, baseToken.decimals, baseToken.displayDecimals)
+        : null;
     if (order.status) {
         isOrderFillable = order.status === OrderStatus.Fillable;
         status = isOrderFillable ? 'Open' : 'Filled';

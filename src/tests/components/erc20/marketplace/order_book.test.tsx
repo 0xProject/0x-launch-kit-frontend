@@ -12,7 +12,7 @@ import { ThemeProvider } from 'styled-components';
 import { OrderBookTableWithTheme } from '../../../../components/erc20/marketplace/order_book';
 import { DefaultTheme } from '../../../../themes/default_theme';
 import { openOrder, tokenFactory } from '../../../../util/test-utils';
-import { OrderSide, TokenSymbol, Web3State } from '../../../../util/types';
+import { OrderSide, Token, Web3State } from '../../../../util/types';
 
 const mockStore = configureMockStore([]);
 
@@ -295,12 +295,13 @@ describe('OrderBookTable', () => {
             ],
         };
 
-        const token = {
+        const token: Token = {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
             decimals: 0,
             name: '0x',
-            symbol: TokenSymbol.Zrx,
+            symbol: 'zrx',
             primaryColor: '#ccc',
+            displayDecimals: 2,
         };
 
         const userOrder1 = openOrder({
@@ -376,12 +377,13 @@ describe('OrderBookTable', () => {
             ],
         };
 
-        const token = {
+        const token: Token = {
             address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
             decimals: 0,
             name: '0x',
-            symbol: TokenSymbol.Zrx,
+            symbol: 'zrx',
             primaryColor: '#ccc',
+            displayDecimals: 2,
         };
 
         const userOrder1 = openOrder({
