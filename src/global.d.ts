@@ -6,3 +6,7 @@ interface Window {
 
 declare module 'react-copy-to-clipboard';
 declare module 'react-tooltip';
+declare module '*.json' {
+    const value: any;
+    export default value;
+}

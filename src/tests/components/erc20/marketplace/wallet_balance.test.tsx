@@ -9,7 +9,7 @@ import React from 'react';
 import { WalletBalance } from '../../../../components/erc20/marketplace/wallet_balance';
 import * as tokenServices from '../../../../services/tokens';
 import { addressFactory, tokenBalanceFactory, tokenFactory } from '../../../../util/test-utils';
-import { TokenSymbol, Web3State } from '../../../../util/types';
+import { Web3State } from '../../../../util/types';
 import { mountWithTheme } from '../../../util/test_with_theme';
 
 describe('WalletBalance', () => {
@@ -56,6 +56,7 @@ describe('WalletBalance', () => {
                 ethAccount={ethAccount}
                 baseTokenBalance={baseTokenBalance}
                 quoteTokenBalance={quoteTokenBalance}
+                totalEthBalance={new BigNumber(2)}
             />,
         );
 
@@ -89,6 +90,7 @@ describe('WalletBalance', () => {
                 ethAccount={ethAccount}
                 baseTokenBalance={baseTokenBalance}
                 quoteTokenBalance={quoteTokenBalance}
+                totalEthBalance={new BigNumber(2)}
             />,
         );
 
@@ -102,8 +104,8 @@ describe('WalletBalance', () => {
         const baseToken = tokenFactory.build();
         const quoteToken = tokenFactory.build();
         const currencyPair = {
-            base: TokenSymbol.Weth,
-            quote: TokenSymbol.Zrx,
+            base: 'weth',
+            quote: 'zrx',
         };
         const ethAccount = 'This is a test';
 
@@ -126,6 +128,7 @@ describe('WalletBalance', () => {
                 quoteToken={quoteToken}
                 baseTokenBalance={baseTokenBalance}
                 quoteTokenBalance={quoteTokenBalance}
+                totalEthBalance={new BigNumber(2)}
             />,
         );
 

@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components';
 
 import { Toolbar } from '../../../components/common/toolbar';
 import { DefaultTheme } from '../../../themes/default_theme';
+import { Web3State } from '../../../util/types';
 
 const theme = new DefaultTheme();
 
@@ -28,7 +29,7 @@ describe('Toolbar', () => {
 
         const toolbar = (
             <ThemeProvider theme={theme}>
-                <Toolbar startContent={startContent} endContent={endContent} />
+                <Toolbar startContent={startContent} endContent={endContent} web3State={Web3State.Done} />
             </ThemeProvider>
         );
 

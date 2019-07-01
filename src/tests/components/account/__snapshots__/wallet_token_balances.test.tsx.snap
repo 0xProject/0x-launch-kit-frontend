@@ -68,9 +68,11 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
               className="sc-dxgOiQ kjzMiM sc-EHOje dcpbFX"
               color="white"
             >
-              <svg>
-                weth.svg
-              </svg>
+              <label
+                className="sc-bZQynM dstZeq"
+              >
+                WETH
+              </label>
             </div>
           </td>
           <td

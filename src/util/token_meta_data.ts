@@ -1,30 +1,23 @@
-import { NETWORK_ID } from '../common/constants';
+import { NETWORK_ID, UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION } from '../common/constants';
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { Token, TokenSymbol } from './types';
+import { Token } from './types';
 
 export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
-    const tokenMetadata = tokensMetaData.find(
-        tokenMetaData => tokenMetaData.symbol === TokenSymbol.Weth,
-    ) as TokenMetaData;
-    if (tokenMetadata.id) {
-        return {
-            address: tokenMetadata.addresses[NETWORK_ID],
-            symbol: tokenMetadata.symbol,
-            decimals: tokenMetadata.decimals,
-            name: tokenMetadata.name,
-            primaryColor: tokenMetadata.primaryColor,
-            id: tokenMetadata.id,
-        };
-    } else {
-        return {
-            address: tokenMetadata.addresses[NETWORK_ID],
-            symbol: tokenMetadata.symbol,
-            decimals: tokenMetadata.decimals,
-            name: tokenMetadata.name,
-            primaryColor: tokenMetadata.primaryColor,
-        };
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'weth');
+    if (!tokenMetaData) {
+        throw new Error('WETH Token MetaData not found');
     }
+    return {
+        address: tokenMetaData.addresses[NETWORK_ID],
+        symbol: tokenMetaData.symbol,
+        decimals: tokenMetaData.decimals,
+        name: tokenMetaData.name,
+        primaryColor: tokenMetaData.primaryColor,
+        icon: tokenMetaData.icon,
+        displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+        id: tokenMetaData.id || undefined,
+    };
 };
 
 export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaData[]): Token[] => {
@@ -32,24 +25,16 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
         .filter(tokenMetaData => tokenMetaData.addresses[NETWORK_ID])
         .map(
             (tokenMetaData): Token => {
-                if (tokenMetaData.id) {
-                    return {
-                        address: tokenMetaData.addresses[NETWORK_ID],
-                        symbol: tokenMetaData.symbol,
-                        decimals: tokenMetaData.decimals,
-                        name: tokenMetaData.name,
-                        primaryColor: tokenMetaData.primaryColor,
-                        id: tokenMetaData.id,
-                    };
-                } else {
-                    return {
-                        address: tokenMetaData.addresses[NETWORK_ID],
-                        symbol: tokenMetaData.symbol,
-                        decimals: tokenMetaData.decimals,
-                        name: tokenMetaData.name,
-                        primaryColor: tokenMetaData.primaryColor,
-                    };
-                }
+                return {
+                    address: tokenMetaData.addresses[NETWORK_ID],
+                    symbol: tokenMetaData.symbol,
+                    decimals: tokenMetaData.decimals,
+                    name: tokenMetaData.name,
+                    primaryColor: tokenMetaData.primaryColor,
+                    icon: tokenMetaData.icon,
+                    displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+                    id: tokenMetaData.id || undefined,
+                };
             },
         );
 };
