@@ -29,7 +29,7 @@ import {
     Web3State,
 } from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
-import { fetchMarkets, setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote, updateMarketPriceQuote } from '../market/actions';
+import { fetchMarkets, setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,

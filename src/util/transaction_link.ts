@@ -8,6 +8,13 @@ const ETHERSCAN_TRANSACTION_URL: { [key: number]: string } = {
     [Network.Ganache]: 'https://etherscan.io/tx/',
 };
 
+export const ETHERSCAN_URL: { [key: number]: string } = {
+    [Network.Mainnet]: 'https://etherscan.io/',
+    [Network.Rinkeby]: 'https://rinkeby.etherscan.io/',
+    [Network.Kovan]: 'https://kovan.etherscan.io/',
+    [Network.Ganache]: 'https://etherscan.io/',
+};
+
 export const getTransactionLink = (hash: string): string => {
     return `${ETHERSCAN_TRANSACTION_URL[NETWORK_ID]}${hash}`;
 };
