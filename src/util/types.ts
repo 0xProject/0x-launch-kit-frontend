@@ -16,6 +16,7 @@ export interface TabItem {
 
 export enum Network {
     Mainnet = 1,
+    Ropsten = 3,
     Rinkeby = 4,
     Kovan = 42,
     Ganache = 50,
@@ -30,6 +31,9 @@ export interface Token {
     id?: string;
     icon?: string;
     displayDecimals: number;
+    minAmount?: number;
+    maxAmount?: number;
+    precision?: number;
 }
 
 export interface TokenBalance {
@@ -202,6 +206,24 @@ export interface OrderBook {
 export interface CurrencyPair {
     base: string;
     quote: string;
+    config: {
+        basePrecision: number;
+        pricePrecision: number;
+        minAmount: number;
+        maxAmount: number;
+        quotePrecision: number;
+    };
+}
+export interface CurrencyPairMetaData {
+    base: string;
+    quote: string;
+    config?: {
+        basePrecision?: number;
+        pricePrecision?: number;
+        minAmount?: number;
+        maxAmount?: number;
+        quotePrecision?: number;
+    };
 }
 
 export interface Market {
@@ -353,7 +375,7 @@ export interface GeneralConfig {
 
 export interface ConfigFile {
     tokens: TokenMetaData[];
-    pairs: CurrencyPair[];
+    pairs: CurrencyPairMetaData[];
     marketFilters?: Filter[];
     theme?: PartialTheme;
     general?: GeneralConfig;

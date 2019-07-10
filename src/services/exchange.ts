@@ -75,7 +75,7 @@ export const subscribeToFillEventsByFeeRecipient = ({
                 toBlock,
             },
             {
-               feeRecipientAddress: ethAccount,
+                feeRecipientAddress: ethAccount,
             },
         )
         .then(pastFillEventsCallback);

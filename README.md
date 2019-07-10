@@ -1,79 +1,81 @@
-# 0x-launch-kit-frontend
+# Veridex
 
 [![CircleCI](https://circleci.com/gh/0xProject/0x-launch-kit-frontend.svg?style=svg)](https://circleci.com/gh/0xProject/0x-launch-kit-frontend)
 [![dependencies Status](https://david-dm.org/0xproject/0x-launch-kit-frontend/status.svg)](https://david-dm.org/0xproject/0x-launch-kit-frontend)
 [![devDependencies Status](https://david-dm.org/0xproject/0x-launch-kit-frontend/dev-status.svg)](https://david-dm.org/0xproject/0x-launch-kit-frontend?type=dev)
 [![Coverage Status](https://coveralls.io/repos/github/0xProject/0x-launch-kit-frontend/badge.svg?branch=feature%2Fcoveralls)](https://coveralls.io/github/0xProject/0x-launch-kit-frontend?branch=feature%2Fcoveralls)
 
-This is an example implementation of a dApp that interacts with a [0x relayer](https://github.com/0xProject/standard-relayer-api). To use it, you need to have the URL of an existing relayer, or you can start one locally for use during development.
+This project is forked from [0x-launch-kit-fronted](https://github/0xproject/0x-launch-kit-frontend) and with a goal to be the most complete open-source 0x based dex out there. The code here will try to be on sync with the 0x frontend, but with the additional features proposed on the TODO, tests will be include following 0x style.
+
+This source code is used on the [VeriSafe Dex as a service](https://steemit.com/zerox/@joaocampos/veridex-network-dex-as-a-service).
 
 This repo ships with both an ERC-20 token trading interface and an ERC-721 marketplace interface.
 
-|                              ERC-20                              |                              ERC-721                              |
-| :--------------------------------------------------------------: | :---------------------------------------------------------------: |
-| ![](https://s3.eu-west-2.amazonaws.com/0x-wiki-images/erc20.png) | ![](https://s3.eu-west-2.amazonaws.com/0x-wiki-images/erc721.png) |
+Support this fork with the following actions:
+
+-   Add VSF, 0xbitcoin and 0x as pairs
+-   Lets us know you are using this fork
+-   Add a Powered by 0x and VeriSafe
+
+With your help, we can be self-sustainable and complete the long list of TODO's. If you want a feature that is not present on the TODO list, please open an issue requesting a feature request
+
+## Deployed DEX's
+
+List of deployed dex's using this source code:
+
+-   [VeriDex](https://dex.verisafe.io)
+-   [0xChange](https://0xchange.verisafe.io)
+
+If you are using the source code of this fork, please let me know! Help the project adding VSF as a pair on your fork!
 
 ## Usage
 
 Clone this repository and install its dependencies:
 
 ```
-git clone git@github.com:0xProject/0x-launch-kit-frontend.git
-cd 0x-launch-kit-frontend
+git clone git@github.com:VeriSafe/veridex.git
+cd Veridex
 yarn
 ```
 
-### Using an existing relayer
+## TODO
 
-If you have the URL of an existing relayer, you can use this frontend against it. After installing the dependencies, start the application with this command, replacing `RELAYER_URL` with the proper value:
+This is a detailed list of planned features to add to this DEX (includes VeriDex backend) on long term:
+
+-   [x] List Dex Trades
+-   [x] Add troll box using ChatBro
+-   [x] Fully configuration of orderbook and sell and buy cards
+-   [ ] List Market Trades
+-   [ ] List Markets stats
+-   [ ] Click on buy and sell button to auto-fill
+-   [ ] Adding graphs like Trading View
+-   [ ] Create a costumized front page
+-   [ ] List descriptions for each project
+-   [ ] Report data to the most known crypto data aggregators
+-   [ ] List last prices for each token
+-   [ ] Support multiple wallets, like Portis, Torus etc please see list of planned wallets below
+-   [ ] Add mobile support
+-   [ ] Theme switcher
+
+## Planned Wallets Support
+
+-   [x] [Metamask](https://metamask.io/)
+-   [ ] [Torus](https://docs.tor.us/developers/getting-started)
+-   [ ] [Portis](https://developers.portis.io/)
+-   [ ] [Fortmatic](https://developers.fortmatic.com/)
+-   [ ] [WalletConnect](https://docs.walletconnect.org/)
+
+Library to use: [web3-react](https://noahzinsmeister.gitbook.io/web3-react/v/latest/)
+
+### Using VeriDex relayer
 
 ```
-REACT_APP_RELAYER_URL='https://RELAYER_URL/api/v2' yarn start
+REACT_APP_RELAYER_URL='https://veridex.herokuapp.com/v2' yarn start
 ```
 
-A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to the network used by the relayer.
+[VeriDEX OPEN API SPEC](https://verisafe.github.io/veridex-api-spec/)
 
-You can optionally pass in any relayer endpoint that complies with the [0x Standard Relayer API](https://github.com/0xProject/standard-relayer-api). For example, if you want to mirror Kovan liquidity from [Radar Relay](https://radarrelay.com/):
-
-```
-REACT_APP_RELAYER_URL='https://api.kovan.radarrelay.com/0x/v2' yarn start
-```
-
-These commands start the app in development mode. You can run `yarn build` to build the assets. The results will be in the `build` directory. Remember to set the environment variable with the relayer URL when running the `build` command:
-
-```
-REACT_APP_RELAYER_URL='https://RELAYER_URL/api/v2' yarn build
-serve ./build
-```
-
-### Creating a relayer for development
-
-If you don't have a relayer, you can start one locally for development. First create a `docker-compose.yml` file like this:
-
-```yml
-version: '3'
-services:
-    ganache:
-        image: fvictorio/0x-ganache-testing:0.0.1
-        ports:
-            - '8545:8545'
-    launch-kit:
-        image: fvictorio/0x-launch-kit-testing
-        environment:
-            HTTP_PORT: '3000'
-            RPC_URL: 'http://ganache:8545'
-            NETWORK_ID: '50'
-        ports:
-            - '3000:3000'
-        depends_on:
-            - ganache
-```
-
-and then run `docker-compose up`. This will create two containers: one has a ganache with the 0x contracts deployed and some test tokens, and the other one has an instance of the [launch kit](https://github.com/0xProject/0x-launch-kit) implementation of a relayer that connects to that ganache.
-
-After starting those containers, you can run `yarn start` in another terminal. A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to `localhost:8545`.
-
-> _Note: the state of the relayer will be kept between runs. If you want to start from scratch, use `docker-compose up --force-recreate`_
+This relayer has additional endpoints to enable market view data with stats and candles. We will be adding as an opt-in option use these features in your frontend. That way you can use a Standard Relayer without any issues.
 
 ## Environment variables
 
@@ -86,3 +88,7 @@ Check `.env.example` for the full list.
 ### Using custom themes
 
 If you want to add your own theme for the app, please read the [THEMES.md](THEMES.md) file
+
+### Using custom Config on the DEX
+
+If you want to config the app and markets, please read the [CONFIG.md](CONFIG.md) file

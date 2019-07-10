@@ -5,10 +5,10 @@ export const tomorrow = () => {
 };
 // Default to 7 days
 export const getExpirationTimeOrdersFromConfig = () => {
-    return new BigNumber(Math.floor(new Date().valueOf() / 1000) + (Number(process.env.REACT_APP_EXPIRE_ORDERS_TIME) || 3600 * 24 * 7) )    ;
+    return new BigNumber(
+        Math.floor(new Date().valueOf() / 1000) + (Number(process.env.REACT_APP_EXPIRE_ORDERS_TIME) || 3600 * 24 * 7),
+    );
 };
-
-
 
 export const todayInSeconds = () => {
     return Math.floor(Date.now() / 1000);

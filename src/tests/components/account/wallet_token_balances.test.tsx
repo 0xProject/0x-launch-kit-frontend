@@ -29,6 +29,7 @@ const wethTokenBalance = {
 
 describe('WalletTokenBalances', () => {
     it('should show one row for each token plus one for the total eth', () => {
+        const account = '0x1';
         const tokenBalances: TokenBalance[] = [
             {
                 balance: new BigNumber(1),
@@ -70,6 +71,7 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={noop}
                 web3State={Web3State.Done}
+                ethAccount={account}
             />,
         );
 
@@ -78,6 +80,7 @@ describe('WalletTokenBalances', () => {
     });
 
     it('should properly show locked and unlocked tokens', () => {
+        const account = '0x1';
         const tokenBalances: TokenBalance[] = [
             {
                 balance: new BigNumber(1),
@@ -118,6 +121,7 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={noop}
                 web3State={Web3State.Done}
+                ethAccount={account}
             />,
         );
 
@@ -126,6 +130,8 @@ describe('WalletTokenBalances', () => {
     });
 
     it('should call the onToggleTokenLock function when a locked token is clicked', () => {
+        const account = '0x1';
+
         const tokenBalances: TokenBalance[] = [
             {
                 balance: new BigNumber(1),
@@ -168,6 +174,7 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={onToggleTokenLock}
                 web3State={Web3State.Done}
+                ethAccount={account}
             />,
         );
 
@@ -182,6 +189,7 @@ describe('WalletTokenBalances', () => {
     });
 
     it('should call the onToggleTokenLock function when a unlocked token is clicked', () => {
+        const account = '0x1';
         const tokenBalances: TokenBalance[] = [
             {
                 balance: new BigNumber(1),
@@ -224,6 +232,7 @@ describe('WalletTokenBalances', () => {
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={onToggleTokenLock}
                 web3State={Web3State.Done}
+                ethAccount={account}
             />,
         );
         const rows = wrapper.find('tbody tr');

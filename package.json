@@ -39,12 +39,13 @@
     "scripts": {
         "start": "cross-env PORT=3001 react-scripts start",
         "build": "react-scripts build",
-        "test": "REACT_APP_NETWORK_ID=50 react-scripts test --env=node",
+        "test": "cross-env REACT_APP_NETWORK_ID=50 react-scripts test --env=node",
         "test-once": "cross-env CI=true react-scripts test --coverage",
         "lint": "tslint --project . 'src/**/*.{ts,tsx}' && npm run prettier-check",
+        "lint-fix": "tslint --project . 'src/**/*.{ts,tsx}' --fix",
         "eject": "react-scripts eject",
-        "prettier": "prettier --write '**/*.{ts,tsx,json,md}' --ignore-path .gitignore",
-        "prettier-check": "prettier --check '**/*.{ts,tsx,json,md}' --ignore-path .gitignore",
+        "prettier": "cross-env prettier --write '**/*.{ts,tsx,json,md}' --ignore-path .gitignore",
+        "prettier-check": "cross-env prettier --check '**/*.{ts,tsx,json,md}' --ignore-path .gitignore",
         "coveralls": "cat ./coverage/lcov.info | coveralls"
     },
     "eslintConfig": {

@@ -1,10 +1,19 @@
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
 
+const config = {
+    basePrecision: 8,
+    pricePrecision: 8,
+    quotePrecision: 8,
+    minAmount: 0,
+    maxAmount: 1000000,
+};
+
 const marketExamples = {
     zrxWeth: {
         currencyPair: {
             base: 'zrx',
             quote: 'weth',
+            config,
         },
         price: null,
     },
@@ -12,6 +21,7 @@ const marketExamples = {
         currencyPair: {
             base: 'weth',
             quote: 'zrx',
+            config,
         },
         price: null,
     },
@@ -19,6 +29,7 @@ const marketExamples = {
         currencyPair: {
             base: 'dai',
             quote: 'mkr',
+            config,
         },
         price: null,
     },
@@ -26,6 +37,7 @@ const marketExamples = {
         currencyPair: {
             base: 'dai',
             quote: 'weth',
+            config,
         },
         price: null,
     },

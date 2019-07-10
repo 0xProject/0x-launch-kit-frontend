@@ -118,7 +118,14 @@ The config file lives at `src/config.json`.
     "pairs": [
         {
             "base": "zrx",
-            "quote": "weth"
+            "quote": "weth",
+            "config": {
+                "basePrecision": 2,
+                "pricePrecision": 5,
+                "quotePrecision": 5,
+                "minAmount": 10,
+                "maxAmount": 100000
+            }
         },
         {
             "base": "zrx",
@@ -212,7 +219,7 @@ Inside the config is a tokens section. This is an array of all of the tokens use
 
 ### Pairs
 
-The pairs lists the available markets for the front end to render. This appears in the Market Dropdown component.
+The pairs lists the available markets for the front end to render and it is possible to configure orderbook and buy and sell cards to fit the market needs. This appears in the Market Dropdown component.
 
 ```json
 {
@@ -229,10 +236,22 @@ The pairs lists the available markets for the front end to render. This appears 
 }
 ```
 
-| property | description                         |
-| -------- | ----------------------------------- |
-| base     | The base token in the trading pair  |
-| quote    | The quote token in the trading pair |
+| property           | description                         |
+| ------------------ | ----------------------------------- |
+| base               | The base token in the trading pair  |
+| quote              | The quote token in the trading pair |
+| config             | Optional. Configs for orderbook and |
+| buy and sell cards |
+
+#### Pair Config
+
+| property       | description                         |
+| -------------- | ----------------------------------- |
+| minAmount      | Minimal buy amount of base token    |
+| maxAmount      | The quote token in the trading pair |
+| pricePrecision | price precision on the orderbook    |
+| quotePrecision | quote precision                     |
+| basePrecision  | base precision on the trade size    |
 
 ### Market Filters
 

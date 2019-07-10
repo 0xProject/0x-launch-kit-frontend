@@ -19,10 +19,8 @@ interface StateProps {
 type Props = StateProps & OwnProps;
 
 const connectToExplorer = () => {
-   window.open('https://0xtracker.com/search?q=0x5265bde27f57e738be6c1f6ab3544e82cdc92a8f')
+    window.open('https://0xtracker.com/search?q=0x5265bde27f57e738be6c1f6ab3544e82cdc92a8f');
 };
-
-
 
 const DropdownItems = styled(CardBase)`
     box-shadow: ${props => props.theme.componentsTheme.boxShadow};
@@ -33,18 +31,18 @@ class WalletConnectionContent extends React.PureComponent<Props> {
     public render = () => {
         const { ethAccount, ...restProps } = this.props;
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
-        
+
         const viewOnEtherscan = () => {
             window.open(`https://etherscan.io/address/${ethAccount}`);
         };
-        
+
         const content = (
             <DropdownItems>
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <DropdownTextItem text="Copy Address to Clipboard" />
                 </CopyToClipboard>
                 <DropdownTextItem onClick={viewOnEtherscan} text="View Address on Etherscan" />
-                <DropdownTextItem onClick={connectToExplorer} text="Track DEX volume" />             
+                <DropdownTextItem onClick={connectToExplorer} text="Track DEX volume" />
             </DropdownItems>
         );
 

@@ -4,7 +4,13 @@ import { withRouter } from 'react-router-dom';
 
 import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
-import { initializeAppNoMetamaskOrLocked, initWallet, updateMarketPriceEther, updateMarketPriceQuote, updateStore } from '../store/actions';
+import {
+    initializeAppNoMetamaskOrLocked,
+    initWallet,
+    updateMarketPriceEther,
+    updateMarketPriceQuote,
+    updateStore,
+} from '../store/actions';
 import { getCurrentMarketPlace, getWeb3State } from '../store/selectors';
 import { MARKETPLACES, StoreState, Web3State } from '../util/types';
 
@@ -78,7 +84,7 @@ class App extends React.Component<Props> {
             this._updatePriceEtherInterval = window.setInterval(async () => {
                 this.props.onUpdateMarketPriceEther();
                 if (MARKETPLACE === MARKETPLACES.ERC20) {
-                  this.props.onUpdateMarketPriceQuote();
+                    this.props.onUpdateMarketPriceQuote();
                 }
             }, UPDATE_ETHER_PRICE_INTERVAL);
         }

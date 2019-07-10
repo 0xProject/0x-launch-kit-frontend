@@ -40,6 +40,13 @@ describe('WalletBalance', () => {
         const currencyPair = {
             base: baseToken.symbol,
             quote: quoteToken.symbol,
+            config: {
+                basePrecision: 8,
+                pricePrecision: 8,
+                quotePrecision: 8,
+                minAmount: 0,
+                maxAmount: 1000000,
+            },
         };
 
         const baseTokenBalance = tokenBalanceFactory.build();
@@ -75,6 +82,13 @@ describe('WalletBalance', () => {
         const currencyPair = {
             base: baseToken.symbol,
             quote: quoteToken.symbol,
+            config: {
+                basePrecision: 8,
+                pricePrecision: 8,
+                quotePrecision: 8,
+                minAmount: 0,
+                maxAmount: 1000000,
+            },
         };
 
         const baseTokenBalance = tokenBalanceFactory.build();
@@ -106,6 +120,13 @@ describe('WalletBalance', () => {
         const currencyPair = {
             base: 'weth',
             quote: 'zrx',
+            config: {
+                basePrecision: 8,
+                pricePrecision: 8,
+                quotePrecision: 8,
+                minAmount: 0,
+                maxAmount: 1000000,
+            },
         };
         const ethAccount = 'This is a test';
 

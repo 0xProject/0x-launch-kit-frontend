@@ -12,8 +12,6 @@ import { ToolbarContentContainer } from './common/toolbar_content';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
 
-
-
 const toolbar = <ToolbarContentContainer />;
 
 export const Erc20App = () => {

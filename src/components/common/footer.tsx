@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 import { GIT_COMMIT } from '../../common/constants';
-import { themeDimensions,themeBreakPoints } from '../../themes/commons';
+import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -12,23 +12,22 @@ const FooterWrapper = styled.div`
     height: ${themeDimensions.footerHeight};
     justify-content: center;
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
-    .link{
+    .link {
         padding-left: 5px;
     }
 
     @media (max-width: ${themeBreakPoints.md}) {
-        .link{
+        .link {
             padding-left: 2px;
         }
     }
 
-    
-    .break{
+    .break {
         flex-basis: 100%;
-        width: 0px; 
-        height: 0px; 
+        width: 0px;
+        height: 0px;
         overflow: hidden;
-      }
+    }
 `;
 
 const poweredBySVG = () => {
@@ -102,23 +101,27 @@ export const Footer: React.FC<Props> = props => {
     return (
         <FooterWrapper title={GIT_COMMIT} {...props}>
             <a href="https://www.verisafe.io/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-              Terms and Conditions
+                Terms and Conditions
             </a>
             <a href="https://0x.org/" target="_blank" rel="noopener noreferrer" className="link">
                 {poweredBySVG()}
             </a>
-            <br className="break"/>
-            
+            <br className="break" />
+
             <a href="https://www.verisafe.io/privacy-policy" target="_blank" rel="noopener noreferrer" className="link">
-              Privay Policy
+                Privay Policy
             </a>
-            <a href="https://steemit.com/veridex/@joaocampos/tutorial-to-use-veridex-at-dex-verisafe-io-https-dex-verisafe-io" target="_blank" rel="noopener noreferrer" className="link">
-              Tutorial
+            <a
+                href="https://steemit.com/veridex/@joaocampos/tutorial-to-use-veridex-at-dex-verisafe-io-https-dex-verisafe-io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link"
+            >
+                Tutorial
             </a>
             <a href="https://my.verisafe.io/help-support/" target="_blank" rel="noopener noreferrer" className="link">
-              Listings
+                Listings
             </a>
         </FooterWrapper>
-    
     );
 };

@@ -4,7 +4,13 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
-import { getEthAccount, getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
+import {
+    getEthAccount,
+    getEthBalance,
+    getTokenBalances,
+    getWeb3State,
+    getWethTokenBalance,
+} from '../../store/selectors';
 import { getEtherscanLinkForToken, getEtherscanLinkForTokenAndAddress, tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -146,7 +152,14 @@ const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
 
 class WalletTokenBalances extends React.PureComponent<Props> {
     public render = () => {
-        const { ethBalance, tokenBalances, onStartToggleTokenLockSteps, web3State, wethTokenBalance, ethAccount } = this.props;
+        const {
+            ethBalance,
+            tokenBalances,
+            onStartToggleTokenLockSteps,
+            web3State,
+            wethTokenBalance,
+            ethAccount,
+        } = this.props;
 
         if (!wethTokenBalance) {
             return null;
@@ -199,7 +212,10 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                         </TokenEtherscanLink>
                     </CustomTDTokenName>
                     <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>
-                        <QuantityEtherscanLink href={getEtherscanLinkForTokenAndAddress(token, ethAccount)} target={'_blank'}>
+                        <QuantityEtherscanLink
+                            href={getEtherscanLinkForTokenAndAddress(token, ethAccount)}
+                            target={'_blank'}
+                        >
                             {formattedBalance}
                         </QuantityEtherscanLink>
                     </CustomTD>
@@ -248,7 +264,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         tokenBalances: getTokenBalances(state),
         web3State: getWeb3State(state),
         wethTokenBalance: getWethTokenBalance(state),
-        ethAccount:  getEthAccount(state),
+        ethAccount: getEthAccount(state),
     };
 };
 const mapDispatchToProps = {

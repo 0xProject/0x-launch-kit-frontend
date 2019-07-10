@@ -169,10 +169,11 @@ export const getOrderBook = createSelector(
     getOpenSellOrders,
     getOpenBuyOrders,
     getMySizeOrders,
-    (sellOrders, buyOrders, mySizeOrders): OrderBook => {
+    getCurrencyPair,
+    (sellOrders, buyOrders, mySizeOrders, currencyPair): OrderBook => {
         const orderBook = {
-            sellOrders: mergeByPrice(sellOrders),
-            buyOrders: mergeByPrice(buyOrders),
+            sellOrders: mergeByPrice(sellOrders, currencyPair.config.pricePrecision),
+            buyOrders: mergeByPrice(buyOrders, currencyPair.config.pricePrecision),
             mySizeOrders,
         };
         return orderBook;

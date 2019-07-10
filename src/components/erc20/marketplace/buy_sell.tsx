@@ -8,7 +8,7 @@ import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getCurrencyPair, getOrderPriceSelected, getWeb3State } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
-import { tokenSymbolToDisplayString } from '../../../util/tokens';
+import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../../util/tokens';
 import {
     ButtonIcons,
     ButtonVariant,
@@ -25,7 +25,6 @@ import { CardTabSelector } from '../../common/card_tab_selector';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
 import { OrderDetailsContainer } from './order_details';
-import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 
 interface StateProps {
     web3State: Web3State;
@@ -120,6 +119,14 @@ const Label = styled.label<{ color?: string }>`
     margin: 0;
 `;
 
+const MinLabel = styled.label<{ color?: string }>`
+    color: ${props => props.color || props.theme.componentsTheme.textColorCommon};
+    font-size: 10px;
+    font-weight: 500;
+    line-height: normal;
+    margin: 0;
+`;
+
 const InnerTabs = styled(CardTabSelector)`
     font-size: 14px;
 `;
@@ -208,17 +215,26 @@ class BuySell extends React.Component<Props, State> {
                 text: 'Limit',
             },
         ];
+        const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
+        // Configs
+        const pricePrecision = currencyPair.config.pricePrecision;
+        const minAmount = currencyPair.config.minAmount;
+        const minAmountUnits = unitsInTokenAmount(String(currencyPair.config.minAmount), decimals);
+        const basePrecision = currencyPair.config.basePrecision;
+        const stepAmount = new BigNumber(1).div(new BigNumber(10).pow(basePrecision));
+        const stepAmountUnits = unitsInTokenAmount(String(stepAmount), decimals);
 
         const isMakerAmountEmpty = makerAmount === null || makerAmount.isZero();
+        const isMakerAmountMin = makerAmount === null || makerAmount.isLessThanOrEqualTo(minAmountUnits);
         const isPriceEmpty = price === null || price.isZero();
-        const isPriceMin = price === null || price.isLessThan(new BigNumber(1).div(new BigNumber(10)).pow(UI_DECIMALS_DISPLAYED_PRICE_ETH));
-        const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty || isPriceMin);
-        const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
+        const isPriceMin =
+            price === null || price.isLessThan(new BigNumber(1).div(new BigNumber(10).pow(pricePrecision)));
+        const isOrderTypeLimitIsEmpty =
+            orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty || isPriceMin);
+        const isOrderTypeMarketIsEmpty = orderType === OrderType.Market && (isMakerAmountEmpty || isMakerAmountMin);
 
         const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
         const btnText = error && error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
-
-        const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
 
         return (
             <>
@@ -241,17 +257,20 @@ class BuySell extends React.Component<Props, State> {
                     </TabsContainer>
                     <Content>
                         <LabelContainer>
-                            <Label>Amount</Label>
+                            <Label>
+                                Amount <MinLabel>(Min: {minAmount})</MinLabel>
+                            </Label>
                             <InnerTabs tabs={buySellInnerTabs} />
                         </LabelContainer>
                         <FieldContainer>
                             <BigInputNumberStyled
                                 decimals={decimals}
-                                min={new BigNumber(0)}
+                                min={minAmountUnits}
                                 onChange={this.updateMakerAmount}
-                                value={makerAmount}
-                                placeholder={'0'}
-                                valueFixedDecimals={0}
+                                value={makerAmount || minAmountUnits}
+                                step={stepAmountUnits}
+                                placeholder={new BigNumber(minAmount).toString()}
+                                valueFixedDecimals={basePrecision}
                             />
                             <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
                         </FieldContainer>
@@ -263,11 +282,14 @@ class BuySell extends React.Component<Props, State> {
                                 <FieldContainer>
                                     <BigInputNumberStyled
                                         decimals={0}
-                                        min={new BigNumber(0)}
+                                        min={new BigNumber(1).div(new BigNumber(10).pow(pricePrecision))}
                                         onChange={this.updatePrice}
                                         value={price}
-                                        placeholder={'0.0000001'}
-                                        valueFixedDecimals={7}
+                                        step={new BigNumber(1).div(new BigNumber(10).pow(pricePrecision))}
+                                        placeholder={new BigNumber(1)
+                                            .div(new BigNumber(10).pow(pricePrecision))
+                                            .toString()}
+                                        valueFixedDecimals={pricePrecision}
                                     />
                                     <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
                                 </FieldContainer>
@@ -281,7 +303,9 @@ class BuySell extends React.Component<Props, State> {
                             currencyPair={currencyPair}
                         />
                         <Button
-                            disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
+                            disabled={
+                                web3State !== Web3State.Done || isOrderTypeLimitIsEmpty || isOrderTypeMarketIsEmpty
+                            }
                             icon={error && error.btnMsg ? ButtonIcons.Warning : undefined}
                             onClick={this.submit}
                             variant={

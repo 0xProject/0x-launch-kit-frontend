@@ -8,10 +8,14 @@ const dummyTokensMetaData: TokenMetaData[] = [
         decimals: 18,
         symbol: 'weth',
         name: 'Wrapped Ether',
+        id: 'ethereum',
         addresses: {
             [NETWORK_ID]: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
         },
         primaryColor: '#ccc',
+        displayDecimals: 2,
+        precision: 8,
+        minAmount: 0,
     },
     {
         decimals: 18,
@@ -21,6 +25,9 @@ const dummyTokensMetaData: TokenMetaData[] = [
             [NETWORK_ID]: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         },
         primaryColor: '#ccc',
+        displayDecimals: 2,
+        precision: 2,
+        id: '0x',
     },
 ];
 const wethToken: Token = {
@@ -31,6 +38,10 @@ const wethToken: Token = {
     primaryColor: '#ccc',
     displayDecimals: 2,
     icon: undefined,
+    minAmount: 0,
+    maxAmount: undefined,
+    precision: 8,
+    id: 'ethereum',
 };
 const zrxToken: Token = {
     address: dummyTokensMetaData[1].addresses[NETWORK_ID],
@@ -40,6 +51,10 @@ const zrxToken: Token = {
     primaryColor: '#ccc',
     displayDecimals: 2,
     icon: undefined,
+    id: '0x',
+    maxAmount: undefined,
+    minAmount: 0,
+    precision: 2,
 };
 
 const fillEvent1 = {

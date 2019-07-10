@@ -199,19 +199,18 @@ class OrderDetails extends React.Component<Props, State> {
         const quoteTokenAmountUnits = tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals);
         const costAmount = tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals, quoteToken.displayDecimals);
         if (qouteInUSD) {
-         const quotePriceAmountUSD = new BigNumber(quoteTokenAmountUnits).multipliedBy(qouteInUSD);
-         return `${costAmount} ${tokenSymbolToDisplayString(quote)} (${quotePriceAmountUSD.toFixed(2)} $)`;
+            const quotePriceAmountUSD = new BigNumber(quoteTokenAmountUnits).multipliedBy(qouteInUSD);
+            return `${costAmount} ${tokenSymbolToDisplayString(quote)} (${quotePriceAmountUSD.toFixed(2)} $)`;
         } else {
-          
             return `${costAmount} ${tokenSymbolToDisplayString(quote)}`;
         }
     };
     private readonly _getCostLabelStringForRender = () => {
         const { qouteInUSD, orderSide } = this.props;
         if (qouteInUSD) {
-         return orderSide === OrderSide.Sell ? 'Total (USD)': 'Cost (USD)';
+            return orderSide === OrderSide.Sell ? 'Total (USD)' : 'Cost (USD)';
         } else {
-         return orderSide === OrderSide.Sell ? 'Total' : 'Cost';
+            return orderSide === OrderSide.Sell ? 'Total' : 'Cost';
         }
     };
 }

@@ -6,7 +6,6 @@ import { getRelayer } from '../services/relayer';
 
 import { getKnownTokens } from './known_tokens';
 import * as orderHelper from './orders';
-
 import { getExpirationTimeOrdersFromConfig } from './time_utils';
 import { tokenAmountInUnitsToBigNumber, unitsInTokenAmount } from './tokens';
 import { OrderSide, UIOrder } from './types';

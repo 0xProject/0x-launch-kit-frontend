@@ -52,11 +52,17 @@ export const getOrderSideFromFillEvent = (
             const baseToken = knownTokens.getTokenBySymbol(baseSymbol);
             const quoteToken = knownTokens.getTokenBySymbol(quoteSymbol);
             // Make sure all the address's are at lower case
-            if (makerTokenAddress.toLowerCase() === baseToken.address.toLowerCase() && takerTokenAddress.toLowerCase() === quoteToken.address.toLowerCase()) {
+            if (
+                makerTokenAddress.toLowerCase() === baseToken.address.toLowerCase() &&
+                takerTokenAddress.toLowerCase() === quoteToken.address.toLowerCase()
+            ) {
                 // This is a sell order --> fill event is a buy
                 orderSide = OrderSide.Buy;
                 break;
-            } else if (makerTokenAddress.toLowerCase() === quoteToken.address.toLowerCase() && takerTokenAddress.toLowerCase() === baseToken.address.toLowerCase()) {
+            } else if (
+                makerTokenAddress.toLowerCase() === quoteToken.address.toLowerCase() &&
+                takerTokenAddress.toLowerCase() === baseToken.address.toLowerCase()
+            ) {
                 // This is a buy order --> fill event is a sell
                 orderSide = OrderSide.Sell;
                 break;

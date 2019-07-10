@@ -4,7 +4,7 @@ import * as Factory from 'factory.ts';
 
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { Collectible, OrderSide, Token, TokenBalance, UIOrder } from './types';
+import { Collectible, CurrencyPair, OrderSide, Token, TokenBalance, UIOrder } from './types';
 
 export const makeOrder = ({
     makerAssetAmount,
@@ -49,6 +49,18 @@ export const uiOrder = (params = {}): UIOrder => {
         ...params,
     };
 };
+
+export const getCurrencyPairFromTokens = (base: Token, quote: Token): CurrencyPair => ({
+    base: base.symbol.toLowerCase(),
+    quote: quote.symbol.toLowerCase(),
+    config: {
+        basePrecision: 4,
+        pricePrecision: 4,
+        quotePrecision: 4,
+        minAmount: 0,
+        maxAmount: 1000000,
+    },
+});
 
 export const openOrder = (params = {}): UIOrder => {
     return uiOrder({

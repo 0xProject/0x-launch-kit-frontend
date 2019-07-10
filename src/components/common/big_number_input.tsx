@@ -70,11 +70,11 @@ export class BigNumberInput extends React.Component<Props, State> {
 
     public render = () => {
         const { currentValueStr } = this.state;
-        const { decimals, step, min, max, className, placeholder } = this.props;
-        const stepStr = step && tokenAmountInUnits(step, decimals);
-        const minStr = min && tokenAmountInUnits(min, decimals);
-        const maxStr = max && tokenAmountInUnits(max, decimals);
-
+        const { decimals, step, min, max, className, placeholder, valueFixedDecimals } = this.props;
+        const fixedDecimals = valueFixedDecimals !== undefined ? valueFixedDecimals : 2;
+        const stepStr = step && tokenAmountInUnits(step, decimals, fixedDecimals);
+        const minStr = min && tokenAmountInUnits(min, decimals, fixedDecimals);
+        const maxStr = max && tokenAmountInUnits(max, decimals, fixedDecimals);
         return (
             <Input
                 className={className}

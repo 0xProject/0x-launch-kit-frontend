@@ -11,7 +11,7 @@ import { ThemeProvider } from 'styled-components';
 
 import { OrderBookTableWithTheme } from '../../../../components/erc20/marketplace/order_book';
 import { DefaultTheme } from '../../../../themes/default_theme';
-import { openOrder, tokenFactory } from '../../../../util/test-utils';
+import { getCurrencyPairFromTokens, openOrder, tokenFactory } from '../../../../util/test-utils';
 import { OrderSide, Token, Web3State } from '../../../../util/types';
 
 const mockStore = configureMockStore([]);
@@ -60,7 +60,7 @@ describe('OrderBookTable', () => {
 
         const baseToken = tokenFactory.build();
         const quoteToken = tokenFactory.build();
-
+        const currencyPair = getCurrencyPairFromTokens(baseToken, quoteToken);
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
             size: new BigNumber(2),
@@ -82,6 +82,7 @@ describe('OrderBookTable', () => {
                         userOrders={userOrders}
                         absoluteSpread={absoluteSpread}
                         percentageSpread={percentageSpread}
+                        currencyPair={currencyPair}
                     />
                 </Provider>
             </ThemeProvider>
@@ -136,6 +137,7 @@ describe('OrderBookTable', () => {
 
         const baseToken = tokenFactory.build();
         const quoteToken = tokenFactory.build();
+        const currencyPair = getCurrencyPairFromTokens(baseToken, quoteToken);
 
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
@@ -158,6 +160,7 @@ describe('OrderBookTable', () => {
                         userOrders={userOrders}
                         percentageSpread={percentageSpread}
                         absoluteSpread={absoluteSpread}
+                        currencyPair={currencyPair}
                     />
                 </Provider>
             </ThemeProvider>
@@ -222,6 +225,7 @@ describe('OrderBookTable', () => {
 
         const baseToken = tokenFactory.build();
         const quoteToken = tokenFactory.build();
+        const currencyPair = getCurrencyPairFromTokens(baseToken, quoteToken);
 
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
@@ -244,6 +248,7 @@ describe('OrderBookTable', () => {
                         userOrders={userOrders}
                         absoluteSpread={absoluteSpread}
                         percentageSpread={percentageSpread}
+                        currencyPair={currencyPair}
                     />
                 </Provider>
             </ThemeProvider>
@@ -303,6 +308,7 @@ describe('OrderBookTable', () => {
             primaryColor: '#ccc',
             displayDecimals: 2,
         };
+        const currencyPair = getCurrencyPairFromTokens(token, token);
 
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
@@ -326,6 +332,7 @@ describe('OrderBookTable', () => {
                         web3State={Web3State.NotInstalled}
                         absoluteSpread={absoluteSpread}
                         percentageSpread={percentageSpread}
+                        currencyPair={currencyPair}
                     />
                 </Provider>
             </ThemeProvider>
@@ -385,7 +392,7 @@ describe('OrderBookTable', () => {
             primaryColor: '#ccc',
             displayDecimals: 2,
         };
-
+        const currencyPair = getCurrencyPairFromTokens(token, token);
         const userOrder1 = openOrder({
             side: OrderSide.Buy,
             size: new BigNumber(2),
@@ -408,6 +415,7 @@ describe('OrderBookTable', () => {
                         web3State={Web3State.Locked}
                         absoluteSpread={absoluteSpread}
                         percentageSpread={percentageSpread}
+                        currencyPair={currencyPair}
                     />
                 </Provider>
             </ThemeProvider>

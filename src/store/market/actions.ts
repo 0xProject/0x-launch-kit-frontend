@@ -51,9 +51,6 @@ export const fetchMarketPriceQuoteUpdate = createAction('market/PRICE_QUOTE_fetc
     return (quoteInUsd: BigNumber) => resolve(quoteInUsd);
 });
 
-
-
-
 export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
     return async (dispatch, getState) => {
         const state = getState() as StoreState;
@@ -72,14 +69,12 @@ export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
         // if quote token changed, update quote price
         if (oldQuoteToken !== newQuoteToken) {
             try {
-             await  dispatch(updateMarketPriceQuote());
+                await dispatch(updateMarketPriceQuote());
             } catch (e) {
-                logger.error(
-                    `Failed to get Quote price`,
-                );
+                logger.error(`Failed to get Quote price`);
             }
         }
-      
+
         const newSearch = queryString.stringify({
             ...queryString.parse(state.router.location.search),
             base: currencyPair.base,
@@ -160,10 +155,10 @@ export const updateMarketPriceQuote: ThunkCreator = () => {
             if (quoteToken && quoteToken.id) {
                 // if ethereum price is already fetched we use it
                 if (quoteToken.id === 'ethereum' && state.market.ethInUsd) {
-                  dispatch(fetchMarketPriceQuoteUpdate(state.market.ethInUsd));
+                    dispatch(fetchMarketPriceQuoteUpdate(state.market.ethInUsd));
                 } else {
-                  const marketPriceQuoteData = await getMarketPriceQuote(quoteToken.id);
-                  dispatch(fetchMarketPriceQuoteUpdate(marketPriceQuoteData));
+                    const marketPriceQuoteData = await getMarketPriceQuote(quoteToken.id);
+                    dispatch(fetchMarketPriceQuoteUpdate(marketPriceQuoteData));
                 }
             } else {
                 throw new Error('Quote Token Need ID');
@@ -173,4 +168,3 @@ export const updateMarketPriceQuote: ThunkCreator = () => {
         }
     };
 };
-

@@ -276,6 +276,38 @@ describe('mergeByPrice', () => {
             },
         ]);
     });
+    it('should group orders by precision', async () => {
+        // given
+        const orders = [
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('5.00'),
+            },
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.00'),
+                size: new BigNumber('3.00'),
+            },
+            {
+                side: OrderSide.Sell,
+                price: new BigNumber('1.01'),
+                size: new BigNumber('4.00'),
+            },
+        ].map(uiOrder);
+
+        // when
+        const result = mergeByPrice(orders, 0);
+
+        // then
+        expect(result).toEqual([
+            {
+                side: OrderSide.Sell,
+                size: new BigNumber('12.00'),
+                price: new BigNumber('1.00'),
+            },
+        ]);
+    });
 
     it('should return the same list if all prices are different', async () => {
         // given

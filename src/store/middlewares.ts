@@ -1,11 +1,11 @@
 import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
 import { getType } from 'typesafe-actions';
 
+import { FEE_RECIPIENT } from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
 
 import * as actions from './actions';
-import { getEthAccount, getHasUnreadNotifications, getNotifications, getFills } from './selectors';
-import { FEE_RECIPIENT } from '../common/constants';
+import { getEthAccount, getFills, getHasUnreadNotifications, getNotifications } from './selectors';
 
 const localStorage = new LocalStorage(window.localStorage);
 
@@ -36,9 +36,9 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
             const state = getState();
             const ethAccount = FEE_RECIPIENT;
             const fills = getFills(state);
-    
+
             localStorage.saveFills(fills, ethAccount);
-    
+
             break;
         }
         case getType(actions.setFills): {
@@ -49,9 +49,6 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
 
             break;
         }
-
-
-
 
         default:
             return result;

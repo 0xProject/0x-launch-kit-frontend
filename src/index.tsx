@@ -1,6 +1,7 @@
 import { ConnectedRouter } from 'connected-react-router';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactGA from 'react-ga';
 import ReactModal from 'react-modal';
 import { Provider } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
@@ -9,24 +10,19 @@ import 'sanitize.css';
 import { DEFAULT_BASE_PATH, ERC20_APP_BASE_PATH, /*ERC721_APP_BASE_PATH,*/ LOGGER_ID } from './common/constants';
 import { AppContainer } from './components/app';
 import { Erc20App } from './components/erc20/erc20_app';
-//import { Erc721App } from './components/erc721/erc721_app';
+// import { Erc721App } from './components/erc721/erc721_app';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import { history, store } from './store';
-import ReactGA from 'react-ga';
 
 // Adding analytics
 ReactGA.initialize(process.env.REACT_APP_ANALYTICS || '');
 
-history.listen(his =>{
-    ReactGA.pageview(his.pathname +  his.search);
-})
-
-
+history.listen(his => {
+    ReactGA.pageview(his.pathname + his.search);
+});
 
 ReactModal.setAppElement('#root');
-
-
 
 if (['development', 'production'].includes(process.env.NODE_ENV) && !window.localStorage.debug) {
     // Log only the app constant id to the console
@@ -40,7 +36,7 @@ const Web3WrappedApp = (
             <AppContainer>
                 <Switch>
                     <Route path={ERC20_APP_BASE_PATH} component={Erc20App} />
-                    { /* <Route path={ERC721_APP_BASE_PATH} component={Erc721App} />*/ }
+                    {/* <Route path={ERC721_APP_BASE_PATH} component={Erc721App} />*/}
                     <Route component={RedirectToHome} />
                 </Switch>
             </AppContainer>

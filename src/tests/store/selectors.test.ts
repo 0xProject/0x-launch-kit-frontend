@@ -206,6 +206,15 @@ describe('selectors', () => {
             blockchain: {
                 web3State: Web3State.Done,
             },
+            market: {
+                currencyPair: {
+                    base: 'dummy',
+                    quote: 'dummy',
+                    config: {
+                        pricePrecision: 1,
+                    },
+                },
+            },
         };
 
         // when

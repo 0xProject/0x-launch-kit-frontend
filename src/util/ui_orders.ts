@@ -90,12 +90,11 @@ const ordersToUIOrdersWithOrdersInfo = (
     });
 };
 
-export const mergeByPrice = (orders: UIOrder[]): OrderBookItem[] => {
+export const mergeByPrice = (orders: UIOrder[], precision = UI_DECIMALS_DISPLAYED_PRICE_ETH): OrderBookItem[] => {
     const initialValue: { [x: string]: UIOrder[] } = {};
     const ordersByPrice = orders.reduce((acc, order) => {
-        acc[order.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)] =
-            acc[order.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)] || [];
-        acc[order.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)].push(order);
+        acc[order.price.toFixed(precision)] = acc[order.price.toFixed(precision)] || [];
+        acc[order.price.toFixed(precision)].push(order);
         return acc;
     }, initialValue);
 

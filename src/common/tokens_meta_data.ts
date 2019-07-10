@@ -9,5 +9,8 @@ export interface TokenMetaData {
     id?: string;
     icon?: string;
     displayDecimals?: number;
+    minAmount?: number;
+    maxAmount?: number;
+    precision?: number;
 }
 export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = Config.getConfig().tokens;

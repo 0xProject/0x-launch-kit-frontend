@@ -83,8 +83,7 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
             return { ...state, fills: action.payload };
         case getType(actions.addFills): {
             const newFills = action.payload.filter(fill => {
-                const doesAlreadyExist = state.fills
-                    .some(f => f.id === fill.id);
+                const doesAlreadyExist = state.fills.some(f => f.id === fill.id);
                 return !doesAlreadyExist;
             });
 

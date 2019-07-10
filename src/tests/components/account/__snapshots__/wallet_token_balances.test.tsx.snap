@@ -56,7 +56,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
         </tr>
       </thead>
       <tbody
-        className="sc-hMqMXs eaTBaG"
+        className="sc-kkGfuU hgDFia"
       >
         <tr
           className="sc-VigVT fIhGog"
@@ -79,7 +79,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
             <span
-              className="sc-eNQAEJ cOvcCf"
+              className="sc-kEYyzF btlffM"
             >
               ETH Total
             </span>
@@ -102,10 +102,10 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             -
           </td>
           <td
-            className="sc-fjdhpX sc-jKJlTe gXnDqt"
+            className="sc-fjdhpX sc-hMqMXs cBPvQV"
           >
             <span
-              className="sc-kEYyzF gCLQrS"
+              className="sc-iAyFgw kwlZO"
               onClick={[Function]}
             >
               <svg
@@ -144,18 +144,30 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           <td
             className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
-            <span
-              className="sc-eNQAEJ cOvcCf"
+            <a
+              className="sc-jKJlTe dZnCrV"
+              href="https://etherscan.io/token/0x1"
+              target="_blank"
             >
-              MOCK1
-            </span>
-             
-            - MOCK1
+              <span
+                className="sc-kEYyzF btlffM"
+              >
+                MOCK1
+              </span>
+               
+               - MOCK1
+            </a>
           </td>
           <td
             className="sc-fjdhpX iVqJl"
           >
-            0.00
+            <a
+              className="sc-eNQAEJ jnCnhx"
+              href="https://etherscan.io/token/0x1?a=0x1"
+              target="_blank"
+            >
+              0.00
+            </a>
           </td>
           <td
             className="sc-fjdhpX iVqJl"
@@ -168,10 +180,10 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             -
           </td>
           <td
-            className="sc-fjdhpX sc-jKJlTe gXnDqt"
+            className="sc-fjdhpX sc-hMqMXs cBPvQV"
           >
             <span
-              className="sc-kEYyzF gCLQrS"
+              className="sc-iAyFgw kwlZO"
               onClick={[Function]}
             >
               <svg
@@ -210,18 +222,30 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           <td
             className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
-            <span
-              className="sc-eNQAEJ cOvcCf"
+            <a
+              className="sc-jKJlTe dZnCrV"
+              href="https://etherscan.io/token/0x2"
+              target="_blank"
             >
-              MOCK2
-            </span>
-             
-            - MOCK2
+              <span
+                className="sc-kEYyzF btlffM"
+              >
+                MOCK2
+              </span>
+               
+               - MOCK2
+            </a>
           </td>
           <td
             className="sc-fjdhpX iVqJl"
           >
-            0.00
+            <a
+              className="sc-eNQAEJ jnCnhx"
+              href="https://etherscan.io/token/0x2?a=0x1"
+              target="_blank"
+            >
+              0.00
+            </a>
           </td>
           <td
             className="sc-fjdhpX iVqJl"
@@ -234,10 +258,10 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             -
           </td>
           <td
-            className="sc-fjdhpX sc-jKJlTe gXnDqt"
+            className="sc-fjdhpX sc-hMqMXs cBPvQV"
           >
             <span
-              className="sc-kEYyzF gCLQrS"
+              className="sc-iAyFgw kwlZO"
               onClick={[Function]}
             >
               <svg
@@ -276,18 +300,30 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           <td
             className="sc-fjdhpX sc-ckVGcZ dzaBDi"
           >
-            <span
-              className="sc-eNQAEJ cOvcCf"
+            <a
+              className="sc-jKJlTe dZnCrV"
+              href="https://etherscan.io/token/0x3"
+              target="_blank"
             >
-              MOCK3
-            </span>
-             
-            - MOCK3
+              <span
+                className="sc-kEYyzF btlffM"
+              >
+                MOCK3
+              </span>
+               
+               - MOCK3
+            </a>
           </td>
           <td
             className="sc-fjdhpX iVqJl"
           >
-            0.00
+            <a
+              className="sc-eNQAEJ jnCnhx"
+              href="https://etherscan.io/token/0x3?a=0x1"
+              target="_blank"
+            >
+              0.00
+            </a>
           </td>
           <td
             className="sc-fjdhpX iVqJl"
@@ -300,10 +336,10 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             -
           </td>
           <td
-            className="sc-fjdhpX sc-jKJlTe gXnDqt"
+            className="sc-fjdhpX sc-hMqMXs cBPvQV"
           >
             <span
-              className="sc-kEYyzF gCLQrS"
+              className="sc-iAyFgw kwlZO"
               onClick={[Function]}
             >
               <svg
