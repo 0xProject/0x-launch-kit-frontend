@@ -173,25 +173,55 @@
                 "1": "0x4e15361fd6b4bb609fa63c81a2be19d873717870"
             },
             "displayDecimals": 0
+        },
+        {
+            "decimals": 8,
+            "symbol": "0xbtc",
+            "name": "0xBitcoin",
+            "primaryColor": "#ff7423",
+            "icon": "assets/icons/zxb.svg",
+            "addresses": {
+                "1": "0xb6ed7644c69416d67b522e20bc294a9a9b405b31"
+            },
+            "displayDecimals": 2,
+            "id": "0xbtc"
         }
     ],
     "pairs": [
+        {
+            "base": "vsf",
+            "quote": "weth",
+            "config": {
+                "basePrecision": 0,
+                "pricePrecision": 7,
+                "minAmount": 10000
+            }
+        },
         {
             "base": "nuke",
             "quote": "weth",
             "config": {
                 "basePrecision": 2,
                 "pricePrecision": 8,
-                "minAmount": 5
+                "minAmount": 1
             }
         },
         {
-            "base": "vsf",
+            "base": "0xbtc",
             "quote": "weth",
             "config": {
-                "basePrecision": 0,
+                "basePrecision": 2,
                 "pricePrecision": 8,
-                "minAmount": 10000
+                "minAmount": 1
+            }
+        },
+        {
+            "base": "0xbtc",
+            "quote": "vsf",
+            "config": {
+                "basePrecision": 0,
+                "pricePrecision": 2,
+                "minAmount": 1
             }
         },
         {

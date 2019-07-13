@@ -220,12 +220,14 @@ class BuySell extends React.Component<Props, State> {
         const pricePrecision = currencyPair.config.pricePrecision;
         const minAmount = currencyPair.config.minAmount;
         const minAmountUnits = unitsInTokenAmount(String(currencyPair.config.minAmount), decimals);
+        const amount = makerAmount || minAmountUnits;
+
         const basePrecision = currencyPair.config.basePrecision;
         const stepAmount = new BigNumber(1).div(new BigNumber(10).pow(basePrecision));
         const stepAmountUnits = unitsInTokenAmount(String(stepAmount), decimals);
 
-        const isMakerAmountEmpty = makerAmount === null || makerAmount.isZero();
-        const isMakerAmountMin = makerAmount === null || makerAmount.isLessThanOrEqualTo(minAmountUnits);
+        const isMakerAmountEmpty = amount.isZero();
+        const isMakerAmountMin = amount.isLessThan(minAmountUnits);
         const isPriceEmpty = price === null || price.isZero();
         const isPriceMin =
             price === null || price.isLessThan(new BigNumber(1).div(new BigNumber(10).pow(pricePrecision)));
@@ -267,7 +269,7 @@ class BuySell extends React.Component<Props, State> {
                                 decimals={decimals}
                                 min={minAmountUnits}
                                 onChange={this.updateMakerAmount}
-                                value={makerAmount || minAmountUnits}
+                                value={amount}
                                 step={stepAmountUnits}
                                 placeholder={new BigNumber(minAmount).toString()}
                                 valueFixedDecimals={basePrecision}
@@ -298,7 +300,7 @@ class BuySell extends React.Component<Props, State> {
                         <OrderDetailsContainer
                             orderType={orderType}
                             orderSide={tab}
-                            tokenAmount={makerAmount || new BigNumber(0)}
+                            tokenAmount={amount}
                             tokenPrice={price || new BigNumber(0)}
                             currencyPair={currencyPair}
                         />
