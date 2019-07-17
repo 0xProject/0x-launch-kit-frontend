@@ -24,6 +24,9 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenM
         maxAmount: tokenMetaData.maxAmount || undefined,
         precision:
             tokenMetaData.precision !== undefined ? tokenMetaData.precision : UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+        website: tokenMetaData.website || undefined,
+        description: tokenMetaData.description || undefined,
+        verisafe_sticker: undefined,
     };
 };
 
@@ -50,6 +53,9 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                         tokenMetaData.precision !== undefined
                             ? tokenMetaData.precision
                             : UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+                    website: tokenMetaData.website || undefined,
+                    description: tokenMetaData.description || undefined,
+                    verisafe_sticker: tokenMetaData.verisafe_sticker || undefined,
                 };
             },
         );

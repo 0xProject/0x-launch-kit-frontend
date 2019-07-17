@@ -11,6 +11,7 @@ import { MARKETPLACES } from '../../util/types';
 import { ToolbarContentContainer } from './common/toolbar_content';
 import { Marketplace } from './pages/marketplace';
 import { MyWallet } from './pages/my_wallet';
+import { TokensListPage } from './pages/tokens_list';
 
 const toolbar = <ToolbarContentContainer />;
 
@@ -24,6 +25,7 @@ export const Erc20App = () => {
                 <Switch>
                     <Route exact={true} path={`${ERC20_APP_BASE_PATH}/`} component={Marketplace} />
                     <Route exact={true} path={`${ERC20_APP_BASE_PATH}/my-wallet`} component={MyWallet} />
+                    <Route exact={true} path={`${ERC20_APP_BASE_PATH}/listed-tokens`} component={TokensListPage} />
                 </Switch>
             </GeneralLayout>
         </ThemeProvider>

@@ -170,8 +170,8 @@ There are a few general configuration options for Launch Kit.
 ```json
 {
     "general": {
-        "title": "Launch Kit",
-        "icon": "assets/icons/zrx.svg"
+        "title": "VeriDex",
+        "icon": "assets/icons/vsf.svg"
     }
 }
 ```
@@ -190,32 +190,38 @@ Inside the config is a tokens section. This is an array of all of the tokens use
     "tokens:": [
         {
             "decimals": 18,
-            "displayDecimals": 4,
-            "symbol": "mkr",
-            "name": "Maker",
-            "primaryColor": "#68CCBB",
-            "icon": "assets/icons/mkr.svg",
+            "symbol": "vsf",
+            "name": "VeriSafe",
+            "primaryColor": "#081e6e",
+            "icon": "assets/icons/vsf.svg",
             "addresses": {
-                "1": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
-                "3": "0x06732516acd125b6e83c127752ed5f027e1b276e",
-                "4": "0xb763e26cd6dd09d16f52dc3c60ebb77e46b03290",
-                "42": "0x7B6B10CAa9E8E9552bA72638eA5b47c25afea1f3",
-                "50": "0x34d402f14d58e001d8efbe6585051bf9706aa064"
-            }
+                "1": "0xac9ce326e95f51b5005e9fe1dd8085a01f18450c",
+                "3": "0xba3a79d758f19efe588247388754b8e4d6edda81"
+            },
+            "id": "verisafe",
+            "displayDecimals": 0,
+            "description": "The transparent ecossystem that crypto needs!",
+            "website": "https://www.verisafe.io"
         }
     ]
 }
 ```
 
-| property        | description                                                                                                                                                                            |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| decimals        | The number of decimals for this token. This is used to calculate the price and convert to units (smallest possible value). For example ZRX is 18 decimals, so 1 ZRX is `1*10^18` units |
-| displayDecimals | The number of decimals to display for the token in the UI                                                                                                                              |
-| symbol          | The Symbol for the token. **Ensure this is lowercase**. This is used in the Market dropdowns and in the Wallet and Order info UI                                                       |
-| name            | The descriptive name for the token                                                                                                                                                     |
-| icon            | The icon to render for this token. This must be SVG file format and should be placed in the `public` folder                                                                            |
-| primaryColor    | If an SVG cannot be found then this is used to differentiate the tokens in the Wallet and Market dropdown                                                                              |
-| addresses       | A list of addresses for the token for various networks                                                                                                                                 |
+| property         | description                                                                                                                                                                            |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| decimals         | The number of decimals for this token. This is used to calculate the price and convert to units (smallest possible value). For example ZRX is 18 decimals, so 1 ZRX is `1*10^18` units |
+| displayDecimals  | The number of decimals to display for the token in the UI                                                                                                                              |
+| symbol           | The Symbol for the token. **Ensure this is lowercase**. This is used in the Market dropdowns and in the Wallet and Order info UI                                                       |
+| name             | The descriptive name for the token                                                                                                                                                     |
+| icon             | The icon to render for this token. This must be SVG file format and should be placed in the `public` folder                                                                            |
+| primaryColor     | If an SVG cannot be found then this is used to differentiate the tokens in the Wallet and Market dropdown                                                                              |
+| addresses        | A list of addresses for the token for various networks                                                                                                                                 |
+|                  |
+| website          | Token website                                                                                                                                                                          |
+|                  |
+| description      | Small project description                                                                                                                                                              |
+|                  |
+| verisafe_sticker | VeriSafe Sticker                                                                                                                                                                       |
 
 ### Pairs
 

@@ -32,6 +32,6 @@ yarn-error.log*
 #Trading View library
 src/charting_library
 src/datafeeds
-src/config/
+src/config/files
 public/charting_library
 public/datafeeds

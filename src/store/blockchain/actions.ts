@@ -288,8 +288,10 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const knownTokens = getKnownTokens();
         const localStorage = new LocalStorage(window.localStorage);
-
-        dispatch(setFills(localStorage.getFills(ethAccount)));
+        const storageFills = localStorage.getFills(ethAccount).filter(f => {
+            return knownTokens.isKnownAddress(f.tokenBase.address) && knownTokens.isKnownAddress(f.tokenQuote.address);
+        });
+        dispatch(setFills(storageFills));
 
         const state = getState();
         const web3Wrapper = await getWeb3Wrapper();

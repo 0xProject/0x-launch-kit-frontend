@@ -34,6 +34,9 @@ export interface Token {
     minAmount?: number;
     maxAmount?: number;
     precision?: number;
+    website?: string;
+    description?: string;
+    verisafe_sticker?: string;
 }
 
 export interface TokenBalance {

@@ -346,7 +346,7 @@ class BuySell extends React.Component<Props, State> {
         const { currencyPair } = this.props;
         const minAmount = currencyPair.config.minAmount;
         const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
-        const minAmountUnits = unitsInTokenAmount(String(currencyPair.config.minAmount), decimals);
+        const minAmountUnits = unitsInTokenAmount(String(minAmount), decimals);
 
         const orderSide = this.state.tab;
         const makerAmount = this.state.makerAmount || minAmountUnits;
