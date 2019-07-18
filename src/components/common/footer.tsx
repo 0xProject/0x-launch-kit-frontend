@@ -1,7 +1,8 @@
 import React, { HTMLAttributes } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GIT_COMMIT } from '../../common/constants';
+import { ERC20_APP_BASE_PATH, GIT_COMMIT } from '../../common/constants';
 import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
@@ -100,7 +101,13 @@ const poweredBySVG = () => {
 export const Footer: React.FC<Props> = props => {
     return (
         <FooterWrapper title={GIT_COMMIT} {...props}>
-            <a href="https://www.verisafe.io/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+            <Link to={`${ERC20_APP_BASE_PATH}/listed-tokens`}>Tokens</Link>
+            <a
+                href="https://www.verisafe.io/terms-and-conditions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link"
+            >
                 Terms and Conditions
             </a>
             <a href="https://0x.org/" target="_blank" rel="noopener noreferrer" className="link">
