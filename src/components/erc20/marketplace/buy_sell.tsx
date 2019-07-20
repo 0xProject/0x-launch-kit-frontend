@@ -285,7 +285,7 @@ class BuySell extends React.Component<Props, State> {
                                 <FieldContainer>
                                     <BigInputNumberStyled
                                         decimals={0}
-                                        min={new BigNumber(1).div(new BigNumber(10).pow(pricePrecision))}
+                                        min={new BigNumber(0)}
                                         onChange={this.updatePrice}
                                         value={price}
                                         step={new BigNumber(1).div(new BigNumber(10).pow(pricePrecision))}
