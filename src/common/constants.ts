@@ -10,6 +10,7 @@ export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhos
 
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
+    gasTransferToken: 21000,
 };
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -24,11 +25,14 @@ export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
 export const UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION = 2;
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 0;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
-export const UI_GENERAL_TITLE = 'Launch Kit';
+export const UI_GENERAL_TITLE = 'VeriDex';
 
 export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
 export const METAMASK_CHROME_EXTENSION_DOWNLOAD_URL =
     'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn';
+
+export const PORTIS_APP_ID = process.env.REACT_APP_PORTIS_APP_ID;
+export const FORTMATIC_APP_ID = process.env.REACT_APP_FORTMATIC_APP_ID;
 
 // Default value is enabled, 0 is disabled
 export const UI_UPDATE_CHECK_INTERVAL: number = process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL

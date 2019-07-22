@@ -21,11 +21,11 @@ import {
     updateTokenBalances,
     updateWethBalance,
 } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
-import { StepWrapEth, StoreState } from '../../../util/types';
+import { StepWrapEth, StoreState, Wallet } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -37,6 +37,7 @@ interface StateProps {
     estimatedTxTimeMs: number;
     step: StepWrapEth;
     ethBalance: BigNumber;
+    wallet: Wallet;
 }
 
 interface DispatchProps {
@@ -58,7 +59,7 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, step, wallet } = this.props;
 
         const { context, currentWethBalance, newWethBalance } = step;
         const amount = newWethBalance.minus(currentWethBalance);
@@ -87,7 +88,7 @@ class WrapEthStep extends React.Component<Props, State> {
 
         const title = `Convert ${convertingFrom}`;
 
-        const confirmCaption = `Confirm on Metamask to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
+        const confirmCaption = `Confirm on ${wallet} to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
         const loadingCaption = buildMessage('Converting');
         const doneCaption = buildMessage('Converted');
         const loadingFooterCaption = `Waiting for confirmation....`;
@@ -107,6 +108,7 @@ class WrapEthStep extends React.Component<Props, State> {
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._convertWeth}
                 showPartialProgress={true}
+                wallet={wallet}
             />
         );
     };
@@ -159,6 +161,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepWrapEth,
         ethBalance: getEthBalance(state),
+        wallet: getWallet(state) as Wallet,
     };
 };
 

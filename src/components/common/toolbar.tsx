@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
+import { setWeb3State } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
@@ -19,7 +20,11 @@ interface StateProps {
     web3State: Web3State;
 }
 
-type Props = OwnProps & StateProps;
+interface DispatchProps {
+    onConnectWallet: () => any;
+}
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 export const separatorTopbar = css`
     &:after {
@@ -81,8 +86,12 @@ const ToolbarEnd = styled.div`
     }
 `;
 
+const ErrorPointer = styled(ErrorCard)`
+    cursor: pointer;
+`;
+
 const Toolbar = (props: Props) => {
-    const { startContent, endContent, centerContent } = props;
+    const { startContent, endContent, centerContent, onConnectWallet } = props;
 
     const getContentFromWeb3State = (web3State: Web3State): React.ReactNode => {
         switch (web3State) {
@@ -96,8 +105,19 @@ const Toolbar = (props: Props) => {
                         icon={ErrorIcons.Metamask}
                     />
                 );
+            case Web3State.Connect:
+                return (
+                    <ErrorPointer
+                        onClick={onConnectWallet}
+                        fontSize={FontSize.Large}
+                        text={'Connect Wallet'}
+                        icon={ErrorIcons.Lock}
+                    />
+                );
+            case Web3State.Connecting:
+                return <ErrorCard fontSize={FontSize.Large} text={'Connecting Wallet'} icon={ErrorIcons.Lock} />;
             case Web3State.Loading:
-                return <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />;
+                return <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Wallet} />;
             case Web3State.Error:
                 return (
                     <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmWrongNetwork} icon={ErrorIcons.Warning} />
@@ -128,7 +148,15 @@ const mapStateToProps = (state: StoreState): StateProps => {
         web3State: getWeb3State(state),
     };
 };
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        onConnectWallet: () => dispatch(setWeb3State(Web3State.Connecting)),
+    };
+};
 
-const ToolbarContainer = connect(mapStateToProps)(Toolbar);
+const ToolbarContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Toolbar);
 
 export { Toolbar, ToolbarContainer };

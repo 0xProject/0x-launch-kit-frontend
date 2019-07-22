@@ -95,7 +95,11 @@ class NotificationItem extends React.Component<Props, State> {
     public componentDidMount = async () => {
         const { item } = this.props;
 
-        if (item.kind === NotificationKind.Market || item.kind === NotificationKind.CancelOrder) {
+        if (
+            item.kind === NotificationKind.Market ||
+            item.kind === NotificationKind.CancelOrder ||
+            item.kind === NotificationKind.TokenTransferred
+        ) {
             this.setState({
                 pending: true,
             });
@@ -153,6 +157,9 @@ class NotificationItem extends React.Component<Props, State> {
                 break;
             case NotificationKind.OrderFilled:
                 operation = item.side === OrderSide.Buy ? 'Buy Order Filled' : 'Sell Order Filled';
+                break;
+            case NotificationKind.TokenTransferred:
+                operation = 'Transfer Sent';
                 break;
             default: {
                 const _exhaustiveCheck: never = item;

@@ -53,7 +53,13 @@ export const getAllOrders: ThunkCreator = () => {
         const web3State = getWeb3State(state) as Web3State;
         try {
             let uiOrders: UIOrder[] = [];
-            const isWeb3NotDoneState = [Web3State.Locked, Web3State.NotInstalled, Web3State.Error].includes(web3State);
+            const isWeb3NotDoneState = [
+                Web3State.Locked,
+                Web3State.NotInstalled,
+                Web3State.Error,
+                Web3State.Connecting,
+                Web3State.Connect,
+            ].includes(web3State);
             // tslint:disable-next-line:prefer-conditional-expression
             if (isWeb3NotDoneState) {
                 uiOrders = await getAllOrdersAsUIOrdersWithoutOrdersInfo(baseToken, quoteToken);

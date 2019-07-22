@@ -10,5 +10,6 @@
         "promise-function-async": false,
         "interface-name": [true, "never-prefix"],
         "linebreak-style": [true, "LF"]
-    }
+    },
+    "exclude": ["src/charting_library/*", "src/datafeeds/*"]
 }

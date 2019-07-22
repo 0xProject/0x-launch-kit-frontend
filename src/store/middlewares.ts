@@ -5,7 +5,7 @@ import { FEE_RECIPIENT } from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
 
 import * as actions from './actions';
-import { getEthAccount, getFills, getHasUnreadNotifications, getNotifications } from './selectors';
+import { getEthAccount, getFills, getHasUnreadNotifications, getNotifications, getWallet } from './selectors';
 
 const localStorage = new LocalStorage(window.localStorage);
 
@@ -47,6 +47,18 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
             const fills = getFills(state);
             localStorage.saveFills(fills, ethAccount);
 
+            break;
+        }
+        case getType(actions.resetWallet): {
+            localStorage.resetWalletConnected();
+            break;
+        }
+        case getType(actions.setWallet): {
+            const state = getState();
+            const wallet = getWallet(state);
+            if (wallet) {
+                localStorage.saveWalletConnected(wallet);
+            }
             break;
         }
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { goToHome, initWallet } from '../../store/actions';
+import { goToHome, initWallet, setWeb3State } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
-import { ModalDisplay, StoreState, Web3State } from '../../util/types';
+import { ModalDisplay, StoreState, Wallet, Web3State } from '../../util/types';
 
-import { MetamaskErrorModal } from './metamask_error_modal';
+import { WalletChooseModal } from './wallet_choose_modal';
 
 interface State {
     shouldOpenModal: boolean;
@@ -18,7 +18,8 @@ interface StateProps {
 
 interface DispatchProps {
     onGoToHome: () => any;
-    onConnectWallet: () => any;
+    onCloseModalConnecting: () => any;
+    onChooseWallet: (wallet: Wallet) => any;
 }
 
 interface OwnProps {
@@ -27,7 +28,7 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-class CheckMetamaskStateModal extends React.Component<Props, State> {
+class CheckWalletStateModal extends React.Component<Props, State> {
     public state = {
         shouldOpenModal: true,
         modalToDisplay: null,
@@ -48,11 +49,10 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
         const { shouldOpenModal, modalToDisplay } = this.state;
         const { children } = this.props;
         return shouldOpenModal && modalToDisplay ? (
-            <MetamaskErrorModal
+            <WalletChooseModal
                 isOpen={shouldOpenModal}
                 closeModal={this._closeModal}
-                noMetamaskType={modalToDisplay}
-                connectWallet={this._connectWallet}
+                chooseWallet={this._chooseWallet}
             />
         ) : (
             children || null
@@ -63,20 +63,24 @@ class CheckMetamaskStateModal extends React.Component<Props, State> {
         this.setState({
             shouldOpenModal: false,
         });
-        this.props.onGoToHome();
+        const { web3State } = this.props;
+        if (web3State === Web3State.Connecting) {
+            this.props.onCloseModalConnecting();
+            this._updateState();
+        } else {
+            this.props.onGoToHome();
+        }
     };
 
-    private readonly _connectWallet = () => {
-        this.props.onConnectWallet();
-        // localStorage.saveWalletConnected(true);
+    private readonly _chooseWallet = (wallet: Wallet) => {
+        this.props.onChooseWallet(wallet);
     };
 
     private readonly _updateState = () => {
         const { web3State } = this.props;
-        if (web3State === Web3State.Locked) {
-            this.setState({ shouldOpenModal: true, modalToDisplay: ModalDisplay.EnablePermissions });
-        } else if (web3State === Web3State.NotInstalled) {
-            this.setState({ shouldOpenModal: true, modalToDisplay: ModalDisplay.InstallMetamask });
+
+        if (web3State === Web3State.Connecting) {
+            this.setState({ shouldOpenModal: true, modalToDisplay: ModalDisplay.ConnectWallet });
         } else {
             this.setState({ shouldOpenModal: false });
         }
@@ -91,13 +95,14 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onGoToHome: () => dispatch(goToHome()),
-        onConnectWallet: () => dispatch(initWallet()),
+        onCloseModalConnecting: () => dispatch(setWeb3State(Web3State.Connect)),
+        onChooseWallet: (wallet: Wallet) => dispatch(initWallet(wallet)),
     };
 };
 
-const CheckMetamaskStateModalContainer = connect(
+const CheckWalletStateModalContainer = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(CheckMetamaskStateModal);
+)(CheckWalletStateModal);
 
-export { CheckMetamaskStateModal, CheckMetamaskStateModalContainer };
+export { CheckWalletStateModal, CheckWalletStateModalContainer };

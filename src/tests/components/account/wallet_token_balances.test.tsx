@@ -6,9 +6,9 @@ import { BigNumber } from '0x.js';
 import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
+import { DefaultTheme } from '../../../themes/default_theme';
 import { TokenBalance, Web3State } from '../../../util/types';
 import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
-
 const noop = () => ({});
 const ZERO = new BigNumber(0);
 const tokenDefaults = {
@@ -26,6 +26,8 @@ const wethTokenBalance = {
     },
     isUnlocked: true,
 };
+
+const theme = new DefaultTheme();
 
 describe('WalletTokenBalances', () => {
     it('should show one row for each token plus one for the total eth', () => {
@@ -62,7 +64,7 @@ describe('WalletTokenBalances', () => {
                 isUnlocked: true,
             },
         ];
-
+        const onSubmitTransferToken = jest.fn();
         // when
         const wrapper = mountWithTheme(
             <WalletTokenBalances
@@ -70,8 +72,10 @@ describe('WalletTokenBalances', () => {
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={noop}
+                onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                theme={theme}
             />,
         );
 
@@ -113,6 +117,7 @@ describe('WalletTokenBalances', () => {
                 isUnlocked: true,
             },
         ];
+        const onSubmitTransferToken = jest.fn();
 
         const tree = renderWithTheme(
             <WalletTokenBalances
@@ -120,8 +125,10 @@ describe('WalletTokenBalances', () => {
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={noop}
+                onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                theme={theme}
             />,
         );
 
@@ -165,7 +172,7 @@ describe('WalletTokenBalances', () => {
             },
         ];
         const onToggleTokenLock = jest.fn();
-
+        const onSubmitTransferToken = jest.fn();
         // when
         const wrapper = mountWithTheme(
             <WalletTokenBalances
@@ -173,8 +180,10 @@ describe('WalletTokenBalances', () => {
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={onToggleTokenLock}
+                onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                theme={theme}
             />,
         );
 
@@ -223,6 +232,7 @@ describe('WalletTokenBalances', () => {
             },
         ];
         const onToggleTokenLock = jest.fn();
+        const onSubmitTransferToken = jest.fn();
 
         // when
         const wrapper = mountWithTheme(
@@ -231,8 +241,10 @@ describe('WalletTokenBalances', () => {
                 wethTokenBalance={wethTokenBalance}
                 tokenBalances={tokenBalances}
                 onStartToggleTokenLockSteps={onToggleTokenLock}
+                onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                theme={theme}
             />,
         );
         const rows = wrapper.find('tbody tr');

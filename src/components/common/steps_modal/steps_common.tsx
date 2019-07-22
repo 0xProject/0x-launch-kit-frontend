@@ -2,7 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { SpinnerSize } from '../../../themes/commons';
+import { FortmaticLarge } from '../icons/icon_fortmatic_large';
 import { MetamaskLarge } from '../icons/icon_metamask_large';
+import { PortisLarge } from '../icons/icon_portis_large';
+import { TorusLarge } from '../icons/icon_torus_large';
 import { NotificationCancelIcon } from '../icons/notification_cancel_icon';
 import { NotificationCheckmarkIcon } from '../icons/notification_checkmark_icon';
 import { Spinner } from '../spinner';
@@ -19,6 +22,26 @@ enum StepStatus {
 interface WithChildren {
     children: React.ReactNode;
 }
+const StepStatusConfirmOnPortis = (props: React.Props<WithChildren>) => (
+    <>
+        <PortisIcon />
+        {props.children}
+    </>
+);
+
+const StepStatusConfirmOnTorus = (props: React.Props<WithChildren>) => (
+    <>
+        <TorusIcon />
+        {props.children}
+    </>
+);
+
+const StepStatusConfirmOnFortmatic = (props: React.Props<WithChildren>) => (
+    <>
+        <FortmaticIcon />
+        {props.children}
+    </>
+);
 
 const StepStatusConfirmOnMetamask = (props: React.Props<WithChildren>) => (
     <>
@@ -57,6 +80,17 @@ const StepStatusError = (props: React.Props<WithChildren>) => (
 const iconMarginBottom = '30px';
 
 const MetamaskIcon = styled(MetamaskLarge)`
+    margin-bottom: ${iconMarginBottom};
+`;
+
+const PortisIcon = styled(PortisLarge)`
+    margin-bottom: ${iconMarginBottom};
+`;
+const TorusIcon = styled(TorusLarge)`
+    margin-bottom: ${iconMarginBottom};
+`;
+
+const FortmaticIcon = styled(FortmaticLarge)`
     margin-bottom: ${iconMarginBottom};
 `;
 
@@ -140,6 +174,9 @@ export {
     ModalTextClickable,
     StepStatus,
     StepStatusConfirmOnMetamask,
+    StepStatusConfirmOnPortis,
+    StepStatusConfirmOnTorus,
+    StepStatusConfirmOnFortmatic,
     StepStatusDone,
     StepStatusError,
     StepStatusLoading,

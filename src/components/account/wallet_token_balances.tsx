@@ -1,9 +1,9 @@
 import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 
-import { startToggleTokenLockSteps } from '../../store/actions';
+import { startToggleTokenLockSteps, startTranferTokenSteps } from '../../store/actions';
 import {
     getEthAccount,
     getEthBalance,
@@ -11,12 +11,16 @@ import {
     getWeb3State,
     getWethTokenBalance,
 } from '../../store/selectors';
+import { Theme } from '../../themes/commons';
 import { getEtherscanLinkForToken, getEtherscanLinkForTokenAndAddress, tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
+import { ButtonVariant, StoreState, Token, TokenBalance, Web3State } from '../../util/types';
+import { Button } from '../common/button';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { LoadingWrapper } from '../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
+
+import { TransferTokenModal } from './wallet_transfer_token_modal';
 
 interface StateProps {
     ethBalance: BigNumber;
@@ -25,12 +29,23 @@ interface StateProps {
     wethTokenBalance: TokenBalance | null;
     ethAccount: string;
 }
+interface OwnProps {
+    theme: Theme;
+}
 
 interface DispatchProps {
     onStartToggleTokenLockSteps: (token: Token, isUnlocked: boolean) => void;
+    onSubmitTransferToken: (amount: BigNumber, token: Token, address: string, isEth: boolean) => Promise<any>;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = StateProps & DispatchProps & OwnProps;
+
+interface State {
+    modalIsOpen: boolean;
+    isSubmitting: boolean;
+    tokenBalanceSelected: TokenBalance | null;
+    isEth: boolean;
+}
 
 const THStyled = styled(TH)`
     &:first-child {
@@ -150,7 +165,14 @@ const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
     );
 };
 
-class WalletTokenBalances extends React.PureComponent<Props> {
+class WalletTokenBalances extends React.PureComponent<Props, State> {
+    public readonly state: State = {
+        modalIsOpen: false,
+        isSubmitting: false,
+        tokenBalanceSelected: null,
+        isEth: false,
+    };
+
     public render = () => {
         const {
             ethBalance,
@@ -159,6 +181,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             web3State,
             wethTokenBalance,
             ethAccount,
+            theme,
         } = this.props;
 
         if (!wethTokenBalance) {
@@ -170,6 +193,12 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
         const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
 
+        const openTransferEthModal = () => {
+            this.setState({
+                modalIsOpen: true,
+                isEth: true,
+            });
+        };
         const totalEthRow = (
             <TR>
                 <TokenTD>
@@ -192,6 +221,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                     onClick={onTotalEthClick}
                     styles={{ borderBottom: true, textAlign: 'center' }}
                 />
+                <CustomTD styles={{ borderBottom: true, textAlign: 'left' }}>
+                    <Button onClick={openTransferEthModal} variant={ButtonVariant.Primary}>
+                        Send
+                    </Button>
+                </CustomTD>
             </TR>
         );
 
@@ -200,6 +234,13 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             const { symbol } = token;
             const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
             const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
+            const openTransferModal = () => {
+                this.setState({
+                    modalIsOpen: true,
+                    tokenBalanceSelected: tokenBalance,
+                    isEth: false,
+                });
+            };
 
             return (
                 <TR key={symbol}>
@@ -226,6 +267,11 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                         onClick={onClick}
                         styles={{ borderBottom: true, textAlign: 'center' }}
                     />
+                    <CustomTD styles={{ borderBottom: true, textAlign: 'left' }}>
+                        <Button onClick={openTransferModal} variant={ButtonVariant.Primary}>
+                            Send
+                        </Button>
+                    </CustomTD>
                 </TR>
             );
         });
@@ -235,26 +281,65 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             content = <LoadingWrapper />;
         } else {
             content = (
-                <Table isResponsive={true}>
-                    <THead>
-                        <TR>
-                            <THStyled>Token</THStyled>
-                            <THStyled>{}</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
-                            <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
-                        </TR>
-                    </THead>
-                    <TBody>
-                        {totalEthRow}
-                        {tokensRows}
-                    </TBody>
-                </Table>
+                <>
+                    <Table isResponsive={true}>
+                        <THead>
+                            <TR>
+                                <THStyled>Token</THStyled>
+                                <THStyled>{}</THStyled>
+                                <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
+                                <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
+                                <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
+                                <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
+                                <THLast styles={{ textAlign: 'center' }}>Actions</THLast>
+                            </TR>
+                        </THead>
+                        <TBody>
+                            {totalEthRow}
+                            {tokensRows}
+                        </TBody>
+                    </Table>
+                    <TransferTokenModal
+                        isOpen={this.state.modalIsOpen}
+                        tokenBalance={this.state.tokenBalanceSelected as TokenBalance}
+                        isSubmitting={this.state.isSubmitting}
+                        onSubmit={this.handleSubmit}
+                        style={theme.modalTheme}
+                        closeModal={this.closeModal}
+                        ethBalance={ethBalance}
+                        isEth={this.state.isEth}
+                        wethToken={wethToken}
+                    />
+                </>
             );
         }
 
         return <Card title="Token Balances">{content}</Card>;
+    };
+    public closeModal = () => {
+        this.setState({
+            modalIsOpen: false,
+        });
+    };
+
+    public openModal = () => {
+        this.setState({
+            modalIsOpen: true,
+        });
+    };
+
+    public handleSubmit = async (amount: BigNumber, token: Token, address: string, isEth: boolean) => {
+        this.setState({
+            isSubmitting: true,
+        });
+        try {
+            await this.props.onSubmitTransferToken(amount, token, address, isEth);
+        } finally {
+            this.setState({
+                isSubmitting: false,
+            });
+            this.closeModal();
+        }
     };
 }
 
@@ -269,11 +354,14 @@ const mapStateToProps = (state: StoreState): StateProps => {
 };
 const mapDispatchToProps = {
     onStartToggleTokenLockSteps: startToggleTokenLockSteps,
+    onSubmitTransferToken: startTranferTokenSteps,
 };
 
-const WalletTokenBalancesContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(WalletTokenBalances);
+const WalletTokenBalancesContainer = withTheme(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(WalletTokenBalances),
+);
 
 export { WalletTokenBalances, WalletTokenBalancesContainer };

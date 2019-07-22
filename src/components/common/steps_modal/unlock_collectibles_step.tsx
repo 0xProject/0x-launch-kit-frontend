@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { unlockCollectible } from '../../../store/blockchain/actions';
-import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
 import { sleep } from '../../../util/sleep';
-import { Collectible, StepUnlockCollectibles, StoreState } from '../../../util/types';
+import { Collectible, StepUnlockCollectibles, StoreState, Wallet } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -18,6 +18,7 @@ interface OwnProps {
 interface StateProps {
     estimatedTxTimeMs: number;
     step: StepUnlockCollectibles;
+    wallet: Wallet;
 }
 
 interface DispatchProps {
@@ -29,11 +30,11 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class UnlockCollectiblesStep extends React.Component<Props> {
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, step, wallet } = this.props;
         const { isUnlocked, collectible } = step;
         const collectibleName = collectible.name;
         const title = `Selling ${collectibleName}`;
-        const confirmCaption = `Confirm on Metamask to ${
+        const confirmCaption = `Confirm on ${wallet} to ${
             isUnlocked ? 'lock' : 'unlock'
         } ${collectibleName} for trading on 0x.`;
         const loadingCaption = isUnlocked
@@ -60,6 +61,7 @@ class UnlockCollectiblesStep extends React.Component<Props> {
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._unlockCollectibles}
                 showPartialProgress={true}
+                wallet={wallet}
             />
         );
     };
@@ -85,6 +87,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepUnlockCollectibles,
+        wallet: getWallet(state) as Wallet,
     };
 };
 

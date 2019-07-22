@@ -2,20 +2,20 @@
 
 exports[`Toolbar Toolbar to match snapshot 1`] = `
 <div
-  className="sc-ifAKCX dQcDOG"
+  className="sc-EHOje guXWSa"
 >
   <div
-    className="sc-EHOje dLceQg"
+    className="sc-bZQynM dRxzcF"
   >
     <label>
       Start Content
     </label>
   </div>
   <div
-    className="sc-bZQynM jpBPBC"
+    className="sc-gzVnrw dzhSQZ"
   />
   <div
-    className="sc-gzVnrw hKUcKm"
+    className="sc-htoDjs ciwOfe"
   >
     <label>
       End Content

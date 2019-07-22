@@ -7,9 +7,9 @@ import { InsufficientFeeBalanceException } from '../../../exceptions/insufficien
 import { InsufficientTokenBalanceException } from '../../../exceptions/insufficient_token_balance_exception';
 import { SignatureFailedException } from '../../../exceptions/signature_failed_exception';
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
-import { OrderSide, StepBuySellLimitOrder, StoreState } from '../../../util/types';
+import { OrderSide, StepBuySellLimitOrder, StoreState, Wallet } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -20,6 +20,7 @@ interface OwnProps {
 interface StateProps {
     estimatedTxTimeMs: number;
     step: StepBuySellLimitOrder;
+    wallet: Wallet;
 }
 
 interface DispatchProps {
@@ -38,12 +39,11 @@ class SignOrderStep extends React.Component<Props, State> {
         errorMsg: 'Error signing/submitting order.',
     };
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, step, wallet } = this.props;
 
         const isBuy = step.side === OrderSide.Buy;
-
         const title = 'Order setup';
-        const confirmCaption = 'Confirm signature on Metamask to submit order to the book.';
+        const confirmCaption = `Confirm signature on ${wallet} to submit order to the book.`;
         const loadingCaption = 'Submitting order.';
         const doneCaption = `${isBuy ? 'Buy' : 'Sell'} order for ${tokenSymbolToDisplayString(
             step.token.symbol,
@@ -65,6 +65,7 @@ class SignOrderStep extends React.Component<Props, State> {
                 runAction={this._getSignedOrder}
                 step={step}
                 title={title}
+                wallet={wallet}
             />
         );
     };
@@ -104,6 +105,7 @@ class SignOrderStep extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
+        wallet: getWallet(state) as Wallet,
         step: getStepsModalCurrentStep(state) as StepBuySellLimitOrder,
     };
 };

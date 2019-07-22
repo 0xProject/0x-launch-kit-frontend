@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { lockToken, unlockToken } from '../../../store/blockchain/actions';
-import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
 import { sleep } from '../../../util/sleep';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
-import { StepToggleTokenLock, StoreState, Token } from '../../../util/types';
+import { StepToggleTokenLock, StoreState, Token, Wallet } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -19,6 +19,7 @@ interface OwnProps {
 interface StateProps {
     estimatedTxTimeMs: number;
     step: StepToggleTokenLock;
+    wallet: Wallet;
 }
 
 interface DispatchProps {
@@ -31,12 +32,12 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class ToggleTokenLockStep extends React.Component<Props> {
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, step, wallet } = this.props;
         const { context, isUnlocked, token } = step;
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
         const title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock token' : 'Unlock token';
-        const confirmCaption = `Confirm on Metamask to ${
+        const confirmCaption = `Confirm on ${wallet} to ${
             isUnlocked ? 'lock' : 'unlock'
         } ${tokenSymbol} for trading on 0x.`;
         const loadingCaption = isUnlocked
@@ -63,6 +64,7 @@ class ToggleTokenLockStep extends React.Component<Props> {
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._toggleToken}
                 showPartialProgress={true}
+                wallet={wallet}
             />
         );
     };
@@ -91,6 +93,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepToggleTokenLock,
+        wallet: getWallet(state) as Wallet,
     };
 };
 

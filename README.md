@@ -1,16 +1,16 @@
 # Veridex
 
 [![Chat with us on Discord](https://img.shields.io/badge/chat-Discord-blueViolet.svg)](https://discord.gg/JqheZms)
-[![CircleCI](https://circleci.com/gh/VeriSafe/VeriDex?style=svg)](https://circleci.com/gh/VeriSafe/VeriDex)
-[![dependencies Status](https://david-dm.org/0xproject/0x-launch-kit-frontend/status.svg)](https://david-dm.org/0xproject/0x-launch-kit-frontend)
-[![devDependencies Status](https://david-dm.org/0xproject/0x-launch-kit-frontend/dev-status.svg)](https://david-dm.org/0xproject/0x-launch-kit-frontend?type=dev)
+[![CircleCI](https://circleci.com/gh/0xProject/0x-launch-kit-frontend.svg?style=svg)](https://circleci.com/gh/0xProject/0x-launch-kit-frontend)
+[![dependencies Status](https://david-dm.org/verisafe/veridex/status.svg)](https://david-dm.org/verisafe/veridex)
+[![devDependencies Status](https://david-dm.org/verisafe/veridex/dev-status.svg)](https://david-dm.org/verisafe/veridex?type=dev)
 [![Coverage Status](https://coveralls.io/repos/github/VeriSafe/VeriDex/badge.svg?branch=development)](https://coveralls.io/github/VeriSafe/VeriDex?branch=development)
 
-This project is forked from [0x-launch-kit-fronted](https://github/0xproject/0x-launch-kit-frontend) and with a goal to be the most complete open-source 0x based dex out there. The code here will try to be on sync with the 0x frontend, but with the additional features proposed on the TODO, tests will be include following 0x style.
+This project is forked from [0x-launch-kit-fronted](https://github/0xproject/0x-launch-kit-frontend) and it have a goal to be the most complete open-source 0x based dex out there. The code here will try to be on sync with the 0x frontend, but with the additional features proposed on the TODO, tests will be include following 0x style.
 
 This source code is used on the [VeriSafe Dex as a service](https://steemit.com/zerox/@joaocampos/veridex-network-dex-as-a-service).
 
-This repo ships with both an ERC-20 token trading interface and an ERC-721 marketplace interface.
+This repo ships with both an ERC-20 token trading interface and an ERC-721 marketplace interface. However, for now, only improvements on ERC-20 token trading will be done.
 
 Support this fork with the following actions:
 
@@ -18,7 +18,7 @@ Support this fork with the following actions:
 -   Lets us know you are using this fork
 -   Add a Powered by 0x and VeriSafe
 
-With your help, we can be self-sustainable and complete the long list of TODO's. If you want a feature that is not present on the TODO list, please open an issue requesting a feature request
+With your help, we can be self-sustainable and complete the long list of TODO's. If you want a feature that is not present on the TODO list, please open an issue requesting a feature request.
 
 ## Deployed DEX's
 
@@ -46,6 +46,9 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [x] List Dex Trades
 -   [x] Add troll box using ChatBro
 -   [x] Fully configuration of orderbook and sell and buy cards
+-   [x] Support multiple wallets, like Portis, Torus etc please see list of planned wallets below
+-   [x] Add mobile support
+-   [x] Support to transfer tokens
 -   [ ] List Market Trades
 -   [ ] List Markets stats
 -   [ ] Click on buy and sell button to auto-fill
@@ -54,19 +57,15 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [x] List descriptions for each project
 -   [ ] Report data to the most known crypto data aggregators
 -   [ ] List last prices for each token
--   [ ] Support multiple wallets, like Portis, Torus etc please see list of planned wallets below
--   [ ] Add mobile support
 -   [ ] Theme switcher
 
 ## Planned Wallets Support
 
 -   [x] [Metamask](https://metamask.io/)
 -   [ ] [Torus](https://docs.tor.us/developers/getting-started)
--   [ ] [Portis](https://developers.portis.io/)
--   [ ] [Fortmatic](https://developers.fortmatic.com/)
+-   [x] [Portis](https://developers.portis.io/)
+-   [x] [Fortmatic](https://developers.fortmatic.com/)
 -   [ ] [WalletConnect](https://docs.walletconnect.org/)
-
-Library to use: [web3-react](https://noahzinsmeister.gitbook.io/web3-react/v/latest/)
 
 ### Using VeriDex relayer
 

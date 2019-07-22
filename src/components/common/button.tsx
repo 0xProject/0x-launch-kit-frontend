@@ -45,7 +45,18 @@ const StyledButton = styled.button<{ variant?: ButtonVariant }>`
         props.variant && props.variant === ButtonVariant.Buy
             ? `background-color: ${props.theme.componentsTheme.buttonBuyBackgroundColor};`
             : ''}
-
+    ${props =>
+        props.variant && props.variant === ButtonVariant.Portis
+            ? `background-color: ${props.theme.componentsTheme.buttonPortisBackgroundColor};`
+            : ''}
+    ${props =>
+        props.variant && props.variant === ButtonVariant.Torus
+            ? `background-color: ${props.theme.componentsTheme.buttonTorusBackgroundColor};`
+            : ''}
+    ${props =>
+        props.variant && props.variant === ButtonVariant.Fortmatic
+            ? `background-color: ${props.theme.componentsTheme.buttonFortmaticBackgroundColor};`
+            : ''}
     align-items: center;
     border-radius: ${themeDimensions.borderRadius};
     border: none;

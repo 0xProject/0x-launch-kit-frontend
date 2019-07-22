@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../../common/constants';
-import { initWallet } from '../../../store/actions';
+import { initWallet, setWeb3State } from '../../../store/actions';
 import {
     getBaseToken,
     getBaseTokenBalance,
@@ -13,12 +13,13 @@ import {
     getQuoteToken,
     getQuoteTokenBalance,
     getTotalEthBalance,
+    getWallet,
     getWeb3State,
 } from '../../../store/selectors';
 import { errorsWallet } from '../../../util/error_messages';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
+import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Wallet, Web3State } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
@@ -139,10 +140,13 @@ interface StateProps {
     baseTokenBalance: TokenBalance | null;
     quoteTokenBalance: TokenBalance | null;
     totalEthBalance: BigNumber;
+    wallet: Wallet | null;
 }
 
 interface DispatchProps {
     onConnectWallet: () => any;
+    onConnectingWallet: () => any;
+    onChooseWallet: () => any;
 }
 
 type Props = StateProps & DispatchProps;
@@ -168,17 +172,17 @@ const simplifiedTextBoxSmall = () => {
     );
 };
 
-const getWalletName = () => {
-    return 'MetaMask';
-};
-
-const getWallet = (web3State: Web3State) => {
-    return (
-        <WalletStatusContainer>
-            <WalletStatusBadge web3State={web3State} />
-            <WalletStatusTitle>{getWalletName()}</WalletStatusTitle>
-        </WalletStatusContainer>
-    );
+const getWalletContent = (web3State: Web3State, wallet: Wallet | null) => {
+    if (wallet) {
+        return (
+            <WalletStatusContainer>
+                <WalletStatusBadge web3State={web3State} />
+                <WalletStatusTitle>{wallet}</WalletStatusTitle>
+            </WalletStatusContainer>
+        );
+    } else {
+        return;
+    }
 };
 
 const getWalletTitle = (web3State: Web3State) => {
@@ -186,6 +190,12 @@ const getWalletTitle = (web3State: Web3State) => {
 
     if (web3State === Web3State.NotInstalled) {
         title = 'No wallet found';
+    }
+    if (web3State === Web3State.Connect) {
+        title = 'Connect';
+    }
+    if (web3State === Web3State.Connecting) {
+        title = 'Connecting';
     }
 
     return title;
@@ -200,10 +210,10 @@ const openMetamaskExtensionUrl = () => {
 
 class WalletBalance extends React.Component<Props, State> {
     public render = () => {
-        const { web3State } = this.props;
+        const { web3State, wallet } = this.props;
         const walletContent = this._getWalletContent();
         return (
-            <Card title={getWalletTitle(web3State)} action={getWallet(web3State)} minHeightBody={'0px'}>
+            <Card title={getWalletTitle(web3State)} action={getWalletContent(web3State, wallet)} minHeightBody={'0px'}>
                 {walletContent}
             </Card>
         );
@@ -215,10 +225,13 @@ class WalletBalance extends React.Component<Props, State> {
             web3State,
             currencyPair,
             onConnectWallet,
+            onChooseWallet,
             quoteToken,
             quoteTokenBalance,
             baseTokenBalance,
             totalEthBalance,
+            onConnectingWallet,
+            wallet,
         } = this.props;
 
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
@@ -279,6 +292,32 @@ class WalletBalance extends React.Component<Props, State> {
                 </WalletErrorContainer>
             );
         }
+        if (web3State === Web3State.Connect) {
+            content = (
+                <WalletErrorContainer>
+                    <ErrorCardStyled
+                        fontSize={FontSize.Large}
+                        icon={ErrorIcons.Lock}
+                        onClick={onConnectingWallet}
+                        text={'Connect Your Wallet'}
+                        textAlign="center"
+                    />
+                </WalletErrorContainer>
+            );
+        }
+        if (web3State === Web3State.Connecting) {
+            content = (
+                <WalletErrorContainer>
+                    <ErrorCardStyled
+                        fontSize={FontSize.Large}
+                        icon={ErrorIcons.Lock}
+                        onClick={onChooseWallet}
+                        text={'Connecting Your Wallet'}
+                        textAlign="center"
+                    />
+                </WalletErrorContainer>
+            );
+        }
 
         if (web3State === Web3State.NotInstalled) {
             content = (
@@ -292,9 +331,13 @@ class WalletBalance extends React.Component<Props, State> {
         }
 
         if (web3State === Web3State.Loading) {
+            let loadingText = errorsWallet.mmLoading;
+            if (wallet) {
+                loadingText = `Please wait while we load ${wallet}`;
+            }
             content = (
                 <>
-                    <ButtonStyled variant={ButtonVariant.Tertiary}>{errorsWallet.mmLoading}</ButtonStyled>
+                    <ButtonStyled variant={ButtonVariant.Tertiary}>{loadingText}</ButtonStyled>
                 </>
             );
         }
@@ -339,11 +382,14 @@ const mapStateToProps = (state: StoreState): StateProps => {
         quoteTokenBalance: getQuoteTokenBalance(state),
         baseTokenBalance: getBaseTokenBalance(state),
         totalEthBalance: getTotalEthBalance(state),
+        wallet: getWallet(state),
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
+        onChooseWallet: () => dispatch(setWeb3State(Web3State.Connect)),
+        onConnectingWallet: () => dispatch(setWeb3State(Web3State.Connecting)),
         onConnectWallet: () => dispatch(initWallet()),
     };
 };

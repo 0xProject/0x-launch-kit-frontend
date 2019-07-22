@@ -5,14 +5,14 @@ import { withRouter } from 'react-router-dom';
 import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
 import {
-    initializeAppNoMetamaskOrLocked,
+    initializeAppWallet,
     initWallet,
     updateMarketPriceEther,
     updateMarketPriceQuote,
     updateStore,
 } from '../store/actions';
 import { getCurrentMarketPlace, getWeb3State } from '../store/selectors';
-import { MARKETPLACES, StoreState, Web3State } from '../util/types';
+import { MARKETPLACES, StoreState, Wallet, Web3State } from '../util/types';
 
 interface OwnProps {
     children: React.ReactNode;
@@ -24,8 +24,8 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onConnectWallet: () => any;
-    onInitMetamaskState: () => any;
+    onConnectWallet: (wallet: Wallet) => any;
+    onInitWalletState: () => any;
     onUpdateStore: () => any;
     onUpdateMarketPriceEther: () => any;
     onUpdateMarketPriceQuote: () => any;
@@ -40,11 +40,12 @@ class App extends React.Component<Props> {
     private _updatePriceEtherInterval: number | undefined;
 
     public componentDidMount = () => {
-        const wasWalletConnected = localStorage.getWalletConnected();
-        if (wasWalletConnected) {
-            this.props.onConnectWallet();
+        // this.props.onInitWalletState();
+        const walletConnected = localStorage.getWalletConnected();
+        if (walletConnected !== false && walletConnected !== undefined) {
+            this.props.onConnectWallet(walletConnected as Wallet);
         } else {
-            this.props.onInitMetamaskState();
+            this.props.onInitWalletState();
         }
     };
 
@@ -112,11 +113,11 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onInitMetamaskState: () => dispatch(initializeAppNoMetamaskOrLocked()),
+        onInitWalletState: () => dispatch(initializeAppWallet()),
         onUpdateStore: () => dispatch(updateStore()),
         onUpdateMarketPriceEther: () => dispatch(updateMarketPriceEther()),
         onUpdateMarketPriceQuote: () => dispatch(updateMarketPriceQuote()),
-        onConnectWallet: () => dispatch(initWallet()),
+        onConnectWallet: (wallet: Wallet) => dispatch(initWallet(wallet)),
     };
 };
 

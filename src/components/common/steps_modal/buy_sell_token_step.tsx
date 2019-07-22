@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { OrderSide, StepBuySellMarket, StoreState, Token } from '../../../util/types';
+import { OrderSide, StepBuySellMarket, StoreState, Token, Wallet } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -19,6 +19,7 @@ interface StateProps {
     estimatedTxTimeMs: number;
     step: StepBuySellMarket;
     quoteToken: Token;
+    wallet: Wallet;
 }
 
 interface DispatchProps {
@@ -39,7 +40,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        const { buildStepsProgress, estimatedTxTimeMs, step, wallet } = this.props;
         const { token } = step;
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
@@ -52,7 +53,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
 
         const title = 'Order setup';
 
-        const confirmCaption = `Confirm on Metamask to ${isBuy ? 'buy' : 'sell'} ${amountOfTokenString}.`;
+        const confirmCaption = `Confirm on ${wallet} to ${isBuy ? 'buy' : 'sell'} ${amountOfTokenString}.`;
         const loadingCaption = `Processing ${isBuy ? 'buy' : 'sale'} of ${amountOfTokenString}.`;
         const doneCaption = `${isBuy ? 'Buy' : 'Sell'} Order Complete!`;
         const errorCaption = `${isBuy ? 'buying' : 'selling'} ${amountOfTokenString}.`;
@@ -73,6 +74,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
                 estimatedTxTimeMs={estimatedTxTimeMs}
                 runAction={this._confirmOnMetamaskBuyOrSell}
                 showPartialProgress={true}
+                wallet={wallet}
             />
         );
     };
@@ -113,6 +115,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
         step: getStepsModalCurrentStep(state) as StepBuySellMarket,
         quoteToken: getQuoteToken(state) as Token,
+        wallet: getWallet(state) as Wallet,
     };
 };
 

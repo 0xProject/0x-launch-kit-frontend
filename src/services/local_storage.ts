@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 
 import { FILLS_LIMIT, NETWORK_ID, NOTIFICATIONS_LIMIT } from '../common/constants';
-import { Fill, Notification } from '../util/types';
+import { Fill, Notification, Wallet } from '../util/types';
 
 const addPrefix = (key: string) => `VeriDex.${key}`;
 
@@ -158,11 +158,13 @@ export class LocalStorage {
         return JSON.parse(this._storage.getItem(adBlockMessageShownKey) || 'false');
     }
 
-    public saveWalletConnected(walletConnected: boolean): void {
+    public saveWalletConnected(walletConnected: string): void {
         this._storage.setItem(walletConnectedKey, JSON.stringify(walletConnected));
     }
-
-    public getWalletConnected(): boolean {
-        return JSON.parse(this._storage.getItem(walletConnectedKey) || 'false');
+    public resetWalletConnected(): void {
+        this._storage.setItem(walletConnectedKey, JSON.stringify(false));
+    }
+    public getWalletConnected(): Wallet | null | boolean {
+        return JSON.parse(this._storage.getItem(walletConnectedKey) || JSON.stringify(false));
     }
 }

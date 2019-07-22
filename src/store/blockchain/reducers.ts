@@ -8,6 +8,7 @@ import { RootAction } from '../reducers';
 
 const initialBlockchainState: BlockchainState = {
     ethAccount: '',
+    wallet: null,
     web3State: Web3State.Loading,
     tokenBalances: [],
     ethBalance: new BigNumber(0),
@@ -31,6 +32,10 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, wethTokenBalance: action.payload };
         case getType(actions.setGasInfo):
             return { ...state, gasInfo: action.payload };
+        case getType(actions.setWallet):
+            return { ...state, wallet: action.payload };
+        case getType(actions.resetWallet):
+            return { ...state, wallet: null };
         case getType(actions.setWethBalance):
             return {
                 ...state,

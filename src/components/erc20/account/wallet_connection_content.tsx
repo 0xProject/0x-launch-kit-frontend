@@ -3,6 +3,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { logoutWallet } from '../../../store/actions';
 import { getEthAccount } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
 import { StoreState } from '../../../util/types';
@@ -15,8 +16,11 @@ interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
 interface StateProps {
     ethAccount: string;
 }
+interface DispatchProps {
+    onLogoutWallet: () => any;
+}
 
-type Props = StateProps & OwnProps;
+type Props = StateProps & OwnProps & DispatchProps;
 
 const connectToExplorer = () => {
     window.open('https://0xtracker.com/search?q=0x5265bde27f57e738be6c1f6ab3544e82cdc92a8f');
@@ -29,7 +33,7 @@ const DropdownItems = styled(CardBase)`
 
 class WalletConnectionContent extends React.PureComponent<Props> {
     public render = () => {
-        const { ethAccount, ...restProps } = this.props;
+        const { ethAccount, onLogoutWallet, ...restProps } = this.props;
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
 
         const viewOnEtherscan = () => {
@@ -43,6 +47,7 @@ class WalletConnectionContent extends React.PureComponent<Props> {
                 </CopyToClipboard>
                 <DropdownTextItem onClick={viewOnEtherscan} text="View Address on Etherscan" />
                 <DropdownTextItem onClick={connectToExplorer} text="Track DEX volume" />
+                <DropdownTextItem onClick={onLogoutWallet} text="Logout Wallet" />
             </DropdownItems>
         );
 
@@ -62,10 +67,15 @@ const mapStateToProps = (state: StoreState): StateProps => {
         ethAccount: getEthAccount(state),
     };
 };
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+    return {
+        onLogoutWallet: () => dispatch(logoutWallet()),
+    };
+};
 
 const WalletConnectionContentContainer = connect(
     mapStateToProps,
-    {},
+    mapDispatchToProps,
 )(WalletConnectionContent);
 
 export { WalletConnectionContent, WalletConnectionContentContainer };

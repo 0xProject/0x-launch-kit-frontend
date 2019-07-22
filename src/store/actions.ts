@@ -20,18 +20,21 @@ export const updateStore = () => {
     return async (dispatch: any, getState: any) => {
         const state = getState();
         const web3Wrapper = await getWeb3Wrapper();
-        const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
-        dispatch(updateTokenBalances());
-        dispatch(updateGasInfo());
-        dispatch(updateMarketPriceEther());
+        if (web3Wrapper) {
+            const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
 
-        // Updates based on the current app
-        const currentMarketPlace = getCurrentMarketPlace(state);
-        if (currentMarketPlace === MARKETPLACES.ERC20) {
-            dispatch(updateERC20Store(ethAccount));
-            dispatch(updateMarketPriceQuote());
-        } else {
-            dispatch(updateERC721Store(ethAccount));
+            dispatch(updateTokenBalances());
+            dispatch(updateGasInfo());
+            dispatch(updateMarketPriceEther());
+
+            // Updates based on the current app
+            const currentMarketPlace = getCurrentMarketPlace(state);
+            if (currentMarketPlace === MARKETPLACES.ERC20) {
+                dispatch(updateERC20Store(ethAccount));
+                dispatch(updateMarketPriceQuote());
+            } else {
+                dispatch(updateERC721Store(ethAccount));
+            }
         }
     };
 };

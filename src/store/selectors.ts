@@ -19,6 +19,7 @@ import { mergeByPrice } from '../util/ui_orders';
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
 export const getTokenBalances = (state: StoreState) => state.blockchain.tokenBalances;
 export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
+export const getWallet = (state: StoreState) => state.blockchain.wallet;
 export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
 export const getWethTokenBalance = (state: StoreState) => state.blockchain.wethTokenBalance;
 export const getConvertBalanceState = (state: StoreState) => state.blockchain.convertBalanceState;

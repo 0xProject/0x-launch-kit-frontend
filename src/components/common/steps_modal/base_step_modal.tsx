@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ComponentUnmountedException } from '../../../exceptions/component_unmounted_exception';
 import { getStepTitle, isLongStep, makeGetProgress } from '../../../util/steps';
-import { Step } from '../../../util/types';
+import { Step, Wallet } from '../../../util/types';
 
 import { StepPendingTime } from './step_pending_time';
 import {
@@ -10,7 +10,10 @@ import {
     ModalText,
     ModalTextClickable,
     StepStatus,
+    StepStatusConfirmOnFortmatic,
     StepStatusConfirmOnMetamask,
+    StepStatusConfirmOnPortis,
+    StepStatusConfirmOnTorus,
     StepStatusDone,
     StepStatusError,
     StepStatusLoading,
@@ -41,6 +44,7 @@ interface Props {
     errorCaption: string;
     step: Step;
     showPartialProgress?: boolean;
+    wallet?: Wallet;
 }
 
 interface State {
@@ -81,6 +85,7 @@ export class BaseStepModal extends React.Component<Props, State> {
             loadingFooterCaption,
             doneFooterCaption,
             title,
+            wallet,
         } = this.props;
         const { loadingStarted, status } = this.state;
         const retry = () => this._retry();
@@ -108,7 +113,26 @@ export class BaseStepModal extends React.Component<Props, State> {
                 );
                 break;
             default:
-                content = <StepStatusConfirmOnMetamask />;
+                if (wallet) {
+                    switch (wallet) {
+                        case Wallet.Metamask:
+                            content = <StepStatusConfirmOnMetamask />;
+                            break;
+                        case Wallet.Portis:
+                            content = <StepStatusConfirmOnPortis />;
+                            break;
+                        case Wallet.Fortmatic:
+                            content = <StepStatusConfirmOnFortmatic />;
+                            break;
+                        case Wallet.Torus:
+                            content = <StepStatusConfirmOnTorus />;
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    content = <StepStatusConfirmOnMetamask />;
+                }
                 bodyText = <ModalText>{confirmCaption}</ModalText>;
                 footer = <ModalStatusTextLight>{loadingFooterCaption}</ModalStatusTextLight>;
                 break;
