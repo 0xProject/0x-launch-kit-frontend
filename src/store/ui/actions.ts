@@ -1,4 +1,4 @@
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import { BigNumber, signatureUtils } from '0x.js';
 import { createAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_ADDRESS } from '../../common/constants';
@@ -289,8 +289,7 @@ export const createSignedOrder: ThunkCreator = (amount: BigNumber, price: BigNum
                 side,
             );
 
-            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-            return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            return signatureUtils.ecSignOrderAsync(web3Wrapper.getProvider(), order, ethAccount);
         } catch (error) {
             throw new SignedOrderException(error.message);
         }

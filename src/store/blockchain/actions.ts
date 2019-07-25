@@ -1,5 +1,5 @@
 // tslint:disable:max-file-line-count
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import { BigNumber, signatureUtils } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT } from '../../common/constants';
@@ -483,8 +483,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
                 );
             }
 
-            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-            return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            return signatureUtils.ecSignOrderAsync(web3Wrapper.getProvider(), order, ethAccount);
         } catch (error) {
             throw new SignedOrderException(error.message);
         }

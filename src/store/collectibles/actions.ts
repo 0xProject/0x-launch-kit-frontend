@@ -1,4 +1,4 @@
-import { MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
+import { signatureUtils, SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import { ZERO_ADDRESS } from '../../common/constants';
@@ -65,8 +65,11 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
                 takerAssetAmount: order.makerAssetAmount,
             };
 
-            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-            const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
+            const buySignedOrder = await signatureUtils.ecSignOrderAsync(
+                web3Wrapper.getProvider(),
+                buyOrder,
+                ethAccount,
+            );
             tx = await contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, gasOptions);
         } else {
             tx = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(

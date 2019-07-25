@@ -1,3 +1,4 @@
+import { MetamaskSubprovider } from '0x.js';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 
 import { sleep } from '../util/sleep';
@@ -18,16 +19,16 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
 
     if (ethereum) {
         try {
-            web3Wrapper = new Web3Wrapper(ethereum);
+            web3Wrapper = new Web3Wrapper(new MetamaskSubprovider(ethereum));
             // Request account access if needed
             await ethereum.enable();
 
             // Subscriptions register
-            ethereum.on('accountsChanged', async (accounts: []) => {
+            ethereum.on('accountsChanged', async (_accounts: []) => {
                 // Reload to avoid MetaMask bug: "MetaMask - RPC Error: Internal JSON-RPC"
                 location.reload();
             });
-            ethereum.on('networkChanged', async (network: number) => {
+            ethereum.on('networkChanged', async (_network: number) => {
                 location.reload();
             });
 
@@ -37,7 +38,7 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
             return null;
         }
     } else if (web3) {
-        web3Wrapper = new Web3Wrapper(web3.currentProvider);
+        web3Wrapper = new Web3Wrapper(new MetamaskSubprovider(web3.currentProvider));
         return web3Wrapper;
     } else {
         //  The user does not have metamask installed

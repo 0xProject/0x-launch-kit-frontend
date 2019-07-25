@@ -1,7 +1,8 @@
-import { BigNumber, SignedOrder } from '0x.js';
+import { assetDataUtils, BigNumber, SignedOrder } from '0x.js';
+import { AssetBuyer } from '@0x/asset-buyer';
 import { createAction } from 'typesafe-actions';
 
-import { ZERO_ADDRESS } from '../../common/constants';
+import { NETWORK_ID, RELAYER_URL } from '../../common/constants';
 import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { RelayerException } from '../../exceptions/relayer_exception';
@@ -184,26 +185,25 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
             const quoteToken = getQuoteToken(state) as Token;
             const contractWrappers = await getContractWrappers();
 
-            // Check if the order is fillable using the forwarder
-            const ethBalance = getEthBalance(state) as BigNumber;
-            const ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
-                return total.plus(currentValue);
-            }, new BigNumber(0));
-            const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
+            const assetBuyer = AssetBuyer.getAssetBuyerForStandardRelayerAPIUrl(
+                contractWrappers.getProvider(),
+                RELAYER_URL,
+                {
+                    networkId: NETWORK_ID,
+                },
+            );
+            const buyQuote = await assetBuyer.getBuyQuoteAsync(
+                assetDataUtils.encodeERC20AssetData(baseToken.address),
+                amount,
+            );
+            const ethBalance = getEthBalance(state);
+            const isEthBalanceEnough = ethBalance.isGreaterThan(buyQuote.worstCaseQuoteInfo.totalEthAmount);
+
             const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
 
             let txHash;
             if (isMarketBuyForwarder) {
-                txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
-                    ordersToFill,
-                    amount,
-                    ethAccount,
-                    ethAmountRequired,
-                    [],
-                    0,
-                    ZERO_ADDRESS,
-                    getTransactionOptions(gasPrice),
-                );
+                txHash = await assetBuyer.executeBuyQuoteAsync(buyQuote);
             } else {
                 txHash = await contractWrappers.exchange.batchFillOrdersAsync(
                     ordersToFill,
