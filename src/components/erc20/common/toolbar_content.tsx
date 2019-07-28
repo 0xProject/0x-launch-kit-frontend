@@ -5,7 +5,7 @@ import styled, { withTheme } from 'styled-components';
 
 import { ReactComponent as LogoSvg } from '../../../assets/icons/erc20_logo.svg';
 import { Config } from '../../../common/config';
-import { UI_GENERAL_TITLE } from '../../../common/constants';
+import { NETWORK_ID, RELAYER_URL, UI_GENERAL_TITLE } from '../../../common/constants';
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
@@ -92,8 +92,21 @@ const ToolbarContent = (props: Props) => {
         e.preventDefault();
         props.onGoToWallet();
     };
+    const handleInstantClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        (window as any).zeroExInstant.render(
+            {
+                orderSource: RELAYER_URL,
+                networkId: NETWORK_ID,
+            },
+            'body',
+        );
+    };
     const endContent = (
         <>
+            <MyWalletLink href="/instant" onClick={handleInstantClick}>
+                Instant
+            </MyWalletLink>
             <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
                 My Wallet
             </MyWalletLink>
