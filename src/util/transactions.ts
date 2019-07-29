@@ -9,6 +9,7 @@ const GET_BLOCK_NUMBER_FROM_TRANSACTION_HASH_RETRIES = 10;
 export const getTransactionOptions = (gasPrice: BigNumber) => {
     let options = {
         gasPrice,
+        shouldValidate: true,
     };
 
     if (process.env.NODE_ENV === 'development') {
