@@ -30,7 +30,13 @@ import {
     Web3State,
 } from '../../util/types';
 import { getAllCollectibles } from '../collectibles/actions';
-import { fetchMarkets, setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote } from '../market/actions';
+import {
+    fetchMarkets,
+    setMarketTokens,
+    updateMarketPriceEther,
+    updateMarketPriceQuote,
+    updateMarketPriceTokens,
+} from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
 import {
     getCurrencyPair,
@@ -541,6 +547,8 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
 
             try {
                 await dispatch(fetchMarkets());
+
+                await dispatch(updateMarketPriceTokens());
                 // For executing this method (setConnectedUserNotifications) is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(setConnectedUserNotifications(ethAccount));
@@ -745,6 +753,8 @@ export const initializeAppWallet: ThunkCreator = () => {
 
             // tslint:disable-next-line:no-floating-promises
             await dispatch(fetchMarkets());
+            // tslint:disable-next-line:no-floating-promises
+            await dispatch(updateMarketPriceTokens());
             // tslint:disable-next-line: no-floating-promises
             dispatch(updateMarketPriceQuote());
         } else {

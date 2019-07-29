@@ -29,6 +29,7 @@ export interface Token {
     symbol: string;
     primaryColor: string;
     id?: string;
+    c_id?: string; // coingecko id
     icon?: string;
     displayDecimals: number;
     minAmount?: number;
@@ -37,6 +38,14 @@ export interface Token {
     website?: string;
     description?: string;
     verisafe_sticker?: string;
+    price_usd?: BigNumber | null;
+    price_usd_24h_change?: BigNumber | null;
+}
+
+export interface TokenPrice {
+    c_id: string; // coingecko id
+    price_usd: BigNumber;
+    price_usd_24h_change: BigNumber;
 }
 
 export interface TokenBalance {
@@ -92,6 +101,7 @@ export interface MarketState {
     readonly ethInUsd: BigNumber | null;
     readonly quoteInUsd?: BigNumber | null;
     readonly markets: Market[] | null;
+    readonly tokensPrice: TokenPrice[] | null;
 }
 
 export interface StoreState {

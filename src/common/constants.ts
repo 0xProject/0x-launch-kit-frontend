@@ -44,6 +44,16 @@ export const UPDATE_ETHER_PRICE_INTERVAL: number = process.env.REACT_APP_UPDATE_
     ? Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10)
     : 3600000;
 
+// Default value is enabled, 0 is disabled
+export const UPDATE_TOKENS_PRICE_INTERVAL: number = process.env.REACT_APP_UPDATE_TOKENS_PRICE_INTERVAL
+    ? Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10)
+    : 3600000;
+
+// Default value is enabled, 0 is disabled
+export const UPDATE_ERC20_MARKETS: number = process.env.REACT_APP_UPDATE_ERC20_MARKETS_INTERVAL
+    ? Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10)
+    : 3600000;
+
 export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;
 

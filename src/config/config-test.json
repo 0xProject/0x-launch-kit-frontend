@@ -22,6 +22,7 @@
                 "50": "0xba3a79d758f19efe588247388754b8e4d6edda81"
             },
             "id": "verisafe",
+            "c_id": "verisafe",
             "displayDecimals": 0,
             "description": "The transparent ecossystem that crypto needs!",
             "website": "https://www.verisafe.io"
@@ -40,7 +41,8 @@
             },
             "decimals": 18,
             "displayDecimals": 3,
-            "id": "ethereum"
+            "id": "ethereum",
+            "c_id": "ethereum"
         },
 
         {
@@ -59,8 +61,24 @@
             "decimals": 18,
             "displayDecimals": 2,
             "id": "0x",
+            "c_id": "0x",
             "website": "https://0x.org",
             "description": "0x is an open protocol that enables the peer-to-peer exchange of assets on the Ethereum blockchain."
+        },
+        {
+            "decimals": 18,
+            "symbol": "dai",
+            "name": "Dai",
+            "icon": "assets/icons/dai.svg",
+            "primaryColor": "#DEA349",
+            "c_id": "dai",
+            "addresses": {
+                "1": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+                "3": "0xfc8862446cd3e4a2e7167e7d97df738407fead07",
+                "4": "0x6f2d6ff85efca691aad23d549771160a12f0a0fc",
+                "42": "0xc4375b7de8af5a38a93548eb8453a498222c4ff2",
+                "50": ""
+            }
         }
     ],
     "pairs": [
@@ -86,6 +104,14 @@
             "quote": "weth",
             "config": {
                 "basePrecision": 2,
+                "pricePrecision": 5
+            }
+        },
+        {
+            "base": "weth",
+            "quote": "dai",
+            "config": {
+                "basePrecision": 3,
                 "pricePrecision": 5
             }
         }

@@ -7,6 +7,7 @@ export interface TokenMetaData {
     name: string;
     primaryColor: string;
     id?: string;
+    c_id?: string;
     icon?: string;
     displayDecimals?: number;
     minAmount?: number;

@@ -46,6 +46,11 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           <th
             className="sc-jzJRlG sc-Rmtcm bGNJGX"
           >
+            Value (USD)
+          </th>
+          <th
+            className="sc-jzJRlG sc-Rmtcm bGNJGX"
+          >
             % Change
           </th>
           <th
@@ -61,7 +66,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
         </tr>
       </thead>
       <tbody
-        className="sc-fAjcbJ ceWnPj"
+        className="sc-caSCKo lhCxMI"
       >
         <tr
           className="sc-fjdhpX nsimD"
@@ -84,7 +89,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             className="sc-cSHVUG sc-jhAzac jDLVBI"
           >
             <span
-              className="sc-eqIVtm dkFliP"
+              className="sc-fAjcbJ eZyXpC"
             >
               ETH Total
             </span>
@@ -99,10 +104,15 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
           <td
             className="sc-cSHVUG kqDNvB"
           >
-            -
+            1$
           </td>
           <td
             className="sc-cSHVUG kqDNvB"
+          >
+            0.000$
+          </td>
+          <td
+            className="sc-cSHVUG zcUxn"
           >
             -
           </td>
@@ -110,7 +120,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             className="sc-cSHVUG sc-dVhcbM cpoHyI"
           >
             <span
-              className="sc-caSCKo evEljT"
+              className="sc-gisBJw KUkSt"
               onClick={[Function]}
             >
               <svg
@@ -165,7 +175,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
               target="_blank"
             >
               <span
-                className="sc-eqIVtm dkFliP"
+                className="sc-fAjcbJ eZyXpC"
               >
                 MOCK1
               </span>
@@ -195,10 +205,15 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             -
           </td>
           <td
+            className="sc-cSHVUG zcUxn"
+          >
+            -
+          </td>
+          <td
             className="sc-cSHVUG sc-dVhcbM cpoHyI"
           >
             <span
-              className="sc-caSCKo evEljT"
+              className="sc-gisBJw KUkSt"
               onClick={[Function]}
             >
               <svg
@@ -253,7 +268,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
               target="_blank"
             >
               <span
-                className="sc-eqIVtm dkFliP"
+                className="sc-fAjcbJ eZyXpC"
               >
                 MOCK2
               </span>
@@ -283,10 +298,15 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             -
           </td>
           <td
+            className="sc-cSHVUG zcUxn"
+          >
+            -
+          </td>
+          <td
             className="sc-cSHVUG sc-dVhcbM cpoHyI"
           >
             <span
-              className="sc-caSCKo evEljT"
+              className="sc-gisBJw KUkSt"
               onClick={[Function]}
             >
               <svg
@@ -341,7 +361,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
               target="_blank"
             >
               <span
-                className="sc-eqIVtm dkFliP"
+                className="sc-fAjcbJ eZyXpC"
               >
                 MOCK3
               </span>
@@ -371,10 +391,15 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             -
           </td>
           <td
+            className="sc-cSHVUG zcUxn"
+          >
+            -
+          </td>
+          <td
             className="sc-cSHVUG sc-dVhcbM cpoHyI"
           >
             <span
-              className="sc-caSCKo evEljT"
+              className="sc-gisBJw KUkSt"
               onClick={[Function]}
             >
               <svg
@@ -401,6 +426,40 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             >
               Send
             </button>
+          </td>
+        </tr>
+        <tr
+          className="sc-fjdhpX nsimD"
+        >
+          <td
+            className="sc-cSHVUG kqDNvB"
+          />
+          <td
+            className="sc-cSHVUG sc-jhAzac jDLVBI"
+          >
+            TOTAL HOLDINGS
+          </td>
+          <td
+            className="sc-cSHVUG kqDNvB"
+          />
+          <td
+            className="sc-cSHVUG kqDNvB"
+          />
+          <td
+            className="sc-cSHVUG kqDNvB"
+          >
+            0.000$
+          </td>
+          <td
+            className="sc-cSHVUG kqDNvB"
+          />
+          <td
+            className="sc-cSHVUG kqDNvB"
+          />
+          <td
+            className="sc-cSHVUG fNRZMA"
+          >
+            Prices by Coingecko
           </td>
         </tr>
       </tbody>

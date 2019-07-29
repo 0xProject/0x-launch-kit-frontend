@@ -49,15 +49,19 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [x] Support multiple wallets, like Portis, Torus etc please see list of planned wallets below
 -   [x] Add mobile support
 -   [x] Support to transfer tokens
+-   [x] Display prices and total holdings on wallet
+-   [x] Display median price
+-   [x] Add notifications
+-   [x] List descriptions for each project
 -   [ ] List Market Trades
 -   [ ] List Markets stats
 -   [ ] Click on buy and sell button to auto-fill
 -   [ ] Adding graphs like Trading View
 -   [ ] Create a costumized front page
--   [x] List descriptions for each project
--   [ ] Report data to the most known crypto data aggregators
+-   [ ] Report data to the most known crypto data aggregators (In progress)
 -   [ ] List last prices for each token
 -   [ ] Theme switcher
+-   [ ] Connect to 0x mesh
 
 ## Planned Wallets Support
 

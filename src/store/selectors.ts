@@ -39,6 +39,7 @@ export const getBaseToken = (state: StoreState) => state.market.baseToken;
 export const getQuoteToken = (state: StoreState) => state.market.quoteToken;
 export const getMarkets = (state: StoreState) => state.market.markets;
 export const getEthInUsd = (state: StoreState) => state.market.ethInUsd;
+export const getTokensPrice = (state: StoreState) => state.market.tokensPrice;
 export const getQuoteInUsd = (state: StoreState) => state.market.quoteInUsd;
 export const getGasPriceInWei = (state: StoreState) => state.blockchain.gasInfo.gasPriceInWei;
 export const getEstimatedTxTimeMs = (state: StoreState) => state.blockchain.gasInfo.estimatedTimeMs;

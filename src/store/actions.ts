@@ -4,7 +4,7 @@ import { MARKETPLACES } from '../util/types';
 
 import { updateGasInfo, updateTokenBalances } from './blockchain/actions';
 import { getAllCollectibles } from './collectibles/actions';
-import { fetchMarkets, setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote } from './market/actions';
+import { setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair, getCurrentMarketPlace } from './selectors';
 
@@ -56,7 +56,8 @@ export const updateERC20Store = (ethAccount: string) => {
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
-            await dispatch(fetchMarkets());
+
+            // await dispatch(fetchMarkets());
         } catch (error) {
             const knownTokens = getKnownTokens();
             const currencyPair = getCurrencyPair(state);

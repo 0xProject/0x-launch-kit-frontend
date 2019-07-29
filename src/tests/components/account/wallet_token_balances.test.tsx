@@ -7,7 +7,7 @@ import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
 import { DefaultTheme } from '../../../themes/default_theme';
-import { TokenBalance, Web3State } from '../../../util/types';
+import { TokenBalance, Web3State, TokenPrice } from '../../../util/types';
 import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
 const noop = () => ({});
 const ZERO = new BigNumber(0);
@@ -64,6 +64,25 @@ describe('WalletTokenBalances', () => {
                 isUnlocked: true,
             },
         ];
+        const tokenPrices: TokenPrice[] = [
+            {
+                c_id: 'MOCK1',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+        ];
+
+        const ethUSDPrice = new BigNumber(1);
         const onSubmitTransferToken = jest.fn();
         // when
         const wrapper = mountWithTheme(
@@ -75,12 +94,14 @@ describe('WalletTokenBalances', () => {
                 onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                ethUsd={ethUSDPrice}
                 theme={theme}
+                tokensPrice={tokenPrices}
             />,
         );
 
         // then
-        expect(wrapper.find('tbody tr')).toHaveLength(4);
+        expect(wrapper.find('tbody tr')).toHaveLength(5);
     });
 
     it('should properly show locked and unlocked tokens', () => {
@@ -117,6 +138,26 @@ describe('WalletTokenBalances', () => {
                 isUnlocked: true,
             },
         ];
+        const tokenPrices: TokenPrice[] = [
+            {
+                c_id: 'MOCK1',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+        ];
+
+        const ethUSDPrice = new BigNumber(1);
+
         const onSubmitTransferToken = jest.fn();
 
         const tree = renderWithTheme(
@@ -128,7 +169,9 @@ describe('WalletTokenBalances', () => {
                 onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                ethUsd={ethUSDPrice}
                 theme={theme}
+                tokensPrice={tokenPrices}
             />,
         );
 
@@ -171,6 +214,25 @@ describe('WalletTokenBalances', () => {
                 isUnlocked: true,
             },
         ];
+        const tokenPrices: TokenPrice[] = [
+            {
+                c_id: 'MOCK1',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+        ];
+
+        const ethUSDPrice = new BigNumber(1);
         const onToggleTokenLock = jest.fn();
         const onSubmitTransferToken = jest.fn();
         // when
@@ -183,7 +245,9 @@ describe('WalletTokenBalances', () => {
                 onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                ethUsd={ethUSDPrice}
                 theme={theme}
+                tokensPrice={tokenPrices}
             />,
         );
 
@@ -233,7 +297,25 @@ describe('WalletTokenBalances', () => {
         ];
         const onToggleTokenLock = jest.fn();
         const onSubmitTransferToken = jest.fn();
+        const tokenPrices: TokenPrice[] = [
+            {
+                c_id: 'MOCK1',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+            {
+                c_id: 'MOCK2',
+                price_usd: new BigNumber(1),
+                price_usd_24h_change: new BigNumber(1),
+            },
+        ];
 
+        const ethUSDPrice = new BigNumber(1);
         // when
         const wrapper = mountWithTheme(
             <WalletTokenBalances
@@ -244,7 +326,9 @@ describe('WalletTokenBalances', () => {
                 onSubmitTransferToken={onSubmitTransferToken}
                 web3State={Web3State.Done}
                 ethAccount={account}
+                ethUsd={ethUSDPrice}
                 theme={theme}
+                tokensPrice={tokenPrices}
             />,
         );
         const rows = wrapper.find('tbody tr');

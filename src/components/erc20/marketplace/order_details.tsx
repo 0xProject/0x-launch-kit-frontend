@@ -119,6 +119,9 @@ class OrderDetails extends React.Component<Props, State> {
         const fee = this._getFeeStringForRender();
         const cost = this._getCostStringForRender();
         const costText = this._getCostLabelStringForRender();
+        const priceMedianText = this._getMedianPriceStringForRender();
+        const { orderType } = this.props;
+
         return (
             <>
                 <LabelContainer>
@@ -132,6 +135,12 @@ class OrderDetails extends React.Component<Props, State> {
                     <CostLabel>{costText}</CostLabel>
                     <CostValue>{cost}</CostValue>
                 </Row>
+                {orderType === OrderType.Market && (
+                    <Row>
+                        <CostLabel>Median Price:</CostLabel>
+                        <CostValue>{priceMedianText}</CostValue>
+                    </Row>
+                )}
             </>
         );
     };
@@ -205,6 +214,22 @@ class OrderDetails extends React.Component<Props, State> {
             return `${costAmount} ${tokenSymbolToDisplayString(quote)}`;
         }
     };
+    private readonly _getMedianPriceStringForRender = () => {
+        const { canOrderBeFilled } = this.state;
+        const { orderType } = this.props;
+        const { tokenAmount } = this.props;
+        if (orderType === OrderType.Market && !canOrderBeFilled) {
+            return `---`;
+        }
+        if (tokenAmount.eq(0)) {
+            return `---`;
+        }
+        const { quote, config } = this.props.currencyPair;
+        const { quoteTokenAmount } = this.state;
+        const priceDisplay = quoteTokenAmount.div(tokenAmount).toFormat(config.pricePrecision + 1);
+        return `${priceDisplay} ${tokenSymbolToDisplayString(quote)}`;
+    };
+
     private readonly _getCostLabelStringForRender = () => {
         const { qouteInUSD, orderSide } = this.props;
         if (qouteInUSD) {

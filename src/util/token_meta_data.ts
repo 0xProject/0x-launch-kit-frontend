@@ -20,6 +20,7 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenM
                 ? tokenMetaData.displayDecimals
                 : UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
         id: tokenMetaData.id || undefined,
+        c_id: tokenMetaData.c_id || undefined,
         minAmount: tokenMetaData.minAmount || 0,
         maxAmount: tokenMetaData.maxAmount || undefined,
         precision:
@@ -47,6 +48,7 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                             ? tokenMetaData.displayDecimals
                             : UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
                     id: tokenMetaData.id || undefined,
+                    c_id: tokenMetaData.c_id || undefined,
                     minAmount: tokenMetaData.minAmount || 0,
                     maxAmount: tokenMetaData.maxAmount || undefined,
                     precision:
