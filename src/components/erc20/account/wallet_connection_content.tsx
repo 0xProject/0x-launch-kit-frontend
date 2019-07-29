@@ -40,6 +40,12 @@ class WalletConnectionContent extends React.PureComponent<Props> {
             window.open(`https://etherscan.io/address/${ethAccount}`);
         };
 
+        const viewOnFabrx = () => {
+            window.open(
+                `https://dash.fabrx.io/thread/partner/VeriDex&a3bccf&1127661506559188992--K_DyiHA0_400x400--jpg&ETH&${ethAccount}/`,
+            );
+        };
+
         const content = (
             <DropdownItems>
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
@@ -47,6 +53,7 @@ class WalletConnectionContent extends React.PureComponent<Props> {
                 </CopyToClipboard>
                 <DropdownTextItem onClick={viewOnEtherscan} text="View Address on Etherscan" />
                 <DropdownTextItem onClick={connectToExplorer} text="Track DEX volume" />
+                <DropdownTextItem onClick={viewOnFabrx} text="Set Alerts" />
                 <DropdownTextItem onClick={onLogoutWallet} text="Logout Wallet" />
             </DropdownItems>
         );
