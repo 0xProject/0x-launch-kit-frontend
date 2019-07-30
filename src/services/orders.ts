@@ -23,8 +23,11 @@ export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token
     const orders: SignedOrder[] = await getAllOrders(baseToken, quoteToken);
     try {
         const contractWrappers = await getContractWrappers();
-        const ordersInfo = await contractWrappers.exchange.getOrdersInfoAsync(orders);
-        return ordersToUIOrders(orders, baseToken, ordersInfo);
+        const ordersAndTradersInfo = await contractWrappers.orderValidator.getOrdersAndTradersInfoAsync(
+            orders,
+            orders.map(o => o.makerAddress),
+        );
+        return ordersToUIOrders(orders, baseToken, ordersAndTradersInfo);
     } catch (err) {
         logger.error(`There was an error getting the orders' info from exchange.`, err);
         throw err;
@@ -47,8 +50,11 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
     const myOrders = await getUserOrders(baseToken, quoteToken, ethAccount);
     try {
         const contractWrappers = await getContractWrappers();
-        const myOrdersInfo = await contractWrappers.exchange.getOrdersInfoAsync(myOrders);
-        return ordersToUIOrders(myOrders, baseToken, myOrdersInfo);
+        const ordersAndTradersInfo = await contractWrappers.orderValidator.getOrdersAndTradersInfoAsync(
+            myOrders,
+            myOrders.map(o => o.makerAddress),
+        );
+        return ordersToUIOrders(myOrders, baseToken, ordersAndTradersInfo);
     } catch (err) {
         logger.error(`There was an error getting the orders' info from exchange.`, err);
         throw err;

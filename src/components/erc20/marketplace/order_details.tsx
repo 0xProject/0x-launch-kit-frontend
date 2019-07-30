@@ -158,20 +158,20 @@ class OrderDetails extends React.Component<Props, State> {
         } else {
             const { tokenAmount, openSellOrders, openBuyOrders } = this.props;
             const isSell = orderSide === OrderSide.Sell;
-            const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
+            const { orders, amounts, canBeFilled } = buildMarketOrders(
                 {
                     amount: tokenAmount,
                     orders: isSell ? openBuyOrders : openSellOrders,
                 },
                 orderSide,
             );
-            const feeInZrx = ordersToFill.reduce((sum, order) => sum.plus(order.takerFee), new BigNumber(0));
-            const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, ordersToFill, amountToPayForEachOrder);
+            const feeInZrx = orders.reduce((sum, order) => sum.plus(order.takerFee), new BigNumber(0));
+            const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, orders, amounts);
 
             this.setState({
                 feeInZrx,
                 quoteTokenAmount,
-                canOrderBeFilled,
+                canOrderBeFilled: canBeFilled,
             });
         }
     };

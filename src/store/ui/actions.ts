@@ -194,7 +194,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
-        const [, filledAmounts, canBeFilled] = buildMarketOrders(
+        const { amounts, canBeFilled } = buildMarketOrders(
             {
                 amount,
                 orders,
@@ -205,7 +205,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             throw new InsufficientOrdersAmountException();
         }
 
-        const totalFilledAmount = filledAmounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+        const totalFilledAmount = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
             return total.plus(currentValue);
         }, new BigNumber(0));
 

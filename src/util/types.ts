@@ -177,6 +177,8 @@ export interface UIOrder {
     filled: BigNumber | null;
     price: BigNumber;
     status: OrderStatus | null;
+    makerFillableAmountInTakerAsset: BigNumber;
+    remainingTakerAssetFillAmount: BigNumber;
 }
 
 export interface OrderBookItem {
