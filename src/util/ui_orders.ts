@@ -60,7 +60,7 @@ const ordersToUIOrdersWithoutOrderInfo = (orders: SignedOrder[], baseToken: Toke
 const filterUIOrders = (orders: UIOrder[]): UIOrder[] => {
     // For Market Fill we remove ANY orders which cannot be filled for their remaining amount.
     const marketFillFilter = (o: UIOrder) =>
-        o.makerFillableAmountInTakerAsset.isGreaterThan(o.remainingTakerAssetFillAmount);
+        o.makerFillableAmountInTakerAsset.isGreaterThanOrEqualTo(o.remainingTakerAssetFillAmount);
     const filteredOrders = orders.filter(marketFillFilter);
     logger.info(`filtered ${orders.length - filteredOrders.length}/${orders.length} orders`);
     return filteredOrders;
