@@ -1,9 +1,8 @@
 import { BigNumber, SignedOrder } from '0x.js';
+import { SwapQuoteConsumer } from '@0x/asset-swapper';
 import { createAction } from 'typesafe-actions';
 
-import { AFFILIATE_FEE_PERCENTAGE, FEE_RECIPIENT } from '../../common/constants';
-import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
-import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
+import { DEFAULT_GAS_LIMIT, FEE_RECIPIENT, NETWORK_ID } from '../../common/constants';
 import { RelayerException } from '../../exceptions/relayer_exception';
 import {
     cancelSignedOrder,
@@ -12,17 +11,14 @@ import {
     getUserOrdersAsUIOrders,
 } from '../../services/orders';
 import { getRelayer } from '../../services/relayer';
-import { isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
-import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
-import { getTransactionOptions } from '../../util/transactions';
+import { buildLimitOrder, buildMarketOrdersQuoteAsync } from '../../util/orders';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder, Web3State } from '../../util/types';
 import { updateTokenBalances } from '../blockchain/actions';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
     getBaseToken,
     getEthAccount,
-    getEthBalance,
     getGasPriceInWei,
     getOpenBuyOrders,
     getOpenSellOrders,
@@ -164,92 +160,50 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
     amount: BigNumber,
     side: OrderSide,
 ) => {
-    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
         const state = getState();
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
-
-        const isBuy = side === OrderSide.Buy;
-        const allOrders = isBuy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
-        const { orders, amounts, canBeFilled } = buildMarketOrders(
-            {
-                amount,
-                orders: allOrders,
-            },
+        const allOrders = [...getOpenSellOrders(state), ...getOpenBuyOrders(state)];
+        const baseToken = getBaseToken(state) as Token;
+        const quoteToken = getQuoteToken(state) as Token;
+        const web3Wrapper = await getWeb3Wrapper();
+        const quote = await buildMarketOrdersQuoteAsync(
+            { amount, orders: allOrders, makerAsset: baseToken.address, takerAsset: quoteToken.address },
             side,
+            web3Wrapper.getProvider(),
         );
 
-        if (canBeFilled) {
-            const baseToken = getBaseToken(state) as Token;
-            const quoteToken = getQuoteToken(state) as Token;
-            const contractWrappers = await getContractWrappers();
+        const consumer = new SwapQuoteConsumer(web3Wrapper.getProvider(), { networkId: NETWORK_ID });
+        // Fees are only collected when using the Forwarder unless also specified in the original order
+        const txHash = await consumer.executeSwapQuoteOrThrowAsync(quote, {
+            takerAddress: ethAccount,
+            feeRecipient: FEE_RECIPIENT,
+            gasPrice,
+            gasLimit: DEFAULT_GAS_LIMIT, // TODO this can currently estimate too precisely and fail with this specific amount
+        });
 
-            // Check if the order is fillable using the forwarder
-            const ethBalance = getEthBalance(state) as BigNumber;
-            const ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
-                return total.plus(currentValue);
-            }, new BigNumber(0));
-            const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
-            const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
+        const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
-            let txHash;
-            if (isMarketBuyForwarder) {
-                txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
-                    orders,
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(getOrderbookAndUserOrders());
+        // tslint:disable-next-line:no-floating-promises
+        dispatch(updateTokenBalances());
+        dispatch(
+            addNotifications([
+                {
+                    id: txHash,
+                    kind: NotificationKind.Market,
                     amount,
-                    ethAccount,
-                    ethAmountRequired,
-                    [],
-                    AFFILIATE_FEE_PERCENTAGE,
-                    FEE_RECIPIENT,
-                    getTransactionOptions(gasPrice),
-                );
-            } else {
-                if (isBuy) {
-                    txHash = await contractWrappers.exchange.marketBuyOrdersAsync(
-                        orders,
-                        amount,
-                        ethAccount,
-                        getTransactionOptions(gasPrice),
-                    );
-                } else {
-                    txHash = await contractWrappers.exchange.marketSellOrdersAsync(
-                        orders,
-                        amount,
-                        ethAccount,
-                        getTransactionOptions(gasPrice),
-                    );
-                }
-            }
+                    token: baseToken,
+                    side,
+                    tx,
+                    timestamp: new Date(),
+                },
+            ]),
+        );
 
-            const web3Wrapper = await getWeb3Wrapper();
-            const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
-
-            // tslint:disable-next-line:no-floating-promises
-            dispatch(getOrderbookAndUserOrders());
-            // tslint:disable-next-line:no-floating-promises
-            dispatch(updateTokenBalances());
-            dispatch(
-                addNotifications([
-                    {
-                        id: txHash,
-                        kind: NotificationKind.Market,
-                        amount,
-                        token: baseToken,
-                        side,
-                        tx,
-                        timestamp: new Date(),
-                    },
-                ]),
-            );
-
-            const amountInReturn = sumTakerAssetFillableOrders(side, orders, amounts);
-
-            return { txHash, amountInReturn };
-        } else {
-            window.alert(INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR);
-            throw new InsufficientOrdersAmountException();
-        }
+        return { txHash, amountInReturn: quote.worstCaseQuoteInfo.makerTokenAmount };
     };
 };
 

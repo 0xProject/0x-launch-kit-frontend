@@ -5,10 +5,8 @@ import { orderCalculationUtils } from '@0x/order-utils';
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../common/constants';
 
 import { getKnownTokens } from './known_tokens';
-import { getLogger } from './logger';
 import { tokenAmountInUnitsToBigNumber } from './tokens';
 import { OrderBookItem, OrderSide, Token, UIOrder } from './types';
-const logger = getLogger('ui_orders');
 
 export const ordersToUIOrders = (
     orders: SignedOrder[],
@@ -62,7 +60,6 @@ const filterUIOrders = (orders: UIOrder[]): UIOrder[] => {
     const marketFillFilter = (o: UIOrder) =>
         o.makerFillableAmountInTakerAsset.isGreaterThan(o.remainingTakerAssetFillAmount);
     const filteredOrders = orders.filter(marketFillFilter);
-    logger.info(`filtered ${orders.length - filteredOrders.length}/${orders.length} orders`);
     return filteredOrders;
 };
 

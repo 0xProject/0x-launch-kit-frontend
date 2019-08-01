@@ -1,7 +1,8 @@
 import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } from '0x.js';
+import { MarketBuySwapQuote, MarketSellSwapQuote, SwapQuoter } from '@0x/asset-swapper';
 import { OrderConfigRequest } from '@0x/connect';
 
-import { ZERO_ADDRESS } from '../common/constants';
+import { NETWORK_ID, ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
 import { getKnownTokens } from './known_tokens';
@@ -38,6 +39,12 @@ interface BuildLimitOrderParams {
 interface BuildMarketOrderParams {
     amount: BigNumber;
     orders: UIOrder[];
+}
+interface BuildMarketQuoteParams {
+    amount: BigNumber;
+    orders: UIOrder[];
+    makerAsset: string;
+    takerAsset: string;
 }
 
 export const buildDutchAuctionCollectibleOrder = async (params: DutchAuctionOrderParams) => {
@@ -140,6 +147,19 @@ export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigReques
     };
 };
 
+export const buildMarketOrdersQuoteAsync = async (
+    params: BuildMarketQuoteParams,
+    side: OrderSide,
+    provider: any,
+): Promise<MarketBuySwapQuote | MarketSellSwapQuote> => {
+    const orders = params.orders.map(o => o.rawOrder);
+    const swapQuoter = SwapQuoter.getSwapQuoterForProvidedOrders(provider, orders, { networkId: NETWORK_ID });
+    const quote =
+        side === OrderSide.Buy
+            ? await swapQuoter.getMarketBuySwapQuoteAsync(params.makerAsset, params.takerAsset, params.amount)
+            : await swapQuoter.getMarketSellSwapQuoteAsync(params.takerAsset, params.makerAsset, params.amount);
+    return quote;
+};
 export const buildMarketOrders = (
     params: BuildMarketOrderParams,
     side: OrderSide,

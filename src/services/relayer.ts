@@ -13,16 +13,14 @@ import { orderHashUtils } from '@0x/order-utils';
 import { RateLimit } from 'async-sema';
 
 import { RELAYER_URL, RELAYER_WEBSOCKET_URL } from '../common/constants';
-import { getLogger } from '../util/logger';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
 import { Token } from '../util/types';
-
-const logger = getLogger('relayer');
 
 export class Relayer {
     private readonly _client: HttpClient;
     private readonly _rateLimit: () => Promise<void>;
-    private readonly _orders: Map<string, Set<SignedOrder>> = new Map();
+    private readonly _orders: Map<string, SignedOrder> = new Map(); // key -> orderHash
+    private readonly _keyToOrderHashes: Map<string, Set<string>> = new Map(); // key -> orderHash
     private readonly _subscriptions: Map<string, boolean> = new Map();
     private readonly _websocketUrl?: string;
     private _ordersChannel?: OrdersChannel;
@@ -41,25 +39,28 @@ export class Relayer {
         }
     }
 
-    constructor(client: HttpClient, options: { rps: number; websocketUrl?: string }) {
-        this._client = client;
+    constructor(url: string, options: { rps: number; websocketUrl?: string }) {
+        this._client = new HttpClient(url);
         this._rateLimit = RateLimit(options.rps); // requests per second
         this._websocketUrl = options.websocketUrl;
-        logger.debug(this._websocketUrl);
     }
     public async getAllOrdersAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<SignedOrder[]> {
         const ordersKey = Relayer._key(baseTokenAssetData, quoteTokenAssetData);
         if (!this._subscriptions.has(ordersKey)) {
             // first time we have had this request
-            const [latestSellOrders, latestBuyOrders] = await Promise.all([
-                this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData),
-                this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData),
-            ]);
-            this._orders.set(ordersKey, new Set([...latestSellOrders, ...latestBuyOrders]));
-            await this._createSubscriptionIfRequiredAsync(baseTokenAssetData, quoteTokenAssetData);
+            await this._fetchOrdersAndSubscribeAsync(baseTokenAssetData, quoteTokenAssetData);
         }
-        const orders = this._orders.get(ordersKey) || new Set();
-        return Array.from(orders.values());
+        const orders: SignedOrder[] = [];
+        const orderHashes = this._keyToOrderHashes.get(ordersKey);
+        if (orderHashes) {
+            orderHashes.forEach(orderHash => {
+                const order = this._orders.get(orderHash);
+                if (order) {
+                    orders.push(order);
+                }
+            });
+        }
+        return orders;
     }
 
     public async getOrderConfigAsync(orderConfig: OrderConfigRequest): Promise<OrderConfigResponse> {
@@ -90,7 +91,7 @@ export class Relayer {
                 a.makerAssetAmount.div(a.takerAssetAmount).comparedTo(b.makerAssetAmount.div(b.takerAssetAmount)),
             );
 
-        if (asks.length) {
+        if (asks.length > 0) {
             const lowestPriceAsk = asks[0];
 
             const { makerAssetAmount, takerAssetAmount } = lowestPriceAsk;
@@ -121,13 +122,34 @@ export class Relayer {
         await this._rateLimit();
         return this._client.submitOrderAsync(order);
     }
+    public async _fetchOrdersAndSubscribeAsync(baseTokenAssetData: string, quoteTokenAssetData: string): Promise<void> {
+        // first time we have had this request
+        const ordersKey = Relayer._key(baseTokenAssetData, quoteTokenAssetData);
+        const orderHashes = new Set<string>();
+        this._keyToOrderHashes.set(ordersKey, orderHashes);
+        const [sellOrders, buyOrders] = await Promise.all([
+            this._getOrdersAsync(baseTokenAssetData, quoteTokenAssetData),
+            this._getOrdersAsync(quoteTokenAssetData, baseTokenAssetData),
+        ]);
+        sellOrders.forEach(o => {
+            const orderHash = Relayer._getOrderHash(o);
+            this._orders.set(orderHash, o.order);
+            orderHashes.add(orderHash);
+        });
+        buyOrders.forEach(o => {
+            const orderHash = Relayer._getOrderHash(o);
+            this._orders.set(orderHash, o.order);
+            orderHashes.add(orderHash);
+        });
+        await this._createSubscriptionIfRequiredAsync(baseTokenAssetData, quoteTokenAssetData);
+    }
 
     private async _getOrdersAsync(
         makerAssetData: string,
         takerAssetData: string,
         makerAddress?: string,
-    ): Promise<SignedOrder[]> {
-        let recordsToReturn: SignedOrder[] = [];
+    ): Promise<Set<APIOrder>> {
+        const recordsToReturn: Set<APIOrder> = new Set<APIOrder>();
         const requestOpts = {
             makerAssetData,
             takerAssetData,
@@ -143,11 +165,7 @@ export class Relayer {
                 ...requestOpts,
                 page,
             });
-
-            const recordsMapped = records.map(apiOrder => {
-                return apiOrder.order;
-            });
-            recordsToReturn = [...recordsToReturn, ...recordsMapped];
+            records.forEach(o => recordsToReturn.add(o));
 
             page += 1;
             const lastPage = Math.ceil(total / perPage);
@@ -156,25 +174,24 @@ export class Relayer {
         return recordsToReturn;
     }
     private _ordersReceived(orders: APIOrder[]): void {
-        // TODO make this more effecient
-        // create a list of orders to add or remove and remove/add them all at once
         for (const order of orders) {
             const orderKey = Relayer._key(order.order.makerAssetData, order.order.takerAssetData);
-            const remainingFillableTakerAssetAmount = (order.metaData as any).remainingFillableTakerAssetAmount;
-            const orderHash = Relayer._getOrderHash(order.order);
-            if (!this._orders.has(orderKey)) {
-                this._orders.set(orderKey, new Set());
-            }
-            const storedOrders = this._orders.get(orderKey) as Set<SignedOrder>;
-            // If we have the meta data informing us that the order cannot be filled for any amount we don't add it
-            if (remainingFillableTakerAssetAmount && new BigNumber(remainingFillableTakerAssetAmount).eq(0)) {
-                storedOrders.forEach(o => {
-                    if (orderHash === Relayer._getOrderHash(o)) {
-                        storedOrders.delete(o);
+            const storedOrdersHashes = this._keyToOrderHashes.get(orderKey);
+            if (storedOrdersHashes) {
+                const remainingFillableTakerAssetAmount = (order.metaData as any).remainingFillableTakerAssetAmount;
+                const orderHash = Relayer._getOrderHash(order);
+                // If we have the meta data informing us that the order cannot be filled for any amount we don't add it
+                if (remainingFillableTakerAssetAmount && new BigNumber(remainingFillableTakerAssetAmount).eq(0)) {
+                    storedOrdersHashes.delete(orderHash);
+                    this._orders.delete(orderHash);
+                } else {
+                    if (!this._orders.has(orderHash)) {
+                        this._orders.set(orderHash, order.order);
                     }
-                });
-            } else {
-                storedOrders.add(order.order);
+                    if (!storedOrdersHashes.has(orderHash)) {
+                        storedOrdersHashes.add(orderHash);
+                    }
+                }
             }
         }
     }
@@ -221,9 +238,7 @@ export class Relayer {
 let relayer: Relayer;
 export const getRelayer = (): Relayer => {
     if (!relayer) {
-        const client = new HttpClient(RELAYER_URL);
-        relayer = new Relayer(client, { rps: 5, websocketUrl: RELAYER_WEBSOCKET_URL });
+        relayer = new Relayer(RELAYER_URL, { rps: 5, websocketUrl: RELAYER_WEBSOCKET_URL });
     }
-
     return relayer;
 };
