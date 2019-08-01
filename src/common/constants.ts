@@ -9,8 +9,12 @@ export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC2
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
 export const RELAYER_WEBSOCKET_URL = process.env.REACT_APP_RELAYER_WEBSOCKET_URL;
 
+export const DEFAULT_GAS_LIMIT: number = process.env.REACT_APP_DEFAULT_GAS_LIMIT
+    ? Number.parseInt(process.env.REACT_APP_DEFAULT_GAS_LIMIT as string, 10)
+    : 500000;
+
 export const TX_DEFAULTS = {
-    gasLimit: 1000000,
+    gasLimit: DEFAULT_GAS_LIMIT,
     shouldValidate: true,
 };
 

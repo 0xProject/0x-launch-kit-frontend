@@ -4,6 +4,7 @@
     "private": true,
     "dependencies": {
         "0x.js": "^6.0.11",
+        "@0x/asset-swapper": "^1.0.0",
         "@0x/connect": "^5.0.12",
         "@0x/order-utils": "^8.2.3",
         "@0x/web3-wrapper": "^6.0.6",

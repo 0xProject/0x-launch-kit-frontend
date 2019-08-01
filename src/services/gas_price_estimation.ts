@@ -22,8 +22,17 @@ const logger = getLogger('gas_price_estimation');
 
 const ETH_GAS_STATION_API_BASE_URL = 'https://ethgasstation.info';
 
+let lastFetchAmount: GasInfo | undefined;
+setInterval(async () => {
+    lastFetchAmount = await fetchFastAmountInWeiAsync();
+    logger.debug(lastFetchAmount);
+}, 30000);
+
 export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {
     let fetchedAmount: GasInfo | undefined;
+    if (lastFetchAmount) {
+        return lastFetchAmount;
+    }
 
     try {
         fetchedAmount = await fetchFastAmountInWeiAsync();
