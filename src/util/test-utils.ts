@@ -46,6 +46,8 @@ export const uiOrder = (params = {}): UIOrder => {
         side: OrderSide.Sell,
         size: new BigNumber(1),
         status: OrderStatus.Fillable,
+        remainingTakerAssetFillAmount: rawOrder.takerAssetAmount,
+        makerFillableAmountInTakerAsset: rawOrder.takerAssetAmount,
         ...params,
     };
 };

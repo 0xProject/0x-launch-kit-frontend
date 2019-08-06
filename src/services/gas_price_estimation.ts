@@ -35,7 +35,7 @@ export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
     };
-    logger.info(info);
+    logger.debug(info);
     return info;
 };
 

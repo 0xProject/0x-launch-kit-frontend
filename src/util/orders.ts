@@ -143,7 +143,7 @@ export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigReques
 export const buildMarketOrders = (
     params: BuildMarketOrderParams,
     side: OrderSide,
-): [SignedOrder[], BigNumber[], boolean] => {
+): { orders: SignedOrder[]; amounts: BigNumber[]; canBeFilled: boolean } => {
     const { amount, orders } = params;
 
     // sort orders from best to worse
@@ -185,8 +185,7 @@ export const buildMarketOrders = (
     const canBeFilled = filledAmount.eq(amount);
 
     const roundedAmounts = amounts.map(a => a.integerValue(BigNumber.ROUND_CEIL));
-
-    return [ordersToFill, roundedAmounts, canBeFilled];
+    return { orders: ordersToFill, amounts: roundedAmounts, canBeFilled };
 };
 
 export const sumTakerAssetFillableOrders = (

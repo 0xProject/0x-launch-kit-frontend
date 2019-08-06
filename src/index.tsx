@@ -24,7 +24,7 @@ history.listen(his => {
 
 ReactModal.setAppElement('#root');
 
-if (['development', 'production'].includes(process.env.NODE_ENV) && !window.localStorage.debug) {
+if (['development'].includes(process.env.NODE_ENV) && !window.localStorage.debug) {
     // Log only the app constant id to the console
     window.localStorage.debug = `${LOGGER_ID}*`;
 }

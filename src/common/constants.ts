@@ -11,11 +11,15 @@ export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhos
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
     gasTransferToken: 21000,
+    shouldValidate: true,
 };
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
+export const AFFILIATE_FEE_PERCENTAGE: number = process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE
+    ? Number.parseInt(process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE as string, 10)
+    : 0;
 
 export const ETH_DECIMALS = 18;
 export const MAX_AMOUNT_TOKENS_IN_UNITS = 100000000000000000000000000000000000;
