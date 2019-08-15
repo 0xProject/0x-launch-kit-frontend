@@ -77,6 +77,7 @@ export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
     Number.parseInt(process.env.REACT_APP_STEP_MODAL_DONE_STATUS_VISIBILITY_TIME as string, 10) || 3500;
 
 export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
+export const OPENSEA_URL = process.env.REACT_APP_OPENSEA_URL;
 
 export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || Network.Mainnet;
 

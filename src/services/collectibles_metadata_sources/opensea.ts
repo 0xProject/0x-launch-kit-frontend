@@ -1,14 +1,14 @@
 import { RateLimit } from 'async-sema';
 
-import { COLLECTIBLE_ADDRESS, NETWORK_ID, OPENSEA_API_KEY } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, NETWORK_ID, OPENSEA_API_KEY, OPENSEA_URL } from '../../common/constants';
 import { Collectible, CollectibleMetadataSource } from '../../util/types';
 
 export class Opensea implements CollectibleMetadataSource {
     private readonly _rateLimit: () => Promise<void>;
 
     private readonly _endpointsUrls: { [key: number]: string } = {
-        1: 'https://api.opensea.io/api/v1',
-        4: 'https://rinkeby-api.opensea.io/api/v1',
+        1: OPENSEA_URL ? OPENSEA_URL : 'https://api.opensea.io/api/v1',
+        4: OPENSEA_URL ? OPENSEA_URL : 'https://rinkeby-api.opensea.io/api/v1',
     };
 
     public static getAssetsAsCollectible(assets: any[]): Collectible[] {
