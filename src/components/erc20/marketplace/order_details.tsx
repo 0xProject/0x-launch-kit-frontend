@@ -224,9 +224,13 @@ class OrderDetails extends React.Component<Props, State> {
         if (tokenAmount.eq(0)) {
             return `---`;
         }
-        const { quote, config } = this.props.currencyPair;
+        const { quote, base, config } = this.props.currencyPair;
         const { quoteTokenAmount } = this.state;
-        const priceDisplay = quoteTokenAmount.div(tokenAmount).toFormat(config.pricePrecision + 1);
+        const quoteToken = getKnownTokens().getTokenBySymbol(quote);
+        const baseToken = getKnownTokens().getTokenBySymbol(base);
+        const quoteTokenAmountUnits = new BigNumber(tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals, 18));
+        const baseTokenAmountUnits = new BigNumber(tokenAmountInUnits(tokenAmount, baseToken.decimals, 18));
+        const priceDisplay = quoteTokenAmountUnits.div(baseTokenAmountUnits).toFormat(config.pricePrecision + 1);
         return `${priceDisplay} ${tokenSymbolToDisplayString(quote)}`;
     };
 

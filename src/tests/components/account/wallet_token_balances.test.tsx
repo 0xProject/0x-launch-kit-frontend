@@ -7,7 +7,7 @@ import React from 'react';
 
 import { WalletTokenBalances } from '../../../components/account';
 import { DefaultTheme } from '../../../themes/default_theme';
-import { TokenBalance, Web3State, TokenPrice } from '../../../util/types';
+import { TokenBalance, TokenPrice, Web3State } from '../../../util/types';
 import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
 const noop = () => ({});
 const ZERO = new BigNumber(0);
