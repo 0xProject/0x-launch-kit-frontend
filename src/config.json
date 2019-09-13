@@ -2,6 +2,7 @@
     "general": {
         "title": "Launch Kit"
     },
+    "makerAddresses": ["0x7f06340C5cA1b5b3648cc1c3C290AA5851ddB7f7", "0x8c5c2671b71BAD73D8B6fB7e8ef6Fe5ec95ff661"],
     "tokens": [
         {
             "symbol": "zrx",
@@ -90,6 +91,20 @@
             }
         },
         {
+            "decimals": 6,
+            "symbol": "usdc",
+            "name": "USDC",
+            "icon": "assets/icons/usdc.svg",
+            "primaryColor": "#3B76C4",
+            "addresses": {
+                "1": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "3": "0x0000000000000000000000000000000000000000",
+                "4": "0x0000000000000000000000000000000000000000",
+                "42": "0x0000000000000000000000000000000000000000",
+                "50": "0x0000000000000000000000000000000000000000"
+            }
+        },
+        {
             "decimals": 18,
             "symbol": "mln",
             "name": "Melon",
@@ -106,28 +121,16 @@
     ],
     "pairs": [
         {
-            "base": "zrx",
-            "quote": "weth"
-        },
-        {
-            "base": "zrx",
+            "base": "weth",
             "quote": "dai"
         },
         {
-            "base": "mkr",
-            "quote": "weth"
+            "base": "weth",
+            "quote": "usdc"
         },
         {
-            "base": "mln",
-            "quote": "weth"
-        },
-        {
-            "base": "dgx",
-            "quote": "weth"
-        },
-        {
-            "base": "rep",
-            "quote": "weth"
+            "base": "dai",
+            "quote": "usdc"
         }
     ],
     "marketFilters": [

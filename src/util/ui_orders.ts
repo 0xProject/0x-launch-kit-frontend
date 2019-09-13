@@ -5,10 +5,10 @@ import { orderCalculationUtils } from '@0x/order-utils';
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../common/constants';
 
 import { getKnownTokens } from './known_tokens';
-import { getLogger } from './logger';
+// import { getLogger } from './logger';
 import { tokenAmountInUnitsToBigNumber } from './tokens';
 import { OrderBookItem, OrderSide, Token, UIOrder } from './types';
-const logger = getLogger('ui_orders');
+// const logger = getLogger('ui_orders');
 
 export const ordersToUIOrders = (
     orders: SignedOrder[],
@@ -58,12 +58,13 @@ const ordersToUIOrdersWithoutOrderInfo = (orders: SignedOrder[], baseToken: Toke
 
 // Filters the UI orders that are unfillable
 const filterUIOrders = (orders: UIOrder[]): UIOrder[] => {
-    // For Market Fill we remove ANY orders which cannot be filled for their remaining amount.
-    const marketFillFilter = (o: UIOrder) =>
-        o.makerFillableAmountInTakerAsset.isGreaterThan(o.remainingTakerAssetFillAmount);
-    const filteredOrders = orders.filter(marketFillFilter);
-    logger.info(`filtered ${orders.length - filteredOrders.length}/${orders.length} orders`);
-    return filteredOrders;
+    // // For Market Fill we remove ANY orders which cannot be filled for their remaining amount.
+    // const marketFillFilter = (o: UIOrder) =>
+    //     o.makerFillableAmountInTakerAsset.isGreaterThan(o.remainingTakerAssetFillAmount);
+    // const filteredOrders = orders.filter(marketFillFilter);
+    // logger.info(`filtered ${orders.length - filteredOrders.length}/${orders.length} orders`);
+    // return filteredOrders;
+    return orders;
 };
 
 // The user has web3 and the order info could be retrieved from the contract

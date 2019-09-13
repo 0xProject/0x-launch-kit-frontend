@@ -1,6 +1,7 @@
 import { assetDataUtils, BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 
+import configFile from '../config.json';
 import { getLogger } from '../util/logger';
 import { getTransactionOptions } from '../util/transactions';
 import { Token } from '../util/types';
@@ -12,11 +13,17 @@ import { getWeb3Wrapper } from './web3_wrapper';
 
 const logger = getLogger('Services::Orders');
 
-export const getAllOrders = (baseToken: Token, quoteToken: Token) => {
+export const getAllOrders = async (baseToken: Token, quoteToken: Token) => {
     const relayer = getRelayer();
     const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
     const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteToken.address);
-    return relayer.getAllOrdersAsync(baseTokenAssetData, quoteTokenAssetData);
+    const orders = await relayer.getAllOrdersAsync(baseTokenAssetData, quoteTokenAssetData);
+    const validMakerAddresses = configFile.makerAddresses.map(address => address.toLowerCase());
+    const filteredOrders = orders.filter(order => {
+        const orderMakerAddress = order.makerAddress;
+        return validMakerAddresses.includes(orderMakerAddress);
+    });
+    return filteredOrders;
 };
 
 export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token) => {

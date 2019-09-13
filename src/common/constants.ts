@@ -6,7 +6,8 @@ export const ERC20_APP_BASE_PATH = '/erc20';
 export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
 
-export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
+// export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
+export const RELAYER_URL = 'https://api.radarrelay.com/0x/v2';
 
 export const TX_DEFAULTS = {
     gasLimit: 1000000,
@@ -77,6 +78,7 @@ export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
 
 export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
 
-export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || Network.Mainnet;
+// export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || Network.Mainnet;
+export const NETWORK_ID = 1;
 
 export const NETWORK_NAME: string = Network[NETWORK_ID];
