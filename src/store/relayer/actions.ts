@@ -192,9 +192,14 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
             // Check if the order is fillable using the forwarder
             const ethBalance = getEthBalance(state) as BigNumber;
-            const ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+            let ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
                 return total.plus(currentValue);
             }, new BigNumber(0));
+
+            ethAmountRequired = ethAmountRequired.plus(
+                ethAmountRequired.times(new BigNumber(AFFILIATE_FEE_PERCENTAGE)),
+            );
+
             const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
             const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
 

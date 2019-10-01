@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { assetDataUtils, BigNumber } from '0x.js';
 
 import { CollectiblesMetadataGateway } from '../../services/collectibles_metadata_gateway';

@@ -169,7 +169,8 @@ describe('TradeButton', () => {
             );
 
             // then
-            expect(wrapper.html()).toBeNull();
+            // tslint:disable-next-line: quotemark
+            expect(wrapper.html()).toContain('');
         });
     });
 });

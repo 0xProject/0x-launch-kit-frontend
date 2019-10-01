@@ -504,4 +504,5 @@ describe('mergeByPrice', () => {
         // then
         expect(result).toEqual([]);
     });
+    // tslint:disable-next-line: max-file-line-count
 });

@@ -53,6 +53,8 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [x] Display median price
 -   [x] Add notifications
 -   [x] List descriptions for each project
+-   [x] Add Fiat on Ramp
+-   [x] Add 0x Instant to easy buy of assets
 -   [ ] List Market Trades
 -   [ ] List Markets stats
 -   [ ] Click on buy and sell button to auto-fill
@@ -62,6 +64,9 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [ ] List last prices for each token
 -   [ ] Theme switcher
 -   [ ] Connect to 0x mesh
+-   [ ] Add crypto price calculator
+-   [ ] Add Swap interface
+-   [ ] Add Token factory
 
 ## Planned Wallets Support
 

@@ -355,6 +355,7 @@ export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAcc
     };
 };
 
+let fillDexEventsSubscription: string | null = null;
 export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: string) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const knownTokens = getKnownTokens();
@@ -419,10 +420,10 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
             },
         });
 
-        if (fillEventsSubscription) {
-            contractWrappers.exchange.unsubscribe(fillEventsSubscription);
+        if (fillDexEventsSubscription) {
+            contractWrappers.exchange.unsubscribe(fillDexEventsSubscription);
         }
-        fillEventsSubscription = subscription;
+        fillDexEventsSubscription = subscription;
 
         localStorage.saveLastBlockChecked(blockNumber, ethAccount);
     };

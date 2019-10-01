@@ -20,3 +20,26 @@ html,
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+
+.zeroExInstantOverlay{
+    z-index: 99999999 !important;
+}
+
+#zerox-widget{
+    z-index: 99999999;
+}
+
+@media screen and (max-width: 600px) {
+
+    .zeroExInstantOverlay{
+        z-index: 1000000 !important;
+        max-width: 500px;
+        max-height: 200px;
+    }
+    .zeroExInstantOverlayCloseButton{
+        z-index: 1200000 !important;
+        display: initial !important;
+    }
+ 
+ }

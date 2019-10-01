@@ -7,9 +7,9 @@ import { InsufficientFeeBalanceException } from '../../../exceptions/insufficien
 import { InsufficientTokenBalanceException } from '../../../exceptions/insufficient_token_balance_exception';
 import { SignatureFailedException } from '../../../exceptions/signature_failed_exception';
 import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getStepsModalCurrentStep, getWallet, getQuoteToken } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
-import { OrderSide, StepBuySellLimitOrder, StoreState, Wallet, Token } from '../../../util/types';
+import { OrderSide, StepBuySellLimitOrder, StoreState, Token, Wallet } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';

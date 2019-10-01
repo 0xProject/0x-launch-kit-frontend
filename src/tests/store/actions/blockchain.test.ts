@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { BigNumber } from '0x.js';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';

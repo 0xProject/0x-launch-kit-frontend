@@ -3,9 +3,11 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { FEE_RECIPIENT, NETWORK_ID } from '../../../common/constants';
 import { logoutWallet } from '../../../store/actions';
 import { getEthAccount } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
+import { ETHERSCAN_URL } from '../../../util/transaction_link';
 import { StoreState } from '../../../util/types';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
@@ -23,7 +25,7 @@ interface DispatchProps {
 type Props = StateProps & OwnProps & DispatchProps;
 
 const connectToExplorer = () => {
-    window.open('https://0xtracker.com/search?q=0x5265bde27f57e738be6c1f6ab3544e82cdc92a8f');
+    window.open(`https://0xtracker.com/search?q=${FEE_RECIPIENT}`);
 };
 
 const DropdownItems = styled(CardBase)`
@@ -37,7 +39,7 @@ class WalletConnectionContent extends React.PureComponent<Props> {
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
 
         const viewOnEtherscan = () => {
-            window.open(`https://etherscan.io/address/${ethAccount}`);
+            window.open(`${ETHERSCAN_URL[NETWORK_ID]}/address/${ethAccount}`);
         };
 
         const viewOnFabrx = () => {

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { BigNumber, OrderStatus } from '0x.js';
 import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
@@ -8,7 +12,7 @@ import { OrderSide, OrderType } from '../../../../util/types';
 
 describe('OrderDetails', () => {
     const getExpectedTotalCostText = (amount: number, symbol: string, price: number): string => {
-        return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(symbol)} (${new BigNumber(amount)
+        return `${new BigNumber(amount).toFixed(3)} ${tokenSymbolToDisplayString(symbol)} (${new BigNumber(amount)
             .times(price)
             .toFixed(2)} $)`;
     };

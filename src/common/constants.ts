@@ -18,7 +18,11 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
 export const AFFILIATE_FEE_PERCENTAGE: number = process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE
-    ? Number.parseInt(process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE as string, 10)
+    ? Number(process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE)
+    : 0;
+
+export const INSTANT_FEE_PERCENTAGE: number = process.env.REACT_APP_INSTANT_FEE_PERCENTAGE
+    ? Number(process.env.REACT_APP_INSTANT_FEE_PERCENTAGE)
     : 0;
 
 export const ETH_DECIMALS = 18;
@@ -37,6 +41,8 @@ export const METAMASK_CHROME_EXTENSION_DOWNLOAD_URL =
 
 export const PORTIS_APP_ID = process.env.REACT_APP_PORTIS_APP_ID;
 export const FORTMATIC_APP_ID = process.env.REACT_APP_FORTMATIC_APP_ID;
+
+export const COINDIRECT_MERCHANT_ID = process.env.REACT_APP_COINDIRECT_MERCHANT_ID || '';
 
 // Default value is enabled, 0 is disabled
 export const UI_UPDATE_CHECK_INTERVAL: number = process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL

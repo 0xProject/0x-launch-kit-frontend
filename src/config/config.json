@@ -15,6 +15,7 @@
                 "3": "0xba3a79d758f19efe588247388754b8e4d6edda81"
             },
             "id": "verisafe",
+            "c_id": "verisafe",
             "displayDecimals": 0,
             "description": "The transparent ecossystem that crypto needs!",
             "website": "https://www.verisafe.io"
@@ -34,6 +35,7 @@
             "decimals": 18,
             "displayDecimals": 2,
             "id": "ethereum",
+            "c_id": "ethereum",
             "website": "https://weth.io",
             "description": "wETH is 'wrapped ETH'"
         },
@@ -44,6 +46,7 @@
             "icon": "assets/icons/zrx.svg",
             "addresses": {
                 "1": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
+                "3": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
                 "4": "0x8080c7e4b81ecf23aa6f877cfbfd9b0c228c6ffa",
                 "5": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
                 "42": "0x2002d3812f58e35f0ea1ffbf80a75a38c32175fa",
@@ -51,6 +54,7 @@
             },
             "decimals": 18,
             "displayDecimals": 2,
+            "c_id": "0x",
             "website": "https://0x.org",
             "description": "0x is an open protocol that enables the peer-to-peer exchange of assets on the Ethereum blockchain."
         }
