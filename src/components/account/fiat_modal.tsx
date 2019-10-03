@@ -43,7 +43,7 @@ const TooltipStyled = styled(Tooltip)`
 
 export const FiatOnRampModal: React.FC<Props> = props => {
     const { reset, isOpen, theme, ethAccount } = props;
-    const fiat_link = `https://business.sandbox.coindirect.com/buy?merchantId=${COINDIRECT_MERCHANT_ID}&to=eth&address=${ethAccount}`;
+    const fiat_link = `https://business.coindirect.com/buy?merchantId=${COINDIRECT_MERCHANT_ID}&to=eth&address=${ethAccount}`;
     const description = `Disclaimer  <br />
     Veridex now enables easy purchase of Ether using credit & debit cards, through Coindirect! <br />
     Once payment is completed, you can check your payment status on Coindirect and deposit history in your ethereum wallet.<br />
