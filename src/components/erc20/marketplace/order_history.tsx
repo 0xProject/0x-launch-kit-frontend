@@ -14,6 +14,11 @@ import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
 
+const OrderHistoryCard = styled(Card)`
+    max-height: 220px;
+    overflow: auto;
+`;
+
 interface StateProps {
     baseToken: Token | null;
     orders: UIOrder[];
@@ -97,7 +102,7 @@ class OrderHistory extends React.Component<Props> {
             }
         }
 
-        return <Card title="My Current Orders">{content}</Card>;
+        return <OrderHistoryCard title="My Current Orders">{content}</OrderHistoryCard>;
     };
 }
 
