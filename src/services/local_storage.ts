@@ -1,7 +1,7 @@
 import { BigNumber } from '0x.js';
 
 import { FILLS_LIMIT, NETWORK_ID, NOTIFICATIONS_LIMIT } from '../common/constants';
-import { Fill, Notification, Wallet } from '../util/types';
+import { Fill, MarketFill, Notification, Wallet } from '../util/types';
 
 const addPrefix = (key: string) => `VeriDex.${key}`;
 
@@ -105,6 +105,24 @@ export class LocalStorage {
         }
         return [];
     }
+    public getMarketFills(account: string): MarketFill {
+        const currentFills = JSON.parse(this._storage.getItem(fillsKey) || '{}', (key: string, value: string) => {
+            if (key === 'amountQuote' || key === 'amountBase') {
+                return new BigNumber(value);
+            }
+            if (key === 'timestamp') {
+                return new Date(value);
+            }
+            if (key === 'tx') {
+                return Promise.resolve();
+            }
+            return value;
+        });
+        if (currentFills[NETWORK_ID] && currentFills[NETWORK_ID].markets && currentFills[NETWORK_ID].markets[account]) {
+            return currentFills[NETWORK_ID].markets[account];
+        }
+        return {};
+    }
 
     public saveFills(fills: Fill[], account: string): void {
         const currentFills = JSON.parse(this._storage.getItem(fillsKey) || '{}');
@@ -125,6 +143,37 @@ export class LocalStorage {
         if (newFills[NETWORK_ID][account].length > FILLS_LIMIT) {
             newFills[NETWORK_ID][account].length = FILLS_LIMIT;
         }
+
+        this._storage.setItem(fillsKey, JSON.stringify(newFills));
+    }
+    // Accumulate market fills
+    public saveMarketFills(marketFills: MarketFill, account: string): void {
+        const currentFills = JSON.parse(this._storage.getItem(fillsKey) || '{}');
+        const newFills = {
+            ...currentFills,
+            [NETWORK_ID]: {
+                ...currentFills[NETWORK_ID],
+                markets: {
+                    ...currentFills[NETWORK_ID].markets,
+                    [account]: marketFills,
+                },
+            },
+        };
+
+        Object.keys(newFills[NETWORK_ID].markets[account]).forEach((m: string) => {
+            // Sort array by timestamp property
+            newFills[NETWORK_ID].markets[account][m] = newFills[NETWORK_ID].markets[account][m].sort(
+                (a: Fill, b: Fill) => {
+                    const aTimestamp = a.timestamp ? a.timestamp.getTime() : 0;
+                    const bTimestamp = b.timestamp ? b.timestamp.getTime() : 0;
+                    return bTimestamp - aTimestamp;
+                },
+            );
+            // Limit number of fills
+            if (newFills[NETWORK_ID].markets[account][m].length > FILLS_LIMIT) {
+                newFills[NETWORK_ID].markets[account][m].length = FILLS_LIMIT;
+            }
+        });
 
         this._storage.setItem(fillsKey, JSON.stringify(newFills));
     }

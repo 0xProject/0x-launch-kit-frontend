@@ -29,3 +29,7 @@ export const getEndDateStringFromTimeInSeconds = (timeInSeconds: BigNumber) => {
     const currentDate = new Date(timeInSeconds.toNumber() * 1000);
     return currentDate.toLocaleString('en-us');
 };
+
+export const convertDateToUTCTimestamp = (date: Date): number => {
+    return date.getTime() - date.getTimezoneOffset() * 60000;
+};

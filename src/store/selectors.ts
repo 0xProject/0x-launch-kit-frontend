@@ -4,7 +4,18 @@ import { createSelector } from 'reselect';
 import { ERC20_APP_BASE_PATH } from '../common/constants';
 import { isWeth } from '../util/known_tokens';
 import {
+    getLastPrice,
+    getTodayClosedOrdersFromFills,
+    getTodayHighPriceFromFills,
+    getTodayLowerPriceFromFills,
+    getTodayVolumeFromFills,
+    marketToString,
+} from '../util/markets';
+import {
     Collectible,
+    CurrencyPair,
+    Fill,
+    MarketFill,
     MARKETPLACES,
     OrderBook,
     OrderSide,
@@ -30,6 +41,9 @@ export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
 export const getOrderPriceSelected = (state: StoreState) => state.ui.orderPriceSelected;
 export const getNotifications = (state: StoreState) => state.ui.notifications;
 export const getFills = (state: StoreState) => state.ui.fills;
+export const getUserFills = (state: StoreState) => state.ui.userFills;
+export const getMarketFills = (state: StoreState) => state.ui.marketFills;
+export const getUserMarketFills = (state: StoreState) => state.ui.userMarketFills;
 export const getHasUnreadNotifications = (state: StoreState) => state.ui.hasUnreadNotifications;
 export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsModal.pendingSteps;
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
@@ -54,6 +68,50 @@ export const getRouterLocationSearch = (state: StoreState) => state.router.locat
 export const getCurrentMarketPlace = createSelector(
     getCurrentRoutePath,
     (currentRoute: string) => (currentRoute.includes(ERC20_APP_BASE_PATH) ? MARKETPLACES.ERC20 : MARKETPLACES.ERC721),
+);
+
+export const getCurrentMarketFills = createSelector(
+    getMarketFills,
+    getCurrencyPair,
+    (marketFills: MarketFill, currencyPair: CurrencyPair) => {
+        const pair = marketToString(currencyPair);
+        return marketFills[pair] ? marketFills[pair] : [];
+    },
+);
+
+export const getCurrentMarketLastPrice = createSelector(
+    getCurrentMarketFills,
+    (marketFills: Fill[]) => {
+        return getLastPrice(marketFills);
+    },
+);
+
+export const getCurrentMarketTodayVolume = createSelector(
+    getCurrentMarketFills,
+    (marketFills: Fill[]) => {
+        return getTodayVolumeFromFills(marketFills);
+    },
+);
+
+export const getCurrentMarketTodayHighPrice = createSelector(
+    getCurrentMarketFills,
+    (marketFills: Fill[]) => {
+        return getTodayHighPriceFromFills(marketFills);
+    },
+);
+
+export const getCurrentMarketTodayLowerPrice = createSelector(
+    getCurrentMarketFills,
+    (marketFills: Fill[]) => {
+        return getTodayLowerPriceFromFills(marketFills);
+    },
+);
+
+export const getCurrentMarketTodayClosedOrders = createSelector(
+    getCurrentMarketFills,
+    (marketFills: Fill[]) => {
+        return getTodayClosedOrdersFromFills(marketFills);
+    },
 );
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {

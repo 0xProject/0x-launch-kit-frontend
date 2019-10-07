@@ -20,6 +20,7 @@ import {
     BlockchainState,
     Collectible,
     GasInfo,
+    MarketFill,
     MARKETPLACES,
     NotificationKind,
     OrderSide,
@@ -49,7 +50,17 @@ import {
     getWethBalance,
     getWethTokenBalance,
 } from '../selectors';
-import { addFills, addNotifications, setFills, setHasUnreadNotifications, setNotifications } from '../ui/actions';
+import {
+    addFills,
+    addMarketFills,
+    addNotifications,
+    setFills,
+    setHasUnreadNotifications,
+    setMarketFills,
+    setNotifications,
+    setUserFills,
+    setUserMarketFills,
+} from '../ui/actions';
 
 const logger = getLogger('Blockchain::Actions');
 
@@ -355,8 +366,8 @@ export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAcc
     };
 };
 
-let fillDexEventsSubscription: string | null = null;
-export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: string) => {
+let fillEventsDexSubscription: string | null = null;
+export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: string, userAccount: string) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const knownTokens = getKnownTokens();
         const localStorage = new LocalStorage(window.localStorage);
@@ -364,6 +375,9 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
             return knownTokens.isKnownAddress(f.tokenBase.address) && knownTokens.isKnownAddress(f.tokenQuote.address);
         });
         dispatch(setFills(storageFills));
+        dispatch(setUserFills(localStorage.getFills(userAccount)));
+        dispatch(setMarketFills(localStorage.getMarketFills(ethAccount)));
+        dispatch(setUserMarketFills(localStorage.getMarketFills(userAccount)));
 
         const state = getState();
         const web3Wrapper = await getWeb3Wrapper();
@@ -372,9 +386,10 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
 
         const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
-
         const fromBlock =
             lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
+        // const fromBlock = Math.max(blockNumber - START_BLOCK_LIMIT, 1);
+        // lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
 
         const toBlock = blockNumber;
 
@@ -399,6 +414,16 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
                         },
                     ]),
                 );
+                dispatch(
+                    addMarketFills({
+                        [fill.market]: [
+                            {
+                                ...fill,
+                                timestamp: new Date(timestamp * 1000),
+                            },
+                        ],
+                    }),
+                );
             },
             pastFillEventsCallback: async fillEvents => {
                 const validFillEvents = fillEvents.filter(knownTokens.isValidFillEvent);
@@ -415,15 +440,23 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
                         };
                     }),
                 );
-
                 dispatch(addFills(fills));
+                const marketsFill: MarketFill = {};
+                fills.forEach(f => {
+                    if (marketsFill[f.market]) {
+                        marketsFill[f.market].push(f);
+                    } else {
+                        marketsFill[f.market] = [f];
+                    }
+                });
+                dispatch(addMarketFills(marketsFill));
             },
         });
 
-        if (fillDexEventsSubscription) {
-            contractWrappers.exchange.unsubscribe(fillDexEventsSubscription);
+        if (fillEventsDexSubscription) {
+            contractWrappers.exchange.unsubscribe(fillEventsDexSubscription);
         }
-        fillDexEventsSubscription = subscription;
+        fillEventsDexSubscription = subscription;
 
         localStorage.saveLastBlockChecked(blockNumber, ethAccount);
     };
@@ -554,7 +587,7 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(setConnectedUserNotifications(ethAccount));
                 // tslint:disable-next-line:no-floating-promises
-                dispatch(setConnectedDexFills(FEE_RECIPIENT));
+                dispatch(setConnectedDexFills(FEE_RECIPIENT, ethAccount));
             } catch (error) {
                 // Relayer error
                 logger.error('The fetch markets from the relayer failed', error);

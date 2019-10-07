@@ -142,7 +142,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             className="sc-cSHVUG fNRZMA"
           >
             <span
-              className="sc-ksYbfQ gUQsdX"
+              className="sc-ksYbfQ hYVCvk"
             >
               <button
                 className="sc-bdVaJa iPzAIi"
@@ -245,7 +245,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             className="sc-cSHVUG fNRZMA"
           >
             <span
-              className="sc-ksYbfQ gUQsdX"
+              className="sc-ksYbfQ hYVCvk"
             >
               <button
                 className="sc-bdVaJa iPzAIi"
@@ -348,7 +348,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             className="sc-cSHVUG fNRZMA"
           >
             <span
-              className="sc-ksYbfQ gUQsdX"
+              className="sc-ksYbfQ hYVCvk"
             >
               <button
                 className="sc-bdVaJa iPzAIi"
@@ -451,7 +451,7 @@ exports[`WalletTokenBalances should properly show locked and unlocked tokens 1`]
             className="sc-cSHVUG fNRZMA"
           >
             <span
-              className="sc-ksYbfQ gUQsdX"
+              className="sc-ksYbfQ hYVCvk"
             >
               <button
                 className="sc-bdVaJa iPzAIi"

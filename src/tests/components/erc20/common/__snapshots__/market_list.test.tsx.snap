@@ -1,0 +1,170 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MarketsList Renders market list 1`] = `
+<div
+  className="sc-kpOJdX dBWysO sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Markets
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-dxgOiQ hJUIXU"
+    >
+      <div
+        className="sc-ckVGcZ gHifNV"
+      >
+        <span
+          className="sc-jKJlTe fLRBMv"
+          onClick={[Function]}
+        >
+          VSF
+        </span>
+        <span
+          className="sc-jKJlTe hvcGSa"
+          onClick={[Function]}
+        >
+          ETH
+        </span>
+        <span
+          className="sc-jKJlTe hvcGSa"
+          onClick={[Function]}
+        >
+          ALL
+        </span>
+      </div>
+      <div
+        className="sc-eNQAEJ hIMUcL"
+      >
+        <div
+          className="sc-kEYyzF aVeFp"
+        >
+          <svg
+            fill="none"
+            height="13"
+            viewBox="0 0 14 13"
+            width="14"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="5"
+              cy="5"
+              r="4"
+              stroke="#BFBFBF"
+              strokeLinejoin="round"
+              strokeWidth="2"
+            />
+            <path
+              d="M12.5 11.5L8 7"
+              stroke="#BFBFBF"
+              strokeWidth="2"
+            />
+          </svg>
+        </div>
+        <input
+          className="sc-hMqMXs dXQhoL"
+          onChange={[Function]}
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      className="sc-kkGfuU gzuEEL"
+    >
+      <table
+        className="sc-gZMcBi eiSZzD"
+      >
+        <thead
+          className="sc-gqjmRU kjTfhg"
+        >
+          <tr
+            className="sc-jTzLTM eCMmlJ"
+          >
+            <th
+              className="sc-fjdhpX sc-kgoBCf sc-hSdWYo eplmLF"
+            >
+              Market
+            </th>
+            <th
+              className="sc-fjdhpX sc-kGXeez sc-eHgmQL JqnTQ"
+            >
+              Best Ask
+            </th>
+            <th
+              className="sc-fjdhpX sc-kGXeez sc-eHgmQL JqnTQ"
+            >
+              Best Bid
+            </th>
+            <th
+              className="sc-fjdhpX sc-kGXeez sc-eHgmQL JqnTQ"
+            >
+              Spread
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          className="sc-VigVT fIhGog"
+        />
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MarketsList Should not render markets list if the user does not have metamask 1`] = `
+<div
+  className="sc-kpOJdX dBWysO sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Markets
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-EHOje kXSMmk"
+    >
+      There are no market details to show
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MarketsList Should not render markets list if the user rejected the metamask permissions 1`] = `
+<div
+  className="sc-kpOJdX dBWysO sc-bwzfXH cfOWoU sc-bdVaJa fJeBhq"
+>
+  <div
+    className="sc-htpNat fMPtTX"
+  >
+    <h1
+      className="sc-bxivhb DvYdZ"
+    >
+      Markets
+    </h1>
+  </div>
+  <div
+    className="sc-ifAKCX jlvJWy"
+  >
+    <div
+      className="sc-EHOje kXSMmk"
+    >
+      There are no market details to show
+    </div>
+  </div>
+</div>
+`;

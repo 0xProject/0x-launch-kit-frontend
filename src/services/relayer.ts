@@ -4,7 +4,7 @@ import { RateLimit } from 'async-sema';
 
 import { RELAYER_URL } from '../common/constants';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
-import { Token } from '../util/types';
+import { MarketData, Token } from '../util/types';
 
 export class Relayer {
     private readonly _client: HttpClient;
@@ -59,6 +59,40 @@ export class Relayer {
         }
 
         return null;
+    }
+    public async getCurrencyPairMarketDataAsync(baseToken: Token, quoteToken: Token): Promise<MarketData> {
+        await this._rateLimit();
+        const { asks, bids } = await this._client.getOrderbookAsync({
+            baseAssetData: assetDataUtils.encodeERC20AssetData(baseToken.address),
+            quoteAssetData: assetDataUtils.encodeERC20AssetData(quoteToken.address),
+        });
+        const marketData: MarketData = {
+            bestAsk: null,
+            bestBid: null,
+            spreadInPercentage: null,
+        };
+
+        if (asks.records.length) {
+            const lowestPriceAsk = asks.records[0];
+            const { makerAssetAmount, takerAssetAmount } = lowestPriceAsk.order;
+            const takerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(takerAssetAmount, quoteToken.decimals);
+            const makerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(makerAssetAmount, baseToken.decimals);
+            marketData.bestAsk = takerAssetAmountInUnits.div(makerAssetAmountInUnits);
+        }
+
+        if (bids.records.length) {
+            const lowestPriceBid = bids.records[0];
+            const { makerAssetAmount, takerAssetAmount } = lowestPriceBid.order;
+            const takerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(takerAssetAmount, baseToken.decimals);
+            const makerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(makerAssetAmount, quoteToken.decimals);
+            marketData.bestBid = makerAssetAmountInUnits.div(takerAssetAmountInUnits);
+        }
+        if (marketData.bestAsk && marketData.bestBid) {
+            const spread = marketData.bestAsk.minus(marketData.bestBid).dividedBy(marketData.bestAsk);
+            marketData.spreadInPercentage = spread.multipliedBy(100);
+        }
+
+        return marketData;
     }
 
     public async getSellCollectibleOrdersAsync(

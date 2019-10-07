@@ -81,7 +81,7 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
                     symbol: token.symbol,
                     name: token.name,
                     primaryColor: token.primaryColor,
-                    iconUrl: token.symbol,
+                    iconUrl: token.icon,
                 },
             };
 

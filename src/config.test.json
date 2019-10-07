@@ -15,10 +15,7 @@
                 "3": "0xba3a79d758f19efe588247388754b8e4d6edda81"
             },
             "id": "verisafe",
-            "c_id": "verisafe",
-            "displayDecimals": 0,
-            "description": "The transparent ecossystem that crypto needs!",
-            "website": "https://www.verisafe.io"
+            "displayDecimals": 0
         },
         {
             "symbol": "weth",
@@ -34,10 +31,7 @@
             },
             "decimals": 18,
             "displayDecimals": 2,
-            "id": "ethereum",
-            "c_id": "ethereum",
-            "website": "https://weth.io",
-            "description": "wETH is 'wrapped ETH'"
+            "id": "ethereum"
         },
         {
             "symbol": "zrx",
@@ -48,44 +42,25 @@
                 "1": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
                 "3": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
                 "4": "0x8080c7e4b81ecf23aa6f877cfbfd9b0c228c6ffa",
-                "5": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
                 "42": "0x2002d3812f58e35f0ea1ffbf80a75a38c32175fa",
                 "50": "0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c"
             },
             "decimals": 18,
-            "displayDecimals": 2,
-            "c_id": "0x",
-            "website": "https://0x.org",
-            "description": "0x is an open protocol that enables the peer-to-peer exchange of assets on the Ethereum blockchain."
+            "displayDecimals": 2
         }
     ],
     "pairs": [
         {
             "base": "vsf",
-            "quote": "weth",
-            "config": {
-                "basePrecision": 0,
-                "pricePrecision": 8,
-                "minAmount": 10000
-            }
+            "quote": "weth"
         },
         {
             "base": "zrx",
-            "quote": "weth",
-            "config": {
-                "basePrecision": 0,
-                "pricePrecision": 7,
-                "minAmount": 10000
-            }
+            "quote": "weth"
         },
         {
             "base": "zrx",
-            "quote": "vsf",
-            "config": {
-                "basePrecision": 0,
-                "pricePrecision": 7,
-                "minAmount": 10
-            }
+            "quote": "vsf"
         }
     ],
     "marketFilters": [

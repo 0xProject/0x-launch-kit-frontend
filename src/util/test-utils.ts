@@ -1,10 +1,12 @@
-import { assetDataUtils, BigNumber, OrderStatus } from '0x.js';
+import { assetDataUtils, BigNumber, ExchangeFillEventArgs, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
 import * as Factory from 'factory.ts';
 
 import { TokenMetaData } from '../common/tokens_meta_data';
 
-import { Collectible, CurrencyPair, OrderSide, Token, TokenBalance, UIOrder } from './types';
+import { buildFill } from './fills';
+import { getKnownTokens } from './known_tokens';
+import { Collectible, CurrencyPair, Market, OrderSide, Token, TokenBalance, UIOrder } from './types';
 
 export const makeOrder = ({
     makerAssetAmount,
@@ -129,3 +131,78 @@ export const collectibleFactory = Factory.Sync.makeFactory<Collectible>({
     order: null,
     tokenId: Factory.each(i => i.toString()),
 });
+
+export const createFill = (
+    makerAssetFilledAmount: BigNumber = new BigNumber(2),
+    takerAssetFilledAmount: BigNumber = new BigNumber(1),
+) => {
+    const knownTokens = getKnownTokens();
+    const zrxToken = knownTokens.getTokenBySymbol('zrx');
+    const wethToken = knownTokens.getWethToken();
+
+    // ZRX/WETH
+    const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(zrxToken.address);
+    const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(wethToken.address);
+    const config = {
+        basePrecision: 8,
+        pricePrecision: 8,
+        quotePrecision: 8,
+        minAmount: 0,
+        maxAmount: 1000000,
+    };
+    const marketData = {
+        spreadInPercentage: new BigNumber(1),
+        bestAsk: new BigNumber(1),
+        bestBid: new BigNumber(1),
+    };
+
+    const markets: Market[] = [
+        {
+            price: null,
+            currencyPair: {
+                base: 'zrx',
+                quote: 'weth',
+                config,
+            },
+            ...marketData,
+        },
+        {
+            price: null,
+            currencyPair: {
+                base: 'mkr',
+                quote: 'weth',
+                config,
+            },
+            ...marketData,
+        },
+        {
+            price: null,
+            currencyPair: {
+                base: 'zrx',
+                quote: 'mkr',
+                config,
+            },
+            ...marketData,
+        },
+    ];
+
+    const args: ExchangeFillEventArgs = {
+        feeRecipientAddress: addressFactory.build().address,
+        makerAddress: addressFactory.build().address,
+        takerAddress: addressFactory.build().address,
+        senderAddress: addressFactory.build().address,
+        makerAssetFilledAmount,
+        takerAssetFilledAmount,
+        makerFeePaid: new BigNumber(0),
+        takerFeePaid: new BigNumber(0),
+        orderHash: '',
+        makerAssetData: baseTokenAssetData,
+        takerAssetData: quoteTokenAssetData,
+    };
+    const log: any = {
+        args,
+        transactionHash: '',
+    };
+
+    return buildFill(log, knownTokens, markets);
+};
