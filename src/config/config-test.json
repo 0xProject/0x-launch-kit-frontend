@@ -87,7 +87,7 @@
             "quote": "weth",
             "config": {
                 "basePrecision": 0,
-                "pricePrecision": 7,
+                "pricePrecision": 8,
                 "minAmount": 1000
             }
         },

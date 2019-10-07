@@ -81,6 +81,7 @@ export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
             }),
         );
         dispatch(setCurrencyPair(currencyPair));
+
         // tslint:disable-next-line:no-floating-promises
         dispatch(getOrderbookAndUserOrders());
         // if quote token changed, update quote price
@@ -119,11 +120,10 @@ export const fetchMarkets: ThunkCreator = () => {
                     const baseToken = knownTokens.getTokenBySymbol(availableMarket.base);
                     const quoteToken = knownTokens.getTokenBySymbol(availableMarket.quote);
 
-                    const price = await relayer.getCurrencyPairPriceAsync(baseToken, quoteToken);
-
+                    const marketData = await relayer.getCurrencyPairMarketDataAsync(baseToken, quoteToken);
                     return {
                         currencyPair: availableMarket,
-                        price,
+                        ...marketData,
                     };
                 } catch (err) {
                     logger.error(
@@ -131,7 +131,9 @@ export const fetchMarkets: ThunkCreator = () => {
                     );
                     return {
                         currencyPair: availableMarket,
-                        price: null,
+                        bestAsk: null,
+                        bestBid: null,
+                        spreadInPercentage: null,
                     };
                 }
             }),

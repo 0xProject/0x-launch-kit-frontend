@@ -1,6 +1,7 @@
 import { assetDataUtils, BigNumber, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
 import { KnownTokens } from './known_tokens';
+import { marketToStringFromTokens } from './markets';
 import { getOrderSideFromFillEvent } from './notifications';
 import { getTransactionLink } from './transaction_link';
 import { Fill, Market, OrderSide, Token } from './types';
@@ -38,6 +39,8 @@ export const buildFill = (
     const quoteDecimalsPerToken = new BigNumber(10).pow(quoteToken.decimals);
     const amountQuoteUnits = amountQuote.div(quoteDecimalsPerToken);
     const price = amountQuoteUnits.div(amountBaseUnits).toString();
+    const market = marketToStringFromTokens(baseToken, quoteToken);
+
     return {
         id: `${log.transactionHash}-${log.logIndex}`,
         amountBase,
@@ -47,6 +50,9 @@ export const buildFill = (
         timestamp: new Date(),
         tokenBase: baseToken,
         tokenQuote: quoteToken,
+        makerAddress: args.makerAddress,
+        takerAddress: args.takerAddress,
+        market,
     };
 };
 

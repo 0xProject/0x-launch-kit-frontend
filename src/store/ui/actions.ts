@@ -17,6 +17,7 @@ import {
 import {
     Collectible,
     Fill,
+    MarketFill,
     Notification,
     NotificationKind,
     OrderSide,
@@ -49,6 +50,30 @@ export const addFills = createAction('ui/FILLS_add', resolve => {
 
 export const setFills = createAction('ui/FILLS_set', resolve => {
     return (fills: Fill[]) => resolve(fills);
+});
+
+export const addMarketFills = createAction('ui/FILLS_MARKET_add', resolve => {
+    return (newMarketFills: MarketFill) => resolve(newMarketFills);
+});
+
+export const setMarketFills = createAction('ui/FILLS_MARKET_set', resolve => {
+    return (marketFills: MarketFill) => resolve(marketFills);
+});
+
+export const addUserMarketFills = createAction('ui/FILLS_USER_MARKET_add', resolve => {
+    return (newUserMarketFills: Fill[]) => resolve(newUserMarketFills);
+});
+
+export const setUserMarketFills = createAction('ui/FILLS_USER_MARKET_set', resolve => {
+    return (newUserMarketFills: MarketFill) => resolve(newUserMarketFills);
+});
+
+export const setUserFills = createAction('ui/FILLS_USER_set', resolve => {
+    return (userFills: Fill[]) => resolve(userFills);
+});
+
+export const addUserFills = createAction('ui/FILLS_USER_add', resolve => {
+    return (userFills: Fill[]) => resolve(userFills);
 });
 
 export const setOrderPriceSelected = createAction('ui/ORDER_PRICE_SELECTED_set', resolve => {

@@ -40,10 +40,8 @@ export const GeneralLayout = (props: Props) => {
     return (
         <General {...restProps}>
             {toolbar}
-            <ContentScroll>
-                {children}
-                <Footer />
-            </ContentScroll>
+            <ContentScroll>{children}</ContentScroll>
+            <Footer />
             <StepsModalContainer />
         </General>
     );

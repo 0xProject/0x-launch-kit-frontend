@@ -1,4 +1,16 @@
-import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../util/markets';
+import { BigNumber } from '0x.js';
+
+import {
+    filterMarketsByString,
+    filterMarketsByTokenSymbol,
+    getLastPrice,
+    getTodayClosedOrdersFromFills,
+    getTodayFillsUTC,
+    getTodayHighPriceFromFills,
+    getTodayLowerPriceFromFills,
+    getTodayVolumeFromFills,
+} from '../../util/markets';
+import { createFill } from '../../util/test-utils';
 
 const config = {
     basePrecision: 8,
@@ -6,6 +18,12 @@ const config = {
     quotePrecision: 8,
     minAmount: 0,
     maxAmount: 1000000,
+};
+
+const marketData = {
+    spreadInPercentage: new BigNumber(1),
+    bestAsk: new BigNumber(1),
+    bestBid: new BigNumber(1),
 };
 
 const marketExamples = {
@@ -16,6 +34,7 @@ const marketExamples = {
             config,
         },
         price: null,
+        ...marketData,
     },
     wethZrx: {
         currencyPair: {
@@ -24,6 +43,7 @@ const marketExamples = {
             config,
         },
         price: null,
+        ...marketData,
     },
     daiMkr: {
         currencyPair: {
@@ -32,6 +52,7 @@ const marketExamples = {
             config,
         },
         price: null,
+        ...marketData,
     },
     daiWeth: {
         currencyPair: {
@@ -40,6 +61,7 @@ const marketExamples = {
             config,
         },
         price: null,
+        ...marketData,
     },
 };
 const { zrxWeth, wethZrx, daiMkr, daiWeth } = marketExamples;
@@ -94,5 +116,44 @@ describe('filterMarketsByString', () => {
         expect(filterMarketsByString(markets, 'Et')).toMatchObject(expectedResult);
         expect(filterMarketsByString(markets, 'eth')).toMatchObject(expectedResult);
         expect(filterMarketsByString(markets, 'ETH')).toMatchObject(expectedResult);
+    });
+});
+
+describe('marketStats', () => {
+    it('get last price from fills', async () => {
+        const fill = createFill();
+        const lastPrice = getLastPrice([fill]);
+        expect(lastPrice).toBe(fill.price);
+    });
+
+    it('get today fills UTC', async () => {
+        const fill = createFill();
+        const todayFills = getTodayFillsUTC([fill]);
+        expect(todayFills).toMatchObject([fill]);
+    });
+
+    it('get today volume from fills', async () => {
+        const fill1 = createFill();
+        const fill2 = createFill();
+        const todayVolume = getTodayVolumeFromFills([fill1, fill2]);
+        expect(todayVolume).toMatchObject(fill1.amountBase.plus(fill2.amountBase));
+    });
+    it('get today High Price from fills', async () => {
+        const fill1 = createFill();
+        const fill2 = createFill(new BigNumber(10), new BigNumber(1));
+        const higherPrice = getTodayHighPriceFromFills([fill1, fill2]);
+        expect(higherPrice && higherPrice.toString()).toBe(fill1.price);
+    });
+    it('get today Lower Price from fills', async () => {
+        const fill1 = createFill();
+        const fill2 = createFill(new BigNumber(10), new BigNumber(1));
+        const lowerPrice = getTodayLowerPriceFromFills([fill1, fill2]);
+        expect(lowerPrice && lowerPrice.toString()).toBe(fill2.price);
+    });
+    it('get today closed orders', async () => {
+        const fill1 = createFill();
+        const fill2 = createFill(new BigNumber(10), new BigNumber(1));
+        const closedOrders = getTodayClosedOrdersFromFills([fill1, fill2]);
+        expect(closedOrders).toBe(2);
     });
 });

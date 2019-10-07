@@ -13,14 +13,10 @@ const FooterWrapper = styled.div`
     height: ${themeDimensions.footerHeight};
     justify-content: center;
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
-    .link {
-        padding-left: 5px;
-    }
 
     @media (max-width: ${themeBreakPoints.md}) {
-        .link {
-            padding-left: 2px;
-        }
+        flex-direction: column;
+        height: 100%;
     }
 
     .break {
@@ -28,6 +24,24 @@ const FooterWrapper = styled.div`
         width: 0px;
         height: 0px;
         overflow: hidden;
+    }
+`;
+
+const HrefStyled = styled.a`
+    color: white;
+    text-decoration: none;
+    padding-left: 5px;
+    @media (max-width: ${themeBreakPoints.md}) {
+        padding-left: 2px;
+    }
+`;
+
+const LinkStyled = styled(Link)`
+    color: white;
+    text-decoration: none;
+    padding-left: 5px;
+    @media (max-width: ${themeBreakPoints.md}) {
+        padding-left: 2px;
     }
 `;
 
@@ -101,34 +115,33 @@ const poweredBySVG = () => {
 export const Footer: React.FC<Props> = props => {
     return (
         <FooterWrapper title={GIT_COMMIT} {...props}>
-            <Link to={`${ERC20_APP_BASE_PATH}/listed-tokens`}>Tokens</Link>
-            <a
+            <LinkStyled to={`${ERC20_APP_BASE_PATH}/listed-tokens`}>Tokens</LinkStyled>
+            <HrefStyled
                 href="https://www.verisafe.io/terms-and-conditions"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="link"
             >
                 Terms and Conditions
-            </a>
-            <a href="https://0x.org/" target="_blank" rel="noopener noreferrer" className="link">
+            </HrefStyled>
+            <HrefStyled href="https://0x.org/" target="_blank" rel="noopener noreferrer">
                 {poweredBySVG()}
-            </a>
+            </HrefStyled>
             <br className="break" />
 
-            <a href="https://www.verisafe.io/privacy-policy" target="_blank" rel="noopener noreferrer" className="link">
+            <HrefStyled href="https://www.verisafe.io/privacy-policy" target="_blank" rel="noopener noreferrer">
                 Privay Policy
-            </a>
-            <a
+            </HrefStyled>
+            <HrefStyled
                 href="https://steemit.com/veridex/@joaocampos/tutorial-to-use-veridex-at-dex-verisafe-io-https-dex-verisafe-io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link"
             >
                 Tutorial
-            </a>
-            <a href="https://my.verisafe.io/help-support/" target="_blank" rel="noopener noreferrer" className="link">
+            </HrefStyled>
+            <HrefStyled href="https://my.verisafe.io/help-support/" target="_blank" rel="noopener noreferrer">
                 Listings
-            </a>
+            </HrefStyled>
         </FooterWrapper>
     );
 };

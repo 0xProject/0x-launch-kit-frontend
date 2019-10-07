@@ -2,18 +2,19 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { UI_DECIMALS_DISPLAYED_SPREAD_PERCENT } from '../../../common/constants';
 import { marketFilters } from '../../../common/markets';
 import { changeMarket, goToHome } from '../../../store/actions';
-import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
-import { themeDimensions } from '../../../themes/commons';
+import { getBaseToken, getCurrencyPair, getMarkets, getQuoteToken, getWeb3State } from '../../../store/selectors';
+import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
-import { CurrencyPair, Filter, Market, StoreState, Token } from '../../../util/types';
-import { CardBase } from '../../common/card_base';
-import { Dropdown } from '../../common/dropdown';
-import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
+import { CurrencyPair, Filter, Market, StoreState, Token, Web3State } from '../../../util/types';
+import { Card } from '../../common/card';
+import { EmptyContent } from '../../common/empty_content';
 import { MagnifierIcon } from '../../common/icons/magnifier_icon';
 import { TokenIcon } from '../../common/icons/token_icon';
+import { LoadingWrapper } from '../../common/loading';
 import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from '../../common/table';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
@@ -27,6 +28,8 @@ interface PropsToken {
     baseToken: Token | null;
     currencyPair: CurrencyPair;
     markets: Market[] | null;
+    web3State?: Web3State;
+    quoteToken: Token | null;
 }
 
 type Props = PropsDivElement & PropsToken & DispatchProps;
@@ -34,7 +37,6 @@ type Props = PropsDivElement & PropsToken & DispatchProps;
 interface State {
     selectedFilter: Filter;
     search: string;
-    isUserOnDropdown: boolean;
 }
 
 interface TokenFiltersTabProps {
@@ -48,26 +50,11 @@ interface MarketRowProps {
 
 const rowHeight = '48px';
 
-const MarketsDropdownWrapper = styled(Dropdown)``;
-
-const MarketsDropdownHeader = styled.div`
-    align-items: center;
-    display: flex;
-`;
-
-const MarketsDropdownHeaderText = styled.span`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 26px;
-    margin-right: 10px;
-`;
-
-const MarketsDropdownBody = styled(CardBase)`
-    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
-    max-height: 100%;
-    max-width: 100%;
-    width: 401px;
+const MarketListCard = styled(Card)`
+    min-height: 520px;
+    max-height: 600px;
+    overflow: auto;
+    margin-top: 5px;
 `;
 
 const MarketsFilters = styled.div`
@@ -77,14 +64,6 @@ const MarketsFilters = styled.div`
     justify-content: space-between;
     min-height: ${rowHeight};
     padding: 8px 8px 8px ${themeDimensions.horizontalPadding};
-`;
-
-const MarketsFiltersLabel = styled.h2`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
-    font-size: 16px;
-    font-weight: 600;
-    line-height: normal;
-    margin: 0 auto 0 0;
 `;
 
 const TokenFiltersTabs = styled.div`
@@ -209,6 +188,10 @@ const TokenIconAndLabel = styled.div`
     align-items: center;
     display: flex;
     justify-content: flex-start;
+    @media (max-width: ${themeBreakPoints.md}) {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 `;
 
 const TokenLabel = styled.div`
@@ -219,67 +202,44 @@ const TokenLabel = styled.div`
     margin: 0 0 0 12px;
 `;
 
-const DropdownTokenIcon = styled(TokenIcon)`
-    margin-right: 10px;
-    vertical-align: top;
-`;
-
-class MarketsDropdown extends React.Component<Props, State> {
+class MarketsList extends React.Component<Props, State> {
     public readonly state: State = {
         selectedFilter: marketFilters[0],
         search: '',
-        isUserOnDropdown: false,
     };
-
-    private readonly _dropdown = React.createRef<Dropdown>();
 
     public render = () => {
-        const { currencyPair, baseToken, ...restProps } = this.props;
+        const { baseToken, quoteToken, web3State } = this.props;
+        let content: React.ReactNode;
+        switch (web3State) {
+            case Web3State.Locked:
+            case Web3State.NotInstalled:
+            case Web3State.Loading: {
+                content = <EmptyContent alignAbsoluteCenter={true} text="There are no market details to show" />;
+                break;
+            }
+            default: {
+                if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
+                    content = <LoadingWrapper minHeight="120px" />;
+                } else if (!baseToken || !quoteToken) {
+                    content = <EmptyContent alignAbsoluteCenter={true} text="There are no market details to show" />;
+                } else {
+                    content = (
+                        <>
+                            <MarketsFilters>
+                                {/*  <MarketsFiltersLabel>Markets</MarketsFiltersLabel>*/}
+                                {this._getTokensFilterTabs()}
+                                {this._getSearchField()}
+                            </MarketsFilters>
+                            <TableWrapper>{this._getMarkets()}</TableWrapper>
+                        </>
+                    );
+                }
+                break;
+            }
+        }
 
-        const header = (
-            <MarketsDropdownHeader>
-                <MarketsDropdownHeaderText>
-                    {baseToken ? (
-                        <DropdownTokenIcon
-                            symbol={baseToken.symbol}
-                            primaryColor={baseToken.primaryColor}
-                            isInline={true}
-                            icon={baseToken.icon}
-                        />
-                    ) : null}
-                    {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
-                </MarketsDropdownHeaderText>
-                <ChevronDownIcon />
-            </MarketsDropdownHeader>
-        );
-
-        const body = (
-            <MarketsDropdownBody>
-                <MarketsFilters onMouseOver={this._setUserOnDropdown} onMouseOut={this._removeUserOnDropdown}>
-                    <MarketsFiltersLabel>Markets</MarketsFiltersLabel>
-                    {this._getTokensFilterTabs()}
-                    {this._getSearchField()}
-                </MarketsFilters>
-                <TableWrapper>{this._getMarkets()}</TableWrapper>
-            </MarketsDropdownBody>
-        );
-        return (
-            <MarketsDropdownWrapper
-                body={body}
-                header={header}
-                ref={this._dropdown}
-                shouldCloseDropdownOnClickOutside={!this.state.isUserOnDropdown}
-                {...restProps}
-            />
-        );
-    };
-
-    private readonly _setUserOnDropdown = () => {
-        this.setState({ isUserOnDropdown: true });
-    };
-
-    private readonly _removeUserOnDropdown = () => {
-        this.setState({ isUserOnDropdown: false });
+        return <MarketListCard title="Markets">{content}</MarketListCard>;
     };
 
     private readonly _getTokensFilterTabs = () => {
@@ -340,7 +300,9 @@ class MarketsDropdown extends React.Component<Props, State> {
                 <THead>
                     <TR>
                         <THFirstStyled styles={{ textAlign: 'left' }}>Market</THFirstStyled>
-                        <THLastStyled styles={{ textAlign: 'center' }}>Price</THLastStyled>
+                        <THLastStyled styles={{ textAlign: 'center' }}>Best Ask</THLastStyled>
+                        <THLastStyled styles={{ textAlign: 'center' }}>Best Bid</THLastStyled>
+                        <THLastStyled styles={{ textAlign: 'center' }}>Spread</THLastStyled>
                     </TR>
                 </THead>
                 <TBody>
@@ -370,7 +332,13 @@ class MarketsDropdown extends React.Component<Props, State> {
                                     </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
                                 <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
-                                    {this._getPrice(market)}
+                                    {this._getBestAsk(market)}
+                                </CustomTDLastStyled>
+                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
+                                    {this._getBestBid(market)}
+                                </CustomTDLastStyled>
+                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
+                                    {this._getSpreadInPercentage(market)}
                                 </CustomTDLastStyled>
                             </TRStyled>
                         );
@@ -383,14 +351,25 @@ class MarketsDropdown extends React.Component<Props, State> {
     private readonly _setSelectedMarket: any = (currencyPair: CurrencyPair) => {
         this.props.changeMarket(currencyPair);
         this.props.goToHome();
-        if (this._dropdown.current) {
-            this._dropdown.current.closeDropdown();
-        }
     };
 
-    private readonly _getPrice: any = (market: Market) => {
+    private readonly _getBestAsk: any = (market: Market) => {
         if (market.bestAsk) {
             return market.bestAsk.toFixed(market.currencyPair.config.pricePrecision);
+        }
+
+        return '-';
+    };
+    private readonly _getBestBid: any = (market: Market) => {
+        if (market.bestBid) {
+            return market.bestBid.toFixed(market.currencyPair.config.pricePrecision);
+        }
+
+        return '-';
+    };
+    private readonly _getSpreadInPercentage: any = (market: Market) => {
+        if (market.spreadInPercentage) {
+            return `${market.spreadInPercentage.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT)} %`;
         }
 
         return '-';
@@ -402,6 +381,8 @@ const mapStateToProps = (state: StoreState): PropsToken => {
         baseToken: getBaseToken(state),
         currencyPair: getCurrencyPair(state),
         markets: getMarkets(state),
+        quoteToken: getQuoteToken(state),
+        web3State: getWeb3State(state),
     };
 };
 
@@ -412,9 +393,9 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const MarketsDropdownContainer = connect(
+const MarketsListContainer = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(MarketsDropdown);
+)(MarketsList);
 
-export { MarketsDropdown, MarketsDropdownContainer };
+export { MarketsList, MarketsListContainer };

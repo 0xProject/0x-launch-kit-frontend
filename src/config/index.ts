@@ -1,8 +1,9 @@
-import configFileTest from '../config/config-test.json';
 // Use this on production
 // import configFileProduction from '../config/files/config.json';
+
 // Using this due to CI error
-import configFileProduction from '../config/config.json';
+import configFileTest from './config-test.json';
+import configFileProduction from './config.json';
 
 let configFile: any;
 

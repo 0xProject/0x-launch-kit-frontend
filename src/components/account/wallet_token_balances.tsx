@@ -147,8 +147,9 @@ const ButtonsContainer = styled.span`
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    @media (min-width: ${themeBreakPoints.sm}) {
+    @media (min-width: ${themeBreakPoints.xs}) {
         flex-wrap: wrap;
+        display: -webkit-inline-box;
     }
 `;
 
