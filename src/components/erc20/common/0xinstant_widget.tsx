@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { FEE_RECIPIENT, INSTANT_FEE_PERCENTAGE } from '../../../common/constants';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { ButtonVariant, Wallet } from '../../../util/types';
 import { Button } from '../../common/button';
@@ -70,7 +71,7 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
     public render = () => {
         const { orderSource, networkId = 1, tokenAddress, walletDisplayName = Wallet.Metamask } = this.props;
 
-        const openZeroXinstantModal = () => {
+        const openZeroXinstantModal = async () => {
             const knownTokens = getKnownTokens();
             const token = knownTokens.getTokenByAddress(tokenAddress);
             const erc20TokenAssetData = zeroExInstant.assetDataForERC20TokenAddress(token.address);
@@ -87,6 +88,7 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
 
             zeroExInstant.render(
                 {
+                    provider: (await getWeb3Wrapper()).getProvider(),
                     orderSource,
                     networkId,
                     affiliateInfo: {
