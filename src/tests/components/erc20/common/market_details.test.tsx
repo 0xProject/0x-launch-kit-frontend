@@ -106,7 +106,7 @@ describe('MarketDetails', () => {
 
         // when
         const fill = buildFill(log, knownTokens, markets);
-
+        const precision = currencyPairFromTokens.config.pricePrecision;
         // when
         const wrapper = shallow(
             <MarketDetails
@@ -126,11 +126,11 @@ describe('MarketDetails', () => {
         const baseTokenName = getTextCustomTDFromWrapper(wrapper);
         expect(baseTokenName).toEqual(zrxToken.name);
         const lastPriceText = getTextCustomTDFromWrapper(wrapper, 1);
-        expect(lastPriceText).toEqual(fill.price);
+        expect(lastPriceText).toEqual(new BigNumber(fill.price).toFixed(precision));
         const highPriceText = getTextCustomTDFromWrapper(wrapper, 2);
-        expect(highPriceText).toEqual(fill.price);
+        expect(highPriceText).toEqual(new BigNumber(fill.price).toFixed(precision));
         const lowerPriceText = getTextCustomTDFromWrapper(wrapper, 3);
-        expect(lowerPriceText).toEqual(fill.price);
+        expect(lowerPriceText).toEqual(new BigNumber(fill.price).toFixed(precision));
         /* const volumeText = getTextCustomTDFromWrapper(wrapper, 4);
         expect(`${volumeText}  `).toEqual(
             `${tokenAmountInUnits(
