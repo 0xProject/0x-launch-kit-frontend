@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { themeBreakPoints } from '../../../themes/commons';
+import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
 import { CheckWalletStateModalContainer } from '../../common/check_wallet_state_modal_container';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
@@ -22,11 +22,17 @@ const ColumnWideDouble = styled.div`
     }
 `;
 
+const ContentDoubleHeight = styled(Content)`
+    @media (min-width: ${themeBreakPoints.xl}) {
+        height: calc(200% - ${themeDimensions.footerHeight});
+    }
+`;
+
 class Marketplace extends React.PureComponent {
     public render = () => {
         return (
             <>
-                <Content>
+                <ContentDoubleHeight>
                     <ColumnWide>
                         <MarketsListContainer />
                     </ColumnWide>
@@ -34,8 +40,8 @@ class Marketplace extends React.PureComponent {
                         <MarketDetailsContainer />
                     </ColumnWideDouble>
                     <CheckWalletStateModalContainer />
-                </Content>
-                <Content>
+                </ContentDoubleHeight>
+                <ContentDoubleHeight>
                     <ColumnNarrow>
                         <WalletBalanceContainer />
                         <BuySellContainer />
@@ -52,7 +58,7 @@ class Marketplace extends React.PureComponent {
         <GoogleADS client={'ca-pub-8425903251487932'} slot={'7055050362'}  format={'auto'} responsive={'auto'}/> */}
                     </ColumnWide>
                     <CheckWalletStateModalContainer />
-                </Content>
+                </ContentDoubleHeight>
             </>
         );
     };
