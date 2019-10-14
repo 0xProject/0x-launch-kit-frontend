@@ -7,7 +7,7 @@ import { getThemeByMarketplace } from '../../themes/theme_meta_data_utils';
 import { MARKETPLACES } from '../../util/types';
 import { AdBlockDetector } from '../common/adblock_detector';
 import { CheckMetamaskStateModalContainer } from '../common/check_metamask_state_modal_container';
-import { GeneralLayout } from '../general_layout';
+import { GeneralLayoutContainer } from '../general_layout';
 
 import { CollectibleSellModal } from './collectibles/collectible_sell_modal';
 import { ToolbarContentContainer } from './common/toolbar_content';
@@ -18,7 +18,7 @@ import { MyCollectibles } from './pages/my_collectibles';
 
 const toolbar = <ToolbarContentContainer />;
 
-const GeneralLayoutERC721 = styled(GeneralLayout)`
+const GeneralLayoutERC721 = styled(GeneralLayoutContainer)`
     background-color: ${props => props.theme.componentsTheme.backgroundERC721};
 `;
 

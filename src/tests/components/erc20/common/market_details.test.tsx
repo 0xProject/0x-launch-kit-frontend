@@ -120,6 +120,7 @@ describe('MarketDetails', () => {
                 lastPrice={getLastPrice([fill])}
                 changeMarket={changeMarket}
                 goToHome={goToHome}
+                windowWidth={1500}
             />,
         );
 

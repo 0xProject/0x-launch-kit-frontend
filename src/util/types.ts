@@ -95,6 +95,8 @@ export interface UIState {
     readonly hasUnreadNotifications: boolean;
     readonly stepsModal: StepsModalState;
     readonly orderPriceSelected: BigNumber | null;
+    readonly sidebarOpen: boolean;
+    readonly openFiatOnRampModal: boolean;
 }
 
 export interface MarketState {
@@ -376,6 +378,8 @@ export enum Wallet {
     Torus = 'Torus',
     Fortmatic = 'Fortmatic',
     WalletConnect = 'WalletConnect',
+    Coinbase = 'Coinbase Wallet',
+    Enjin = 'Enjin Wallet',
 }
 
 export interface Collectible {
@@ -460,4 +464,35 @@ export interface ConfigFile {
     wallets?: WalletsConfig;
     theme?: PartialTheme;
     general?: GeneralConfig;
+}
+
+export enum Browser {
+    Chrome = 'CHROME',
+    Firefox = 'FIREFOX',
+    Opera = 'OPERA',
+    Safari = 'SAFARI',
+    Edge = 'EDGE',
+    Other = 'OTHER',
+}
+
+export enum OperatingSystem {
+    Android = 'ANDROID',
+    iOS = 'IOS', // tslint:disable-line:enum-naming
+    Mac = 'MAC',
+    Windows = 'WINDOWS',
+    WindowsPhone = 'WINDOWS_PHONE',
+    Linux = 'LINUX',
+    Other = 'OTHER',
+}
+
+export enum ProviderType {
+    Parity = 'PARITY',
+    MetaMask = 'META_MASK',
+    Mist = 'MIST',
+    CoinbaseWallet = 'COINBASE_WALLET',
+    EnjinWallet = 'ENJIN_WALLET',
+    Cipher = 'CIPHER',
+    TrustWallet = 'TRUST_WALLET',
+    Opera = 'OPERA',
+    Fallback = 'FALLBACK',
 }

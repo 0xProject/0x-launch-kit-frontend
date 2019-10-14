@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { setHasUnreadNotifications } from '../../store/actions';
 import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
-import { themeDimensions } from '../../themes/commons';
+import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
@@ -50,6 +50,9 @@ const NewNotificationsBadge = styled.div`
 const NotificationsDropdownBody = styled(CardBase)`
     box-shadow: ${props => props.theme.componentsTheme.boxShadow};
     width: 400px;
+    @media (max-width: ${themeBreakPoints.sm}) {
+        width: 340px;
+    }
 `;
 const NotificationsList = styled.div`
     max-height: 420px;

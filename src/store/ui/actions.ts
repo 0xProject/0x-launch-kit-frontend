@@ -100,6 +100,14 @@ export const setModalTransfer = createAction('ui/TRANSFER_MODAL_set', resolve =>
     return (isOpen: boolean) => resolve(isOpen);
 });
 
+export const openSideBar = createAction('ui/OPEN_SIDEBAR_set', resolve => {
+    return (isOpen: boolean) => resolve(isOpen);
+});
+
+export const openFiatOnRampModal = createAction('ui/OPEN_FIAT_ON_RAMP_set', resolve => {
+    return (isOpen: boolean) => resolve(isOpen);
+});
+
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {
     return async dispatch => {
         const toggleTokenLockStep = isUnlocked ? getLockTokenStep(token) : getUnlockTokenStep(token);

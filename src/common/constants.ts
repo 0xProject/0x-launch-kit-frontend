@@ -1,6 +1,6 @@
 import { BigNumber } from '0x.js';
 
-import { Network } from '../util/types';
+import { Network, ProviderType } from '../util/types';
 
 export const ERC20_APP_BASE_PATH = '/erc20';
 export const ERC721_APP_BASE_PATH = '/erc721';
@@ -103,3 +103,15 @@ export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_
 export const NETWORK_NAME: string = Network[NETWORK_ID];
 
 export const FILLS_LIMIT: number = Number.parseInt(process.env.REACT_APP_FILLS_LIMIT as string, 10) || 50;
+
+export const PROVIDER_TYPE_TO_NAME: { [key in ProviderType]: string } = {
+    [ProviderType.Cipher]: 'Cipher',
+    [ProviderType.EnjinWallet]: 'Enjin Wallet',
+    [ProviderType.MetaMask]: 'MetaMask',
+    [ProviderType.Mist]: 'Mist',
+    [ProviderType.CoinbaseWallet]: 'Coinbase Wallet',
+    [ProviderType.Parity]: 'Parity',
+    [ProviderType.TrustWallet]: 'Trust Wallet',
+    [ProviderType.Opera]: 'Opera Wallet',
+    [ProviderType.Fallback]: 'Fallback',
+};

@@ -1,17 +1,20 @@
 import React from 'react';
 import Modal from 'react-modal';
-import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import styled, { withTheme } from 'styled-components';
 
 import { COINDIRECT_MERCHANT_ID } from '../../common/constants';
-import { Theme } from '../../themes/commons';
+import { openFiatOnRampModal } from '../../store/actions';
+import { getEthAccount, getOpenFiatOnRampModalState } from '../../store/selectors';
+import { Theme, themeBreakPoints } from '../../themes/commons';
 import { CloseModalButton } from '../common/icons/close_modal_button';
 import { IconType, Tooltip } from '../common/tooltip';
 
 interface Props {
     theme: Theme;
-    isOpen: boolean;
-    ethAccount: string;
-    reset: () => void;
+    // isOpen: boolean;
+    //  ethAccount: string;
+    // reset: () => void;
 }
 
 const ModalContent = styled.div`
@@ -25,6 +28,9 @@ const ModalContent = styled.div`
     overflow: auto;
     width: 400px;
     height: 610px;
+    @media (max-width: ${themeBreakPoints.sm}) {
+        width: inherit;
+    }
 `;
 
 const Title = styled.h1`
@@ -42,7 +48,14 @@ const TooltipStyled = styled(Tooltip)`
 `;
 
 export const FiatOnRampModal: React.FC<Props> = props => {
-    const { reset, isOpen, theme, ethAccount } = props;
+    const { theme } = props;
+    const dispatch = useDispatch();
+    const ethAccount = useSelector(getEthAccount);
+    const isOpen = useSelector(getOpenFiatOnRampModalState);
+    const reset = () => {
+        dispatch(openFiatOnRampModal(false));
+    };
+
     const fiat_link = `https://business.coindirect.com/buy?merchantId=${COINDIRECT_MERCHANT_ID}&to=eth&address=${ethAccount}`;
     const description = `Disclaimer  <br />
     Veridex now enables easy purchase of Ether using credit & debit cards, through Coindirect! <br />
@@ -55,8 +68,10 @@ export const FiatOnRampModal: React.FC<Props> = props => {
             <CloseModalButton onClick={reset} />
             <ModalContent>
                 <Title>BUY ETH {toolTip}</Title>
-                <iframe title="fiat_on_ramp" src={fiat_link} width="400" height="610" />
+                <iframe title="fiat_on_ramp" src={fiat_link} width="400" height="610" frameBorder="0" />
             </ModalContent>
         </Modal>
     );
 };
+
+export const FiatOnRampModalContainer = withTheme(FiatOnRampModal);

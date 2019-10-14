@@ -19,6 +19,8 @@ const initialUIState: UIState = {
     hasUnreadNotifications: false,
     stepsModal: initialStepsModalState,
     orderPriceSelected: null,
+    sidebarOpen: false,
+    openFiatOnRampModal: false,
 };
 
 export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
@@ -148,6 +150,12 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
             } else {
                 return state;
             }
+        }
+        case getType(actions.openSideBar): {
+            return { ...state, sidebarOpen: action.payload };
+        }
+        case getType(actions.openFiatOnRampModal): {
+            return { ...state, openFiatOnRampModal: action.payload };
         }
         /*case getType(actions.addUserMarketFills): {
             const newFills = action.payload.filter(fill => {

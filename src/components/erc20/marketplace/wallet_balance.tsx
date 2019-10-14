@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../../common/constants';
-import { initWallet, setWeb3State } from '../../../store/actions';
+import { initWallet, openFiatOnRampModal, setWeb3State } from '../../../store/actions';
 import {
     getBaseToken,
     getBaseTokenBalance,
@@ -21,7 +21,6 @@ import { errorsWallet } from '../../../util/error_messages';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Wallet, Web3State } from '../../../util/types';
-import { FiatOnRampModal } from '../../account/fiat_modal';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
@@ -149,6 +148,7 @@ interface DispatchProps {
     onConnectWallet: () => any;
     onConnectingWallet: () => any;
     onChooseWallet: () => any;
+    onClickOpenFiatOnRampModal: () => any;
 }
 
 interface OwnProps {
@@ -241,8 +241,7 @@ class WalletBalance extends React.Component<Props, State> {
             totalEthBalance,
             onConnectingWallet,
             wallet,
-            ethAccount,
-            theme,
+            onClickOpenFiatOnRampModal,
         } = this.props;
 
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
@@ -261,16 +260,9 @@ class WalletBalance extends React.Component<Props, State> {
                 <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />
             ) : null;
             const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ETH' : tokenSymbolToDisplayString(currencyPair.quote);
-            const resetModal = () => {
-                this.setState({
-                    modalBuyEthIsOpen: false,
-                });
-            };
 
             const openFiatOnRamp = () => {
-                this.setState({
-                    modalBuyEthIsOpen: true,
-                });
+                onClickOpenFiatOnRampModal();
             };
 
             content = (
@@ -289,12 +281,6 @@ class WalletBalance extends React.Component<Props, State> {
                     <ButtonStyled onClick={openFiatOnRamp} variant={ButtonVariant.Buy}>
                         Buy ETH
                     </ButtonStyled>
-                    <FiatOnRampModal
-                        isOpen={this.state.modalBuyEthIsOpen}
-                        reset={resetModal}
-                        theme={theme}
-                        ethAccount={ethAccount}
-                    />
                 </>
             );
         }
@@ -423,6 +409,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onChooseWallet: () => dispatch(setWeb3State(Web3State.Connect)),
         onConnectingWallet: () => dispatch(setWeb3State(Web3State.Connecting)),
         onConnectWallet: () => dispatch(initWallet()),
+        onClickOpenFiatOnRampModal: () => dispatch(openFiatOnRampModal(true)),
     };
 };
 

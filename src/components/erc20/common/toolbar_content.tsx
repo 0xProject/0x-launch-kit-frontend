@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import ReactSVG from 'react-svg';
 import styled, { withTheme } from 'styled-components';
 
@@ -9,8 +9,12 @@ import { UI_GENERAL_TITLE } from '../../../common/constants';
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
-import { goToHome, goToWallet } from '../../../store/actions';
+import { goToHome, goToWallet, openSideBar } from '../../../store/actions';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
+import { isMobile } from '../../../util/screen';
+import { Button } from '../../common/button';
+import { withWindowWidth } from '../../common/hoc/withWindowWidth';
+import { MenuBurguer } from '../../common/icons/menu_burguer';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
 import { MarketsDropdownContainer } from './markets_dropdown';
@@ -22,6 +26,7 @@ interface DispatchProps {
 
 interface OwnProps {
     theme: Theme;
+    windowWidth: number;
 }
 
 type Props = DispatchProps & OwnProps;
@@ -69,6 +74,10 @@ const WalletDropdown = styled(WalletConnectionContentContainer)`
     }
 `;
 
+const StyledButton = styled(Button)`
+    background-color: ${props => props.theme.componentsTheme.topbarBackgroundColor};
+`;
+
 const ToolbarContent = (props: Props) => {
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -76,31 +85,54 @@ const ToolbarContent = (props: Props) => {
     };
     const generalConfig = Config.getConfig().general;
     const logo = generalConfig && generalConfig.icon ? <ReactSVG src={generalConfig.icon} /> : <LogoSVGStyled />;
-    const startContent = (
-        <>
-            <LogoHeader
-                image={logo}
-                onClick={handleLogoClick}
-                text={(generalConfig && generalConfig.title) || UI_GENERAL_TITLE}
-                textColor={props.theme.componentsTheme.logoERC20TextColor}
-            />
-            <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-        </>
-    );
+    const dispatch = useDispatch();
+    const setOpenSideBar = () => {
+        dispatch(openSideBar(true));
+    };
+
+    let startContent;
+    if (isMobile(props.windowWidth)) {
+        startContent = (
+            <StyledButton onClick={setOpenSideBar}>
+                <MenuBurguer />
+            </StyledButton>
+        );
+    } else {
+        startContent = (
+            <>
+                <LogoHeader
+                    image={logo}
+                    onClick={handleLogoClick}
+                    text={(generalConfig && generalConfig.title) || UI_GENERAL_TITLE}
+                    textColor={props.theme.componentsTheme.logoERC20TextColor}
+                />
+                <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
+            </>
+        );
+    }
 
     const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
         props.onGoToWallet();
     };
-    const endContent = (
-        <>
-            <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
-                My Wallet
-            </MyWalletLink>
-            <WalletDropdown />
-            <NotificationsDropdownContainer />
-        </>
-    );
+    let endContent;
+    if (isMobile(props.windowWidth)) {
+        endContent = (
+            <>
+                <NotificationsDropdownContainer />
+            </>
+        );
+    } else {
+        endContent = (
+            <>
+                <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
+                    My Wallet
+                </MyWalletLink>
+                <WalletDropdown />
+                <NotificationsDropdownContainer />
+            </>
+        );
+    }
 
     return <ToolbarContainer startContent={startContent} endContent={endContent} />;
 };
@@ -112,11 +144,13 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const ToolbarContentContainer = withTheme(
-    connect(
-        null,
-        mapDispatchToProps,
-    )(ToolbarContent),
+const ToolbarContentContainer = withWindowWidth(
+    withTheme(
+        connect(
+            null,
+            mapDispatchToProps,
+        )(ToolbarContent),
+    ),
 );
 
 export { ToolbarContent, ToolbarContentContainer };

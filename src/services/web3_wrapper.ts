@@ -1,3 +1,5 @@
+// tslint:disable-next-line: no-implicit-dependencies
+import { providerUtils } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 import Portis from '@portis/web3';
 // @ts-ignore - no typings
@@ -31,6 +33,12 @@ export const initializeWeb3Wrapper = async (wallet: Wallet): Promise<Web3Wrapper
             break;
         case Wallet.Fortmatic:
             web3Wrapper = await initFortmatic();
+            break;
+        case Wallet.Enjin:
+            web3Wrapper = await initEnjin();
+            break;
+        case Wallet.Coinbase:
+            web3Wrapper = await initCoinbase();
             break;
         default:
             break;
@@ -67,6 +75,68 @@ export const initMetamask = async (): Promise<Web3Wrapper | null> => {
     } else if (web3) {
         web3Wrapper = new Web3Wrapper(web3.currentProvider);
         return web3Wrapper;
+    } else {
+        localStorage.resetWalletConnected();
+        //  The user does not have metamask installed
+        return null;
+    }
+};
+
+export const initEnjin = async (): Promise<Web3Wrapper | null> => {
+    // @ts-ignore
+    const { enjin } = window;
+    if (enjin) {
+        try {
+            web3Wrapper = new Web3Wrapper(enjin);
+            const isPrivacyModeEnabled = (enjin as any).enable !== undefined;
+
+            if (isPrivacyModeEnabled) {
+                await enjin.enable();
+            }
+            // Subscriptions register
+            /*enjin.on('accountsChanged', async (accounts: []) => {
+                location.reload();
+            });
+            enjin.on('networkChanged', async (network: number) => {
+                location.reload();
+            });*/
+            localStorage.saveWalletConnected(Wallet.Enjin);
+
+            return web3Wrapper;
+        } catch (error) {
+            // The user denied account access
+            return null;
+        }
+    } else {
+        localStorage.resetWalletConnected();
+        //  The user does not have metamask installed
+        return null;
+    }
+};
+
+export const initCoinbase = async (): Promise<Web3Wrapper | null> => {
+    const { web3 } = window;
+    if (web3) {
+        const provider = providerUtils.standardizeOrThrow(web3.currentProvider);
+        if (provider) {
+            try {
+                web3Wrapper = new Web3Wrapper(provider);
+                const isPrivacyModeEnabled = (web3 as any).enable !== undefined;
+                if (isPrivacyModeEnabled) {
+                    await web3.enable();
+                }
+
+                localStorage.saveWalletConnected(Wallet.Coinbase);
+
+                return web3Wrapper;
+            } catch (error) {
+                // The user denied account access
+                return null;
+            }
+        } else {
+            localStorage.resetWalletConnected();
+            return null;
+        }
     } else {
         localStorage.resetWalletConnected();
         //  The user does not have metamask installed

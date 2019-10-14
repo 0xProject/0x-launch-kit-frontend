@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
+import { themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
@@ -17,6 +18,9 @@ import { CancelOrderButtonContainer } from './cancel_order_button';
 const OrderHistoryCard = styled(Card)`
     max-height: 220px;
     overflow: auto;
+    @media (max-width: ${themeBreakPoints.sm}) {
+        margin-top: 10px;
+    }
 `;
 
 interface StateProps {

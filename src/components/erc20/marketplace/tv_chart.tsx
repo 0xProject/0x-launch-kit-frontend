@@ -71,9 +71,9 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
             interval: this.props.interval as ChartingLibraryWidgetOptions['interval'],
             container_id: this.props.containerId as ChartingLibraryWidgetOptions['container_id'],
             library_path: this.props.libraryPath as string,
-
+            timeframe: '3M',
             locale: getLanguageFromURL() || 'en',
-            disabled_features: ['use_localstorage_for_settings'],
+            disabled_features: ['use_localstorage_for_settings', 'left_toolbar', 'context_menus', 'header_widget'],
             enabled_features: [],
             charts_storage_url: this.props.chartsStorageUrl,
             charts_storage_api_version: this.props.chartsStorageApiVersion,

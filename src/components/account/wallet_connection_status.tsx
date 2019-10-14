@@ -12,11 +12,11 @@ const WalletConnectionStatusWrapper = styled.div`
     display: flex;
 `;
 
-const WalletConnectionStatusDotStyled = styled(WalletConnectionStatusDot)`
+export const WalletConnectionStatusDotStyled = styled(WalletConnectionStatusDot)`
     margin-right: 10px;
 `;
 
-const WalletConnectionStatusText = styled.span`
+export const WalletConnectionStatusText = styled.span`
     color: ${props => props.theme.componentsTheme.textColorCommon};
     font-feature-settings: 'calt' 0;
     font-size: 16px;

@@ -10,6 +10,7 @@ import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokensToTokenBalances, tokenToTokenBalance } from '../../services/tokens';
 import { deleteWeb3Wrapper, isMetamaskInstalled } from '../../services/web3_wrapper';
+import { envUtil } from '../../util/env';
 import { buildFill } from '../../util/fills';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
@@ -24,6 +25,7 @@ import {
     MARKETPLACES,
     NotificationKind,
     OrderSide,
+    ProviderType,
     ThunkCreator,
     Token,
     TokenBalance,
@@ -521,6 +523,7 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = (wallet: Wallet) => {
             const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
 
+            // tslint:disable-next-line: await-promise
             await dispatch(
                 initializeBlockchainData({
                     ethAccount,
@@ -754,12 +757,22 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
  */
 export const initializeAppWallet: ThunkCreator = () => {
     return async (dispatch, getState) => {
-        /*  if (isMetamaskInstalled()) {
-            dispatch(setWeb3State(Web3State.Locked));
-        } else {
-            dispatch(setWeb3State(Web3State.NotInstalled));
-        }*/
         const state = getState();
+
+        // detect if is mobile operate system
+        if (envUtil.isMobileOperatingSystem()) {
+            const providerType = envUtil.getProviderTypeFromWindow();
+            switch (providerType) {
+                case ProviderType.CoinbaseWallet:
+                    await dispatch(initWallet(Wallet.Coinbase));
+                    return;
+                case ProviderType.EnjinWallet:
+                    await dispatch(initWallet(Wallet.Enjin));
+                    return;
+                default:
+                    break;
+            }
+        }
         const wallet = getWallet(state);
         if (!wallet) {
             dispatch(setWeb3State(Web3State.Connecting));

@@ -16,10 +16,12 @@ import {
     getWeb3State,
 } from '../../../store/selectors';
 import { marketToString } from '../../../util/markets';
+import { isMobile } from '../../../util/screen';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { CurrencyPair, StoreState, Token, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
+import { withWindowWidth } from '../../common/hoc/withWindowWidth';
 import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 import { TVChartContainer } from '../marketplace/tv_chart';
@@ -52,7 +54,11 @@ interface DispatchProps {
     goToHome: () => any;
 }
 
-type Props = StateProps & DispatchProps;
+interface OwnProps {
+    windowWidth: number;
+}
+
+type Props = StateProps & DispatchProps & OwnProps;
 
 interface MarketStats {
     highPrice: BigNumber | null | number;
@@ -91,6 +97,71 @@ const statsToRow = (marketStats: MarketStats, baseToken: Token, currencyPair: Cu
     );
 };
 
+const DesktopTable = (marketStats: MarketStats, baseToken: Token) => {
+    return (
+        <Table isResponsive={true}>
+            <THead>
+                <TR>
+                    <TH>Project</TH>
+                    <TH styles={{ textAlign: 'right' }}>Last Price</TH>
+                    <TH styles={{ textAlign: 'right' }}>Max Price 24H</TH>
+                    <TH styles={{ textAlign: 'right' }}>Min Price 24H</TH>
+                    <TH styles={{ textAlign: 'right' }}>Volume 24H</TH>
+                    <TH styles={{ textAlign: 'right' }}>Orders Closed</TH>
+                </TR>
+            </THead>
+            <tbody>{statsToRow(marketStats, baseToken)}</tbody>
+        </Table>
+    );
+};
+
+const MobileTable = (marketStats: MarketStats, baseToken: Token) => {
+    return (
+        <Table isResponsive={true}>
+            <tbody>
+                <TR>
+                    <TH>Project</TH>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>{baseToken.name}</CustomTD>
+                </TR>
+                <TR>
+                    <TH>Last Price</TH>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>{marketStats.lastPrice || '-'}</CustomTD>
+                </TR>
+                <TR>
+                    <TH>Max Price 24H</TH>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>
+                        {(marketStats.highPrice && marketStats.highPrice.toString()) || '-'}
+                    </CustomTD>
+                </TR>
+                <TR>
+                    <TH>Min Price 24H</TH>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>
+                        {(marketStats.lowerPrice && marketStats.lowerPrice.toString()) || '-'}
+                    </CustomTD>
+                </TR>
+                <TR>
+                    <TH>Volume 24H</TH>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>
+                        {(marketStats.volume &&
+                            `${tokenAmountInUnits(
+                                marketStats.volume,
+                                baseToken.decimals,
+                                baseToken.displayDecimals,
+                            ).toString()} ${baseToken.symbol.toUpperCase()}`) ||
+                            '-'}{' '}
+                    </CustomTD>
+                </TR>
+                <TR>
+                    <TH>Orders Closed</TH>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>
+                        {marketStats.closedOrders || '-'}
+                    </CustomTD>
+                </TR>
+            </tbody>
+        </Table>
+    );
+};
+
 class MarketDetails extends React.Component<Props> {
     public render = () => {
         const { baseToken, quoteToken, web3State, currencyPair } = this.props;
@@ -108,7 +179,8 @@ class MarketDetails extends React.Component<Props> {
                 } else if (!baseToken || !quoteToken) {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no market details to show" />;
                 } else {
-                    const { highPrice, lowerPrice, volume, closedOrders, lastPrice } = this.props;
+                    const { highPrice, lowerPrice, volume, closedOrders, lastPrice, windowWidth } = this.props;
+
                     const marketStats = {
                         highPrice,
                         lowerPrice,
@@ -116,21 +188,15 @@ class MarketDetails extends React.Component<Props> {
                         closedOrders,
                         lastPrice,
                     };
+                    let tableMarketDetails;
+
+                    isMobile(windowWidth)
+                        ? (tableMarketDetails = MobileTable(marketStats, baseToken))
+                        : (tableMarketDetails = DesktopTable(marketStats, baseToken));
+
                     content = (
                         <>
-                            <Table isResponsive={true}>
-                                <THead>
-                                    <TR>
-                                        <TH>Project</TH>
-                                        <TH styles={{ textAlign: 'right' }}>Last Price</TH>
-                                        <TH styles={{ textAlign: 'right' }}>Max Price 24H</TH>
-                                        <TH styles={{ textAlign: 'right' }}>Min Price 24H</TH>
-                                        <TH styles={{ textAlign: 'right' }}>Volume 24H</TH>
-                                        <TH styles={{ textAlign: 'right' }}>Orders Closed</TH>
-                                    </TR>
-                                </THead>
-                                <tbody>{statsToRow(marketStats, baseToken, currencyPair)}</tbody>
-                            </Table>
+                            {tableMarketDetails}
                             <StyledHr />
                             <TVChartContainer symbol={marketToString(currencyPair)} />
                         </>
@@ -169,9 +235,11 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const MarketDetailsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(MarketDetails);
+const MarketDetailsContainer = withWindowWidth(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(MarketDetails),
+);
 
 export { MarketDetails, MarketDetailsContainer };

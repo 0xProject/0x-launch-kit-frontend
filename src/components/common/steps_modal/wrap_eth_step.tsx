@@ -68,9 +68,9 @@ class WrapEthStep extends React.Component<Props, State> {
             UI_DECIMALS_DISPLAYED_ON_STEP_MODALS,
         );
 
-        const ethToWeth = amount.isGreaterThan(0);
-        const convertingFrom = ethToWeth ? 'ETH' : 'wETH';
-        const convertingTo = ethToWeth ? 'wETH' : 'ETH';
+        const isEthToWeth = amount.isGreaterThan(0);
+        const convertingFrom = isEthToWeth ? 'ETH' : 'wETH';
+        const convertingTo = isEthToWeth ? 'wETH' : 'ETH';
 
         const isOrder = context === 'order';
 

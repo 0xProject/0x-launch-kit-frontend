@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { NETWORK_ID, RELAYER_URL } from '../../common/constants';
-import { startToggleTokenLockSteps, startTranferTokenSteps } from '../../store/actions';
+import { openFiatOnRampModal, startToggleTokenLockSteps, startTranferTokenSteps } from '../../store/actions';
 import {
     getEthAccount,
     getEthBalance,
@@ -25,7 +25,6 @@ import { LoadingWrapper } from '../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
 import { ZeroXInstantWidget } from '../erc20/common/0xinstant_widget';
 
-import { FiatOnRampModal } from './fiat_modal';
 import { TransferTokenModal } from './wallet_transfer_token_modal';
 
 interface StateProps {
@@ -45,13 +44,13 @@ interface OwnProps {
 interface DispatchProps {
     onStartToggleTokenLockSteps: (token: Token, isUnlocked: boolean) => void;
     onSubmitTransferToken: (amount: BigNumber, token: Token, address: string, isEth: boolean) => Promise<any>;
+    onClickOpenFiatOnRampModal: (isOpen: boolean) => void;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
 
 interface State {
     modalIsOpen: boolean;
-    modalBuyEthIsOpen: boolean;
     isSubmitting: boolean;
     tokenBalanceSelected: TokenBalance | null;
     isEth: boolean;
@@ -92,6 +91,9 @@ const TokenEtherscanLink = styled.a`
 
     &:hover {
         text-decoration: underline;
+    }
+    @media (max-width: ${themeBreakPoints.sm}) {
+        display: inline;
     }
 `;
 
@@ -135,6 +137,14 @@ const CustomTDPriceChange = styled(CustomTD)`
 
 const TokenName = styled.span`
     font-weight: 700;
+    @media (max-width: ${themeBreakPoints.sm}) {
+        display: block;
+    }
+`;
+const TokenNameSeparator = styled.span`
+    @media (max-width: ${themeBreakPoints.sm}) {
+        display: none;
+    }
 `;
 
 const TBody = styled.tbody`
@@ -219,7 +229,6 @@ const PriceChangeCell = ({ price_usd_24h_change }: PriceChangeProps) => {
 class WalletTokenBalances extends React.PureComponent<Props, State> {
     public readonly state: State = {
         modalIsOpen: false,
-        modalBuyEthIsOpen: false,
         isSubmitting: false,
         tokenBalanceSelected: null,
         isEth: false,
@@ -237,6 +246,7 @@ class WalletTokenBalances extends React.PureComponent<Props, State> {
             tokensPrice,
             ethUsd,
             wallet,
+            onClickOpenFiatOnRampModal,
         } = this.props;
 
         if (!wethTokenBalance) {
@@ -254,16 +264,9 @@ class WalletTokenBalances extends React.PureComponent<Props, State> {
                 isEth: true,
             });
         };
-        const resetModal = () => {
-            this.setState({
-                modalBuyEthIsOpen: false,
-            });
-        };
 
         const openFiatOnRamp = () => {
-            this.setState({
-                modalBuyEthIsOpen: true,
-            });
+            onClickOpenFiatOnRampModal(true);
         };
 
         const totalEthRow = (
@@ -298,12 +301,6 @@ class WalletTokenBalances extends React.PureComponent<Props, State> {
                     styles={{ borderBottom: true, textAlign: 'center' }}
                 />
                 <CustomTD styles={{ borderBottom: true, textAlign: 'left' }}>
-                    <FiatOnRampModal
-                        isOpen={this.state.modalBuyEthIsOpen}
-                        reset={resetModal}
-                        theme={theme}
-                        ethAccount={ethAccount}
-                    />
                     <ButtonsContainer>
                         <Button onClick={openTransferEthModal} variant={ButtonVariant.Primary}>
                             Send
@@ -337,7 +334,9 @@ class WalletTokenBalances extends React.PureComponent<Props, State> {
                     </TokenTD>
                     <CustomTDTokenName styles={{ borderBottom: true }}>
                         <TokenEtherscanLink href={getEtherscanLinkForToken(token)} target={'_blank'}>
-                            <TokenName>{token.symbol.toUpperCase()}</TokenName> {` - ${token.name}`}
+                            <TokenName>{token.symbol.toUpperCase()}</TokenName>{' '}
+                            <TokenNameSeparator>{` - `}</TokenNameSeparator>
+                            {`${token.name}`}
                         </TokenEtherscanLink>
                     </CustomTDTokenName>
                     <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>
@@ -504,6 +503,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const mapDispatchToProps = {
     onStartToggleTokenLockSteps: startToggleTokenLockSteps,
     onSubmitTransferToken: startTranferTokenSteps,
+    onClickOpenFiatOnRampModal: openFiatOnRampModal,
 };
 
 const WalletTokenBalancesContainer = withTheme(
