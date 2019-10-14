@@ -97,7 +97,7 @@ const statsToRow = (marketStats: MarketStats, baseToken: Token, currencyPair: Cu
     );
 };
 
-const DesktopTable = (marketStats: MarketStats, baseToken: Token) => {
+const DesktopTable = (marketStats: MarketStats, baseToken: Token, currencyPair: CurrencyPair) => {
     return (
         <Table isResponsive={true}>
             <THead>
@@ -110,12 +110,16 @@ const DesktopTable = (marketStats: MarketStats, baseToken: Token) => {
                     <TH styles={{ textAlign: 'right' }}>Orders Closed</TH>
                 </TR>
             </THead>
-            <tbody>{statsToRow(marketStats, baseToken)}</tbody>
+            <tbody>{statsToRow(marketStats, baseToken, currencyPair)}</tbody>
         </Table>
     );
 };
 
-const MobileTable = (marketStats: MarketStats, baseToken: Token) => {
+const MobileTable = (marketStats: MarketStats, baseToken: Token, currencyPair: CurrencyPair) => {
+    const lastPrice = marketStats.lastPrice
+        ? new BigNumber(marketStats.lastPrice).toFixed(currencyPair.config.pricePrecision)
+        : '-';
+
     return (
         <Table isResponsive={true}>
             <tbody>
@@ -125,18 +129,21 @@ const MobileTable = (marketStats: MarketStats, baseToken: Token) => {
                 </TR>
                 <TR>
                     <TH>Last Price</TH>
-                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>{marketStats.lastPrice || '-'}</CustomTD>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>{lastPrice || '-'}</CustomTD>
                 </TR>
                 <TR>
                     <TH>Max Price 24H</TH>
                     <CustomTD styles={{ textAlign: 'right', tabular: true }}>
-                        {(marketStats.highPrice && marketStats.highPrice.toString()) || '-'}
+                        {(marketStats.highPrice && marketStats.highPrice.toFixed(currencyPair.config.pricePrecision)) ||
+                            '-'}
                     </CustomTD>
                 </TR>
                 <TR>
                     <TH>Min Price 24H</TH>
                     <CustomTD styles={{ textAlign: 'right', tabular: true }}>
-                        {(marketStats.lowerPrice && marketStats.lowerPrice.toString()) || '-'}
+                        {(marketStats.lowerPrice &&
+                            marketStats.lowerPrice.toFixed(currencyPair.config.pricePrecision)) ||
+                            '-'}
                     </CustomTD>
                 </TR>
                 <TR>
@@ -191,8 +198,8 @@ class MarketDetails extends React.Component<Props> {
                     let tableMarketDetails;
 
                     isMobile(windowWidth)
-                        ? (tableMarketDetails = MobileTable(marketStats, baseToken))
-                        : (tableMarketDetails = DesktopTable(marketStats, baseToken));
+                        ? (tableMarketDetails = MobileTable(marketStats, baseToken, currencyPair))
+                        : (tableMarketDetails = DesktopTable(marketStats, baseToken, currencyPair));
 
                     content = (
                         <>

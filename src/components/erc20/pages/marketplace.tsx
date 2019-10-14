@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-
-import { themeBreakPoints } from '../../../themes/commons';
+import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
 import { FiatOnRampModalContainer } from '../../account/fiat_modal';
 import { CheckWalletStateModalContainer } from '../../common/check_wallet_state_modal_container';
 import { ColumnNarrow } from '../../common/column_narrow';
@@ -41,8 +40,8 @@ class Marketplace extends React.PureComponent {
                     <ColumnWideDouble>
                         <MarketDetailsContainer />
                     </ColumnWideDouble>
-                </Content>
-                <Content>
+                </ContentDoubleHeight>
+                <ContentDoubleHeight>
                     <ColumnNarrow>
                         <WalletBalanceContainer />
                         <BuySellContainer />
@@ -60,7 +59,7 @@ class Marketplace extends React.PureComponent {
                     </ColumnWide>
                     <CheckWalletStateModalContainer />
                     <FiatOnRampModalContainer />
-                </Content>
+                </ContentDoubleHeight>
             </>
         );
     };
