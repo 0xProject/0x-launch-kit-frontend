@@ -5,10 +5,12 @@ import styled, { withTheme } from 'styled-components';
 import { METAMASK_CHROME_EXTENSION_DOWNLOAD_URL } from '../../common/constants';
 import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { Theme } from '../../themes/commons';
+import { envUtil } from '../../util/env';
 import { ButtonVariant, Wallet } from '../../util/types';
 
 import { Button } from './button';
 import { CloseModalButton } from './icons/close_modal_button';
+import { GetCoinbaseWallet } from './icons/coinbase_wallet_get';
 
 interface OwnProps {
     theme: Theme;
@@ -50,9 +52,21 @@ const ButtonStyled = styled(Button)`
     margin: 10px;
 `;
 
+const ButtonCoinbase = styled(Button)`
+    width: 100%;
+    margin: 10px;
+    background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
+`;
+
 const LinkButton = styled.a`
     color: ${props => props.theme.componentsTheme.buttonTextColor};
     text-decoration: none;
+`;
+
+const MobileText = styled.p`
+    color: ${props => props.theme.componentsTheme.buttonTextColor};
+    text-decoration: none;
+    text-align: left;
 `;
 
 const WalletChooseModalContainer: React.FC<Props> = props => {
@@ -77,6 +91,22 @@ const WalletChooseModalContainer: React.FC<Props> = props => {
     const chooseFortmatic = () => {
         chooseWallet(Wallet.Fortmatic);
     };
+    const clickGetCoinbaseWallet = () => {
+        const os = envUtil.getOperatingSystem();
+        switch (os) {
+            case 'android':
+                window.open('https://play.google.com/store/apps/details?id=org.toshi');
+                break;
+            case 'ios':
+                window.open('https://itunes.apple.com/app/coinbase-wallet/id1278383455?ls=1&mt=8');
+                break;
+            default:
+                window.open('https://play.google.com/store/apps/details?id=org.toshi');
+                break;
+        }
+    };
+
+    const isMobile = envUtil.isMobileOperatingSystem();
 
     const content = (
         <>
@@ -91,13 +121,25 @@ const WalletChooseModalContainer: React.FC<Props> = props => {
                 <LinkButton>{'Torus'}</LinkButton>
                </ButtonStyled>*/}
             {/*isMMInstalled() ? <ModalTextLink>Torus not work with Metamask installed! </ModalTextLink> : ''*/}
-            <ButtonStyled disabled={!isMMInstalled()} onClick={chooseMetamask} variant={ButtonVariant.Tertiary}>
-                <LinkButton>{'Metamask'}</LinkButton>
-            </ButtonStyled>
-            {isMMInstalled() ? (
+            {!isMobile && (
+                <ButtonStyled disabled={!isMMInstalled()} onClick={chooseMetamask} variant={ButtonVariant.Tertiary}>
+                    <LinkButton>{'Metamask'}</LinkButton>
+                </ButtonStyled>
+            )}
+
+            {isMMInstalled() || isMobile ? (
                 ''
             ) : (
                 <ModalTextLink onClick={getMetamask}>Metamask not installed! Get Metamask</ModalTextLink>
+            )}
+
+            {isMobile ? (
+                <>
+                    <MobileText>Mobile Wallets With Dapp Browsers</MobileText>
+                    <ButtonCoinbase onClick={clickGetCoinbaseWallet}>{GetCoinbaseWallet()}</ButtonCoinbase>
+                </>
+            ) : (
+                ''
             )}
         </>
     );
