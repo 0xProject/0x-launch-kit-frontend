@@ -1,6 +1,7 @@
 import { BigNumber } from '0x.js';
 
 import {
+    createBuySellLimitMatchingSteps,
     createBuySellLimitSteps,
     createBuySellMarketSteps,
     getUnlockTokenStepIfNeeded,
@@ -275,6 +276,81 @@ describe('Buy sell market steps for zrx/weth', () => {
         expect(buySellMarketFlow).toHaveLength(2);
         expect(buySellMarketFlow[0].kind).toBe(StepKind.ToggleTokenLock);
         expect(buySellMarketFlow[1].kind).toBe(StepKind.BuySellMarket);
+    });
+});
+
+describe('Buy sell limit matching steps for zrx/weth', () => {
+    it('should create just one buy market step if base and quote tokens are unlocked', async () => {
+        // given
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
+        // Unlocks base zrx token
+        tokenBalances[0].isUnlocked = true;
+        const wethTokenBalance = {
+            balance: ZERO,
+            token: wethToken,
+            isUnlocked: true,
+        };
+        const ethBalance = new BigNumber(0);
+        const amount: BigNumber = new BigNumber(0);
+        const side: OrderSide = OrderSide.Buy;
+        const amountOfWethNeededForOrders = new BigNumber(0);
+        const takerFee = unitsInTokenAmount('1', 18);
+        const price = new BigNumber(0);
+
+        // when
+        const buySellLimitMatchingFlow: Step[] = createBuySellLimitMatchingSteps(
+            baseToken,
+            quoteToken,
+            tokenBalances,
+            wethTokenBalance,
+            ethBalance,
+            amount,
+            side,
+            amountOfWethNeededForOrders,
+            price,
+            takerFee,
+        );
+
+        // then
+        expect(buySellLimitMatchingFlow).toHaveLength(1);
+        expect(buySellLimitMatchingFlow[0].kind).toBe(StepKind.BuySellLimitMatching);
+    });
+    it('Should create a unlock zrx step if TAKER FEE is positive and if zrx is locked', async () => {
+        // given
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
+        const wethTokenBalance = {
+            balance: ZERO,
+            token: wethToken,
+            isUnlocked: true,
+        };
+        const ethBalance = new BigNumber(0);
+        // Base token zrx is locked
+        tokenBalances[0].isUnlocked = false;
+        const amount: BigNumber = new BigNumber(0);
+        const side: OrderSide = OrderSide.Buy;
+        const takerFee = unitsInTokenAmount('1', 18);
+        const amountOfWethNeededForOrders = new BigNumber(0);
+        const price = new BigNumber(0);
+        // when
+        const buySellLimitMatchingFlow: Step[] = createBuySellLimitMatchingSteps(
+            baseToken,
+            quoteToken,
+            tokenBalances,
+            wethTokenBalance,
+            ethBalance,
+            amount,
+            side,
+            amountOfWethNeededForOrders,
+            price,
+            takerFee,
+        );
+
+        // then
+        expect(buySellLimitMatchingFlow).toHaveLength(2);
+        expect(buySellLimitMatchingFlow[0].kind).toBe(StepKind.ToggleTokenLock);
+        expect(buySellLimitMatchingFlow[1].kind).toBe(StepKind.BuySellLimitMatching);
     });
 });
 

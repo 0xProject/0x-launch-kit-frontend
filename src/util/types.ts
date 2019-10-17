@@ -123,6 +123,7 @@ export enum StepKind {
     ToggleTokenLock = 'ToggleTokenLock',
     TransferToken = 'TransferToken',
     BuySellLimit = 'BuySellLimit',
+    BuySellLimitMatching = 'BuySellLimitMatching',
     BuySellMarket = 'BuySellMarket',
     UnlockCollectibles = 'UnlockCollectibles',
     SellCollectible = 'SellCollectible',
@@ -172,6 +173,15 @@ export interface StepBuySellMarket {
     token: Token;
 }
 
+export interface StepBuySellLimitMatching {
+    kind: StepKind.BuySellLimitMatching;
+    amount: BigNumber;
+    price: BigNumber;
+    price_avg: BigNumber;
+    side: OrderSide;
+    token: Token;
+}
+
 export interface StepSellCollectible {
     kind: StepKind.SellCollectible;
     collectible: Collectible;
@@ -195,6 +205,7 @@ export type Step =
     | StepSellCollectible
     | StepBuyCollectible
     | StepUnlockCollectibles
+    | StepBuySellLimitMatching
     | StepTransferToken;
 
 export interface StepsModalState {
@@ -495,4 +506,5 @@ export enum ProviderType {
     TrustWallet = 'TRUST_WALLET',
     Opera = 'OPERA',
     Fallback = 'FALLBACK',
+    // tslint:disable-next-line: max-file-line-count
 }

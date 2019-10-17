@@ -14,7 +14,12 @@ import {
 import { getRelayer } from '../../services/relayer';
 import { isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
-import { buildLimitOrder, buildMarketOrders, sumTakerAssetFillableOrders } from '../../util/orders';
+import {
+    buildLimitOrder,
+    buildMarketLimitMatchingOrders,
+    buildMarketOrders,
+    sumTakerAssetFillableOrders,
+} from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
 import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder, Web3State } from '../../util/types';
 import { updateTokenBalances } from '../blockchain/actions';
@@ -165,6 +170,97 @@ export const submitLimitOrder: ThunkCreator = (signedOrder: SignedOrder, amount:
     };
 };
 
+export const submitLimitMatchingOrder: ThunkCreator = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+        const baseToken = getBaseToken(state) as Token;
+        const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
+        const isBuy = side === OrderSide.Buy;
+        const allOrders = isBuy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+
+        const { orders, amounts, remainingAmount } = buildMarketLimitMatchingOrders(
+            {
+                amount,
+                price,
+                orders: allOrders,
+            },
+            side,
+        );
+
+        if (orders.length > 0) {
+            const quoteToken = getQuoteToken(state) as Token;
+            const contractWrappers = await getContractWrappers();
+
+            // Check if the order is fillable using the forwarder
+            const ethBalance = getEthBalance(state) as BigNumber;
+            let ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+                return total.plus(currentValue);
+            }, new BigNumber(0));
+
+            ethAmountRequired = ethAmountRequired.plus(
+                ethAmountRequired.times(new BigNumber(AFFILIATE_FEE_PERCENTAGE)).toFixed(0),
+            );
+
+            const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
+            const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
+
+            let txHash = '';
+            if (isMarketBuyForwarder) {
+                txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+                    orders,
+                    amount,
+                    ethAccount,
+                    ethAmountRequired,
+                    [],
+                    AFFILIATE_FEE_PERCENTAGE,
+                    FEE_RECIPIENT,
+                    getTransactionOptions(gasPrice),
+                );
+            } else {
+                if (isBuy) {
+                    txHash = await contractWrappers.exchange.marketBuyOrdersAsync(
+                        orders,
+                        amount,
+                        ethAccount,
+                        getTransactionOptions(gasPrice),
+                    );
+                } else {
+                    txHash = await contractWrappers.exchange.marketSellOrdersAsync(
+                        orders,
+                        amount,
+                        ethAccount,
+                        getTransactionOptions(gasPrice),
+                    );
+                }
+            }
+            const web3Wrapper = await getWeb3Wrapper();
+            const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(getOrderbookAndUserOrders());
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(updateTokenBalances());
+            dispatch(
+                addNotifications([
+                    {
+                        id: txHash,
+                        kind: NotificationKind.Market,
+                        amount,
+                        token: baseToken,
+                        side,
+                        tx,
+                        timestamp: new Date(),
+                    },
+                ]),
+            );
+            const amountInReturn = sumTakerAssetFillableOrders(side, orders, amounts);
+            return { txHash, amountInReturn };
+        } else {
+            return { remainingAmount };
+        }
+    };
+};
+
 export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInReturn: BigNumber }>> = (
     amount: BigNumber,
     side: OrderSide,
@@ -196,13 +292,14 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
             }, new BigNumber(0));
 
             ethAmountRequired = ethAmountRequired.plus(
-                ethAmountRequired.times(new BigNumber(AFFILIATE_FEE_PERCENTAGE)),
+                ethAmountRequired.times(new BigNumber(AFFILIATE_FEE_PERCENTAGE)).toFixed(0),
             );
 
             const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
             const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
 
             let txHash;
+
             if (isMarketBuyForwarder) {
                 txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
                     orders,

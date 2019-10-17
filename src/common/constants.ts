@@ -25,6 +25,8 @@ export const INSTANT_FEE_PERCENTAGE: number = process.env.REACT_APP_INSTANT_FEE_
     ? Number(process.env.REACT_APP_INSTANT_FEE_PERCENTAGE)
     : 0;
 
+export const IS_ORDER_LIMIT_MATCHING: boolean = process.env.REACT_APP_MATCH_LIMIT_ORDERS === 'true' ? true : false;
+
 export const ETH_DECIMALS = 18;
 export const MAX_AMOUNT_TOKENS_IN_UNITS = 100000000000000000000000000000000000;
 

@@ -33,7 +33,7 @@
                 "50": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082"
             },
             "decimals": 18,
-            "displayDecimals": 2,
+            "displayDecimals": 3,
             "id": "ethereum",
             "c_id": "ethereum",
             "website": "https://weth.io",
@@ -57,6 +57,22 @@
             "c_id": "0x",
             "website": "https://0x.org",
             "description": "0x is an open protocol that enables the peer-to-peer exchange of assets on the Ethereum blockchain."
+        },
+        {
+            "decimals": 9,
+            "symbol": "dgx",
+            "name": "DigixDao",
+            "icon": "assets/icons/dgx.svg",
+            "primaryColor": "#E1AA3E",
+            "addresses": {
+                "1": "0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A",
+                "3": "0xc4895a5aafa2708d6bc1294e20ec839aad156b1d",
+                "4": "0xc40a46ca4bc8e6057ed571e39cf400f3f935e4d5",
+                "42": "0xA4f468c9c692eb6B4b8b06270dAe7A2CfeedcDe9",
+                "50": "0xcdb594a32b1cc3479d8746279712c39d18a07fc0"
+            },
+            "c_id": "digixdao",
+            "website": "https://digix.global/dgd/"
         }
     ],
     "pairs": [
@@ -79,6 +95,15 @@
             }
         },
         {
+            "base": "dgx",
+            "quote": "weth",
+            "config": {
+                "basePrecision": 0,
+                "pricePrecision": 7,
+                "minAmount": 1
+            }
+        },
+        {
             "base": "zrx",
             "quote": "vsf",
             "config": {
@@ -90,12 +115,12 @@
     ],
     "marketFilters": [
         {
-            "text": "VSF",
-            "value": "vsf"
-        },
-        {
             "text": "ETH",
             "value": "weth"
+        },
+        {
+            "text": "VSF",
+            "value": "vsf"
         }
     ]
 }
