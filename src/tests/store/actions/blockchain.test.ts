@@ -1,13 +1,14 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
+import { ZERO } from '../../../common/constants';
 import { toggleTokenLock, updateWethBalance } from '../../../store/blockchain/actions';
 import { addressFactory, tokenFactory } from '../../../util/test-utils';
 
 const web3Wrapper = {
     awaitTransactionSuccessAsync: jest.fn().mockResolvedValue(''),
-    getBalanceInWeiAsync: jest.fn().mockResolvedValue(new BigNumber(0)),
+    getBalanceInWeiAsync: jest.fn().mockResolvedValue(ZERO),
     getNetworkIdAsync: jest.fn().mockResolvedValue(50),
 };
 
@@ -52,7 +53,7 @@ describe('blockchain actions', () => {
             expect(contractWrappers.erc20Token.setProxyAllowanceAsync).toHaveBeenCalled();
             expect(contractWrappers.erc20Token.setProxyAllowanceAsync.mock.calls[0][0]).toEqual(token.address);
             expect(contractWrappers.erc20Token.setProxyAllowanceAsync.mock.calls[0][1]).toEqual(ethAccount);
-            expect(contractWrappers.erc20Token.setProxyAllowanceAsync.mock.calls[0][2]).toEqual(new BigNumber(0));
+            expect(contractWrappers.erc20Token.setProxyAllowanceAsync.mock.calls[0][2]).toEqual(ZERO);
             expect(result).toEqual(tx);
         });
     });

@@ -1,6 +1,9 @@
-import { assetDataUtils, BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
+import { DevUtilsContract } from '@0x/contract-wrappers';
+import { assetDataUtils } from '@0x/order-utils';
+import { BigNumber } from '@0x/utils';
 
+import { NETWORK_ID } from '../common/constants';
 import { getLogger } from '../util/logger';
 import { getTransactionOptions } from '../util/transactions';
 import { Token } from '../util/types';
@@ -23,11 +26,13 @@ export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token
     const orders: SignedOrder[] = await getAllOrders(baseToken, quoteToken);
     try {
         const contractWrappers = await getContractWrappers();
-        const ordersAndTradersInfo = await contractWrappers.orderValidator.getOrdersAndTradersInfoAsync(
-            orders,
-            orders.map(o => o.makerAddress),
-        );
-        return ordersToUIOrders(orders, baseToken, ordersAndTradersInfo);
+        // HACK(dekz): Kovan DevUtils in contract-wrappers is currently incorrect
+        const devUtils =
+            NETWORK_ID === 42
+                ? new DevUtilsContract('0x6387a62a340de79f2f0353bd05d9567fe0aca955', contractWrappers.getProvider())
+                : contractWrappers.devUtils;
+        const [ordersInfo] = await devUtils.getOrderRelevantStates.callAsync(orders, orders.map(o => o.signature));
+        return ordersToUIOrders(orders, baseToken, ordersInfo);
     } catch (err) {
         logger.error(`There was an error getting the orders' info from exchange.`, err);
         throw err;
@@ -50,11 +55,12 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
     const myOrders = await getUserOrders(baseToken, quoteToken, ethAccount);
     try {
         const contractWrappers = await getContractWrappers();
-        const ordersAndTradersInfo = await contractWrappers.orderValidator.getOrdersAndTradersInfoAsync(
-            myOrders,
-            myOrders.map(o => o.makerAddress),
-        );
-        return ordersToUIOrders(myOrders, baseToken, ordersAndTradersInfo);
+        const devUtils =
+            NETWORK_ID === 42
+                ? new DevUtilsContract('0x6387a62a340de79f2f0353bd05d9567fe0aca955', contractWrappers.getProvider())
+                : contractWrappers.devUtils;
+        const [ordersInfo] = await devUtils.getOrderRelevantStates.callAsync(myOrders, myOrders.map(o => o.signature));
+        return ordersToUIOrders(myOrders, baseToken, ordersInfo);
     } catch (err) {
         logger.error(`There was an error getting the orders' info from exchange.`, err);
         throw err;
@@ -64,6 +70,9 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
 export const cancelSignedOrder = async (order: SignedOrder, gasPrice: BigNumber) => {
     const contractWrappers = await getContractWrappers();
     const web3Wrapper = await getWeb3Wrapper();
-    const tx = await contractWrappers.exchange.cancelOrderAsync(order, getTransactionOptions(gasPrice));
+    const tx = await contractWrappers.exchange.cancelOrder.validateAndSendTransactionAsync(order, {
+        from: order.makerAddress,
+        ...getTransactionOptions(gasPrice),
+    });
     return web3Wrapper.awaitTransactionSuccessAsync(tx);
 };

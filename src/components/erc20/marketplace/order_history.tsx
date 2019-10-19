@@ -1,4 +1,4 @@
-import { OrderStatus } from '0x.js';
+import { OrderStatus } from '@0x/types';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';

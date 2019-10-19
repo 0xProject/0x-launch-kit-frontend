@@ -1,5 +1,6 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
+import { ZERO } from '../../common/constants';
 import {
     createBuySellLimitSteps,
     createBuySellMarketSteps,
@@ -11,7 +12,6 @@ import { tokenFactory } from '../../util/test-utils';
 import { unitsInTokenAmount } from '../../util/tokens';
 import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, TokenBalance } from '../../util/types';
 
-const ZERO = new BigNumber(0);
 const tokenDefaults = {
     primaryColor: 'white',
     decimals: 18,
@@ -87,8 +87,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
             token: wethToken,
             isUnlocked: true,
         };
-        const amount: BigNumber = new BigNumber(0);
-        const price: BigNumber = new BigNumber(0);
+        const amount: BigNumber = ZERO;
+        const price: BigNumber = ZERO;
         const side: OrderSide = OrderSide.Buy;
         const makerFee = unitsInTokenAmount('1', 18);
 
@@ -117,8 +117,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
             token: wethToken,
             isUnlocked: false,
         };
-        const amount: BigNumber = new BigNumber(0);
-        const price: BigNumber = new BigNumber(0);
+        const amount: BigNumber = ZERO;
+        const price: BigNumber = ZERO;
         const side: OrderSide = OrderSide.Buy;
         const makerFee = unitsInTokenAmount('1', 18);
 
@@ -150,8 +150,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
             token: wethToken,
             isUnlocked: true,
         };
-        const amount: BigNumber = new BigNumber(0);
-        const price: BigNumber = new BigNumber(0);
+        const amount: BigNumber = ZERO;
+        const price: BigNumber = ZERO;
         const side: OrderSide = OrderSide.Sell;
         const makerFee = unitsInTokenAmount('1', 18);
 
@@ -182,8 +182,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
         };
         // Base token zrx is locked
         tokenBalances[0].isUnlocked = false;
-        const amount: BigNumber = new BigNumber(0);
-        const price: BigNumber = new BigNumber(0);
+        const amount: BigNumber = ZERO;
+        const price: BigNumber = ZERO;
         const side: OrderSide = OrderSide.Buy;
         const makerFee = unitsInTokenAmount('1', 18);
 
@@ -218,10 +218,10 @@ describe('Buy sell market steps for zrx/weth', () => {
             token: wethToken,
             isUnlocked: true,
         };
-        const ethBalance = new BigNumber(0);
-        const amount: BigNumber = new BigNumber(0);
+        const ethBalance = ZERO;
+        const amount: BigNumber = ZERO;
         const side: OrderSide = OrderSide.Buy;
-        const amountOfWethNeededForOrders = new BigNumber(0);
+        const amountOfWethNeededForOrders = ZERO;
         const takerFee = unitsInTokenAmount('1', 18);
 
         // when
@@ -250,13 +250,13 @@ describe('Buy sell market steps for zrx/weth', () => {
             token: wethToken,
             isUnlocked: true,
         };
-        const ethBalance = new BigNumber(0);
+        const ethBalance = ZERO;
         // Base token zrx is locked
         tokenBalances[0].isUnlocked = false;
-        const amount: BigNumber = new BigNumber(0);
+        const amount: BigNumber = ZERO;
         const side: OrderSide = OrderSide.Buy;
         const takerFee = unitsInTokenAmount('1', 18);
-        const amountOfWethNeededForOrders = new BigNumber(0);
+        const amountOfWethNeededForOrders = ZERO;
 
         // when
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(

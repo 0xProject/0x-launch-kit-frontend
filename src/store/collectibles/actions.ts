@@ -1,10 +1,14 @@
-import { MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
+import { signatureUtils } from '@0x/order-utils';
+import { MetamaskSubprovider } from '@0x/subproviders';
+import { SignedOrder } from '@0x/types';
+import { BigNumber } from '@0x/utils';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
-import { ZERO_ADDRESS } from '../../common/constants';
+import { FEE_PERCENTAGE, FEE_RECIPIENT } from '../../common/constants';
 import { cancelSignedOrder } from '../../services/orders';
 import { getLogger } from '../../util/logger';
-import { isDutchAuction } from '../../util/orders';
+import { calculateWorstCaseProtocolFee, isDutchAuction } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount, getGasPriceInWei } from '../selectors';
@@ -50,11 +54,11 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 
         const state = getState();
         const gasPrice = getGasPriceInWei(state);
-        const gasOptions = getTransactionOptions(gasPrice);
+        const protocolFee = calculateWorstCaseProtocolFee([order], gasPrice);
 
         let tx;
         if (isDutchAuction(order)) {
-            const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetailsAsync(order);
+            const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetails.callAsync(order);
             const currentAuctionAmount = auctionDetails.currentAmount;
             const buyOrder = {
                 ...order,
@@ -67,17 +71,29 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
             const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
-            tx = await contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, gasOptions);
+            tx = await contractWrappers.dutchAuction.matchOrders.validateAndSendTransactionAsync(
+                buySignedOrder,
+                order,
+                buySignedOrder.signature,
+                order.signature,
+                { from: ethAccount, value: protocolFee, ...getTransactionOptions(gasPrice) },
+            );
         } else {
-            tx = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+            const affiliateFeeAmount = order.takerAssetAmount
+                .plus(protocolFee)
+                .multipliedBy(FEE_PERCENTAGE)
+                .integerValue(BigNumber.ROUND_CEIL);
+            tx = await contractWrappers.forwarder.marketBuyOrdersWithEth.validateAndSendTransactionAsync(
                 [order],
                 order.makerAssetAmount,
-                ethAccount,
-                order.takerAssetAmount,
-                [],
-                0,
-                ZERO_ADDRESS,
-                gasOptions,
+                [order.signature],
+                Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
+                FEE_RECIPIENT,
+                {
+                    from: ethAccount,
+                    value: order.takerAssetAmount.plus(affiliateFeeAmount).plus(protocolFee),
+                    ...getTransactionOptions(gasPrice),
+                },
             );
         }
         await web3Wrapper.awaitTransactionSuccessAsync(tx);

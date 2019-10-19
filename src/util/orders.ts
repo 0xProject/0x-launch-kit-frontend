@@ -1,7 +1,8 @@
-import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } from '0x.js';
 import { OrderConfigRequest } from '@0x/connect';
+import { assetDataUtils, Order, SignedOrder } from '@0x/order-utils';
+import { BigNumber } from '@0x/utils';
 
-import { ZERO_ADDRESS } from '../common/constants';
+import { NETWORK_ID, PROTOCOL_FEE_MULTIPLIER, ZERO, ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
 import { getKnownTokens } from './known_tokens';
@@ -54,7 +55,7 @@ export const buildDutchAuctionCollectibleOrder = async (params: DutchAuctionOrde
     } = params;
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const beginTimeSeconds = new BigNumber(Math.round(Date.now() / 1000));
-    const auctionAssetData = DutchAuctionWrapper.encodeDutchAuctionAssetData(collectibleData, beginTimeSeconds, price);
+    const auctionAssetData = assetDataUtils.encodeDutchAuctionAssetData(collectibleData, beginTimeSeconds, price);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
 
     const orderConfigRequest: OrderConfigRequest = {
@@ -136,6 +137,7 @@ export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigReques
     return {
         ...orderConfigRequest,
         ...orderResult,
+        chainId: NETWORK_ID,
         salt: new BigNumber(Date.now()),
     };
 };
@@ -143,7 +145,7 @@ export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigReques
 export const buildMarketOrders = (
     params: BuildMarketOrderParams,
     side: OrderSide,
-): { orders: SignedOrder[]; amounts: BigNumber[]; canBeFilled: boolean } => {
+): [SignedOrder[], BigNumber[], boolean] => {
     const { amount, orders } = params;
 
     // sort orders from best to worse
@@ -157,7 +159,7 @@ export const buildMarketOrders = (
 
     const ordersToFill: SignedOrder[] = [];
     const amounts: BigNumber[] = [];
-    let filledAmount = new BigNumber(0);
+    let filledAmount = ZERO;
     for (let i = 0; i < sortedOrders.length && filledAmount.isLessThan(amount); i++) {
         const order = sortedOrders[i];
         ordersToFill.push(order.rawOrder);
@@ -185,7 +187,8 @@ export const buildMarketOrders = (
     const canBeFilled = filledAmount.eq(amount);
 
     const roundedAmounts = amounts.map(a => a.integerValue(BigNumber.ROUND_CEIL));
-    return { orders: ordersToFill, amounts: roundedAmounts, canBeFilled };
+
+    return [ordersToFill, roundedAmounts, canBeFilled];
 };
 
 export const sumTakerAssetFillableOrders = (
@@ -197,17 +200,22 @@ export const sumTakerAssetFillableOrders = (
         throw new Error('ordersToFill and amount array lengths must be the same.');
     }
     if (ordersToFill.length === 0) {
-        return new BigNumber(0);
+        return ZERO;
     }
     return ordersToFill.reduce((sum, order, index) => {
         // Check buildMarketOrders for more details
         const price = side === OrderSide.Buy ? 1 : order.makerAssetAmount.div(order.takerAssetAmount);
         return sum.plus(amounts[index].multipliedBy(price));
-    }, new BigNumber(0));
+    }, ZERO);
+};
+
+export const calculateWorstCaseProtocolFee = (orders: SignedOrder[], gasPrice: BigNumber): BigNumber => {
+    const protocolFee = new BigNumber(orders.length * PROTOCOL_FEE_MULTIPLIER).times(gasPrice);
+    return protocolFee;
 };
 
 export const getDutchAuctionData = (assetData: string) => {
-    return DutchAuctionWrapper.decodeDutchAuctionData(assetData);
+    return assetDataUtils.decodeDutchAuctionData(assetData);
 };
 
 export const isDutchAuction = (order: SignedOrder) => {

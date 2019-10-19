@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
 import { Network } from '../util/types';
 
@@ -7,20 +7,26 @@ export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
 
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3001/api/v2';
+export const RELAYER_WS_URL = process.env.REACT_APP_RELAYER_WS_URL || 'ws://localhost:3001/';
 
 export const TX_DEFAULTS = {
-    gasLimit: 1000000,
-    shouldValidate: true,
+    gas: 1000000,
 };
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export const UNLIMITED_ALLOWANCE_IN_BASE_UNITS = new BigNumber(2).pow(256).minus(1);
+
+export const ZERO = new BigNumber(0);
+
+export const ZERO_BYTES = '0x';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
-export const AFFILIATE_FEE_PERCENTAGE: number = process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE
-    ? Number.parseInt(process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE as string, 10)
-    : 0;
+
+export const FEE_PERCENTAGE = new BigNumber(process.env.REACT_APP_FEE_PERCENTAGE || ZERO);
 
 export const ETH_DECIMALS = 18;
+
+export const PROTOCOL_FEE_MULTIPLIER = 150000;
 
 export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;

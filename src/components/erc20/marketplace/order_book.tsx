@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
@@ -7,6 +7,7 @@ import {
     UI_DECIMALS_DISPLAYED_ORDER_SIZE,
     UI_DECIMALS_DISPLAYED_PRICE_ETH,
     UI_DECIMALS_DISPLAYED_SPREAD_PERCENT,
+    ZERO,
 } from '../../../common/constants';
 import {
     getBaseToken,
@@ -178,10 +179,10 @@ class OrderToRow extends React.Component<OrderToRowProps> {
                 return sumSize.plus(mySizeItem.size);
             }
             return sumSize;
-        }, new BigNumber(0));
+        }, ZERO);
 
         const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
-        const isMySizeEmpty = mySize.eq(new BigNumber(0));
+        const isMySizeEmpty = mySize.eq(ZERO);
         const displayColor = isMySizeEmpty ? '#dedede' : undefined;
         const mySizeRow =
             web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (

@@ -1,7 +1,10 @@
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import { ERC721TokenContract } from '@0x/contract-wrappers';
+import { signatureUtils } from '@0x/order-utils';
+import { MetamaskSubprovider } from '@0x/subproviders';
+import { BigNumber } from '@0x/utils';
 import { createAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_ADDRESS } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, ZERO } from '../../common/constants';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { InsufficientTokenBalanceException } from '../../exceptions/insufficient_token_balance_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
@@ -18,6 +21,7 @@ import {
     Collectible,
     Notification,
     NotificationKind,
+    OrderFeeData,
     OrderSide,
     Step,
     StepKind,
@@ -99,12 +103,13 @@ export const startSellCollectibleSteps: ThunkCreator = (
     return async (dispatch, getState, { getContractWrappers }) => {
         const state = getState();
 
-        const contractWrapers = await getContractWrappers();
+        const contractWrappers = await getContractWrappers();
         const ethAccount = selectors.getEthAccount(state);
 
-        const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(
-            COLLECTIBLE_ADDRESS,
+        const erc721Token = new ERC721TokenContract(COLLECTIBLE_ADDRESS, contractWrappers.getProvider());
+        const isUnlocked = await erc721Token.isApprovedForAll.callAsync(
             ethAccount,
+            contractWrappers.erc721Proxy.address,
         );
         const sellCollectibleSteps: Step[] = createSellCollectibleSteps(
             collectible,
@@ -133,7 +138,9 @@ export const startBuyCollectibleSteps: ThunkCreator = (collectible: Collectible,
 
             const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
 
-            const { currentAmount } = await contractWrappers.dutchAuction.getAuctionDetailsAsync(collectible.order);
+            const { currentAmount } = await contractWrappers.dutchAuction.getAuctionDetails.callAsync(
+                collectible.order,
+            );
 
             buyCollectibleSteps = createDutchBuyCollectibleSteps(
                 collectible.order,
@@ -155,7 +162,7 @@ export const startBuySellLimitSteps: ThunkCreator = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
-    makerFee: BigNumber,
+    orderFeeData: OrderFeeData,
 ) => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -172,7 +179,7 @@ export const startBuySellLimitSteps: ThunkCreator = (
             amount,
             price,
             side,
-            makerFee,
+            orderFeeData,
         );
 
         dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
@@ -181,7 +188,11 @@ export const startBuySellLimitSteps: ThunkCreator = (
     };
 };
 
-export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => {
+export const startBuySellMarketSteps: ThunkCreator = (
+    amount: BigNumber,
+    side: OrderSide,
+    orderFeeData: OrderFeeData,
+) => {
     return async (dispatch, getState) => {
         const state = getState();
         const baseToken = selectors.getBaseToken(state) as Token;
@@ -194,7 +205,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
-        const { amounts, canBeFilled } = buildMarketOrders(
+        const [, filledAmounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
                 orders,
@@ -205,9 +216,9 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             throw new InsufficientOrdersAmountException();
         }
 
-        const totalFilledAmount = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+        const totalFilledAmount = filledAmounts.reduce((total: BigNumber, currentValue: BigNumber) => {
             return total.plus(currentValue);
-        }, new BigNumber(0));
+        }, ZERO);
 
         const price = totalFilledAmount.div(amount);
 
@@ -240,7 +251,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             amount,
             side,
             price,
-            takerFee,
+            orderFeeData,
         );
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));

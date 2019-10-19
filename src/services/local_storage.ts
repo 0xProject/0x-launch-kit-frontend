@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
 import { NETWORK_ID, NOTIFICATIONS_LIMIT } from '../common/constants';
 import { Notification } from '../util/types';

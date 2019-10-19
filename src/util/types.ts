@@ -1,5 +1,6 @@
-import { BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
+import { OrderStatus } from '@0x/types';
+import { BigNumber } from '@0x/utils';
 import { RouterState } from 'connected-react-router';
 import { ActionCreator, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
@@ -35,6 +36,13 @@ export interface TokenBalance {
     balance: BigNumber;
     isUnlocked: boolean;
     token: Token;
+}
+
+export interface OrderFeeData {
+    makerFee: BigNumber;
+    takerFee: BigNumber;
+    makerFeeAssetData: string;
+    takerFeeAssetData: string;
 }
 
 export interface SearchTokenBalanceObject {
@@ -177,8 +185,6 @@ export interface UIOrder {
     filled: BigNumber | null;
     price: BigNumber;
     status: OrderStatus | null;
-    makerFillableAmountInTakerAsset: BigNumber;
-    remainingTakerAssetFillAmount: BigNumber;
 }
 
 export interface OrderBookItem {

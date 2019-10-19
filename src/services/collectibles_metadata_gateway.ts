@@ -1,4 +1,5 @@
-import { assetDataUtils, SignedOrder } from '0x.js';
+import { assetDataUtils } from '@0x/order-utils';
+import { SignedOrder } from '@0x/types';
 
 import { COLLECTIBLE_ADDRESS } from '../common/constants';
 import { getRelayer, Relayer } from '../services/relayer';

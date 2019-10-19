@@ -1,5 +1,6 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
+import { ZERO } from '../../common/constants';
 import { padRightSplitted } from '../../util/number_utils';
 
 describe('padRightSplitted', () => {
@@ -37,7 +38,7 @@ describe('padRightSplitted', () => {
                 expectedNum: '10.1234',
             },
             {
-                num: new BigNumber(0),
+                num: ZERO,
                 decimals: 4,
                 expectedDiff: '',
                 expectedNum: '0.0000',
@@ -49,7 +50,7 @@ describe('padRightSplitted', () => {
                 expectedNum: '100.6768',
             },
             {
-                num: new BigNumber(0),
+                num: ZERO,
                 decimals: 4,
                 expectedDiff: '',
                 expectedNum: '0.0000',

@@ -1,7 +1,8 @@
-import { BigNumber, OrderStatus } from '0x.js';
+import { OrderStatus } from '@0x/types';
+import { BigNumber } from '@0x/utils';
 import { createSelector } from 'reselect';
 
-import { ERC20_APP_BASE_PATH } from '../common/constants';
+import { ERC20_APP_BASE_PATH, ZERO } from '../common/constants';
 import { isWeth } from '../util/known_tokens';
 import {
     Collectible,
@@ -23,7 +24,7 @@ export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
 export const getWethTokenBalance = (state: StoreState) => state.blockchain.wethTokenBalance;
 export const getConvertBalanceState = (state: StoreState) => state.blockchain.convertBalanceState;
 export const getWethBalance = (state: StoreState) =>
-    state.blockchain.wethTokenBalance ? state.blockchain.wethTokenBalance.balance : new BigNumber(0);
+    state.blockchain.wethTokenBalance ? state.blockchain.wethTokenBalance.balance : ZERO;
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
 export const getOrderPriceSelected = (state: StoreState) => state.ui.orderPriceSelected;
@@ -140,7 +141,7 @@ export const getSpread = createSelector(
     getOpenSellOrders,
     (buyOrders, sellOrders) => {
         if (!buyOrders.length || !sellOrders.length) {
-            return new BigNumber(0);
+            return ZERO;
         }
 
         const lowestPriceSell = sellOrders[sellOrders.length - 1].price;
@@ -155,7 +156,7 @@ export const getSpreadInPercentage = createSelector(
     getOpenSellOrders,
     (absSpread, sellOrders) => {
         if (!sellOrders.length) {
-            return new BigNumber(0);
+            return ZERO;
         }
 
         const lowestPriceSell = sellOrders[sellOrders.length - 1].price;

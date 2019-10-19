@@ -1,4 +1,4 @@
-import { ContractWrappers } from '0x.js';
+import { ContractWrappers } from '@0x/contract-wrappers';
 
 import { NETWORK_ID } from '../common/constants';
 
