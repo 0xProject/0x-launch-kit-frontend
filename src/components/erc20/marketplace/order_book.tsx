@@ -280,6 +280,8 @@ class OrderBookTable extends React.Component<Props> {
 
         if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
             content = <CenteredLoading />;
+        } else if (web3State === Web3State.Loading) {
+            content = <CenteredLoading />;
         } else if ((!buyOrders.length && !sellOrders.length) || !baseToken || !quoteToken) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
         } else {

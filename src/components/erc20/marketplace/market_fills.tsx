@@ -70,9 +70,12 @@ class MarketFills extends React.Component<Props> {
         let content: React.ReactNode;
         switch (web3State) {
             case Web3State.Locked:
-            case Web3State.NotInstalled:
-            case Web3State.Loading: {
+            case Web3State.NotInstalled: {
                 content = <EmptyContent alignAbsoluteCenter={true} text="There are no trades to show" />;
+                break;
+            }
+            case Web3State.Loading: {
+                content = <LoadingWrapper minHeight="120px" />;
                 break;
             }
             default: {
