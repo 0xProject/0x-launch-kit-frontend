@@ -459,6 +459,16 @@ export interface PartialTheme {
 export interface GeneralConfig {
     title?: string;
     icon?: string;
+    social?: {
+        facebook_url?: string;
+        reddit_url?: string;
+        twitter_url?: string;
+        telegram_url?: string;
+        discord_url?: string;
+        bitcointalk_url?: string;
+        youtube_url?: string;
+        medium_url?: string;
+    };
 }
 
 interface WalletsConfig {

@@ -1,7 +1,16 @@
 {
     "general": {
         "title": "VeriDex",
-        "icon": "assets/icons/vsf.svg"
+        "icon": "assets/icons/vsf.svg",
+        "social": {
+            "telegram_url": "https://t.me/VeriSafe",
+            "twitter_url": "https://twitter.com/VeriSafeProject",
+            "facebook_url": "https://www.facebook.com/VeriSafe.io/",
+            "discord_url": "https://discord.gg/cGMJemv",
+            "reddit_url": "https://reddit.com/r/verisafe",
+            "bitcointalk_url": "https://bitcointalk.org/index.php?topic=5140352",
+            "statedapps_url": "https://www.stateofthedapps.com/dapps/veridex"
+        }
     },
     "tokens": [
         {
