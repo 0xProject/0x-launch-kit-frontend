@@ -135,8 +135,8 @@ const AccountTradings: React.FC<Props> = props => {
 
     return (
         <AccountTradingsCard
-            title={`Trading Stats ${marketName} -  From:${new Date(from).toDateString()}   To: ${new Date(
-                to,
+            title={`Trading Stats ${marketName} -  From:${new Date(Number(from)).toDateString()}   To: ${new Date(
+                Number(to),
             ).toDateString()}`}
         >
             {content}
