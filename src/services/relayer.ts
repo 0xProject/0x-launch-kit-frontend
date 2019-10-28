@@ -4,7 +4,7 @@ import { RateLimit } from 'async-sema';
 
 import { RELAYER_URL } from '../common/constants';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
-import { MarketData, Token } from '../util/types';
+import { AccountMarketStat, MarketData, Token } from '../util/types';
 
 export class Relayer {
     private readonly _client: HttpClient;
@@ -60,6 +60,7 @@ export class Relayer {
 
         return null;
     }
+
     public async getCurrencyPairMarketDataAsync(baseToken: Token, quoteToken: Token): Promise<MarketData> {
         await this._rateLimit();
         const { asks, bids } = await this._client.getOrderbookAsync({
@@ -158,4 +159,25 @@ export const getRelayer = (): Relayer => {
     }
 
     return relayer;
+};
+
+export const getAccountMarketStatsFromRelayer = async (
+    pair: string,
+    from: number,
+    to: number,
+): Promise<AccountMarketStat[]> => {
+    const headers = new Headers({
+        'content-type': 'application/json',
+    });
+
+    const init: RequestInit = {
+        method: 'GET',
+        headers,
+    };
+    const response = await fetch(`${RELAYER_URL}/markets/${pair}/accounts/stats?from=${from}&to=${to}`, init);
+    if (response.ok) {
+        return (await response.json()) as AccountMarketStat[];
+    } else {
+        return [];
+    }
 };

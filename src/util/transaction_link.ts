@@ -22,5 +22,9 @@ export const getTransactionLink = (hash: string): string => {
 };
 
 export const viewAddressOnEtherscan = (ethAccount: string) => {
-    window.open(`${ETHERSCAN_URL[NETWORK_ID]}/address/${ethAccount}`);
+    window.open(`${ETHERSCAN_URL[NETWORK_ID]}address/${ethAccount}`);
+};
+
+export const getAddressLinkExplorer = (ethAccount: string): string => {
+    return `${ETHERSCAN_URL[NETWORK_ID]}address/${ethAccount}`;
 };

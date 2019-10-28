@@ -6,6 +6,7 @@ import Portis from '@portis/web3';
 import Fortmatic from 'fortmatic';
 
 import { FORTMATIC_APP_ID, NETWORK_ID, NETWORK_NAME, PORTIS_APP_ID } from '../common/constants';
+import { providerFactory } from '../util/provider_factory';
 import { sleep } from '../util/sleep';
 import { Wallet } from '../util/types';
 
@@ -39,6 +40,12 @@ export const initializeWeb3Wrapper = async (wallet: Wallet): Promise<Web3Wrapper
             break;
         case Wallet.Coinbase:
             web3Wrapper = await initCoinbase();
+            break;
+        case Wallet.Trust:
+            web3Wrapper = await initProviderWallet(wallet);
+            break;
+        case Wallet.Cipher:
+            web3Wrapper = await initProviderWallet(wallet);
             break;
         default:
             break;
@@ -81,7 +88,7 @@ export const initMetamask = async (): Promise<Web3Wrapper | null> => {
         return null;
     }
 };
-
+// TODO: Refactor this to initProviderWallet
 export const initEnjin = async (): Promise<Web3Wrapper | null> => {
     // @ts-ignore
     const { enjin } = window;
@@ -93,13 +100,6 @@ export const initEnjin = async (): Promise<Web3Wrapper | null> => {
             if (isPrivacyModeEnabled) {
                 await enjin.enable();
             }
-            // Subscriptions register
-            /*enjin.on('accountsChanged', async (accounts: []) => {
-                location.reload();
-            });
-            enjin.on('networkChanged', async (network: number) => {
-                location.reload();
-            });*/
             localStorage.saveWalletConnected(Wallet.Enjin);
 
             return web3Wrapper;
@@ -113,7 +113,7 @@ export const initEnjin = async (): Promise<Web3Wrapper | null> => {
         return null;
     }
 };
-
+// TODO: Refactor this to initProviderWallet
 export const initCoinbase = async (): Promise<Web3Wrapper | null> => {
     const { web3 } = window;
     if (web3) {
@@ -140,6 +140,27 @@ export const initCoinbase = async (): Promise<Web3Wrapper | null> => {
     } else {
         localStorage.resetWalletConnected();
         //  The user does not have metamask installed
+        return null;
+    }
+};
+
+const initProviderWallet = async (wallet: Wallet): Promise<Web3Wrapper | null> => {
+    const provider = providerFactory.getInjectedProviderIfExists();
+
+    if (provider) {
+        try {
+            web3Wrapper = new Web3Wrapper(provider);
+            if (provider.enable !== undefined) {
+                await provider.enable();
+            }
+            localStorage.saveWalletConnected(wallet);
+            return web3Wrapper;
+        } catch (error) {
+            // The user denied account access
+            return null;
+        }
+    } else {
+        localStorage.resetWalletConnected();
         return null;
     }
 };

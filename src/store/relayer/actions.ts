@@ -11,7 +11,7 @@ import {
     getAllOrdersAsUIOrdersWithoutOrdersInfo,
     getUserOrdersAsUIOrders,
 } from '../../services/orders';
-import { getRelayer } from '../../services/relayer';
+import { getAccountMarketStatsFromRelayer, getRelayer } from '../../services/relayer';
 import { isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import {
@@ -21,7 +21,16 @@ import {
     sumTakerAssetFillableOrders,
 } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
-import { NotificationKind, OrderSide, RelayerState, ThunkCreator, Token, UIOrder, Web3State } from '../../util/types';
+import {
+    AccountMarketStat,
+    NotificationKind,
+    OrderSide,
+    RelayerState,
+    ThunkCreator,
+    Token,
+    UIOrder,
+    Web3State,
+} from '../../util/types';
 import { updateTokenBalances } from '../blockchain/actions';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
@@ -50,6 +59,10 @@ export const setUserOrders = createAction('relayer/USER_ORDERS_set', resolve => 
     return (orders: UIOrder[]) => resolve(orders);
 });
 
+export const setAccountMarketStats = createAction('relayer/ACCOUNT_MARKET_STATS_set', resolve => {
+    return (accountMarketStats: AccountMarketStat[]) => resolve(accountMarketStats);
+});
+
 export const getAllOrders: ThunkCreator = () => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -74,6 +87,17 @@ export const getAllOrders: ThunkCreator = () => {
             dispatch(setOrders(uiOrders));
         } catch (err) {
             logger.error(`getAllOrders: fetch orders from the relayer failed.`, err);
+        }
+    };
+};
+
+export const fetchAccountMarketStats: ThunkCreator = (market, from, to) => {
+    return async (dispatch, _getState) => {
+        try {
+            const accountMarketStats: AccountMarketStat[] = await getAccountMarketStatsFromRelayer(market, from, to);
+            dispatch(setAccountMarketStats(accountMarketStats));
+        } catch (err) {
+            logger.error(`get Market Account Stats: fetch account stats from the relayer failed.`, err);
         }
     };
 };

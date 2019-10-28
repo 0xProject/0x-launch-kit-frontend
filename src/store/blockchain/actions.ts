@@ -10,12 +10,14 @@ import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokensToTokenBalances, tokenToTokenBalance } from '../../services/tokens';
 import { deleteWeb3Wrapper, isMetamaskInstalled } from '../../services/web3_wrapper';
+import * as serviceWorker from '../../serviceWorker';
 import { envUtil } from '../../util/env';
 import { buildFill } from '../../util/fills';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
+import { providerFactory } from '../../util/provider_factory';
 import { getTransactionOptions } from '../../util/transactions';
 import {
     BlockchainState,
@@ -390,7 +392,7 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
         const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
         const fromBlock =
             lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
-        // const fromBlock = Math.max(blockNumber - START_BLOCK_LIMIT, 1);
+        //   const fromBlock = Math.max(blockNumber - START_BLOCK_LIMIT, 1);
         // lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
 
         const toBlock = blockNumber;
@@ -760,17 +762,41 @@ export const initializeAppWallet: ThunkCreator = () => {
         const state = getState();
 
         // detect if is mobile operate system
+        // Note: need to disable service workers when inside dapp browsers
         if (envUtil.isMobileOperatingSystem()) {
             const providerType = envUtil.getProviderTypeFromWindow();
             switch (providerType) {
                 case ProviderType.CoinbaseWallet:
+                    serviceWorker.unregister();
                     await dispatch(initWallet(Wallet.Coinbase));
                     return;
                 case ProviderType.EnjinWallet:
+                    serviceWorker.unregister();
                     await dispatch(initWallet(Wallet.Enjin));
+                    return;
+                case ProviderType.Cipher:
+                    serviceWorker.unregister();
+                    await dispatch(initWallet(Wallet.Cipher));
                     return;
                 default:
                     break;
+            }
+            // check if Trust wallet or other wallet is injected
+            const provider = providerFactory.getInjectedProviderIfExists();
+            if (provider) {
+                const providerT = envUtil.getProviderType(provider);
+                switch (providerT) {
+                    case ProviderType.TrustWallet:
+                        serviceWorker.unregister();
+                        await dispatch(initWallet(Wallet.Trust));
+                        return;
+                    case ProviderType.MetaMask:
+                        serviceWorker.unregister();
+                        await dispatch(initWallet(Wallet.Metamask));
+                        return;
+                    default:
+                        break;
+                }
             }
         }
         const wallet = getWallet(state);
