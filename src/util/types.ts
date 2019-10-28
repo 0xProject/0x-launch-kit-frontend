@@ -14,6 +14,8 @@ export interface TabItem {
     text: string;
 }
 
+export type Maybe<T> = T | undefined;
+
 export enum Network {
     Mainnet = 1,
     Ropsten = 3,
@@ -84,6 +86,7 @@ export interface BlockchainState {
 export interface RelayerState {
     readonly orders: UIOrder[];
     readonly userOrders: UIOrder[];
+    readonly accountMarketStats?: AccountMarketStat[];
 }
 
 export interface UIState {
@@ -391,6 +394,8 @@ export enum Wallet {
     WalletConnect = 'WalletConnect',
     Coinbase = 'Coinbase Wallet',
     Enjin = 'Enjin Wallet',
+    Cipher = 'Cipher Wallet',
+    Trust = 'Trust Wallet',
 }
 
 export interface Collectible {
@@ -516,5 +521,16 @@ export enum ProviderType {
     TrustWallet = 'TRUST_WALLET',
     Opera = 'OPERA',
     Fallback = 'FALLBACK',
+    // tslint:disable-next-line: max-file-line-count
+}
+
+export interface AccountMarketStat {
+    pair: string;
+    address: string;
+    totalAmountQuote: string;
+    totalAmountBase: string;
+    totalMakerFeePaid?: string;
+    totalTakerFeePaid?: string;
+    totalClosedOrders: number;
     // tslint:disable-next-line: max-file-line-count
 }

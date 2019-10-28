@@ -3,9 +3,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
+import { getCurrencyPairFromTokens } from '../../../util/known_currency_pairs';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
@@ -37,7 +37,7 @@ const SideTD = styled(CustomTD)<{ side: OrderSide }>`
         props.side === OrderSide.Buy ? props.theme.componentsTheme.green : props.theme.componentsTheme.red};
 `;
 
-const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
+const orderToRow = (order: UIOrder, index: number, baseToken: Token, quoteToken: Token) => {
     const sideLabel = order.side === OrderSide.Sell ? 'Sell' : 'Buy';
     const size = tokenAmountInUnits(order.size, baseToken.decimals, baseToken.displayDecimals);
     let status = '--';
@@ -50,8 +50,8 @@ const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
         isOrderFillable = order.status === OrderStatus.Fillable;
         status = isOrderFillable ? 'Open' : 'Filled';
     }
-
-    const price = parseFloat(order.price.toString()).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
+    const currencyPair = getCurrencyPairFromTokens(baseToken, quoteToken);
+    const price = parseFloat(order.price.toString()).toFixed(currencyPair.config.pricePrecision);
 
     return (
         <TR key={index}>
@@ -101,7 +101,9 @@ class OrderHistory extends React.Component<Props> {
                                     <TH>&nbsp;</TH>
                                 </TR>
                             </THead>
-                            <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, baseToken))}</tbody>
+                            <tbody>
+                                {ordersToShow.map((order, index) => orderToRow(order, index, baseToken, quoteToken))}
+                            </tbody>
                         </Table>
                     );
                 }

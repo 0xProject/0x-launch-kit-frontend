@@ -66,6 +66,7 @@ export const getCollectibleById = (state: StoreState, props: { collectibleId: st
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 export const getCurrentRoutePath = (state: StoreState) => state.router.location.pathname;
 export const getRouterLocationSearch = (state: StoreState) => state.router.location.search;
+export const getAccountMarketStats = (state: StoreState) => state.relayer.accountMarketStats;
 
 export const getCurrentMarketPlace = createSelector(
     getCurrentRoutePath,
@@ -156,6 +157,8 @@ export const getOpenOrders = createSelector(
         switch (web3State) {
             case Web3State.NotInstalled:
             case Web3State.Error:
+            case Web3State.Connect:
+            case Web3State.Connecting:
             case Web3State.Locked: {
                 return orders;
             }

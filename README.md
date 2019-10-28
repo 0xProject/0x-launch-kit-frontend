@@ -62,6 +62,7 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [x] Support for mobile dapp browswers like Enjin and Coinbase
 -   [x] Mobile friendly
 -   [x] Connect to 0x mesh
+-   [x] Adding Account market stats
 -   [ ] Click on buy and sell button to auto-fill
 -   [ ] Create a costumized front page
 -   [ ] Order Matching on the Frontend when doing limit orders
@@ -83,6 +84,8 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [ ] [WalletConnect](https://docs.walletconnect.org/)
 -   [x] [EnjinWallet](https://enjin.io/products/wallet)
 -   [x] [CoinbaseWallet](https://wallet.coinbase.com/)
+-   [x] [TrustWallet](https://trustwallet.com)
+-   [x] [CipherBrowser](https://www.cipherbrowser.com/)
 
 ### Using VeriDex relayer
 
