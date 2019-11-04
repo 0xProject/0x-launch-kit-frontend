@@ -79,6 +79,7 @@ export interface MarketState {
     readonly quoteToken: Token | null;
     readonly ethInUsd: BigNumber | null;
     readonly markets: Market[] | null;
+    readonly makerAddresses: string[] | null;
 }
 
 export interface StoreState {
