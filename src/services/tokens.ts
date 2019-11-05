@@ -1,8 +1,6 @@
-import { DevUtilsContract } from '@0x/contract-wrappers';
 import { assetDataUtils } from '@0x/order-utils';
 import { BigNumber } from '@0x/utils';
 
-import { NETWORK_ID } from '../common/constants';
 import { Token, TokenBalance } from '../util/types';
 
 import { getContractWrappers } from './contract_wrappers';

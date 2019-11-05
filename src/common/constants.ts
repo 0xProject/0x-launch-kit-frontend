@@ -84,5 +84,8 @@ export const STEP_MODAL_DONE_STATUS_VISIBILITY_TIME: number =
 export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
 
 export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || Network.Mainnet;
+// HACK(dekz): re-write the Ganache chain id which isn't network id
+export const CHAIN_ID: number =
+    Number.parseInt(process.env.REACT_APP_CHAIN_ID as string, 10) || NETWORK_ID === 50 ? 1337 : NETWORK_ID;
 
 export const NETWORK_NAME: string = Network[NETWORK_ID];

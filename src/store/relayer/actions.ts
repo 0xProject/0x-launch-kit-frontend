@@ -212,7 +212,13 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
                 .integerValue(BigNumber.ROUND_CEIL);
             const totalEthAmount = ethAmountRequired.plus(protocolFee).plus(affiliateFeeAmount);
             const isEthBalanceEnough = ethBalance.isGreaterThan(totalEthAmount);
-            const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
+            // HACK(dekz): Forwarder not currently deployed in Ganache
+            const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
+            const isMarketBuyForwarder =
+                isBuy &&
+                isWeth(quoteToken.symbol) &&
+                isEthBalanceEnough &&
+                contractWrappers.forwarder.address !== NULL_ADDRESS;
             const orderSignatures = ordersToFill.map(o => o.signature);
 
             let txHash;
@@ -231,16 +237,29 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
                         },
                     );
                 } else {
-                    txHash = await contractWrappers.exchange.batchFillOrders.validateAndSendTransactionAsync(
-                        ordersToFill,
-                        amounts,
-                        orderSignatures,
-                        {
-                            from: ethAccount,
-                            value: protocolFee,
-                            ...getTransactionOptions(gasPrice),
-                        },
-                    );
+                    if (isBuy) {
+                        txHash = await contractWrappers.exchange.marketBuyOrdersFillOrKill.validateAndSendTransactionAsync(
+                            ordersToFill,
+                            amount,
+                            orderSignatures,
+                            {
+                                from: ethAccount,
+                                value: protocolFee,
+                                ...getTransactionOptions(gasPrice),
+                            },
+                        );
+                    } else {
+                        txHash = await contractWrappers.exchange.marketSellOrdersFillOrKill.validateAndSendTransactionAsync(
+                            ordersToFill,
+                            amount,
+                            orderSignatures,
+                            {
+                                from: ethAccount,
+                                value: protocolFee,
+                                ...getTransactionOptions(gasPrice),
+                            },
+                        );
+                    }
                 }
             } catch (e) {
                 logger.log(e.message);

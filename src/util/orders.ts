@@ -2,7 +2,7 @@ import { OrderConfigRequest } from '@0x/connect';
 import { assetDataUtils, Order, SignedOrder } from '@0x/order-utils';
 import { BigNumber } from '@0x/utils';
 
-import { NETWORK_ID, PROTOCOL_FEE_MULTIPLIER, ZERO, ZERO_ADDRESS } from '../common/constants';
+import { CHAIN_ID, PROTOCOL_FEE_MULTIPLIER, ZERO, ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
 import { getKnownTokens } from './known_tokens';
@@ -137,7 +137,7 @@ export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigReques
     return {
         ...orderConfigRequest,
         ...orderResult,
-        chainId: NETWORK_ID,
+        chainId: CHAIN_ID,
         salt: new BigNumber(Date.now()),
     };
 };
