@@ -4,7 +4,7 @@ import { Orderbook } from '@0x/orderbook';
 import { BigNumber } from '@0x/utils';
 import { RateLimit } from 'async-sema';
 
-import { NETWORK_ID, RELAYER_URL, RELAYER_WS_URL } from '../common/constants';
+import { NETWORK_ID, RELAYER_RPS, RELAYER_URL, RELAYER_WS_URL } from '../common/constants';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
 import { Token } from '../util/types';
 
@@ -105,7 +105,7 @@ export class Relayer {
 let relayer: Relayer;
 export const getRelayer = (): Relayer => {
     if (!relayer) {
-        relayer = new Relayer({ rps: 5 });
+        relayer = new Relayer({ rps: RELAYER_RPS });
     }
 
     return relayer;

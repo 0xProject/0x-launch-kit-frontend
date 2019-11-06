@@ -289,7 +289,8 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [, , canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        // tslint:disable-next-line:no-unused-variable
+        const [_ordersToFill, _amounts, canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(canBeFilled).toBe(true);
@@ -304,7 +305,8 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [, , canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        // tslint:disable-next-line:no-unused-variable
+        const [_ordersToFill, _amounts, canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(canBeFilled).toBe(false);

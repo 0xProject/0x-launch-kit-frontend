@@ -28,25 +28,28 @@ export const createBuySellLimitSteps = (
     orderFeeData: OrderFeeData,
 ): Step[] => {
     const buySellLimitFlow: Step[] = [];
-    let unlockBaseOrQuoteTokenStep;
+    let unlockTokenStep;
 
     // unlock base and quote tokens if necessary
 
-    unlockBaseOrQuoteTokenStep =
+    unlockTokenStep =
         side === OrderSide.Buy
             ? // If it's a buy -> the quote token has to be unlocked
               getUnlockTokenStepIfNeeded(quoteToken, tokenBalances, wethTokenBalance)
             : // If it's a sell -> the base token has to be unlocked
               getUnlockTokenStepIfNeeded(baseToken, tokenBalances, wethTokenBalance);
 
-    if (unlockBaseOrQuoteTokenStep) {
-        buySellLimitFlow.push(unlockBaseOrQuoteTokenStep);
+    if (unlockTokenStep) {
+        buySellLimitFlow.push(unlockTokenStep);
     }
 
     if (orderFeeData.makerFee.isGreaterThan(0)) {
-        const unlockFeeTokenStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, orderFeeData.makerFeeAssetData);
-        if (unlockFeeTokenStep) {
-            buySellLimitFlow.push(unlockFeeTokenStep);
+        const { tokenAddress } = assetDataUtils.decodeERC20AssetData(orderFeeData.makerFeeAssetData);
+        if (!unlockTokenStep || unlockTokenStep.token.address !== tokenAddress) {
+            const unlockFeeTokenStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, tokenAddress);
+            if (unlockFeeTokenStep) {
+                buySellLimitFlow.push(unlockFeeTokenStep);
+            }
         }
     }
 
@@ -172,9 +175,12 @@ export const createBuySellMarketSteps = (
 
     // unlock fees if the taker fee is positive
     if (orderFeeData.takerFee.isGreaterThan(0)) {
-        const unlockFeeStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, orderFeeData.takerFeeAssetData);
-        if (unlockFeeStep) {
-            buySellMarketFlow.push(unlockFeeStep);
+        const { tokenAddress } = assetDataUtils.decodeERC20AssetData(orderFeeData.takerFeeAssetData);
+        if (!unlockTokenStep || (unlockTokenStep && unlockTokenStep.token.address !== tokenAddress)) {
+            const unlockFeeStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, tokenAddress);
+            if (unlockFeeStep) {
+                buySellMarketFlow.push(unlockFeeStep);
+            }
         }
     }
 
@@ -272,12 +278,11 @@ export const getWrapEthStepIfNeeded = (
 
 export const getUnlockFeeAssetStepIfNeeded = (
     tokenBalances: TokenBalance[],
-    feeTokenAssetData: string,
+    feeTokenAddress: string,
 ): StepToggleTokenLock | null => {
-    const tokenAddress = assetDataUtils.decodeERC20AssetData(feeTokenAssetData).tokenAddress;
-    const balance = tokenBalances.find(tokenBalance => tokenBalance.token.address === tokenAddress);
+    const balance = tokenBalances.find(tokenBalance => tokenBalance.token.address === feeTokenAddress);
     if (!balance) {
-        throw new Error(`Unknown fee token: ${feeTokenAssetData}`);
+        throw new Error(`Unknown fee token: ${feeTokenAddress}`);
     }
     if (!balance.isUnlocked) {
         return {

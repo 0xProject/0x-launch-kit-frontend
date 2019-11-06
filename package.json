@@ -38,11 +38,11 @@
         "typesafe-actions": "^3.0.0"
     },
     "scripts": {
-        "start": "NODE_ENV=production PORT=3001 react-scripts --max_old_space_size=4096 start",
-        "build": "NODE_ENV=production react-scripts --max_old_space_size=4096 build",
-        "test": "REACT_APP_NETWORK_ID=50 react-scripts test --env=node",
-        "test-once": "cross-env CI=true react-scripts test --coverage",
-        "lint": "tslint --project . 'src/**/*.{ts,tsx}' && npm run prettier-check",
+        "start": "PORT=3001 react-scripts --max_old_space_size=4096 start",
+        "build": "react-scripts --max_old_space_size=4096 build",
+        "test": "REACT_APP_NETWORK_ID=50 REACT_APP_CHAIN_ID=1337 react-scripts test --env=node",
+        "test-once": "cross-env REACT_APP_NETWORK_ID=50 REACT_APP_CHAIN_ID=1337 CI=true react-scripts test --coverage",
+        "lint": "tslint --format stylish --project . 'src/**/*.{ts,tsx}' && npm run prettier-check",
         "eject": "react-scripts eject",
         "prettier": "prettier --write '**/*.{ts,tsx,json,md}' --ignore-path .gitignore",
         "prettier-check": "prettier --check '**/*.{ts,tsx,json,md}' --ignore-path .gitignore",

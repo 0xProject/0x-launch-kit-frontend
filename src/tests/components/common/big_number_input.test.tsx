@@ -6,6 +6,7 @@ import { BigNumber } from '@0x/utils';
 import { mount } from 'enzyme';
 import React from 'react';
 
+import { ZERO } from '../../../common/constants';
 import { BigNumberInput } from '../../../components/common/big_number_input';
 import { mountWithTheme } from '../../util/test_with_theme';
 

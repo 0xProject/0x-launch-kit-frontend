@@ -1,7 +1,7 @@
 import { SignedOrder } from '@0x/connect';
 import { assetDataUtils } from '@0x/order-utils';
 import { OrderStatus } from '@0x/types';
-import { BigNumber } from '@0x/utils';
+import { BigNumber, NULL_BYTES } from '@0x/utils';
 import * as Factory from 'factory.ts';
 
 import { NETWORK_ID, ZERO } from '../common/constants';
@@ -36,8 +36,8 @@ export const makeOrder = ({
         takerAssetData: assetDataUtils.encodeERC20AssetData(takerTokenAddress),
         makerFee: ZERO,
         takerFee: ZERO,
-        makerFeeAssetData: '0x',
-        takerFeeAssetData: '0x',
+        makerFeeAssetData: NULL_BYTES,
+        takerFeeAssetData: NULL_BYTES,
         chainId: NETWORK_ID,
         signature: '',
     };

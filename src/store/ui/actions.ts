@@ -205,7 +205,8 @@ export const startBuySellMarketSteps: ThunkCreator = (
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
-        const [, filledAmounts, canBeFilled] = buildMarketOrders(
+        // tslint:disable-next-line:no-unused-variable
+        const [_ordersToFill, filledAmounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
                 orders,

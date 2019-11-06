@@ -18,8 +18,6 @@ export const UNLIMITED_ALLOWANCE_IN_BASE_UNITS = new BigNumber(2).pow(256).minus
 
 export const ZERO = new BigNumber(0);
 
-export const ZERO_BYTES = '0x';
-
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
 
 export const FEE_PERCENTAGE = new BigNumber(process.env.REACT_APP_FEE_PERCENTAGE || ZERO);
@@ -27,6 +25,8 @@ export const FEE_PERCENTAGE = new BigNumber(process.env.REACT_APP_FEE_PERCENTAGE
 export const ETH_DECIMALS = 18;
 
 export const PROTOCOL_FEE_MULTIPLIER = 150000;
+
+export const RELAYER_RPS = 5;
 
 export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
@@ -85,7 +85,10 @@ export const OPENSEA_API_KEY = process.env.REACT_APP_OPENSEA_API_KEY;
 
 export const NETWORK_ID: number = Number.parseInt(process.env.REACT_APP_NETWORK_ID as string, 10) || Network.Mainnet;
 // HACK(dekz): re-write the Ganache chain id which isn't network id
-export const CHAIN_ID: number =
-    Number.parseInt(process.env.REACT_APP_CHAIN_ID as string, 10) || NETWORK_ID === 50 ? 1337 : NETWORK_ID;
+export const CHAIN_ID: number = process.env.REACT_APP_CHAIN_ID
+    ? Number.parseInt(process.env.REACT_APP_CHAIN_ID as string, 10)
+    : NETWORK_ID === 50
+    ? 1337
+    : NETWORK_ID;
 
 export const NETWORK_NAME: string = Network[NETWORK_ID];

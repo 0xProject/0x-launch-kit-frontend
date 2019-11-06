@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { ZERO, ZERO_BYTES } from '../../../common/constants';
+import { ZERO } from '../../../common/constants';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
@@ -98,8 +98,8 @@ class OrderDetails extends React.Component<Props, State> {
     public state = {
         makerFeeAmount: ZERO,
         takerFeeAmount: ZERO,
-        makerFeeAssetData: ZERO_BYTES,
-        takerFeeAssetData: ZERO_BYTES,
+        makerFeeAssetData: NULL_BYTES,
+        takerFeeAssetData: NULL_BYTES,
         quoteTokenAmount: ZERO,
         canOrderBeFilled: true,
     };
@@ -201,7 +201,7 @@ class OrderDetails extends React.Component<Props, State> {
         const feeAssetData = orderType === OrderType.Limit ? makerFeeAssetData : takerFeeAssetData;
         const feeAmount = orderType === OrderType.Limit ? makerFeeAmount : takerFeeAmount;
         if (feeAssetData === NULL_BYTES) {
-            return '';
+            return '0.00';
         }
         const feeToken = getKnownTokens().getTokenByAssetData(feeAssetData);
 

@@ -1,20 +1,30 @@
 import { OrderStatus, SignedOrder } from '@0x/types';
-import { BigNumber } from '@0x/utils';
+import { BigNumber, NULL_BYTES } from '@0x/utils';
 import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
-import { NETWORK_ID, ZERO } from '../../../../common/constants';
+import { CHAIN_ID, ZERO } from '../../../../common/constants';
 import { CostValue, OrderDetails, Value } from '../../../../components/erc20/marketplace/order_details';
 import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../../../util/tokens';
 import { OrderSide, OrderType } from '../../../../util/types';
 
 const ORDER_DEFAULTS = {
-    makerAssetData: '0x',
-    takerAssetData: '0x',
-    chainId: NETWORK_ID,
+    makerAssetData: NULL_BYTES,
+    takerAssetData: NULL_BYTES,
+    chainId: CHAIN_ID,
+};
+
+const ORDER_FEE_DEFAULTS = {
+    makerFee: ZERO,
+    takerFee: ZERO,
+    makerFeeAssetData: NULL_BYTES,
+    takerFeeAssetData: NULL_BYTES,
 };
 
 describe('OrderDetails', () => {
+    const getZeroTotalCost = (): string => {
+        return `0.00`;
+    };
     const getExpectedTotalCostText = (amount: number, symbol: string): string => {
         return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString(symbol)}`;
     };
@@ -41,10 +51,7 @@ describe('OrderDetails', () => {
         // given
         const makerAmount = unitsInTokenAmount('13', 18);
         const tokenPrice = new BigNumber(3);
-        const fees = async () => {
-            return { makerFee: ZERO, takerFee: ZERO };
-        };
-
+        const fees = async () => ORDER_FEE_DEFAULTS;
         // when
         const wrapper = shallow(
             <OrderDetails
@@ -62,7 +69,7 @@ describe('OrderDetails', () => {
         const amountText = getAmountTextFromWrapper(wrapper);
         expect(amountText).toEqual(getExpectedTotalCostText(0, currencyPair.quote));
         const feeText = getFeeTextFromWrapper(wrapper);
-        expect(feeText).toEqual(getExpectedFeeText(0));
+        expect(feeText).toEqual(getZeroTotalCost());
     });
 
     it('Calculates fees for market orders', () => {
@@ -129,9 +136,7 @@ describe('OrderDetails', () => {
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
-        const fees = async () => {
-            return { makerFee: ZERO, takerFee: ZERO };
-        };
+        const fees = async () => ORDER_FEE_DEFAULTS;
 
         // when
         const wrapper = shallow(
@@ -217,9 +222,7 @@ describe('OrderDetails', () => {
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
-        const fees = async () => {
-            return { makerFee: ZERO, takerFee: ZERO };
-        };
+        const fees = async () => ORDER_FEE_DEFAULTS;
 
         // when
         const wrapper = shallow(
@@ -303,9 +306,7 @@ describe('OrderDetails', () => {
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
-        const fees = async () => {
-            return { makerFee: ZERO, takerFee: ZERO };
-        };
+        const fees = async () => ORDER_FEE_DEFAULTS;
 
         // when
         const wrapper = shallow(

@@ -1,6 +1,6 @@
 import { ExchangeFillEventArgs } from '@0x/contract-wrappers';
 import { assetDataUtils } from '@0x/order-utils';
-import { BigNumber } from '@0x/utils';
+import { BigNumber, NULL_BYTES } from '@0x/utils';
 
 import { ZERO } from '../../common/constants';
 import { getKnownTokens } from '../../util/known_tokens';
@@ -59,8 +59,8 @@ describe('buildOrderFilledNotification', () => {
             orderHash: '',
             makerAssetData: baseTokenAssetData,
             takerAssetData: quoteTokenAssetData,
-            makerFeeAssetData: '0x',
-            takerFeeAssetData: '0x',
+            makerFeeAssetData: NULL_BYTES,
+            takerFeeAssetData: NULL_BYTES,
             protocolFeePaid: ZERO,
         };
         const log: any = {
@@ -90,8 +90,8 @@ describe('buildOrderFilledNotification', () => {
             orderHash: '',
             makerAssetData: quoteTokenAssetData,
             takerAssetData: baseTokenAssetData,
-            makerFeeAssetData: '0x',
-            takerFeeAssetData: '0x',
+            makerFeeAssetData: NULL_BYTES,
+            takerFeeAssetData: NULL_BYTES,
             protocolFeePaid: ZERO,
         };
         const log: any = {

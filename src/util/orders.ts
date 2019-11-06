@@ -133,7 +133,6 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
 export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigRequest: OrderConfigRequest) => {
     const client = getRelayer();
     const orderResult = await client.getOrderConfigAsync(orderConfigRequest);
-
     return {
         ...orderConfigRequest,
         ...orderResult,
