@@ -53,7 +53,7 @@ const fillToRow = (fill: Fill, index: number, _setMarket: any) => {
     try {
         currencyPair = getCurrencyPairByTokensSymbol(fill.tokenBase.symbol, fill.tokenQuote.symbol);
     } catch {
-        return '';
+        return (null);
     }
     const price = parseFloat(fill.price.toString()).toFixed(currencyPair.config.pricePrecision);
 
