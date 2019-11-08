@@ -3,7 +3,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { goToHomeLaunchpad, logoutWallet, goToHomeMarginLend } from '../../../store/actions';
+import { goToHomeLaunchpad, goToHomeMarginLend, logoutWallet } from '../../../store/actions';
 import { getEthAccount } from '../../../store/selectors';
 import { connectToExplorer, viewOnFabrx } from '../../../util/external_services';
 import { truncateAddress } from '../../../util/number_utils';

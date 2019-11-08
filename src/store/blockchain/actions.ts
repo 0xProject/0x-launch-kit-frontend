@@ -868,7 +868,6 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
 export const initializeAppWallet: ThunkCreator = () => {
     return async (dispatch, getState) => {
         const state = getState();
-
         // detect if is mobile operate system
         // Note: need to disable service workers when inside dapp browsers
         if (envUtil.isMobileOperatingSystem()) {
