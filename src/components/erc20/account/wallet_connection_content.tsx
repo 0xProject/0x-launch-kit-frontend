@@ -3,7 +3,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { goToHomeLaunchpad, logoutWallet } from '../../../store/actions';
+import { goToHomeLaunchpad, logoutWallet, goToHomeMarginLend } from '../../../store/actions';
 import { getEthAccount } from '../../../store/selectors';
 import { connectToExplorer, viewOnFabrx } from '../../../util/external_services';
 import { truncateAddress } from '../../../util/number_utils';
@@ -21,6 +21,7 @@ interface StateProps {
 interface DispatchProps {
     onLogoutWallet: () => any;
     onGoToHomeLaunchpad: () => any;
+    onGoToHomeMarginLend: () => any;
 }
 
 type Props = StateProps & OwnProps & DispatchProps;
@@ -32,7 +33,7 @@ const DropdownItems = styled(CardBase)`
 
 class WalletConnectionContent extends React.PureComponent<Props> {
     public render = () => {
-        const { ethAccount, onLogoutWallet, onGoToHomeLaunchpad, ...restProps } = this.props;
+        const { ethAccount, onLogoutWallet, onGoToHomeLaunchpad, onGoToHomeMarginLend, ...restProps } = this.props;
         const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
 
         const openFabrx = () => {
