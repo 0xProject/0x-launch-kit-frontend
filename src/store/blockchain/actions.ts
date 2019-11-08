@@ -14,6 +14,7 @@ import * as serviceWorker from '../../serviceWorker';
 import { envUtil } from '../../util/env';
 import { buildFill } from '../../util/fills';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
+import { getKnownTokensIEO } from '../../util/known_tokens_ieo';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
@@ -31,6 +32,8 @@ import {
     ThunkCreator,
     Token,
     TokenBalance,
+    TokenBalanceIEO,
+    TokenIEO,
     Wallet,
     Web3State,
 } from '../../util/types';
@@ -42,7 +45,13 @@ import {
     updateMarketPriceQuote,
     updateMarketPriceTokens,
 } from '../market/actions';
-import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
+import {
+    fetchAllIEOOrders,
+    fetchUserIEOOrders,
+    getOrderBook,
+    getOrderbookAndUserOrders,
+    initializeRelayerData,
+} from '../relayer/actions';
 import {
     getCurrencyPair,
     getCurrentMarketPlace,
@@ -88,6 +97,18 @@ export const setWeb3State = createAction('blockchain/WEB3_STATE_set', resolve =>
 
 export const setTokenBalances = createAction('blockchain/TOKEN_BALANCES_set', resolve => {
     return (tokenBalances: TokenBalance[]) => resolve(tokenBalances);
+});
+
+export const setBaseTokenIEO = createAction('blockchain/BASE_TOKEN_IEO_set', resolve => {
+    return (token: TokenIEO) => resolve(token);
+});
+
+export const setBaseTokenBalanceIEO = createAction('blockchain/BASE_TOKEN_BALANCE_IEO_set', resolve => {
+    return (token: TokenBalanceIEO) => resolve(token);
+});
+
+export const setTokenBalancesIEO = createAction('blockchain/TOKEN_BALANCES_IEO_set', resolve => {
+    return (tokenBalances: TokenBalanceIEO[]) => resolve(tokenBalances);
 });
 
 export const setEthBalance = createAction('blockchain/ETH_BALANCE_set', resolve => {
@@ -861,5 +882,46 @@ export const logoutWallet: ThunkCreator = () => {
 export const lockWallet: ThunkCreator = () => {
     return async (dispatch, getState) => {
         dispatch(setWeb3State(Web3State.Locked));
+    };
+};
+
+export const fetchBaseTokenIEO: ThunkCreator = (token: TokenIEO) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        if (!ethAccount) {
+            return;
+        }
+        const wethBalance = getWethTokenBalance(state);
+        const tokenBalance = (await tokenToTokenBalance(token, ethAccount)) as TokenBalanceIEO;
+        dispatch(setBaseTokenBalanceIEO(tokenBalance));
+        dispatch(setBaseTokenIEO(token));
+        try {
+            // tslint:disable-next-line: no-floating-promises
+            dispatch(fetchUserIEOOrders(ethAccount, token, (wethBalance && wethBalance.token) || null));
+        } catch (error) {
+            logger.error('The fetch ieo orders from the relayer failed', error);
+        }
+    };
+};
+
+export const fetchLaunchpad: ThunkCreator = () => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        if (ethAccount) {
+            const knownTokens = getKnownTokensIEO();
+            const tokenBalances = (await tokensToTokenBalances(
+                knownTokens.getTokens(),
+                ethAccount,
+            )) as TokenBalanceIEO[];
+            dispatch(setTokenBalancesIEO(tokenBalances));
+        }
+        try {
+            // tslint:disable-next-line: no-floating-promises
+            dispatch(fetchAllIEOOrders());
+        } catch (error) {
+            logger.error('The fetch ieo orders from the relayer failed', error);
+        }
     };
 };

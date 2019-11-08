@@ -10,6 +10,10 @@ export const getExpirationTimeOrdersFromConfig = () => {
     );
 };
 
+export const getExpirationTimeFromDate = (timestamp: number | string) => {
+    return new BigNumber(Math.floor(new Date(timestamp).valueOf() / 1000));
+};
+
 export const todayInSeconds = () => {
     return Math.floor(Date.now() / 1000);
 };

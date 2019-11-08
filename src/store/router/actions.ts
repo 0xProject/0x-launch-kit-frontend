@@ -1,7 +1,7 @@
 import { push, replace } from 'connected-react-router';
 import queryString from 'query-string';
 
-import { ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH } from '../../common/constants';
+import { ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH, LAUNCHPAD_APP_BASE_PATH } from '../../common/constants';
 import { CollectibleFilterType } from '../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../util/sortable_collectibles';
 import { ThunkCreator } from '../../util/types';
@@ -23,6 +23,19 @@ const goToHomeErc20: ThunkCreator = () => {
             push({
                 ...state.router.location,
                 pathname: `${ERC20_APP_BASE_PATH}/`,
+            }),
+        );
+    };
+};
+
+export const goToHomeLaunchpad: ThunkCreator = () => {
+    return async (dispatch, getState) => {
+        const state = getState();
+
+        dispatch(
+            push({
+                ...state.router.location,
+                pathname: `${LAUNCHPAD_APP_BASE_PATH}/tokens`,
             }),
         );
     };

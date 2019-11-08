@@ -1,8 +1,9 @@
 import { getWeb3Wrapper } from '../services/web3_wrapper';
 import { getKnownTokens } from '../util/known_tokens';
+import { getLogger } from '../util/logger';
 import { MARKETPLACES } from '../util/types';
 
-import { updateGasInfo, updateTokenBalances } from './blockchain/actions';
+import { fetchLaunchpad, updateGasInfo, updateTokenBalances } from './blockchain/actions';
 import { getAllCollectibles } from './collectibles/actions';
 import { setMarketTokens, updateMarketPriceEther, updateMarketPriceQuote } from './market/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
@@ -15,6 +16,8 @@ export * from './router/actions';
 export * from './ui/actions';
 export * from './market/actions';
 export * from './collectibles/actions';
+
+const logger = getLogger('Store::Actions');
 
 export const updateStore = () => {
     return async (dispatch: any, getState: any) => {
@@ -32,8 +35,10 @@ export const updateStore = () => {
             if (currentMarketPlace === MARKETPLACES.ERC20) {
                 dispatch(updateERC20Store(ethAccount));
                 dispatch(updateMarketPriceQuote());
-            } else {
+            } else if (currentMarketPlace === MARKETPLACES.ERC721) {
                 dispatch(updateERC721Store(ethAccount));
+            } else {
+                dispatch(updateLaunchpadStore());
             }
         }
     };
@@ -66,6 +71,16 @@ export const updateERC20Store = (ethAccount: string) => {
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderBook());
+        }
+    };
+};
+
+export const updateLaunchpadStore = () => {
+    return async (dispatch: any, _getState: any) => {
+        try {
+            dispatch(fetchLaunchpad());
+        } catch (error) {
+            logger.error('Failed to update Launchpad', error);
         }
     };
 };

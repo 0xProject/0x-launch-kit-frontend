@@ -6,7 +6,7 @@ import { INSUFFICIENT_FEE_BALANCE, INSUFFICIENT_MAKER_BALANCE_ERR, SIGNATURE_ERR
 import { InsufficientFeeBalanceException } from '../../../exceptions/insufficient_fee_balance_exception';
 import { InsufficientTokenBalanceException } from '../../../exceptions/insufficient_token_balance_exception';
 import { SignatureFailedException } from '../../../exceptions/signature_failed_exception';
-import { createSignedOrder, submitLimitOrder } from '../../../store/actions';
+import { createSignedOrder, createSignedOrderIEO, submitLimitOrder, submitLimitOrderIEO } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import { OrderSide, StepBuySellLimitOrder, StoreState, Token, Wallet } from '../../../util/types';
@@ -27,6 +27,8 @@ interface StateProps {
 interface DispatchProps {
     createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<SignedOrder>;
     submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
+    createSignedOrderIEO: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<SignedOrder>;
+    submitLimitOrderIEO: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 interface State {
@@ -73,11 +75,15 @@ class SignOrderStep extends React.Component<Props, State> {
 
     private readonly _getSignedOrder = async ({ onLoading, onDone, onError }: any) => {
         const { step, quoteToken } = this.props;
-        const { amount, price, side } = step;
+        const { amount, price, side, is_ieo } = step;
         try {
-            const signedOrder = await this.props.createSignedOrder(amount, price, side);
+            const signedOrder = is_ieo
+                ? await this.props.createSignedOrderIEO(amount, price, side)
+                : await this.props.createSignedOrder(amount, price, side);
             onLoading();
-            await this.props.submitLimitOrder(signedOrder, amount, side);
+            is_ieo
+                ? await this.props.submitLimitOrderIEO(signedOrder, amount, side)
+                : await this.props.submitLimitOrder(signedOrder, amount, side);
             onDone();
         } catch (error) {
             let errorException = error;
@@ -122,6 +128,10 @@ const SignOrderStepContainer = connect(
                 dispatch(submitLimitOrder(signedOrder, amount, side)),
             createSignedOrder: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
                 dispatch(createSignedOrder(amount, price, side)),
+            submitLimitOrderIEO: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) =>
+                dispatch(submitLimitOrderIEO(signedOrder, amount, side)),
+            createSignedOrderIEO: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
+                dispatch(createSignedOrderIEO(amount, price, side)),
         };
     },
 )(SignOrderStep);

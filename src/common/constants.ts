@@ -3,6 +3,7 @@ import { BigNumber } from '0x.js';
 import { Network, ProviderType } from '../util/types';
 
 export const ERC20_APP_BASE_PATH = '/erc20';
+export const LAUNCHPAD_APP_BASE_PATH = '/launchpad';
 export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
 
@@ -63,8 +64,8 @@ export const UPDATE_TOKENS_PRICE_INTERVAL: number = process.env.REACT_APP_UPDATE
 
 // Default value is enabled, 0 is disabled
 export const UPDATE_ERC20_MARKETS: number = process.env.REACT_APP_UPDATE_ERC20_MARKETS_INTERVAL
-    ? Number.parseInt(process.env.REACT_APP_UPDATE_ETHER_PRICE_INTERVAL as string, 10)
-    : 3600000;
+    ? Number.parseInt(process.env.REACT_APP_UPDATE_ERC20_MARKETS_INTERVAL as string, 10)
+    : 60000;
 
 export const NOTIFICATIONS_LIMIT: number =
     Number.parseInt(process.env.REACT_APP_NOTIFICATIONS_LIMIT as string, 10) || 20;

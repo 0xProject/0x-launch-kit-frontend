@@ -8,6 +8,7 @@ interface Props {
     icon: string;
     url: string;
     theme: Theme;
+    color?: string;
 }
 
 const IconContainer = styled.div`
@@ -22,7 +23,7 @@ const IconContainer = styled.div`
 `;
 
 const SocialIconContainer = (props: Props) => {
-    const { url, icon, ...restProps } = props;
+    const { url, icon, color = 'white', ...restProps } = props;
     const iconSrc = `assets/social/${icon}.svg`;
 
     const Icon = <ReactSVG src={iconSrc as string} />;
@@ -31,7 +32,7 @@ const SocialIconContainer = (props: Props) => {
     };
 
     return (
-        <IconContainer color={'white'} onClick={openSocial} {...restProps}>
+        <IconContainer color={color} onClick={openSocial} {...restProps}>
             {Icon}
         </IconContainer>
     );

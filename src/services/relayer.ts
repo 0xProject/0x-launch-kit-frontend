@@ -3,6 +3,7 @@ import { HttpClient, OrderConfigRequest, OrderConfigResponse, SignedOrder } from
 import { RateLimit } from 'async-sema';
 
 import { RELAYER_URL } from '../common/constants';
+import { serializeOrder } from '../util/orders';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
 import { AccountMarketStat, MarketData, Token } from '../util/types';
 
@@ -177,6 +178,64 @@ export const getAccountMarketStatsFromRelayer = async (
     const response = await fetch(`${RELAYER_URL}/markets/${pair}/accounts/stats?from=${from}&to=${to}`, init);
     if (response.ok) {
         return (await response.json()) as AccountMarketStat[];
+    } else {
+        return [];
+    }
+};
+
+export const postIEOSignedOrder = async (order: SignedOrder): Promise<void> => {
+    const headers = new Headers({
+        'content-type': 'application/json',
+    });
+
+    const init: RequestInit = {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(order),
+    };
+    const response = await fetch(`${RELAYER_URL}/ieo_order`, init);
+    if (response.ok) {
+        return;
+    }
+};
+
+export const getUserIEOSignedOrders = async (
+    makerAddress: string,
+    baseToken: Token,
+    quoteToken: Token,
+): Promise<SignedOrder[]> => {
+    const headers = new Headers({
+        'content-type': 'application/json',
+    });
+    const init: RequestInit = {
+        method: 'GET',
+        headers,
+    };
+    const baseAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
+    const quoteAssetData = assetDataUtils.encodeERC20AssetData(quoteToken.address);
+
+    const response = await fetch(
+        `${RELAYER_URL}/ieo_orders?makerAssetData=${baseAssetData}&takerAssetData=${quoteAssetData}&makerAddress=${makerAddress}`,
+        init,
+    );
+    if (response.ok) {
+        return (await response.json()).records.map((r: any) => r.order).map(serializeOrder) as SignedOrder[];
+    } else {
+        return [];
+    }
+};
+
+export const getAllIEOSignedOrders = async (): Promise<SignedOrder[]> => {
+    const headers = new Headers({
+        'content-type': 'application/json',
+    });
+    const init: RequestInit = {
+        method: 'GET',
+        headers,
+    };
+    const response = await fetch(`${RELAYER_URL}/ieo_orders`, init);
+    if (response.ok) {
+        return (await response.json()).records.map((r: any) => r.order) as SignedOrder[];
     } else {
         return [];
     }

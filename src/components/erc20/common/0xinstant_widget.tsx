@@ -1,3 +1,4 @@
+import { SignedOrder } from '0x.js';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -36,7 +37,7 @@ interface State {
 }
 
 interface Props {
-    orderSource: string;
+    orderSource: string | SignedOrder[];
     tokenAddress: string;
     provider?: string;
     walletDisplayName?: Wallet | null;
@@ -49,6 +50,7 @@ interface Props {
     shouldDisableAnalyticsTracking?: boolean;
     onSuccess?: any;
     onClose?: any;
+    feePercentage?: number;
 }
 
 const BuyButton = styled(Button)`
@@ -69,7 +71,13 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { orderSource, networkId = 1, tokenAddress, walletDisplayName = Wallet.Metamask } = this.props;
+        const {
+            orderSource,
+            networkId = 1,
+            tokenAddress,
+            walletDisplayName = Wallet.Metamask,
+            feePercentage = INSTANT_FEE_PERCENTAGE,
+        } = this.props;
 
         const openZeroXinstantModal = async () => {
             const knownTokens = getKnownTokens();
@@ -93,7 +101,7 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
                     networkId,
                     affiliateInfo: {
                         feeRecipient: FEE_RECIPIENT,
-                        feePercentage: INSTANT_FEE_PERCENTAGE,
+                        feePercentage,
                     },
                     walletDisplayName,
                     additionalAssetMetaDataMap,

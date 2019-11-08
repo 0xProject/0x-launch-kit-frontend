@@ -9,9 +9,15 @@ import {
     cancelSignedOrder,
     getAllOrdersAsUIOrders,
     getAllOrdersAsUIOrdersWithoutOrdersInfo,
+    getUserIEOOrdersAsUIOrders,
     getUserOrdersAsUIOrders,
 } from '../../services/orders';
-import { getAccountMarketStatsFromRelayer, getRelayer } from '../../services/relayer';
+import {
+    getAccountMarketStatsFromRelayer,
+    getAllIEOSignedOrders,
+    getRelayer,
+    postIEOSignedOrder,
+} from '../../services/relayer';
 import { isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import {
@@ -28,13 +34,15 @@ import {
     RelayerState,
     ThunkCreator,
     Token,
+    TokenBalance,
     UIOrder,
     Web3State,
 } from '../../util/types';
-import { updateTokenBalances } from '../blockchain/actions';
+import { fetchBaseTokenIEO, updateTokenBalances } from '../blockchain/actions';
 import { getAllCollectibles } from '../collectibles/actions';
 import {
     getBaseToken,
+    getBaseTokenIEO,
     getEthAccount,
     getEthBalance,
     getGasPriceInWei,
@@ -42,6 +50,7 @@ import {
     getOpenSellOrders,
     getQuoteToken,
     getWeb3State,
+    getWethTokenBalance,
 } from '../selectors';
 import { addNotifications } from '../ui/actions';
 
@@ -57,6 +66,14 @@ export const setOrders = createAction('relayer/ORDERS_set', resolve => {
 
 export const setUserOrders = createAction('relayer/USER_ORDERS_set', resolve => {
     return (orders: UIOrder[]) => resolve(orders);
+});
+
+export const setUserIEOOrders = createAction('relayer/USER_ORDERS_IEO_set', resolve => {
+    return (orders: UIOrder[]) => resolve(orders);
+});
+
+export const setTokenIEOOrders = createAction('relayer/TOKEN_IEO_ORDERS_set', resolve => {
+    return (orders: SignedOrder[]) => resolve(orders);
 });
 
 export const setAccountMarketStats = createAction('relayer/ACCOUNT_MARKET_STATS_set', resolve => {
@@ -98,6 +115,28 @@ export const fetchAccountMarketStats: ThunkCreator = (market, from, to) => {
             dispatch(setAccountMarketStats(accountMarketStats));
         } catch (err) {
             logger.error(`get Market Account Stats: fetch account stats from the relayer failed.`, err);
+        }
+    };
+};
+
+export const fetchAllIEOOrders: ThunkCreator = () => {
+    return async (dispatch, _getState) => {
+        try {
+            const IEOOrders: SignedOrder[] = await getAllIEOSignedOrders();
+            dispatch(setTokenIEOOrders(IEOOrders));
+        } catch (err) {
+            logger.error(`get IEO orders from relayer failed.`, err);
+        }
+    };
+};
+
+export const fetchUserIEOOrders: ThunkCreator = (ethAccount, baseToken, quoteToken) => {
+    return async (dispatch, _getState) => {
+        try {
+            const IEOOrders = await getUserIEOOrdersAsUIOrders(baseToken, quoteToken, ethAccount);
+            dispatch(setUserIEOOrders(IEOOrders));
+        } catch (err) {
+            logger.error(`get IEO orders from relayer failed.`, err);
         }
     };
 };
@@ -174,6 +213,34 @@ export const submitLimitOrder: ThunkCreator = (signedOrder: SignedOrder, amount:
             const submitResult = await getRelayer().submitOrderAsync(signedOrder);
             // tslint:disable-next-line:no-floating-promises
             dispatch(getOrderbookAndUserOrders());
+            dispatch(
+                addNotifications([
+                    {
+                        id: signedOrder.signature,
+                        kind: NotificationKind.Limit,
+                        amount,
+                        token: baseToken,
+                        side,
+                        timestamp: new Date(),
+                    },
+                ]),
+            );
+
+            return submitResult;
+        } catch (error) {
+            throw new RelayerException(error.message);
+        }
+    };
+};
+
+export const submitLimitOrderIEO: ThunkCreator = (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const baseToken = getBaseTokenIEO(state) as Token;
+        try {
+            const submitResult = await postIEOSignedOrder(signedOrder);
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(fetchBaseTokenIEO(baseToken));
             dispatch(
                 addNotifications([
                     {
@@ -430,4 +497,39 @@ export const fetchTakerAndMakerFee: ThunkCreator<Promise<{ makerFee: BigNumber; 
             takerFee,
         };
     };
+};
+
+export const fetchTakerAndMakerFeeIEO: ThunkCreator<Promise<{ makerFee: BigNumber; takerFee: BigNumber }>> = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const baseToken = getBaseTokenIEO(state) as Token;
+        const quoteTokenBalance = getWethTokenBalance(state) as TokenBalance;
+        const quoteToken = quoteTokenBalance.token;
+        const contractWrappers = await getContractWrappers();
+
+        const order = await buildLimitOrder(
+            {
+                account: ethAccount,
+                amount,
+                price,
+                baseTokenAddress: baseToken.address,
+                quoteTokenAddress: quoteToken.address,
+                exchangeAddress: contractWrappers.exchange.address,
+            },
+            side,
+        );
+
+        const { makerFee, takerFee } = order;
+
+        return {
+            makerFee,
+            takerFee,
+        };
+    };
+    // tslint:disable-next-line: max-file-line-count
 };

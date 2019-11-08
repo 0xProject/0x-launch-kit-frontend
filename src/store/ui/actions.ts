@@ -31,6 +31,7 @@ import {
     ThunkCreator,
     Token,
     TokenBalance,
+    TokenIEO,
 } from '../../util/types';
 import * as selectors from '../selectors';
 
@@ -251,6 +252,37 @@ export const startBuySellLimitSteps: ThunkCreator = (
     };
 };
 
+export const startBuySellLimitIEOSteps: ThunkCreator = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+    makerFee: BigNumber,
+    baseToken: Token,
+    quoteToken: Token,
+) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const tokenBalanceIEO = selectors.getBaseTokenBalanceIEO(state) as TokenBalance;
+        const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+
+        const buySellLimitFlow: Step[] = createBuySellLimitSteps(
+            baseToken,
+            quoteToken,
+            [tokenBalanceIEO],
+            wethTokenBalance,
+            amount,
+            price,
+            side,
+            makerFee,
+            true,
+        );
+
+        dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
+        dispatch(setStepsModalPendingSteps(buySellLimitFlow.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
 export const startBuySellLimitMatchingSteps: ThunkCreator = (
     amount: BigNumber,
     price: BigNumber,
@@ -447,6 +479,41 @@ export const createSignedOrder: ThunkCreator = (amount: BigNumber, price: BigNum
                     exchangeAddress: contractWrappers.exchange.address,
                 },
                 side,
+            );
+
+            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+            return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+        } catch (error) {
+            throw new SignedOrderException(error.message);
+        }
+    };
+};
+
+export const createSignedOrderIEO: ThunkCreator = (amount: BigNumber, price: BigNumber, side: OrderSide) => {
+    return async (_dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
+        const state = getState();
+        const ethAccount = selectors.getEthAccount(state);
+        const baseToken = selectors.getBaseTokenIEO(state) as TokenIEO;
+        const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        if (!wethTokenBalance) {
+            return;
+        }
+        const quoteToken = wethTokenBalance.token;
+        try {
+            const web3Wrapper = await getWeb3Wrapper();
+            const contractWrappers = await getContractWrappers();
+
+            const order = await buildLimitOrder(
+                {
+                    account: ethAccount,
+                    amount,
+                    price,
+                    baseTokenAddress: baseToken.address,
+                    quoteTokenAddress: quoteToken.address,
+                    exchangeAddress: contractWrappers.exchange.address,
+                },
+                side,
+                baseToken.endDate,
             );
 
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());

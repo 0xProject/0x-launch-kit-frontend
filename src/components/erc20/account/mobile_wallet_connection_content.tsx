@@ -4,7 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 import styled from 'styled-components';
 
-import { goToHome, goToWallet, logoutWallet, openFiatOnRampModal, openSideBar } from '../../../store/actions';
+import {
+    goToHome,
+    goToHomeLaunchpad,
+    goToWallet,
+    logoutWallet,
+    openFiatOnRampModal,
+    openSideBar,
+} from '../../../store/actions';
 import { getEthAccount } from '../../../store/selectors';
 import { connectToExplorer, viewOnFabrx } from '../../../util/external_services';
 import { truncateAddress } from '../../../util/number_utils';
@@ -50,6 +57,11 @@ export const MobileWalletConnectionContent = () => {
         dispatch(openSideBar(false));
     };
 
+    const onGoToLaunchpad = () => {
+        dispatch(goToHomeLaunchpad());
+        dispatch(openSideBar(false));
+    };
+
     const onGoToWallet = () => {
         dispatch(goToWallet());
         dispatch(openSideBar(false));
@@ -82,6 +94,7 @@ export const MobileWalletConnectionContent = () => {
             <ListContainer>
                 <ListItem onClick={onGoToHome}>Home</ListItem>
                 <ListItem onClick={onGoToWallet}>Wallet</ListItem>
+                <ListItem onClick={onGoToLaunchpad}>Launchpad</ListItem>
                 <hr />
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <ListItemFlex>

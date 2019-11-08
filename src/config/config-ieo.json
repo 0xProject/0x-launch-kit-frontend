@@ -1,0 +1,50 @@
+{
+    "tokens": [
+        {
+            "decimals": 18,
+            "symbol": "vsf",
+            "name": "VeriSafe",
+            "primaryColor": "#081e6e",
+            "icon": "assets/icons/vsf.svg",
+            "addresses": {
+                "1": "0xac9ce326e95f51b5005e9fe1dd8085a01f18450c",
+                "3": "0xba3a79d758f19efe588247388754b8e4d6edda81"
+            },
+            "id": "verisafe",
+            "c_id": "verisafe",
+            "displayDecimals": 0,
+            "description": "The transparent ecossystem that crypto needs!",
+            "website": "https://www.verisafe.io",
+            "social": {
+                "telegram_url": "https://t.me/VeriSafe",
+                "twitter_url": "https://twitter.com/VeriSafeProject",
+                "facebook_url": "https://www.facebook.com/VeriSafe.io/",
+                "discord_url": "https://discord.gg/cGMJemv",
+                "reddit_url": "https://reddit.com/r/verisafe",
+                "bitcointalk_url": "https://bitcointalk.org/index.php?topic=5140352",
+                "statedapps_url": "https://www.stateofthedapps.com/dapps/veridex"
+            },
+            "owners": ["0xac9ce326e95f51b5005e9fe1dd8085a01f18450c"],
+            "feePercentage": "0.05"
+        },
+        {
+            "symbol": "weth",
+            "name": "Wrapped Ether",
+            "primaryColor": "#3333ff",
+            "icon": "assets/icons/weth.svg",
+            "addresses": {
+                "1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                "3": "0xc778417e063141139fce010982780140aa0cd5ab",
+                "4": "0xc778417e063141139fce010982780140aa0cd5ab",
+                "42": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+                "50": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082"
+            },
+            "decimals": 18,
+            "displayDecimals": 3,
+            "id": "ethereum",
+            "c_id": "ethereum",
+            "website": "https://weth.io",
+            "description": "wETH is 'wrapped ETH'"
+        }
+    ]
+}
