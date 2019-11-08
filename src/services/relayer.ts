@@ -4,7 +4,7 @@ import { Orderbook } from '@0x/orderbook';
 import { BigNumber } from '@0x/utils';
 import { RateLimit } from 'async-sema';
 
-import { NETWORK_ID, RELAYER_RPS, RELAYER_URL, RELAYER_WS_URL } from '../common/constants';
+import { CHAIN_ID, RELAYER_RPS, RELAYER_URL, RELAYER_WS_URL } from '../common/constants';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
 import { Token } from '../util/types';
 
@@ -16,7 +16,7 @@ export class Relayer {
     constructor(options: { rps: number }) {
         this._orderbook = Orderbook.getOrderbookForWebsocketProvider({
             httpEndpoint: RELAYER_URL,
-            networkId: NETWORK_ID,
+            chainId: CHAIN_ID,
             websocketEndpoint: RELAYER_WS_URL,
         });
         this._client = new HttpClient(RELAYER_URL);

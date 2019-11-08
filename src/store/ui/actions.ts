@@ -302,6 +302,7 @@ export const createSignedOrder: ThunkCreator = (amount: BigNumber, price: BigNum
             );
 
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+            console.log(order);
             return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
         } catch (error) {
             throw new SignedOrderException(error.message);

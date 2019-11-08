@@ -71,7 +71,7 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
             const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
-            tx = await contractWrappers.dutchAuction.matchOrders.validateAndSendTransactionAsync(
+            tx = await contractWrappers.dutchAuction.matchOrders.sendTransactionAsync(
                 buySignedOrder,
                 order,
                 buySignedOrder.signature,
@@ -83,7 +83,7 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
                 .plus(protocolFee)
                 .multipliedBy(FEE_PERCENTAGE)
                 .integerValue(BigNumber.ROUND_CEIL);
-            tx = await contractWrappers.forwarder.marketBuyOrdersWithEth.validateAndSendTransactionAsync(
+            tx = await contractWrappers.forwarder.marketBuyOrdersWithEth.sendTransactionAsync(
                 [order],
                 order.makerAssetAmount,
                 [order.signature],

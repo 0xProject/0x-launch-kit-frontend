@@ -15,7 +15,7 @@ const web3Wrapper = {
 const contractWrappers = {
     erc20Token: {
         approve: {
-            validateAndSendTransactionAsync: jest.fn(),
+            sendTransactionAsync: jest.fn(),
         },
     },
     erc20Proxy: {
@@ -23,10 +23,10 @@ const contractWrappers = {
     },
     weth9: {
         approve: {
-            validateAndSendTransactionAsync: jest.fn(),
+            sendTransactionAsync: jest.fn(),
         },
         deposit: {
-            validateAndSendTransactionAsync: jest.fn(),
+            sendTransactionAsync: jest.fn(),
         },
     },
     getProvider: () => ({ isStandardizedProvider: true }),
@@ -45,7 +45,7 @@ describe('blockchain actions', () => {
             // HACK(dekz) skipped as erc20Token no longer exists on contractWrappers
             // given
             const tx = 'some-tx';
-            contractWrappers.erc20Token.approve.validateAndSendTransactionAsync.mockResolvedValueOnce(tx);
+            contractWrappers.erc20Token.approve.sendTransactionAsync.mockResolvedValueOnce(tx);
             const token = tokenFactory.build();
             const ethAccount = addressFactory.build().address;
             const store = mockStore({
@@ -61,11 +61,9 @@ describe('blockchain actions', () => {
             const result = await store.dispatch(toggleTokenLock(token, true) as any);
 
             // then
-            expect(contractWrappers.erc20Token.approve.validateAndSendTransactionAsync).toHaveBeenCalled();
-            expect(contractWrappers.erc20Token.approve.validateAndSendTransactionAsync.mock.calls[0][0]).toEqual(
-                token.address,
-            );
-            expect(contractWrappers.erc20Token.approve.validateAndSendTransactionAsync.mock.calls[0][1]).toEqual(ZERO);
+            expect(contractWrappers.erc20Token.approve.sendTransactionAsync).toHaveBeenCalled();
+            expect(contractWrappers.erc20Token.approve.sendTransactionAsync.mock.calls[0][0]).toEqual(token.address);
+            expect(contractWrappers.erc20Token.approve.sendTransactionAsync.mock.calls[0][1]).toEqual(ZERO);
             expect(result).toEqual(tx);
         });
     });
@@ -73,7 +71,7 @@ describe('blockchain actions', () => {
         it('should convert eth to weth', async () => {
             // given
             const tx = 'some-tx';
-            contractWrappers.weth9.deposit.validateAndSendTransactionAsync.mockResolvedValueOnce(tx);
+            contractWrappers.weth9.deposit.sendTransactionAsync.mockResolvedValueOnce(tx);
             const store = mockStore({
                 blockchain: {
                     ethBalance: new BigNumber(10),
@@ -92,7 +90,7 @@ describe('blockchain actions', () => {
             const result = await store.dispatch(updateWethBalance(new BigNumber(5)) as any);
 
             // then
-            expect(contractWrappers.weth9.deposit.validateAndSendTransactionAsync.mock.calls[0][0].value).toEqual(
+            expect(contractWrappers.weth9.deposit.sendTransactionAsync.mock.calls[0][0].value).toEqual(
                 new BigNumber(4),
             );
             expect(result).toEqual(tx);

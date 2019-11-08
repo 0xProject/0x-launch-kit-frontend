@@ -224,7 +224,7 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
             let txHash;
             try {
                 if (isMarketBuyForwarder) {
-                    txHash = await contractWrappers.forwarder.marketBuyOrdersWithEth.validateAndSendTransactionAsync(
+                    txHash = await contractWrappers.forwarder.marketBuyOrdersWithEth.sendTransactionAsync(
                         ordersToFill,
                         amount,
                         orderSignatures,
@@ -238,7 +238,7 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
                     );
                 } else {
                     if (isBuy) {
-                        txHash = await contractWrappers.exchange.marketBuyOrdersFillOrKill.validateAndSendTransactionAsync(
+                        txHash = await contractWrappers.exchange.marketBuyOrdersFillOrKill.sendTransactionAsync(
                             ordersToFill,
                             amount,
                             orderSignatures,
@@ -249,7 +249,7 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
                             },
                         );
                     } else {
-                        txHash = await contractWrappers.exchange.marketSellOrdersFillOrKill.validateAndSendTransactionAsync(
+                        txHash = await contractWrappers.exchange.marketSellOrdersFillOrKill.sendTransactionAsync(
                             ordersToFill,
                             amount,
                             orderSignatures,

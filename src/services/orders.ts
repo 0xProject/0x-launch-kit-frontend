@@ -70,7 +70,7 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
 export const cancelSignedOrder = async (order: SignedOrder, gasPrice: BigNumber) => {
     const contractWrappers = await getContractWrappers();
     const web3Wrapper = await getWeb3Wrapper();
-    const tx = await contractWrappers.exchange.cancelOrder.validateAndSendTransactionAsync(order, {
+    const tx = await contractWrappers.exchange.cancelOrder.sendTransactionAsync(order, {
         from: order.makerAddress,
         ...getTransactionOptions(gasPrice),
     });
