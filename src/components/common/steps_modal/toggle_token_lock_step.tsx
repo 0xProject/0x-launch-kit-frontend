@@ -24,7 +24,7 @@ interface StateProps {
 
 interface DispatchProps {
     onLockToken: (token: Token) => Promise<any>;
-    onUnlockToken: (token: Token) => Promise<any>;
+    onUnlockToken: (token: Token, address?: string, isProxy?: boolean) => Promise<any>;
     advanceStep: () => void;
 }
 
@@ -35,20 +35,40 @@ class ToggleTokenLockStep extends React.Component<Props> {
         const { buildStepsProgress, estimatedTxTimeMs, step, wallet } = this.props;
         const { context, isUnlocked, token } = step;
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
-
-        const title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock token' : 'Unlock token';
-        const confirmCaption = `Confirm on ${wallet} to ${
-            isUnlocked ? 'lock' : 'unlock'
-        } ${tokenSymbol} for trading on 0x.`;
-        const loadingCaption = isUnlocked
-            ? `Locking ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
-            : `Unlocking ${tokenSymbol}. It will remain unlocked for future trades`;
-        const doneCaption = isUnlocked
-            ? `Locked ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
-            : `Unlocked ${tokenSymbol}. It will remain unlocked for future trades`;
-        const errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${tokenSymbol} failed.`;
-        const loadingFooterCaption = `Waiting for confirmation...`;
-        const doneFooterCaption = !isUnlocked ? ` ${tokenSymbol} Unlocked!` : ` ${tokenSymbol} Locked!`;
+        let title;
+        let confirmCaption;
+        let loadingCaption;
+        let doneCaption;
+        let errorCaption;
+        let loadingFooterCaption;
+        let doneFooterCaption;
+        if (context === 'lending') {
+            title = 'Lending Setup';
+            confirmCaption = `Confirm on ${wallet} to ${isUnlocked ? 'lock' : 'unlock'} ${tokenSymbol} for lending.`;
+            loadingCaption = isUnlocked
+                ? `Locking ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
+                : `Unlocking ${tokenSymbol}. It will remain unlocked for future lendings`;
+            doneCaption = isUnlocked
+                ? `Locked ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
+                : `Unlocked ${tokenSymbol}. It will remain unlocked for future lendings`;
+            errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${tokenSymbol} failed.`;
+            loadingFooterCaption = `Waiting for confirmation...`;
+            doneFooterCaption = !isUnlocked ? ` ${tokenSymbol} Unlocked!` : ` ${tokenSymbol} Locked!`;
+        } else {
+            title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock token' : 'Unlock token';
+            confirmCaption = `Confirm on ${wallet} to ${
+                isUnlocked ? 'lock' : 'unlock'
+            } ${tokenSymbol} for trading on 0x.`;
+            loadingCaption = isUnlocked
+                ? `Locking ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
+                : `Unlocking ${tokenSymbol}. It will remain unlocked for future trades`;
+            doneCaption = isUnlocked
+                ? `Locked ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
+                : `Unlocked ${tokenSymbol}. It will remain unlocked for future trades`;
+            errorCaption = `${isUnlocked ? 'Locking' : 'Unlocking'} ${tokenSymbol} failed.`;
+            loadingFooterCaption = `Waiting for confirmation...`;
+            doneFooterCaption = !isUnlocked ? ` ${tokenSymbol} Unlocked!` : ` ${tokenSymbol} Locked!`;
+        }
 
         return (
             <BaseStepModal
@@ -73,10 +93,12 @@ class ToggleTokenLockStep extends React.Component<Props> {
         const { step, advanceStep, onLockToken, onUnlockToken } = this.props;
 
         const toggleToken = step.isUnlocked ? onLockToken : onUnlockToken;
-
         try {
             const web3Wrapper = await getWeb3Wrapper();
-            const txHash = await toggleToken(step.token);
+            const txHash =
+                step.context === 'lending'
+                    ? await toggleToken(step.token, step.address, false)
+                    : await toggleToken(step.token);
             onLoading();
 
             await web3Wrapper.awaitTransactionSuccessAsync(txHash);
@@ -102,7 +124,8 @@ const ToggleTokenLockStepContainer = connect(
     (dispatch: any) => {
         return {
             onLockToken: (token: Token) => dispatch(lockToken(token)),
-            onUnlockToken: (token: Token) => dispatch(unlockToken(token)),
+            onUnlockToken: (token: Token, address?: string, isProxy?: boolean) =>
+                dispatch(unlockToken(token, address, isProxy)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
         };
     },

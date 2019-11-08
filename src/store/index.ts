@@ -3,6 +3,7 @@ import { createHashHistory } from 'history';
 import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 
+import { getITokenContractWrapper, getTokenizedRegistryContractWrapper } from '../services/bzx';
 import { getCollectiblesMetadataGateway } from '../services/collectibles_metadata_gateway';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { getWeb3Wrapper, initializeWeb3Wrapper } from '../services/web3_wrapper';
@@ -19,6 +20,8 @@ const extraArgument = {
     getWeb3Wrapper,
     initializeWeb3Wrapper,
     getCollectiblesMetadataGateway,
+    getITokenContractWrapper,
+    getTokenizedRegistryContractWrapper,
 };
 export type ExtraArgument = typeof extraArgument;
 

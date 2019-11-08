@@ -15,6 +15,7 @@ import {
 import { ConvertBalanceMustNotBeEqualException } from '../../../exceptions/convert_balance_must_not_be_equal_exception';
 import { InsufficientEthDepositBalanceException } from '../../../exceptions/insufficient_eth_deposit_balance_exception';
 import { UserDeniedTransactionSignatureException } from '../../../exceptions/user_denied_transaction_exception';
+import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import {
     convertBalanceStateAsync,
     stepsModalAdvanceStep,
@@ -73,13 +74,14 @@ class WrapEthStep extends React.Component<Props, State> {
         const convertingTo = isEthToWeth ? 'wETH' : 'ETH';
 
         const isOrder = context === 'order';
+        const isLending = context === 'lending';
 
         const buildMessage = (prefix: string) => {
             return [
                 prefix,
                 ethAmount,
                 convertingFrom,
-                isOrder ? 'for trading' : null, // only show "for trading" when creating an order
+                isOrder ? 'for trading' : isLending ? 'for Lending' : null, // only show "for trading" when creating an order
                 `(${convertingFrom} to ${convertingTo}).`,
             ]
                 .filter(x => x !== null)
@@ -119,8 +121,10 @@ class WrapEthStep extends React.Component<Props, State> {
         const updateBalances = this.props.updateTokenBalances;
         try {
             const convertTxHash = await updateWeth(newWethBalance);
+            const web3Wrapper = await getWeb3Wrapper();
             onLoading();
             convertBalanceState.request();
+            await web3Wrapper.awaitTransactionSuccessAsync(convertTxHash);
             await updateBalances(convertTxHash);
             convertBalanceState.success();
             onDone();

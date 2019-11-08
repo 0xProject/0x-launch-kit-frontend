@@ -13,12 +13,14 @@ import {
     createBuySellLimitSteps,
     createBuySellMarketSteps,
     createDutchBuyCollectibleSteps,
+    createLendingTokenSteps,
     createSellCollectibleSteps,
 } from '../../util/steps_modals_generation';
 import { tokenAmountInUnitsToBigNumber } from '../../util/tokens';
 import {
     Collectible,
     Fill,
+    iTokenData,
     MarketFill,
     Notification,
     NotificationKind,
@@ -27,6 +29,7 @@ import {
     StepKind,
     StepToggleTokenLock,
     StepTransferToken,
+    StepUnLendingToken,
     StepWrapEth,
     ThunkCreator,
     Token,
@@ -373,6 +376,53 @@ export const startBuySellLimitMatchingSteps: ThunkCreator = (
     };
 };
 
+export const startLendingTokenSteps: ThunkCreator = (
+    amount: BigNumber,
+    token: Token,
+    iToken: iTokenData,
+    isEth: boolean,
+) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const ethBalance = selectors.getEthBalance(state);
+        const wethBalance = selectors.getWethBalance(state);
+        const totalEthBalance = selectors.getTotalEthBalance(state);
+        const isEthAndWethNotEnoughBalance = isEth && totalEthBalance.isLessThan(amount);
+
+        if (isEthAndWethNotEnoughBalance) {
+            throw new InsufficientTokenBalanceException(token.symbol);
+        }
+
+        const lendingTokenFlow: Step[] = createLendingTokenSteps(iToken, token, wethBalance, ethBalance, amount, isEth);
+
+        dispatch(setStepsModalCurrentStep(lendingTokenFlow[0]));
+        dispatch(setStepsModalPendingSteps(lendingTokenFlow.slice(1)));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startUnLendingTokenSteps: ThunkCreator = (
+    amount: BigNumber,
+    token: Token,
+    iToken: iTokenData,
+    isEth: boolean,
+) => {
+    return async dispatch => {
+        const unLendingTokenStep: StepUnLendingToken = {
+            kind: StepKind.UnLendingToken,
+            amount,
+            token,
+            isEth,
+            iToken,
+            isLending: false,
+        };
+
+        dispatch(setStepsModalCurrentStep(unLendingTokenStep));
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
 export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -412,13 +462,13 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             // When buying and
             // if quote token is weth, should have enough ETH + WETH balance, or
             // if quote token is not weth, should have enough quote token balance
-            const ifEthAndWethNotEnoughBalance =
+            const isEthAndWethNotEnoughBalance =
                 isWeth(quoteToken.symbol) && totalEthBalance.isLessThan(totalFilledAmount);
             const ifOtherQuoteTokenAndNotEnoughBalance =
                 !isWeth(quoteToken.symbol) &&
                 quoteTokenBalance &&
                 quoteTokenBalance.balance.isLessThan(totalFilledAmount);
-            if (ifEthAndWethNotEnoughBalance || ifOtherQuoteTokenAndNotEnoughBalance) {
+            if (isEthAndWethNotEnoughBalance || ifOtherQuoteTokenAndNotEnoughBalance) {
                 throw new InsufficientTokenBalanceException(quoteToken.symbol);
             }
         }
@@ -564,6 +614,54 @@ export const addTransferTokenNotification: ThunkCreator = (
                     amount,
                     token,
                     address,
+                    tx,
+                    timestamp: new Date(),
+                },
+            ]),
+        );
+    };
+    // tslint:disable-next-line: max-file-line-count
+};
+
+export const addLendingTokenNotification: ThunkCreator = (
+    id: string,
+    amount: BigNumber,
+    token: Token,
+    address: string,
+    tx: Promise<any>,
+) => {
+    return async dispatch => {
+        dispatch(
+            addNotifications([
+                {
+                    id,
+                    kind: NotificationKind.LendingComplete,
+                    amount,
+                    token,
+                    tx,
+                    timestamp: new Date(),
+                },
+            ]),
+        );
+    };
+    // tslint:disable-next-line: max-file-line-count
+};
+
+export const addUnLendingTokenNotification: ThunkCreator = (
+    id: string,
+    amount: BigNumber,
+    token: Token,
+    address: string,
+    tx: Promise<any>,
+) => {
+    return async dispatch => {
+        dispatch(
+            addNotifications([
+                {
+                    id,
+                    kind: NotificationKind.UnLendingComplete,
+                    amount,
+                    token,
                     tx,
                     timestamp: new Date(),
                 },

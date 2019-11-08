@@ -112,6 +112,12 @@ export enum Web3State {
     Locked = 'Locked',
 }
 
+export enum BZXLoadingState {
+    Done = 'Done',
+    Error = 'Error',
+    Loading = 'Loading',
+}
+
 export interface BlockchainState {
     readonly ethAccount: string;
     readonly wallet: Wallet | null;
@@ -124,6 +130,12 @@ export interface BlockchainState {
     readonly tokenBaseIEO: TokenIEO | null;
     readonly tokenBaseBalanceIEO: TokenBalanceIEO | null;
     readonly tokenBalancesIEO: TokenBalanceIEO[];
+}
+
+export interface BZXState {
+    readonly iTokensData: iTokenData[];
+    readonly TokensList: TokenMetadataBZX[];
+    readonly bzxLoadingState: BZXLoadingState;
 }
 
 export interface RelayerState {
@@ -164,12 +176,15 @@ export interface StoreState {
     readonly ui: UIState;
     readonly market: MarketState;
     readonly collectibles: CollectiblesState;
+    readonly bzx: BZXState;
 }
 
 export enum StepKind {
     WrapEth = 'WrapEth',
     ToggleTokenLock = 'ToggleTokenLock',
     TransferToken = 'TransferToken',
+    LendingToken = 'LendingToken',
+    UnLendingToken = 'UnLendingToken',
     BuySellLimit = 'BuySellLimit',
     BuySellLimitMatching = 'BuySellLimitMatching',
     BuySellMarket = 'BuySellMarket',
@@ -182,14 +197,15 @@ export interface StepWrapEth {
     kind: StepKind.WrapEth;
     currentWethBalance: BigNumber;
     newWethBalance: BigNumber;
-    context: 'order' | 'standalone';
+    context: 'order' | 'standalone' | 'lending';
 }
 
 export interface StepToggleTokenLock {
     kind: StepKind.ToggleTokenLock;
     token: Token;
     isUnlocked: boolean;
-    context: 'order' | 'standalone';
+    context: 'order' | 'standalone' | 'lending';
+    address?: string;
 }
 
 export interface StepUnlockCollectibles {
@@ -213,6 +229,24 @@ export interface StepTransferToken {
     address: string;
     token: Token;
     isEth: boolean;
+}
+
+export interface StepLendingToken {
+    kind: StepKind.LendingToken;
+    amount: BigNumber;
+    token: Token;
+    iToken: iTokenData;
+    isEth: boolean;
+    isLending: boolean;
+}
+
+export interface StepUnLendingToken {
+    kind: StepKind.UnLendingToken;
+    amount: BigNumber;
+    token: Token;
+    iToken: iTokenData;
+    isEth: boolean;
+    isLending: boolean;
 }
 
 export interface StepBuySellMarket {
@@ -255,7 +289,9 @@ export type Step =
     | StepBuyCollectible
     | StepUnlockCollectibles
     | StepBuySellLimitMatching
-    | StepTransferToken;
+    | StepTransferToken
+    | StepLendingToken
+    | StepUnLendingToken;
 
 export interface StepsModalState {
     readonly doneSteps: Step[];
@@ -333,6 +369,8 @@ export enum NotificationKind {
     Limit = 'Limit',
     OrderFilled = 'OrderFilled',
     TokenTransferred = 'TokenTransferred',
+    LendingComplete = 'LendingComplete',
+    UnLendingComplete = 'UnLendingComplete',
 }
 
 export interface Fill {
@@ -403,12 +441,26 @@ export interface OrderFilledNotification extends BaseNotification {
     side: OrderSide;
 }
 
+interface LendingTokenNotification extends TransactionNotification {
+    kind: NotificationKind.LendingComplete;
+    amount: BigNumber;
+    token: Token;
+}
+
+interface UnLendingTokenNotification extends TransactionNotification {
+    kind: NotificationKind.UnLendingComplete;
+    amount: BigNumber;
+    token: Token;
+}
+
 export type Notification =
     | CancelOrderNotification
     | MarketNotification
     | LimitNotification
     | OrderFilledNotification
-    | TransferTokenNotification;
+    | TransferTokenNotification
+    | LendingTokenNotification
+    | UnLendingTokenNotification;
 
 export enum OrderType {
     Limit = 'Limit',
@@ -430,6 +482,7 @@ export enum MARKETPLACES {
     ERC20 = 'ERC20',
     ERC721 = 'ERC721',
     LaunchPad = 'LAUNCHPAD',
+    Margin = 'MARGIN',
 }
 
 export enum Wallet {
@@ -583,5 +636,37 @@ export interface AccountMarketStat {
     totalMakerFeePaid?: string;
     totalTakerFeePaid?: string;
     totalClosedOrders: number;
+    // tslint:disable-next-line: max-file-line-count
+}
+
+enum TokenTypeBZX {
+    No,
+    IToken,
+    PToken,
+}
+
+export interface TokenMetadataBZX {
+    token: string;
+    asset: string;
+    name: string;
+    symbol: string;
+    type: TokenTypeBZX;
+    index: number;
+}
+
+// tslint:disable-next-line: class-name
+export interface iTokenData {
+    token: Token;
+    address: string;
+    name: string;
+    symbol: string;
+    price: BigNumber;
+    checkpointPrice: BigNumber;
+    avgBorrowInterestRate: BigNumber;
+    totalReservedSupply: BigNumber;
+    marketLiquidity: BigNumber;
+    balance: BigNumber;
+    supplyInterestRate: BigNumber;
+    isUnlocked: boolean;
     // tslint:disable-next-line: max-file-line-count
 }

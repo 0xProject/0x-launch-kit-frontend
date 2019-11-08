@@ -11,6 +11,7 @@ import {
     logoutWallet,
     openFiatOnRampModal,
     openSideBar,
+    goToHomeMarginLend,
 } from '../../../store/actions';
 import { getEthAccount } from '../../../store/selectors';
 import { connectToExplorer, viewOnFabrx } from '../../../util/external_services';
@@ -62,6 +63,11 @@ export const MobileWalletConnectionContent = () => {
         dispatch(openSideBar(false));
     };
 
+    const onGoToMarginLend = () => {
+        dispatch(goToHomeMarginLend());
+        dispatch(openSideBar(false));
+    };
+
     const onGoToWallet = () => {
         dispatch(goToWallet());
         dispatch(openSideBar(false));
@@ -95,6 +101,7 @@ export const MobileWalletConnectionContent = () => {
                 <ListItem onClick={onGoToHome}>Home</ListItem>
                 <ListItem onClick={onGoToWallet}>Wallet</ListItem>
                 <ListItem onClick={onGoToLaunchpad}>Launchpad</ListItem>
+                <ListItem onClick={onGoToMarginLend}>Lend</ListItem>
                 <hr />
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <ListItemFlex>

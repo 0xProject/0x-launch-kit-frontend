@@ -116,6 +116,14 @@ export const isWeth = (token: string): boolean => {
     return token === 'weth';
 };
 
+export const isWethToken = (token: Token): boolean => {
+    if (token.symbol.toLowerCase() === 'weth') {
+        return true;
+    } else {
+        return false;
+    }
+};
+
 export const isERC20AssetData = (assetData: string): boolean => {
     try {
         assetDataUtils.decodeERC20AssetData(assetData);

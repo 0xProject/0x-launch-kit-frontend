@@ -4,6 +4,8 @@ import { Network, ProviderType } from '../util/types';
 
 export const ERC20_APP_BASE_PATH = '/erc20';
 export const LAUNCHPAD_APP_BASE_PATH = '/launchpad';
+export const MARGIN_APP_BASE_PATH = '/margin';
+
 export const ERC721_APP_BASE_PATH = '/erc721';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
 

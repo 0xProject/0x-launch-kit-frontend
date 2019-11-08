@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
-import { transferToken } from '../../../store/actions';
+import { transferToken, updateTokenBalance } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
 import { addTransferTokenNotification } from '../../../store/ui/actions';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
@@ -24,6 +24,7 @@ interface StateProps {
 interface DispatchProps {
     onSubmitTransferToken: (token: Token, amount: BigNumber, address: string, isEth: boolean) => Promise<any>;
     notifyTransferToken: (id: string, amount: BigNumber, token: Token, address: string, tx: Promise<any>) => any;
+    updateTokenBalance: (token: Token) => any;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -87,6 +88,7 @@ class TransferTokenStep extends React.Component<Props, State> {
             await web3Wrapper.awaitTransactionSuccessAsync(txHash);
             onDone();
             this.props.notifyTransferToken(txHash, amount, token, address, Promise.resolve());
+            this.props.updateTokenBalance(token);
         } catch (err) {
             onError(err);
         }
@@ -109,6 +111,7 @@ const TransferTokenStepContainer = connect(
                 dispatch(transferToken(token, amount, address, isEth)),
             notifyTransferToken: (id: string, amount: BigNumber, token: Token, address: string, tx: Promise<any>) =>
                 dispatch(addTransferTokenNotification(id, amount, token, address, tx)),
+            updateTokenBalance: (token: Token) => dispatch(updateTokenBalance(token)),
         };
     },
 )(TransferTokenStep);

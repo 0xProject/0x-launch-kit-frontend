@@ -100,12 +100,11 @@ class App extends React.Component<Props> {
                 }
             }, UPDATE_ETHER_PRICE_INTERVAL);
         }
-
         // Enables realtime updates of token prices
         if (
             !this._updatePriceTokensInterval &&
             UPDATE_TOKENS_PRICE_INTERVAL !== 0 &&
-            MARKETPLACE === MARKETPLACES.ERC20
+            (MARKETPLACE === MARKETPLACES.ERC20 || MARKETPLACE === MARKETPLACES.Margin)
         ) {
             this._updatePriceTokensInterval = window.setInterval(async () => {
                 this.props.onUpdateMarketPriceTokens();

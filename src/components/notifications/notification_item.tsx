@@ -161,6 +161,12 @@ class NotificationItem extends React.Component<Props, State> {
             case NotificationKind.TokenTransferred:
                 operation = 'Transfer Sent';
                 break;
+            case NotificationKind.LendingComplete:
+                operation = 'Lending Complete';
+                break;
+            case NotificationKind.UnLendingComplete:
+                operation = 'Unlending Complete';
+                break;
             default: {
                 const _exhaustiveCheck: never = item;
                 operation = _exhaustiveCheck;

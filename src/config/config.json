@@ -21,7 +21,8 @@
             "icon": "assets/icons/vsf.svg",
             "addresses": {
                 "1": "0xac9ce326e95f51b5005e9fe1dd8085a01f18450c",
-                "3": "0xba3a79d758f19efe588247388754b8e4d6edda81"
+                "3": "0xba3a79d758f19efe588247388754b8e4d6edda81",
+                "42": "0xBA3a79D758f19eFe588247388754b8e4d6EddA81"
             },
             "id": "verisafe",
             "c_id": "verisafe",
@@ -82,6 +83,23 @@
             },
             "c_id": "digixdao",
             "website": "https://digix.global/dgd/"
+        },
+        {
+            "decimals": 18,
+            "symbol": "dai",
+            "name": "Dai",
+            "icon": "assets/icons/dai.svg",
+            "primaryColor": "#DEA349",
+            "addresses": {
+                "1": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+                "3": "0xad6d458402f60fd3bd25163575031acdce07538d",
+                "4": "0x6f2d6ff85efca691aad23d549771160a12f0a0fc",
+                "42": "0xc4375b7de8af5a38a93548eb8453a498222c4ff2",
+                "50": ""
+            },
+            "website": "https://makerdao.com/en/dai/",
+            "description": "Dai is an asset-backed, hard currency for the 21st century.",
+            "c_id": "dai"
         }
     ],
     "pairs": [
