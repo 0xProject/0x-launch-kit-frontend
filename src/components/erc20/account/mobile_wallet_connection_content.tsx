@@ -7,11 +7,11 @@ import styled from 'styled-components';
 import {
     goToHome,
     goToHomeLaunchpad,
+    goToHomeMarginLend,
     goToWallet,
     logoutWallet,
     openFiatOnRampModal,
     openSideBar,
-    goToHomeMarginLend,
 } from '../../../store/actions';
 import { getEthAccount } from '../../../store/selectors';
 import { connectToExplorer, viewOnFabrx } from '../../../util/external_services';

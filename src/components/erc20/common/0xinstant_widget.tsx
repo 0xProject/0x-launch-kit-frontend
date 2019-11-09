@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { FEE_RECIPIENT, INSTANT_FEE_PERCENTAGE } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getKnownTokens } from '../../../util/known_tokens';
-import { ButtonVariant, Wallet } from '../../../util/types';
+import { getKnownTokensIEO } from '../../../util/known_tokens_ieo';
+import { ButtonVariant, Token, Wallet } from '../../../util/types';
 import { Button } from '../../common/button';
 
 /**
@@ -53,6 +54,7 @@ interface Props {
     buttonVariant?: ButtonVariant;
     btnName?: string;
     feePercentage?: number;
+    isIEO?: boolean;
 }
 
 const BuyButton = styled(Button)`
@@ -81,11 +83,19 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
             buttonVariant = ButtonVariant.Buy,
             btnName = 'Buy',
             feePercentage = INSTANT_FEE_PERCENTAGE,
+            isIEO = false,
         } = this.props;
 
         const openZeroXinstantModal = async () => {
-            const knownTokens = getKnownTokens();
-            const token = knownTokens.getTokenByAddress(tokenAddress);
+            let token: Token;
+            if (isIEO) {
+                const knownTokens = getKnownTokensIEO();
+                token = knownTokens.getTokenByAddress(tokenAddress);
+            } else {
+                const knownTokens = getKnownTokens();
+                token = knownTokens.getTokenByAddress(tokenAddress);
+            }
+
             const erc20TokenAssetData = zeroExInstant.assetDataForERC20TokenAddress(token.address);
             const additionalAssetMetaDataMap = {
                 [erc20TokenAssetData]: {

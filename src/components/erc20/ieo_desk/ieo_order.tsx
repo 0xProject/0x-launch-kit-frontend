@@ -274,10 +274,9 @@ class IEOOrder extends React.Component<Props, State> {
         const decimals = baseToken.decimals;
         // Configs Hardcoded for now
         const pricePrecision = 12;
-        const minAmount = new BigNumber(1).div(new BigNumber(10).pow(pricePrecision)).toString();
+        const basePrecision = 8;
+        const minAmount = new BigNumber(1).div(new BigNumber(10).pow(basePrecision)).toString();
         const minAmountUnits = unitsInTokenAmount(minAmount, decimals);
-
-        const basePrecision = 12;
         const stepAmount = new BigNumber(1).div(new BigNumber(10).pow(basePrecision));
         const stepAmountUnits = unitsInTokenAmount(String(stepAmount), decimals);
 

@@ -25,7 +25,9 @@ const IconContainer = styled.div`
 const SocialIconContainer = (props: Props) => {
     const { url, icon, color = 'white', ...restProps } = props;
     const iconSrc = `assets/social/${icon}.svg`;
-
+    if (!url) {
+        return null;
+    }
     const Icon = <ReactSVG src={iconSrc as string} />;
     const openSocial = () => {
         window.open(url);
