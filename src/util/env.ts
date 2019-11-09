@@ -21,7 +21,7 @@ export const envUtil = {
         const anyProvider = provider as any;
         if (provider.constructor.name === 'EthereumProvider') {
             return ProviderType.Mist;
-        } else if (anyProvider.isTrust) {
+        } else if ((window as any).ethereum !== undefined && (window as any).ethereum.isTrust) {
             return ProviderType.TrustWallet;
         } else if (anyProvider.isParity) {
             return ProviderType.Parity;
