@@ -200,11 +200,11 @@ const tokensPartialTable = (
                 const { symbol } = token;
                 const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
 
-                const openTransferModal = () => {
+               /* const openTransferModal = () => {
                     setIsModalOpen(true);
                     setTokenBalanceSelected(tokenBalance);
                     setIsEth(false);
-                };
+                };*/
                 let orderSource: SignedOrder[] = [];
                 if (orders) {
                     if (orders.length) {
