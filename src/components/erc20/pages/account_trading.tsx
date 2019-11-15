@@ -14,7 +14,7 @@ const ColumnWideMyWallet = styled(ColumnWide)`
     }
 `;
 
-export const AccountTradingsPage = () => (
+const AccountTradingsPage = () => (
     <Content>
         <ColumnWideMyWallet>
             <AccountTradingsContainer />
@@ -22,3 +22,5 @@ export const AccountTradingsPage = () => (
         <FiatOnRampModalContainer />
     </Content>
 );
+
+export { AccountTradingsPage as default };

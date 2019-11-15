@@ -9,7 +9,7 @@ import { IEOOrderContainer } from '../ieo_desk/ieo_order';
 import { IEOOrderHistoryContainer } from '../ieo_desk/ieo_order_history';
 import { IEOWalletBalanceContainer } from '../ieo_desk/ieo_wallet_balance';
 
-export const IEOOrdersPage = () => (
+const IEOOrdersPage = () => (
     <>
         <Content>
             <CheckWalletStateModalContainer>
@@ -25,3 +25,5 @@ export const IEOOrdersPage = () => (
         </Content>
     </>
 );
+
+export { IEOOrdersPage as default };

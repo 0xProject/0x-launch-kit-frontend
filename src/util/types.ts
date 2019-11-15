@@ -483,6 +483,7 @@ export enum MARKETPLACES {
     ERC721 = 'ERC721',
     LaunchPad = 'LAUNCHPAD',
     Margin = 'MARGIN',
+    Instant = 'INSTANT',
 }
 
 export enum Wallet {

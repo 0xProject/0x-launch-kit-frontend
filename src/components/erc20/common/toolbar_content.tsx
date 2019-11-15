@@ -153,4 +153,4 @@ const ToolbarContentContainer = withWindowWidth(
     ),
 );
 
-export { ToolbarContent, ToolbarContentContainer };
+export { ToolbarContent, ToolbarContentContainer as default };

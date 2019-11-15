@@ -51,6 +51,11 @@ class App extends React.Component<Props> {
     private _updateERC20MarketsInterval: number | undefined;
 
     public componentDidMount = () => {
+        const { MARKETPLACE } = this.props;
+        // no need to init when instant is the marketplace
+        if (MARKETPLACE === MARKETPLACES.Instant) {
+            return;
+        }
         // this.props.onInitWalletState();
         const walletConnected = localStorage.getWalletConnected();
         if (walletConnected !== false && walletConnected !== undefined) {
@@ -61,7 +66,11 @@ class App extends React.Component<Props> {
     };
 
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<Props>, snapshot?: any) => {
-        const { web3State } = this.props;
+        const { web3State, MARKETPLACE } = this.props;
+        // no need to init when instant is the marketplace
+        if (MARKETPLACE === MARKETPLACES.Instant) {
+            return;
+        }
         if (web3State !== prevProps.web3State) {
             if (web3State === Web3State.Done) {
                 this._activatePollingUpdates();

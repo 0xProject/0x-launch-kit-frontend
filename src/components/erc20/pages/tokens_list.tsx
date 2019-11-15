@@ -13,10 +13,12 @@ const ColumnWideMyWallet = styled(ColumnWide)`
     }
 `;
 
-export const TokensListPage = () => (
+const TokensListPage = () => (
     <Content>
         <ColumnWideMyWallet>
             <TokenListWithTheme />
         </ColumnWideMyWallet>
     </Content>
 );
+
+export { TokensListPage as default };

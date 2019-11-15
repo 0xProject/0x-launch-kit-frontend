@@ -16,7 +16,7 @@ const ColumnWideMyWallet = styled(ColumnWide)`
     }
 `;
 
-export const IEOPage = () => (
+const IEOPage = () => (
     <Content>
         <CheckWalletStateModalContainer>
             <ColumnWideMyWallet>
@@ -27,3 +27,5 @@ export const IEOPage = () => (
         <FiatOnRampModalContainer />
     </Content>
 );
+
+export { IEOPage as default };

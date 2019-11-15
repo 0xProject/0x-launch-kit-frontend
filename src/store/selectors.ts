@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 import {
     ERC20_APP_BASE_PATH,
     ERC721_APP_BASE_PATH,
+    INSTANT_APP_BASE_PATH,
     LAUNCHPAD_APP_BASE_PATH,
     MARGIN_APP_BASE_PATH,
 } from '../common/constants';
@@ -92,6 +93,8 @@ export const getCurrentMarketPlace = createSelector(
             return MARKETPLACES.LaunchPad;
         } else if (currentRoute.includes(MARGIN_APP_BASE_PATH)) {
             return MARKETPLACES.Margin;
+        } else if (currentRoute.includes(INSTANT_APP_BASE_PATH)) {
+            return MARKETPLACES.Instant;
         } else {
             return MARKETPLACES.ERC20;
         }

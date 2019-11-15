@@ -19,15 +19,7 @@ import {
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { isMobile } from '../../../util/screen';
 import { getEtherscanLinkForToken, getEtherscanLinkForTokenAndAddress, tokenAmountInUnits } from '../../../util/tokens';
-import {
-    StoreState,
-    Token,
-    TokenBalance,
-    TokenBalanceIEO,
-    TokenPrice,
-    Wallet,
-    Web3State,
-} from '../../../util/types';
+import { StoreState, Token, TokenBalance, TokenBalanceIEO, TokenPrice, Wallet, Web3State } from '../../../util/types';
 import { TransferTokenModal } from '../../account/wallet_transfer_token_modal';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
@@ -200,7 +192,7 @@ const tokensPartialTable = (
                 const { symbol } = token;
                 const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
 
-               /* const openTransferModal = () => {
+                /* const openTransferModal = () => {
                     setIsModalOpen(true);
                     setTokenBalanceSelected(tokenBalance);
                     setIsEth(false);

@@ -25,11 +25,16 @@ export class KnownTokens {
 
     public getTokenBySymbol = (symbol: string): Token => {
         const symbolInLowerCaseScore = symbol.toLowerCase();
-        const token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
+        let token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
         if (!token) {
             if (symbolInLowerCaseScore === 'weth') {
                 return this.getWethToken();
             }
+        }
+        if (!token) {
+            token = this._tokensIEO.find(t => t.symbol === symbolInLowerCaseScore);
+        }
+        if (!token) {
             const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
             logger.log(errorMessage);
             throw new Error(errorMessage);
@@ -89,6 +94,17 @@ export class KnownTokens {
         }
 
         return true;
+    };
+    public getTokenByName = (name: string): Token => {
+        const nameInLowerCaseScore = name.toLowerCase();
+        let token = this._tokens.find(t => t.name.toLowerCase() === nameInLowerCaseScore);
+        if (!token) {
+            token = this._tokensIEO.find(t => t.name.toLowerCase() === nameInLowerCaseScore);
+        }
+        if (!token) {
+            throw new Error(`Token with name ${name} not found in known tokens`);
+        }
+        return token;
     };
 
     public getWethToken = (): Token => {

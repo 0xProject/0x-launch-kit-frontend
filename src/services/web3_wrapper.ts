@@ -1,9 +1,6 @@
 // tslint:disable-next-line: no-implicit-dependencies
 import { providerUtils } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
-import Portis from '@portis/web3';
-// @ts-ignore - no typings
-import Fortmatic from 'fortmatic';
 
 import { FORTMATIC_APP_ID, NETWORK_ID, NETWORK_NAME, PORTIS_APP_ID } from '../common/constants';
 import { providerFactory } from '../util/provider_factory';
@@ -192,7 +189,8 @@ export const initPortis = async (): Promise<Web3Wrapper | null> => {
         return null;
     }
     try {
-        const portis = new Portis(PORTIS_APP_ID, NETWORK_NAME.toLowerCase());
+        const Portis = await import('@portis/web3');
+        const portis = new Portis.default(PORTIS_APP_ID, NETWORK_NAME.toLowerCase());
         web3Wrapper = new Web3Wrapper(portis.provider);
         const [account] = await web3Wrapper.getAvailableAddressesAsync();
         portis.onLogout(() => {
@@ -267,10 +265,12 @@ export const initFortmatic = async (): Promise<Web3Wrapper | null> => {
     if (!FORTMATIC_APP_ID) {
         return null;
     }
+    // @ts-ignore - no typings
+    const Fortmatic = await import('fortmatic');
     const fm =
         NETWORK_ID === 1
-            ? new Fortmatic(FORTMATIC_APP_ID)
-            : new Fortmatic(FORTMATIC_APP_ID, NETWORK_NAME.toLowerCase());
+            ? new Fortmatic.default(FORTMATIC_APP_ID)
+            : new Fortmatic.default(FORTMATIC_APP_ID, NETWORK_NAME.toLowerCase());
 
     web3Wrapper = new Web3Wrapper(fm.getProvider());
     let isUserLoggedIn = await fm.user.isLoggedIn();

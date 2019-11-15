@@ -24,7 +24,8 @@ import { EmptyContent } from '../../common/empty_content';
 import { withWindowWidth } from '../../common/hoc/withWindowWidth';
 import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
-import { TVChartContainer } from '../marketplace/tv_chart';
+
+const TVChartContainer = React.lazy(() => import('../marketplace/tv_chart'));
 
 const MarketDetailCard = styled(Card)`
     max-height: 600px;

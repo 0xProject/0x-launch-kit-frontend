@@ -2,10 +2,10 @@
 // import configFileProduction from '../config/files/config.json';
 
 // import configFileProduction from '../config/files/config2.json';
-// import configFileIEOProduction from './files/config-ieo.json';
 // Using this due to CI error
 import configFileIEOProduction from './config-ieo.json';
 import configFileTest from './config-test.json';
+// import configFileIEOProduction from './files/config-ieo.json';
 import configFileProduction from './config.json';
 
 let configFile: any;

@@ -43,7 +43,8 @@ function getLanguageFromURL(): LanguageCode | null {
     return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode);
 }
 
-export class TVChartContainer extends React.PureComponent<Partial<ChartContainerProps>, ChartContainerState> {
+// tslint:disable-next-line: no-default-export
+export default class TVChartContainer extends React.PureComponent<Partial<ChartContainerProps>, ChartContainerState> {
     public static defaultProps: ChartContainerProps = {
         symbol: 'VSF-WETH',
         interval: 'D',
