@@ -16,7 +16,7 @@ const ColumnWideMyWallet = styled(ColumnWide)`
     }
 `;
 
-export const MyWallet = () => (
+const MyWallet = () => (
     <Content>
         <CheckWalletStateModalContainer>
             <ColumnNarrow>
@@ -29,3 +29,5 @@ export const MyWallet = () => (
         <FiatOnRampModalContainer />
     </Content>
 );
+
+export { MyWallet as default };

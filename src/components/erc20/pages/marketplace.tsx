@@ -65,4 +65,4 @@ class Marketplace extends React.PureComponent {
     };
 }
 
-export { Marketplace };
+export { Marketplace as default };

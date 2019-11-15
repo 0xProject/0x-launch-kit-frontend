@@ -1,8 +1,10 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
+import { KNOWN_TOKENS_IEO_META_DATA } from '../common/tokens_meta_data_ieo';
 import { getLogger } from '../util/logger';
 
+import { mapTokensIEOMetaDataToTokenByNetworkId } from './token_ieo_meta_data';
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
 import { Token } from './types';
 
@@ -10,20 +12,29 @@ const logger = getLogger('Tokens::known_tokens .ts');
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
+    private readonly _tokensIEO: Token[] = [];
     private readonly _wethToken: Token;
 
     constructor(knownTokensMetadata: TokenMetaData[]) {
         this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
+        this._tokensIEO = mapTokensIEOMetaDataToTokenByNetworkId(KNOWN_TOKENS_IEO_META_DATA).filter(
+            token => !isWeth(token.symbol),
+        );
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
         const symbolInLowerCaseScore = symbol.toLowerCase();
-        const token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
+        let token = this._tokens.find(t => t.symbol === symbolInLowerCaseScore);
         if (!token) {
             if (symbolInLowerCaseScore === 'weth') {
                 return this.getWethToken();
             }
+        }
+        if (!token) {
+            token = this._tokensIEO.find(t => t.symbol === symbolInLowerCaseScore);
+        }
+        if (!token) {
             const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
             logger.log(errorMessage);
             throw new Error(errorMessage);
@@ -38,6 +49,9 @@ export class KnownTokens {
             // If it's not on the tokens list, we check if it's an wETH token
             // TODO - Maybe the this._tokens could be refactored to also have wETH inside
             token = this._wethToken.address === address ? this._wethToken : undefined;
+        }
+        if (!token) {
+            token = this._tokensIEO.find(t => t.address.toLowerCase() === addressInLowerCase);
         }
         if (!token) {
             throw new Error(`Token with address ${address} not found in known tokens`);
@@ -80,6 +94,17 @@ export class KnownTokens {
         }
 
         return true;
+    };
+    public getTokenByName = (name: string): Token => {
+        const nameInLowerCaseScore = name.toLowerCase();
+        let token = this._tokens.find(t => t.name.toLowerCase() === nameInLowerCaseScore);
+        if (!token) {
+            token = this._tokensIEO.find(t => t.name.toLowerCase() === nameInLowerCaseScore);
+        }
+        if (!token) {
+            throw new Error(`Token with name ${name} not found in known tokens`);
+        }
+        return token;
     };
 
     public getWethToken = (): Token => {

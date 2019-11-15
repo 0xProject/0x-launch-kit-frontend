@@ -15,7 +15,7 @@ const ColumnWideMyWallet = styled(ColumnWide)`
     }
 `;
 
-export const LendingPage = () => (
+const LendingPage = () => (
     <Content>
         <CheckWalletStateModalContainer>
             <ColumnWideMyWallet>
@@ -25,3 +25,5 @@ export const LendingPage = () => (
         <FiatOnRampModalContainer />
     </Content>
 );
+
+export { LendingPage as default };

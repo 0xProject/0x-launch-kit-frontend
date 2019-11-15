@@ -65,8 +65,10 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [x] Adding Account market stats
 -   [ ] Click on buy and sell button to auto-fill
 -   [ ] Create a costumized front page
--   [ ] Order Matching on the Frontend when doing limit orders
--   [ ] Page for trading competitions
+-   [x] Order Matching on the Frontend when doing limit orders
+-   [x] Page for trading competitions
+-   [x] Add instant as standalone
+-   [x] Code splitting
 -   [ ] Report data to the most known crypto data aggregators (In progress)
 -   [ ] Theme switcher
 -   [ ] [i18n](https://github.com/i18next/react-i18next)

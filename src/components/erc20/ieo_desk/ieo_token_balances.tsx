@@ -19,18 +19,8 @@ import {
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { isMobile } from '../../../util/screen';
 import { getEtherscanLinkForToken, getEtherscanLinkForTokenAndAddress, tokenAmountInUnits } from '../../../util/tokens';
-import {
-    ButtonVariant,
-    StoreState,
-    Token,
-    TokenBalance,
-    TokenBalanceIEO,
-    TokenPrice,
-    Wallet,
-    Web3State,
-} from '../../../util/types';
+import { StoreState, Token, TokenBalance, TokenBalanceIEO, TokenPrice, Wallet, Web3State } from '../../../util/types';
 import { TransferTokenModal } from '../../account/wallet_transfer_token_modal';
-import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { withWindowWidth } from '../../common/hoc/withWindowWidth';
@@ -38,6 +28,7 @@ import { SocialIcon } from '../../common/icons/social_icon';
 import { TokenIcon } from '../../common/icons/token_icon';
 import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../../common/table';
+import { IconType, Tooltip } from '../../common/tooltip';
 import { ZeroXInstantWidget } from '../common/0xinstant_widget';
 
 interface StateProps {
@@ -138,6 +129,39 @@ const SocialsContainer = styled.div`
     justify-content: center;
 `;
 
+const TooltipStyled = styled(Tooltip)`
+    flex-wrap: wrap;
+    .reactTooltip {
+        max-width: 650px;
+    }
+    @media (max-width: ${themeBreakPoints.sm}) {
+        .reactTooltip {
+            max-width: 350px;
+            text-align: center;
+        }
+    }
+`;
+
+const WebsiteLink = styled.a`
+    align-items: center;
+    color: ${props => props.theme.componentsTheme.myWalletLinkColor};
+    display: flex;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+    }
+`;
+
+const LabelWrapper = styled.span`
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    margin-right: 15px;
+`;
+
 const parsedUrl = new URL(window.location.href.replace('#/', ''));
 const tokenName = parsedUrl.searchParams.get('token');
 
@@ -168,11 +192,11 @@ const tokensPartialTable = (
                 const { symbol } = token;
                 const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
 
-                const openTransferModal = () => {
+                /* const openTransferModal = () => {
                     setIsModalOpen(true);
                     setTokenBalanceSelected(tokenBalance);
                     setIsEth(false);
-                };
+                };*/
                 let orderSource: SignedOrder[] = [];
                 if (orders) {
                     if (orders.length) {
@@ -197,18 +221,56 @@ const tokensPartialTable = (
                     : INSTANT_FEE_PERCENTAGE;
                 const hasOrders = orderSource.length ? true : false;
 
+                const website = token.website ? (
+                    <WebsiteLink href={token.website} target={'_blank'}>
+                        {token.website}
+                    </WebsiteLink>
+                ) : (
+                    '-'
+                );
                 if (isMobileView) {
                     return (
                         <tbody key={symbol}>
                             <TR>
                                 <TH>Token</TH>
                                 <CustomTDTokenName styles={{ borderBottom: true, textAlign: 'center' }}>
-                                    <TokenEtherscanLink href={getEtherscanLinkForToken(token)} target={'_blank'}>
-                                        <TokenName>{token.symbol.toUpperCase()}</TokenName>{' '}
-                                        <TokenNameSeparator>{` - `}</TokenNameSeparator>
-                                        {`${token.name}`}
-                                    </TokenEtherscanLink>
+                                    <LabelWrapper>
+                                        <TokenEtherscanLink href={getEtherscanLinkForToken(token)} target={'_blank'}>
+                                            <TokenName>{token.symbol.toUpperCase()}</TokenName>{' '}
+                                            <TokenNameSeparator>{` - `}</TokenNameSeparator>
+                                            {`${token.name}`}
+                                        </TokenEtherscanLink>
+                                        <TooltipStyled
+                                            description={token.description || 'no description'}
+                                            iconType={IconType.Fill}
+                                        />
+                                    </LabelWrapper>
                                 </CustomTDTokenName>
+                            </TR>
+                            <TR>
+                                <TH>Actions </TH>
+                                <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
+                                    <ButtonsContainer>
+                                        {/*<Button onClick={openTransferModal} variant={ButtonVariant.Primary}>
+                                            Send
+                    </Button>*/}
+                                        {hasOrders && (
+                                            <ZeroXInstantWidget
+                                                orderSource={orderSource}
+                                                tokenAddress={token.address}
+                                                networkId={NETWORK_ID}
+                                                walletDisplayName={wallet}
+                                                feePercentage={feePercentage}
+                                                isIEO={true}
+                                            />
+                                        )}
+                                        {!hasOrders && 'No Orders'}
+                                    </ButtonsContainer>
+                                </CustomTD>
+                            </TR>
+                            <TR>
+                                <TH>Website</TH>
+                                <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>{website}</CustomTD>
                             </TR>
                             <TR>
                                 <TH>Balance</TH>
@@ -227,25 +289,6 @@ const tokensPartialTable = (
                                     <SocialsContainer>{socialButtons()}</SocialsContainer>
                                 </CustomTD>
                             </TR>
-                            <TR>
-                                <TH>Actions</TH>
-                                <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
-                                    <ButtonsContainer>
-                                        <Button onClick={openTransferModal} variant={ButtonVariant.Primary}>
-                                            Send
-                                        </Button>
-                                        {hasOrders && (
-                                            <ZeroXInstantWidget
-                                                orderSource={orderSource}
-                                                tokenAddress={token.address}
-                                                networkId={NETWORK_ID}
-                                                walletDisplayName={wallet}
-                                                feePercentage={feePercentage}
-                                            />
-                                        )}
-                                    </ButtonsContainer>
-                                </CustomTD>
-                            </TR>
                         </tbody>
                     );
                 } else {
@@ -258,13 +301,38 @@ const tokensPartialTable = (
                                     icon={token.icon}
                                 />
                             </TokenTD>
-                            <CustomTDTokenName styles={{ borderBottom: true }}>
-                                <TokenEtherscanLink href={getEtherscanLinkForToken(token)} target={'_blank'}>
-                                    <TokenName>{token.symbol.toUpperCase()}</TokenName>{' '}
-                                    <TokenNameSeparator>{` - `}</TokenNameSeparator>
-                                    {`${token.name}`}
-                                </TokenEtherscanLink>
+                            <CustomTDTokenName styles={{ borderBottom: true, textAlign: 'center' }}>
+                                <LabelWrapper>
+                                    <TokenEtherscanLink href={getEtherscanLinkForToken(token)} target={'_blank'}>
+                                        <TokenName>{token.symbol.toUpperCase()}</TokenName>{' '}
+                                        <TokenNameSeparator>{` - `}</TokenNameSeparator>
+                                        {`${token.name}`}
+                                    </TokenEtherscanLink>
+                                    <TooltipStyled
+                                        description={token.description || 'no description'}
+                                        iconType={IconType.Fill}
+                                    />
+                                </LabelWrapper>
                             </CustomTDTokenName>
+                            <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
+                                <ButtonsContainer>
+                                    {/*<Button onClick={openTransferModal} variant={ButtonVariant.Primary}>
+                                        Send
+                                    </Button>*/}
+                                    {hasOrders && (
+                                        <ZeroXInstantWidget
+                                            orderSource={orderSource}
+                                            tokenAddress={token.address}
+                                            networkId={NETWORK_ID}
+                                            walletDisplayName={wallet}
+                                            feePercentage={feePercentage}
+                                            isIEO={true}
+                                        />
+                                    )}
+                                    {!hasOrders && 'No Orders'}
+                                </ButtonsContainer>
+                            </CustomTD>
+                            <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>{website}</CustomTD>
                             <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
                                 <QuantityEtherscanLink
                                     href={getEtherscanLinkForTokenAndAddress(token, ethAccount)}
@@ -275,22 +343,6 @@ const tokensPartialTable = (
                             </CustomTD>
                             <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
                                 <SocialsContainer>{socialButtons()}</SocialsContainer>
-                            </CustomTD>
-                            <CustomTD styles={{ borderBottom: true, textAlign: 'center' }}>
-                                <ButtonsContainer>
-                                    <Button onClick={openTransferModal} variant={ButtonVariant.Primary}>
-                                        Send
-                                    </Button>
-                                    {hasOrders && (
-                                        <ZeroXInstantWidget
-                                            orderSource={orderSource}
-                                            tokenAddress={token.address}
-                                            networkId={NETWORK_ID}
-                                            walletDisplayName={wallet}
-                                            feePercentage={feePercentage}
-                                        />
-                                    )}
-                                </ButtonsContainer>
                             </CustomTD>
                         </TR>
                     );
@@ -347,6 +399,20 @@ const IEOTokenBalances = (props: Props) => {
                 fetchLaunchpad();
             }
         };
+        const transferTokenModal = wethToken ? (
+            <TransferTokenModal
+                isOpen={isModalOpen}
+                tokenBalance={tokenBalanceSelected as TokenBalance}
+                isSubmitting={isSubmitting}
+                onSubmit={handleSubmit}
+                style={theme.modalTheme}
+                closeModal={closeModal}
+                ethBalance={ethBalance}
+                isEth={isEth}
+                wethToken={wethToken}
+            />
+        ) : null;
+
         const isMobileView = isMobile(windowWidth);
         if (isMobileView) {
             content = (
@@ -361,19 +427,7 @@ const IEOTokenBalances = (props: Props) => {
                             isMobileView,
                         )}
                     </Table>
-                    {wethToken && (
-                        <TransferTokenModal
-                            isOpen={isModalOpen}
-                            tokenBalance={tokenBalanceSelected as TokenBalance}
-                            isSubmitting={isSubmitting}
-                            onSubmit={handleSubmit}
-                            style={theme.modalTheme}
-                            closeModal={closeModal}
-                            ethBalance={ethBalance}
-                            isEth={isEth}
-                            wethToken={wethToken}
-                        />
-                    )}
+                    {transferTokenModal}
                 </>
             );
         } else {
@@ -384,9 +438,10 @@ const IEOTokenBalances = (props: Props) => {
                             <TR>
                                 <THStyled>Token</THStyled>
                                 <THStyled>{}</THStyled>
+                                <THLast styles={{ textAlign: 'center' }}>Actions</THLast>
+                                <THStyled styles={{ textAlign: 'center' }}>Website</THStyled>
                                 <THStyled styles={{ textAlign: 'center' }}>Your Balance</THStyled>
                                 <THStyled styles={{ textAlign: 'center' }}>Links</THStyled>
-                                <THLast styles={{ textAlign: 'center' }}>Actions</THLast>
                             </TR>
                         </THead>
                         <TBody>
@@ -400,19 +455,7 @@ const IEOTokenBalances = (props: Props) => {
                             )}
                         </TBody>
                     </Table>
-                    {wethToken && (
-                        <TransferTokenModal
-                            isOpen={isModalOpen}
-                            tokenBalance={tokenBalanceSelected as TokenBalance}
-                            isSubmitting={isSubmitting}
-                            onSubmit={handleSubmit}
-                            style={theme.modalTheme}
-                            closeModal={closeModal}
-                            ethBalance={ethBalance}
-                            isEth={isEth}
-                            wethToken={wethToken}
-                        />
-                    )}
+                    {transferTokenModal}
                 </>
             );
         }
