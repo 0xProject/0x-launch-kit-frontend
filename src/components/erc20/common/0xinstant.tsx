@@ -61,8 +61,8 @@ export const ZeroXInstantComponent = (props: Props) => {
         });
     }, []);
 
-    const { networkId = 1, feePercentage = INSTANT_FEE_PERCENTAGE } = props;
-
+    const { networkId = 1 } = props;
+    let feePercentage = INSTANT_FEE_PERCENTAGE;
     let orderSource: string | SignedOrder[] = RELAYER_URL;
 
     const openZeroXinstantModal = async () => {
@@ -85,6 +85,7 @@ export const ZeroXInstantComponent = (props: Props) => {
                 if (!orderSource || orderSource.length === 0) {
                     orderSource = RELAYER_URL;
                 }
+                feePercentage = Number(baseToken.feePercentage);
             }
         } catch {
             token = undefined;
