@@ -47,8 +47,9 @@ const fillToRow = (fill: Fill, index: number, _setMarket: any) => {
     const displayAmountBase = `${amountBase} ${fill.tokenBase.symbol.toUpperCase()}`;
     const amountQuote = tokenAmountInUnits(fill.amountQuote, fill.tokenQuote.decimals, fill.tokenQuote.displayDecimals);
     const tokenQuoteSymbol = isWeth(fill.tokenQuote.symbol) ? 'ETH' : fill.tokenQuote.symbol.toUpperCase();
+    const tokenBaseSymbol = isWeth(fill.tokenBase.symbol) ? 'ETH' : fill.tokenBase.symbol.toUpperCase();
     const displayAmountQuote = `${amountQuote} ${tokenQuoteSymbol}`;
-    const market = `${fill.tokenBase.symbol.toUpperCase()}/${tokenQuoteSymbol}`;
+    const market = `${tokenBaseSymbol}/${tokenQuoteSymbol}`;
     let currencyPair: CurrencyPair;
     try {
         currencyPair = getCurrencyPairByTokensSymbol(fill.tokenBase.symbol, fill.tokenQuote.symbol);
@@ -81,7 +82,7 @@ class OrderFills extends React.Component<Props> {
         switch (web3State) {
             case Web3State.Locked:
             case Web3State.NotInstalled: {
-                content = <EmptyContent alignAbsoluteCenter={true} text="There are no trades to show" />;
+                content = <EmptyContent alignAbsoluteCenter={true} text="Connect Wallet to show history" />;
                 break;
             }
             case Web3State.Loading: {
@@ -119,7 +120,7 @@ class OrderFills extends React.Component<Props> {
             }
         }
 
-        return <DexTradesList title="Last DEX Trades">{content}</DexTradesList>;
+        return <DexTradesList title="Last 0X Mesh Trades">{content}</DexTradesList>;
     };
 }
 

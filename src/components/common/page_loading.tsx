@@ -8,7 +8,7 @@ const Ball = styled.div`
     color: white;
 `;
 
-export const PageLoading = () => (
+export const PageLoading = ({ text = 'Veridex Loading ...' }) => (
     <div className="black-overlay">
         <Ball className="la-ball-square-clockwise-spin la-2x">
             <div />
@@ -22,7 +22,7 @@ export const PageLoading = () => (
         </Ball>
         <div className="loading-text">
             <LoadingText>
-                <strong> VeriDex Loading...</strong>{' '}
+                <strong> {text}</strong>{' '}
             </LoadingText>
         </div>
     </div>

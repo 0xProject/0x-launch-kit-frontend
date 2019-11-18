@@ -71,7 +71,7 @@ class MarketFills extends React.Component<Props> {
         switch (web3State) {
             case Web3State.Locked:
             case Web3State.NotInstalled: {
-                content = <EmptyContent alignAbsoluteCenter={true} text="There are no trades to show" />;
+                content = <EmptyContent alignAbsoluteCenter={true} text="Connect Wallet to show history" />;
                 break;
             }
             case Web3State.Loading: {
@@ -87,15 +87,16 @@ class MarketFills extends React.Component<Props> {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no trades to show" />;
                 } else {
                     const market = marketToStringFromTokens(baseToken, quoteToken);
-
+                    const tokenQuoteSymbol = isWeth(quoteToken.symbol) ? 'ETH' : quoteToken.symbol.toUpperCase();
+                    const tokenBaseSymbol = isWeth(baseToken.symbol) ? 'ETH' : baseToken.symbol.toUpperCase();
                     content = (
                         <Table isResponsive={true}>
                             <THead>
                                 <TR>
                                     <TH>Side</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Price ({quoteToken.symbol.toUpperCase()})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Amount ({baseToken.symbol.toUpperCase()})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Total ({quoteToken.symbol.toUpperCase()})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Price ({tokenQuoteSymbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Amount ({tokenBaseSymbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Total ({tokenQuoteSymbol})</TH>
                                     <TH styles={{ textAlign: 'right' }}>Age</TH>
                                 </TR>
                             </THead>

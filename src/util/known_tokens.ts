@@ -59,6 +59,15 @@ export class KnownTokens {
         return token;
     };
 
+    public getTokenIEOByAddress = (address: string): Token => {
+        const addressInLowerCase = address.toLowerCase();
+        const token = this._tokensIEO.find(t => t.address.toLowerCase() === addressInLowerCase);
+        if (!token) {
+            throw new Error(`Token with address ${address} not found in known tokens`);
+        }
+        return token;
+    };
+
     public getTokenByAssetData = (assetData: string): Token => {
         const tokenAddress = assetDataUtils.decodeERC20AssetData(assetData).tokenAddress;
         return this.getTokenByAddress(tokenAddress);
@@ -67,6 +76,15 @@ export class KnownTokens {
     public isKnownAddress = (address: string): boolean => {
         try {
             this.getTokenByAddress(address);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    };
+
+    public isIEOKnownAddress = (address: string): boolean => {
+        try {
+            this.getTokenIEOByAddress(address);
             return true;
         } catch (e) {
             return false;

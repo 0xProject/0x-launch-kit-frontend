@@ -204,7 +204,7 @@ const tokensPartialTable = (
                         orderSource = orders.filter(
                             o =>
                                 token.owners.map(own => own.toLowerCase()).includes(o.makerAddress.toLowerCase()) &&
-                                assetData === o.makerAssetData,
+                                assetData === o.makerAssetData.toLowerCase(),
                         );
                     }
                 }

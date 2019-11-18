@@ -9,6 +9,7 @@ import {
     UPDATE_TOKENS_PRICE_INTERVAL,
 } from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
+import * as serviceWorker from '../serviceWorker';
 import {
     initializeAppWallet,
     initWallet,
@@ -54,6 +55,7 @@ class App extends React.Component<Props> {
         const { MARKETPLACE } = this.props;
         // no need to init when instant is the marketplace
         if (MARKETPLACE === MARKETPLACES.Instant) {
+            serviceWorker.unregister();
             return;
         }
         // this.props.onInitWalletState();
@@ -69,6 +71,7 @@ class App extends React.Component<Props> {
         const { web3State, MARKETPLACE } = this.props;
         // no need to init when instant is the marketplace
         if (MARKETPLACE === MARKETPLACES.Instant) {
+            serviceWorker.unregister();
             return;
         }
         if (web3State !== prevProps.web3State) {

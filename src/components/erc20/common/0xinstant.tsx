@@ -6,6 +6,7 @@ import { FEE_RECIPIENT, INSTANT_FEE_PERCENTAGE, RELAYER_URL } from '../../../com
 import { getUserIEOSignedOrders } from '../../../services/relayer';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { Token, TokenIEO, Wallet } from '../../../util/types';
+import { PageLoading } from '../../common/page_loading';
 
 /**
  * @see https://cleverbeagle.com/blog/articles/tutorial-how-to-load-third-party-scripts-dynamically-in-javascript
@@ -54,6 +55,8 @@ const useQuery = () => {
 
 export const ZeroXInstantComponent = (props: Props) => {
     const [isScriptReady, setScripReady] = useState(false);
+    const [isError, setError] = useState(false);
+    const [text, setText] = useState('Loading ...');
     const query = useQuery();
     useEffect(() => {
         load0xInstantScript(() => {
@@ -63,13 +66,14 @@ export const ZeroXInstantComponent = (props: Props) => {
 
     const { networkId = 1 } = props;
     let feePercentage = INSTANT_FEE_PERCENTAGE;
-    let orderSource: string | SignedOrder[] = RELAYER_URL;
+    let orderSource: string | SignedOrder[] | undefined = RELAYER_URL;
 
     const openZeroXinstantModal = async () => {
         let token: Token | undefined;
         const tokenName = query.get('token');
         const tokenSymbol = query.get('symbol');
         const isEIO = query.get('isEIO');
+        // TODO refactor this to be better
         try {
             const knownTokens = getKnownTokens();
             if (tokenName) {
@@ -78,17 +82,25 @@ export const ZeroXInstantComponent = (props: Props) => {
             if (tokenSymbol) {
                 token = knownTokens.getTokenBySymbol(tokenSymbol);
             }
+            if (token) {
+                const isTokenIEO = knownTokens.isIEOKnownAddress(token.address);
+                if (isTokenIEO) {
+                    orderSource = undefined;
+                }
+            }
+
             if (isEIO && token) {
                 const baseToken = token as TokenIEO;
                 const wethToken = knownTokens.getWethToken();
                 orderSource = await getUserIEOSignedOrders(baseToken.owners[0].toLowerCase(), baseToken, wethToken);
                 if (!orderSource || orderSource.length === 0) {
-                    orderSource = RELAYER_URL;
+                    orderSource = undefined;
                 }
                 feePercentage = Number(baseToken.feePercentage);
             }
-        } catch {
+        } catch (e) {
             token = undefined;
+            orderSource = undefined;
         }
         let additionalAssetMetaDataMap = {};
         let erc20TokenAssetData;
@@ -105,25 +117,29 @@ export const ZeroXInstantComponent = (props: Props) => {
                 },
             };
         }
-
-        zeroExInstant.render(
-            {
-                //  provider: (await getWeb3Wrapper()).getProvider(),
-                orderSource,
-                networkId,
-                affiliateInfo: {
-                    feeRecipient: FEE_RECIPIENT,
-                    feePercentage,
+        if (orderSource) {
+            zeroExInstant.render(
+                {
+                    //  provider: (await getWeb3Wrapper()).getProvider(),
+                    orderSource,
+                    networkId,
+                    affiliateInfo: {
+                        feeRecipient: FEE_RECIPIENT,
+                        feePercentage,
+                    },
+                    additionalAssetMetaDataMap,
+                    defaultSelectedAssetData: erc20TokenAssetData,
                 },
-                additionalAssetMetaDataMap,
-                defaultSelectedAssetData: erc20TokenAssetData,
-            },
-            'body',
-        );
+                'body',
+            );
+        } else {
+            setText('ERROR! Please Reload the page');
+            setError(true);
+        }
     };
-    if (isScriptReady) {
+    if (isScriptReady && !isError) {
         // tslint:disable-next-line: no-floating-promises
         openZeroXinstantModal();
     }
-    return <></>;
+    return <PageLoading text={text} />;
 };

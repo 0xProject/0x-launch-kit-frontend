@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { getCurrencyPairFromTokens } from '../../../util/known_currency_pairs';
+import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
@@ -76,7 +77,7 @@ class OrderHistory extends React.Component<Props> {
         switch (web3State) {
             case Web3State.Locked:
             case Web3State.NotInstalled: {
-                content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+                content = <EmptyContent alignAbsoluteCenter={true} text="Connect Wallet to show your orders" />;
                 break;
             }
             case Web3State.Loading: {
@@ -89,14 +90,16 @@ class OrderHistory extends React.Component<Props> {
                 } else if (!ordersToShow.length || !baseToken || !quoteToken) {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
                 } else {
+                    const tokenQuoteSymbol = isWeth(quoteToken.symbol) ? 'ETH' : quoteToken.symbol.toUpperCase();
+                    const tokenBaseSymbol = isWeth(baseToken.symbol) ? 'ETH' : baseToken.symbol.toUpperCase();
                     content = (
                         <Table isResponsive={true}>
                             <THead>
                                 <TR>
                                     <TH>Side</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Size ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Filled ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Price ({quoteToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Size ({tokenBaseSymbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Filled ({tokenBaseSymbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>Price ({tokenQuoteSymbol})</TH>
                                     <TH>Status</TH>
                                     <TH>&nbsp;</TH>
                                 </TR>
