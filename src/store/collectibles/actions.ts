@@ -1,5 +1,3 @@
-import { signatureUtils } from '@0x/order-utils';
-import { MetamaskSubprovider } from '@0x/subproviders';
 import { SignedOrder } from '@0x/types';
 import { BigNumber } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
@@ -58,43 +56,45 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 
         let tx;
         if (isDutchAuction(order)) {
-            const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetails.callAsync(order);
-            const currentAuctionAmount = auctionDetails.currentAmount;
-            const buyOrder = {
-                ...order,
-                makerAddress: ethAccount,
-                makerAssetData: order.takerAssetData,
-                takerAssetData: order.makerAssetData,
-                makerAssetAmount: currentAuctionAmount,
-                takerAssetAmount: order.makerAssetAmount,
-            };
+            throw new Error('DutchAuction currently unsupported');
+            // const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetails.callAsync(order);
+            // const currentAuctionAmount = auctionDetails.currentAmount;
+            // const buyOrder = {
+            //     ...order,
+            //     makerAddress: ethAccount,
+            //     makerAssetData: order.takerAssetData,
+            //     takerAssetData: order.makerAssetData,
+            //     makerAssetAmount: currentAuctionAmount,
+            //     takerAssetAmount: order.makerAssetAmount,
+            // };
 
-            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-            const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
-            tx = await contractWrappers.dutchAuction.matchOrders.sendTransactionAsync(
-                buySignedOrder,
-                order,
-                buySignedOrder.signature,
-                order.signature,
-                { from: ethAccount, value: protocolFee, ...getTransactionOptions(gasPrice) },
-            );
+            // const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+            // const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
+            // tx = await contractWrappers.dutchAuction.matchOrders.sendTransactionAsync(
+            //     buySignedOrder,
+            //     order,
+            //     buySignedOrder.signature,
+            //     order.signature,
+            //     { from: ethAccount, value: protocolFee, ...getTransactionOptions(gasPrice) },
+            // );
         } else {
             const affiliateFeeAmount = order.takerAssetAmount
                 .plus(protocolFee)
                 .multipliedBy(FEE_PERCENTAGE)
                 .integerValue(BigNumber.ROUND_CEIL);
-            tx = await contractWrappers.forwarder.marketBuyOrdersWithEth.sendTransactionAsync(
-                [order],
-                order.makerAssetAmount,
-                [order.signature],
-                Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
-                FEE_RECIPIENT,
-                {
+            tx = await contractWrappers.forwarder
+                .marketBuyOrdersWithEth(
+                    [order],
+                    order.makerAssetAmount,
+                    [order.signature],
+                    Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
+                    FEE_RECIPIENT,
+                )
+                .sendTransactionAsync({
                     from: ethAccount,
                     value: order.takerAssetAmount.plus(affiliateFeeAmount).plus(protocolFee),
                     ...getTransactionOptions(gasPrice),
-                },
-            );
+                });
         }
         await web3Wrapper.awaitTransactionSuccessAsync(tx);
 

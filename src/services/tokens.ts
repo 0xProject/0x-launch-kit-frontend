@@ -8,11 +8,10 @@ import { getContractWrappers } from './contract_wrappers';
 export const tokensToTokenBalances = async (tokens: Token[], address: string): Promise<TokenBalance[]> => {
     const contractWrappers = await getContractWrappers();
     const assetDatas = tokens.map(t => assetDataUtils.encodeERC20AssetData(t.address));
-    const [balances, allowances] = await contractWrappers.devUtils.getBatchBalancesAndAssetProxyAllowances.callAsync(
-        address,
-        assetDatas,
-    );
-    const tokenBalances = balances.map((_b, i) => {
+    const [balances, allowances] = await contractWrappers.devUtils
+        .getBatchBalancesAndAssetProxyAllowances(address, assetDatas)
+        .callAsync();
+    const tokenBalances = balances.map((_b: any, i: any) => {
         return {
             token: tokens[i],
             balance: balances[i],

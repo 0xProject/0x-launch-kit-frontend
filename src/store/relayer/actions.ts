@@ -224,41 +224,36 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
             let txHash;
             try {
                 if (isMarketBuyForwarder) {
-                    txHash = await contractWrappers.forwarder.marketBuyOrdersWithEth.sendTransactionAsync(
-                        ordersToFill,
-                        amount,
-                        orderSignatures,
-                        Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
-                        FEE_RECIPIENT,
-                        {
+                    txHash = await contractWrappers.forwarder
+                        .marketBuyOrdersWithEth(
+                            ordersToFill,
+                            amount,
+                            orderSignatures,
+                            Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
+                            FEE_RECIPIENT,
+                        )
+                        .sendTransactionAsync({
                             from: ethAccount,
                             value: totalEthAmount,
                             ...getTransactionOptions(gasPrice),
-                        },
-                    );
+                        });
                 } else {
                     if (isBuy) {
-                        txHash = await contractWrappers.exchange.marketBuyOrdersFillOrKill.sendTransactionAsync(
-                            ordersToFill,
-                            amount,
-                            orderSignatures,
-                            {
+                        txHash = await contractWrappers.exchange
+                            .marketBuyOrdersFillOrKill(ordersToFill, amount, orderSignatures)
+                            .sendTransactionAsync({
                                 from: ethAccount,
                                 value: protocolFee,
                                 ...getTransactionOptions(gasPrice),
-                            },
-                        );
+                            });
                     } else {
-                        txHash = await contractWrappers.exchange.marketSellOrdersFillOrKill.sendTransactionAsync(
-                            ordersToFill,
-                            amount,
-                            orderSignatures,
-                            {
+                        txHash = await contractWrappers.exchange
+                            .marketSellOrdersFillOrKill(ordersToFill, amount, orderSignatures)
+                            .sendTransactionAsync({
                                 from: ethAccount,
                                 value: protocolFee,
                                 ...getTransactionOptions(gasPrice),
-                            },
-                        );
+                            });
                     }
                 }
             } catch (e) {

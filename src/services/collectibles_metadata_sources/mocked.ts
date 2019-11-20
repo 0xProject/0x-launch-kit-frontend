@@ -96,7 +96,7 @@ export class Mocked implements CollectibleMetadataSource {
         const allCollectiblesWithOwner = await Promise.all(
             allCollectibles.map(async collectible => {
                 const erc721Token = new ERC721TokenContract(contractAddress, contractWrappers.getProvider());
-                const owner = await erc721Token.ownerOf.callAsync(new BigNumber(collectible.tokenId));
+                const owner = await erc721Token.ownerOf(new BigNumber(collectible.tokenId)).callAsync();
 
                 return {
                     ...collectible,

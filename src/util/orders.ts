@@ -86,12 +86,13 @@ export const buildSellCollectibleOrder = async (params: BuildSellCollectibleOrde
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
 
+    const round = (num: BigNumber): BigNumber => num.integerValue(BigNumber.ROUND_FLOOR);
     const orderConfigRequest: OrderConfigRequest = {
         exchangeAddress,
         makerAssetData: collectibleData,
         takerAssetData: wethAssetData,
-        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
-        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
+        makerAssetAmount: side === OrderSide.Buy ? round(amount.multipliedBy(price)) : amount,
+        takerAssetAmount: side === OrderSide.Buy ? amount : round(amount.multipliedBy(price)),
         makerAddress: account,
         takerAddress: ZERO_ADDRESS,
         expirationTimeSeconds: expirationDate,
@@ -112,7 +113,10 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
     const quoteTokenAmountInUnits = baseTokenAmountInUnits.multipliedBy(price);
 
     const quoteTokenDecimals = getKnownTokens().getTokenByAddress(quoteTokenAddress).decimals;
-    const quoteTokenAmountInBaseUnits = unitsInTokenAmount(quoteTokenAmountInUnits.toString(), quoteTokenDecimals);
+    const round = (num: BigNumber): BigNumber => num.integerValue(BigNumber.ROUND_FLOOR);
+    const quoteTokenAmountInBaseUnits = round(
+        unitsInTokenAmount(quoteTokenAmountInUnits.toString(), quoteTokenDecimals),
+    );
 
     const isBuy = side === OrderSide.Buy;
 
