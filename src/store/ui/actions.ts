@@ -14,7 +14,6 @@ import {
     createBasicBuyCollectibleSteps,
     createBuySellLimitSteps,
     createBuySellMarketSteps,
-    createDutchBuyCollectibleSteps,
     createSellCollectibleSteps,
 } from '../../util/steps_modals_generation';
 import {

@@ -22,7 +22,7 @@ import { isMetamaskInstalled } from '../../services/web3_wrapper';
 import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
+import { buildSellCollectibleOrder } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
 import {
     BlockchainState,
