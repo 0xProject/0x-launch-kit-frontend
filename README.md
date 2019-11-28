@@ -7,6 +7,8 @@
 
 This is an example implementation of a dApp that interacts with a [0x relayer](https://github.com/0xProject/standard-relayer-api). To use it, you need to have the URL of an existing relayer, or you can start one locally for use during development.
 
+This version of Launch Kit supports 0x v3. If you're looking for v2 it is available on [this branch](https://github.com/0xProject/0x-launch-kit-frontend/tree/v2).
+
 This repo ships with both an ERC-20 token trading interface and an ERC-721 marketplace interface.
 
 |                              ERC-20                              |                              ERC-721                              |
@@ -25,7 +27,7 @@ yarn
 
 ### Using an existing relayer
 
-If you have the URL of an existing relayer, you can use this frontend against it. After installing the dependencies, start the application with this command, replacing `RELAYER_URL` with the proper value:
+If you have the URL of an existing relayer, you can use this frontend against it. After installing the dependencies, start the application with this command, replacing `RELAYER_URL` and `RELAYER_WS_URL` with the proper value:
 
 ```
 REACT_APP_RELAYER_URL='https://RELAYER_URL/v3' REACT_APP_RELAYER_WS_URL='wss://RELAYER_URL/' yarn start
