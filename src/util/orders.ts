@@ -7,7 +7,7 @@ import { getRelayer } from '../services/relayer';
 
 import { getKnownTokens } from './known_tokens';
 import * as orderHelper from './orders';
-import { tomorrow } from './time_utils';
+import { getExpirationTimeOrdersFromConfig } from './time_utils';
 import { tokenAmountInUnitsToBigNumber, unitsInTokenAmount } from './tokens';
 import { OrderSide, UIOrder } from './types';
 
@@ -128,7 +128,7 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
         takerAssetAmount: isBuy ? amount : quoteTokenAmountInBaseUnits,
         makerAddress: account,
         takerAddress: ZERO_ADDRESS,
-        expirationTimeSeconds: tomorrow(),
+        expirationTimeSeconds: getExpirationTimeOrdersFromConfig(),
     };
 
     return orderHelper.getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);

@@ -102,6 +102,7 @@ You can create a `.env` file to set environment variables and configure the beha
 -   `REACT_APP_FEE_RECIPIENT`: The address which receives the fees from the Forwarder.
 -   `REACT_APP_NETWORK_ID`: The network id to build the front end for. E.g `42` for Kovan, `50` for Ganache
 -   `REACT_APP_CHAIN_ID`: The chain id to build the front end for. E.g `42` for Kovan, `1337` for Ganache
+-   `REACT_APP_DEFAULT_ORDER_EXPIRY_SECONDS`: The expiration time for an order. Defaults to 1 day.
 
 Check `.env.example` for the full list.
 
