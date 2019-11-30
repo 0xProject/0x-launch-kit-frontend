@@ -215,7 +215,7 @@ export const getUserIEOSignedOrders = async (
     const quoteAssetData = assetDataUtils.encodeERC20AssetData(quoteToken.address);
 
     const response = await fetch(
-        `${RELAYER_URL}/ieo_orders?makerAssetData=${baseAssetData}&takerAssetData=${quoteAssetData}&makerAddress=${makerAddress}`,
+        `${RELAYER_URL}/ieo_orders?makerAssetData=${baseAssetData}&takerAssetData=${quoteAssetData}&makerAddress=${makerAddress.toLowerCase()}`,
         init,
     );
     if (response.ok) {

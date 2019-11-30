@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import {
     goToHome,
     goToHomeLaunchpad,
-    goToHomeMarginLend,
     goToWallet,
     logoutWallet,
     openFiatOnRampModal,
@@ -63,10 +62,10 @@ export const MobileWalletConnectionContent = () => {
         dispatch(openSideBar(false));
     };
 
-    const onGoToMarginLend = () => {
+    /*const onGoToMarginLend = () => {
         dispatch(goToHomeMarginLend());
         dispatch(openSideBar(false));
-    };
+    };*/
 
     const onGoToWallet = () => {
         dispatch(goToWallet());
@@ -101,7 +100,7 @@ export const MobileWalletConnectionContent = () => {
                 <ListItem onClick={onGoToHome}>Home</ListItem>
                 <ListItem onClick={onGoToWallet}>Wallet</ListItem>
                 <ListItem onClick={onGoToLaunchpad}>Launchpad</ListItem>
-                <ListItem onClick={onGoToMarginLend}>Lend</ListItem>
+                {/*<ListItem onClick={onGoToMarginLend}>Lend</ListItem>*/}
                 <hr />
                 <CopyToClipboard text={ethAccount ? ethAccount : ''}>
                     <ListItemFlex>

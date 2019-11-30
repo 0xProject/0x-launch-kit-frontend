@@ -597,6 +597,19 @@ export interface ConfigFileIEO {
     tokens: TokenIEOMetaData[];
 }
 
+export interface ConfigFileTipBot {
+    tokens: AssetBot[];
+}
+
+export interface AssetBot {
+    ticker: string;
+    name: string;
+    contract: string;
+    decimals: number;
+    whitelistAddresses: string[];
+    feePercentage: string;
+}
+
 export enum Browser {
     Chrome = 'CHROME',
     Firefox = 'FIREFOX',

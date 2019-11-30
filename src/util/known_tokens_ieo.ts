@@ -1,19 +1,22 @@
 import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
+import { ConfigIEO } from '../common/config';
 import { KNOWN_TOKENS_META_DATA } from '../common/tokens_meta_data';
 import { KNOWN_TOKENS_IEO_META_DATA, TokenIEOMetaData } from '../common/tokens_meta_data_ieo';
 
 import { getLogger } from './logger';
-import { mapTokensIEOMetaDataToTokenByNetworkId } from './token_ieo_meta_data';
+import { mapTokensBotToTokenIEO, mapTokensIEOMetaDataToTokenByNetworkId } from './token_ieo_meta_data';
 import { TokenIEO } from './types';
 
 const logger = getLogger('Tokens::known_tokens .ts');
 
 export class KnownTokensIEO {
     private readonly _tokens: TokenIEO[] = [];
+    private readonly _tokensBot: TokenIEO[] = [];
 
     constructor(knownTokensMetadata: TokenIEOMetaData[]) {
         this._tokens = mapTokensIEOMetaDataToTokenByNetworkId(knownTokensMetadata);
+        this._tokensBot = mapTokensBotToTokenIEO(ConfigIEO.getConfigBot().tokens);
     }
 
     public getTokenBySymbol = (symbol: string): TokenIEO => {
@@ -42,6 +45,54 @@ export class KnownTokensIEO {
         const token = this._tokens.find(t => t.address.toLowerCase() === addressInLowerCase);
         if (!token) {
             throw new Error(`Token with address ${address} not found in known tokens`);
+        }
+        return token;
+    };
+    public getTokenBotByAddress = (address: string): TokenIEO => {
+        const addressInLowerCase = address.toLowerCase();
+        const token = this._tokensBot.find(t => t.address.toLowerCase() === addressInLowerCase);
+        if (!token) {
+            throw new Error(`Token with address ${address} not found in known tokens`);
+        }
+        return token;
+    };
+    public getAllTokensByAddress = (address: string): TokenIEO => {
+        const addressInLowerCase = address.toLowerCase();
+        let token = this._tokensBot.find(t => t.address.toLowerCase() === addressInLowerCase);
+        if (!token) {
+            token = this._tokens.find(t => t.address.toLowerCase() === addressInLowerCase);
+        }
+        if (!token) {
+            throw new Error(`Token with address ${address} not found in known tokens`);
+        }
+        return token;
+    };
+
+    public getTokenBotByName = (name: string): TokenIEO => {
+        const nameInLowerCase = name.toLowerCase();
+        const token = this._tokensBot.find(t => t.name.toLowerCase() === nameInLowerCase);
+        if (!token) {
+            throw new Error(`Token with address ${name} not found in known tokens`);
+        }
+        return token;
+    };
+    public getTokenBotBySymbol = (symbol: string): TokenIEO => {
+        const symbolInLowerCase = symbol.toLowerCase();
+        const token = this._tokensBot.find(t => t.symbol.toLowerCase() === symbolInLowerCase);
+        if (!token) {
+            throw new Error(`Token with address ${symbol} not found in known tokens`);
+        }
+        return token;
+    };
+
+    public getAllTokensByName = (name: string): TokenIEO => {
+        const nameInLowerCase = name.toLowerCase();
+        let token = this._tokensBot.find(t => t.name.toLowerCase() === nameInLowerCase);
+        if (!token) {
+            token = this._tokens.find(t => t.name.toLowerCase() === nameInLowerCase);
+        }
+        if (!token) {
+            throw new Error(`Token with address ${name} not found in known tokens`);
         }
         return token;
     };

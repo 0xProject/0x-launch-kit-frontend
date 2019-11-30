@@ -5,6 +5,7 @@ import { ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
 import { getKnownTokens } from './known_tokens';
+import { getKnownTokensIEO } from './known_tokens_ieo';
 import * as orderHelper from './orders';
 import { getExpirationTimeFromDate, getExpirationTimeOrdersFromConfig } from './time_utils';
 import { tokenAmountInUnitsToBigNumber, unitsInTokenAmount } from './tokens';
@@ -116,6 +117,40 @@ export const buildLimitOrder = async (
     const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteTokenAddress);
 
     const baseTokenDecimals = getKnownTokens().getTokenByAddress(baseTokenAddress).decimals;
+    const baseTokenAmountInUnits = tokenAmountInUnitsToBigNumber(amount, baseTokenDecimals);
+
+    const quoteTokenAmountInUnits = baseTokenAmountInUnits.multipliedBy(price);
+
+    const quoteTokenDecimals = getKnownTokens().getTokenByAddress(quoteTokenAddress).decimals;
+    const quoteTokenAmountInBaseUnits = unitsInTokenAmount(quoteTokenAmountInUnits.toString(), quoteTokenDecimals);
+
+    const isBuy = side === OrderSide.Buy;
+
+    const orderConfigRequest: OrderConfigRequest = {
+        exchangeAddress,
+        makerAssetData: isBuy ? quoteTokenAssetData : baseTokenAssetData,
+        takerAssetData: isBuy ? baseTokenAssetData : quoteTokenAssetData,
+        makerAssetAmount: isBuy ? quoteTokenAmountInBaseUnits : amount,
+        takerAssetAmount: isBuy ? amount : quoteTokenAmountInBaseUnits,
+        makerAddress: account,
+        takerAddress: ZERO_ADDRESS,
+        expirationTimeSeconds: timestamp ? getExpirationTimeFromDate(timestamp) : getExpirationTimeOrdersFromConfig(),
+    };
+
+    return orderHelper.getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
+};
+
+export const buildLimitOrderIEO = async (
+    params: BuildLimitOrderParams,
+    side: OrderSide,
+    timestamp?: number | string,
+): Promise<Order> => {
+    const { account, baseTokenAddress, exchangeAddress, amount, price, quoteTokenAddress } = params;
+
+    const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseTokenAddress);
+    const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteTokenAddress);
+
+    const baseTokenDecimals = getKnownTokensIEO().getAllTokensByAddress(baseTokenAddress).decimals;
     const baseTokenAmountInUnits = tokenAmountInUnitsToBigNumber(amount, baseTokenDecimals);
 
     const quoteTokenAmountInUnits = baseTokenAmountInUnits.multipliedBy(price);

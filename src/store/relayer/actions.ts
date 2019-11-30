@@ -22,6 +22,7 @@ import { isWeth } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import {
     buildLimitOrder,
+    buildLimitOrderIEO,
     buildMarketLimitMatchingOrders,
     buildMarketOrders,
     sumTakerAssetFillableOrders,
@@ -512,7 +513,7 @@ export const fetchTakerAndMakerFeeIEO: ThunkCreator<Promise<{ makerFee: BigNumbe
         const quoteToken = quoteTokenBalance.token;
         const contractWrappers = await getContractWrappers();
 
-        const order = await buildLimitOrder(
+        const order = await buildLimitOrderIEO(
             {
                 account: ethAccount,
                 amount,

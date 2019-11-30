@@ -10,6 +10,11 @@ export const getExpirationTimeOrdersFromConfig = () => {
     );
 };
 
+// Default to 120 days
+export const getExpirationTimeToBotOrders = () => {
+    return new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24 * 120);
+};
+
 export const getExpirationTimeFromDate = (timestamp: number | string) => {
     return new BigNumber(Math.floor(new Date(timestamp).valueOf() / 1000));
 };

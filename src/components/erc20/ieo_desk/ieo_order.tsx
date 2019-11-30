@@ -202,6 +202,8 @@ const BigInputNumberTokenLabel = (props: { tokenSymbol: string }) => (
 
 const parsedUrl = new URL(window.location.href.replace('#/', ''));
 const tokenName = parsedUrl.searchParams.get('token');
+const symbol = parsedUrl.searchParams.get('symbol');
+const bot = parsedUrl.searchParams.get('bot');
 
 class IEOOrder extends React.Component<Props, State> {
     public state: State = {
@@ -217,10 +219,19 @@ class IEOOrder extends React.Component<Props, State> {
 
     public componentDidMount = async () => {
         const known_tokens = getKnownTokensIEO();
+        let token;
         if (tokenName) {
-            const token = known_tokens.getTokenByName(tokenName);
+            bot
+                ? (token = known_tokens.getTokenBotByName(tokenName))
+                : (token = known_tokens.getTokenByName(tokenName));
             await this.props.onFetchBaseTokenIEO(token);
-        } else {
+        }
+        if (symbol) {
+            bot ? (token = known_tokens.getTokenBotBySymbol(symbol)) : (token = known_tokens.getTokenBySymbol(symbol));
+            await this.props.onFetchBaseTokenIEO(token);
+        }
+
+        if (!token) {
             const tokens = known_tokens.getTokens();
             await this.props.onFetchBaseTokenIEO(tokens[0]);
         }
@@ -235,10 +246,21 @@ class IEOOrder extends React.Component<Props, State> {
         }
         if (newProps.ethAccount !== prevProps.ethAccount) {
             const known_tokens = getKnownTokensIEO();
+            let token;
             if (tokenName) {
-                const token = known_tokens.getTokenByName(tokenName);
+                bot
+                    ? (token = known_tokens.getTokenBotByName(tokenName))
+                    : (token = known_tokens.getTokenByName(tokenName));
                 await this.props.onFetchBaseTokenIEO(token);
-            } else {
+            }
+            if (symbol) {
+                bot
+                    ? (token = known_tokens.getTokenBotBySymbol(symbol))
+                    : (token = known_tokens.getTokenBySymbol(symbol));
+                await this.props.onFetchBaseTokenIEO(token);
+            }
+
+            if (!token) {
                 const tokens = known_tokens.getTokens();
                 await this.props.onFetchBaseTokenIEO(tokens[0]);
             }

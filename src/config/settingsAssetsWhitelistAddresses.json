@@ -1,0 +1,5 @@
+{
+    "defaultWhitelistAddresses": ["0x5265bde27f57e738be6c1f6ab3544e82cdc92a8f"],
+    "defaultFeePercentage": 0.01,
+    "tokens": {}
+}

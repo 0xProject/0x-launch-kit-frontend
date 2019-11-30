@@ -53,7 +53,7 @@ class WalletConnectionContent extends React.PureComponent<Props> {
                 <DropdownTextItem onClick={connectToExplorer} text="Track DEX volume" />
                 <DropdownTextItem onClick={openFabrx} text="Set Alerts" />
                 <DropdownTextItem onClick={onGoToHomeLaunchpad} text="Launchpad" />
-                <DropdownTextItem onClick={onGoToHomeMarginLend} text="Lend" />
+                {/*<DropdownTextItem onClick={onGoToHomeMarginLend} text="Lend" />*/}
                 <DropdownTextItem onClick={onLogoutWallet} text="Logout Wallet" />
             </DropdownItems>
         );

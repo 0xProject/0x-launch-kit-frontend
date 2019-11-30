@@ -184,7 +184,7 @@ const ordersToIEOUIOrdersWithOrdersInfo = (
         const size = isSell ? order.makerAssetAmount : order.takerAssetAmount;
 
         const makerAssetAddress = assetDataUtils.decodeERC20AssetData(order.makerAssetData).tokenAddress;
-        const makerAssetTokenDecimals = getKnownTokensIEO().getTokenByAddress(makerAssetAddress).decimals;
+        const makerAssetTokenDecimals = getKnownTokensIEO().getAllTokensByAddress(makerAssetAddress).decimals;
         const makerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(order.makerAssetAmount, makerAssetTokenDecimals);
 
         const takerAssetAddress = assetDataUtils.decodeERC20AssetData(order.takerAssetData).tokenAddress;
