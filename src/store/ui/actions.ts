@@ -6,7 +6,13 @@ import { InsufficientOrdersAmountException } from '../../exceptions/insufficient
 import { InsufficientTokenBalanceException } from '../../exceptions/insufficient_token_balance_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { isWeth } from '../../util/known_tokens';
-import { buildLimitOrder, buildMarketLimitMatchingOrders, buildMarketOrders, isDutchAuction } from '../../util/orders';
+import {
+    buildLimitOrder,
+    buildMarketLimitMatchingOrders,
+    buildMarketOrders,
+    isDutchAuction,
+    buildLimitOrderIEO,
+} from '../../util/orders';
 import {
     createBasicBuyCollectibleSteps,
     createBuySellLimitMatchingSteps,
@@ -553,7 +559,7 @@ export const createSignedOrderIEO: ThunkCreator = (amount: BigNumber, price: Big
             const web3Wrapper = await getWeb3Wrapper();
             const contractWrappers = await getContractWrappers();
 
-            const order = await buildLimitOrder(
+            const order = await buildLimitOrderIEO(
                 {
                     account: ethAccount,
                     amount,
