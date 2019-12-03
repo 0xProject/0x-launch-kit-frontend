@@ -44,7 +44,6 @@ export const getAllITokens = async (ethAccount: string): Promise<[iTokenData[], 
             const price = await tkContract.tokenPrice.callAsync();
             const checkpointPrice = await tkContract.checkpointPrice.callAsync(ethAccount);
             const avgBorrowInterestRate = await tkContract.avgBorrowInterestRate.callAsync();
-            const totalReservedSupply = await tkContract.totalReservedSupply.callAsync();
             const marketLiquidity = await tkContract.marketLiquidity.callAsync();
             const balance = await tkContract.balanceOf.callAsync(ethAccount);
             const supplyInterestRate = await tkContract.supplyInterestRate.callAsync();
@@ -59,7 +58,6 @@ export const getAllITokens = async (ethAccount: string): Promise<[iTokenData[], 
                 price,
                 checkpointPrice,
                 avgBorrowInterestRate,
-                totalReservedSupply,
                 marketLiquidity,
                 balance,
                 supplyInterestRate,
@@ -83,7 +81,6 @@ export const getToken = async (ethAccount: string, iToken: iTokenData): Promise<
         const price = await tkContract.tokenPrice.callAsync();
         const checkpointPrice = await tkContract.checkpointPrice.callAsync(ethAccount);
         const avgBorrowInterestRate = await tkContract.avgBorrowInterestRate.callAsync();
-        const totalReservedSupply = await tkContract.totalReservedSupply.callAsync();
         const marketLiquidity = await tkContract.marketLiquidity.callAsync();
         const balance = await tkContract.balanceOf.callAsync(ethAccount);
         const supplyInterestRate = await tkContract.supplyInterestRate.callAsync();
@@ -101,7 +98,6 @@ export const getToken = async (ethAccount: string, iToken: iTokenData): Promise<
             price,
             checkpointPrice,
             avgBorrowInterestRate,
-            totalReservedSupply,
             marketLiquidity,
             balance,
             supplyInterestRate,

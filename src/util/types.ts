@@ -677,7 +677,6 @@ export interface iTokenData {
     price: BigNumber;
     checkpointPrice: BigNumber;
     avgBorrowInterestRate: BigNumber;
-    totalReservedSupply: BigNumber;
     marketLiquidity: BigNumber;
     balance: BigNumber;
     supplyInterestRate: BigNumber;
