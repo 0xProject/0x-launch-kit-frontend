@@ -30,7 +30,7 @@ yarn
 If you have the URL of an existing relayer, you can use this frontend against it. After installing the dependencies, start the application with this command, replacing `RELAYER_URL` and `RELAYER_WS_URL` with the proper value:
 
 ```
-REACT_APP_RELAYER_URL='https://RELAYER_URL/v3' REACT_APP_RELAYER_WS_URL='wss://RELAYER_URL/' yarn start
+REACT_APP_RELAYER_URL='https://RELAYER_URL/' REACT_APP_RELAYER_WS_URL='wss://RELAYER_URL/' yarn start
 ```
 
 A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to the network used by the relayer.
@@ -38,7 +38,7 @@ A browser tab will open in the `http://localhost:3001` address. You'll need to c
 You can optionally pass in any relayer endpoint that complies with the [0x Standard Relayer API](https://github.com/0xProject/standard-relayer-api). For example, if you want to mirror Kovan liquidity from [Radar Relay](https://radarrelay.com/):
 
 ```
-REACT_APP_RELAYER_URL='https://sra.0x.org/v3' REACT_APP_RELAYER_WS_URL='wss://sra.0x.org/v3' yarn start
+REACT_APP_RELAYER_URL='https://api.0x.org/sra' REACT_APP_RELAYER_WS_URL='wss://api.0x.org/sra' REACT_APP_NETWORK_ID=1 REACT_APP_CHAIN_ID=1 yarn start
 ```
 
 ### Creating a relayer for development
@@ -52,14 +52,12 @@ services:
         image: 0xorg/ganache-cli
         ports:
             - '8545:8545'
-        environment:
-            - VERSION=4.4.0-beta.1
-            - SNAPSHOT_NAME=0x_ganache_snapshot-v3-beta
     backend:
-        image: 0xorg/launch-kit-backend:v3
+        image: 0xorg/launch-kit-backend:latest
         environment:
             HTTP_PORT: '3000'
             NETWORK_ID: '50'
+            CHAIN_ID: '1337'
             WHITELIST_ALL_TOKENS: 'true'
             FEE_RECIPIENT: '0x0000000000000000000000000000000000000001'
             MAKER_FEE_UNIT_AMOUNT: '0'

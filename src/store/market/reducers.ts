@@ -6,6 +6,15 @@ import { MarketState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
+const getMakerAddresses = () => {
+    const makerAddressesString = queryString.parse(queryString.extract(window.location.hash)).makerAddresses as string;
+    if (!makerAddressesString) {
+        return null;
+    }
+    const makerAddresses = makerAddressesString.split(',');
+    return makerAddresses.map(a => a.toLowerCase());
+};
+
 const initialMarketState: MarketState = {
     currencyPair: {
         base: (queryString.parse(queryString.extract(window.location.hash)).base as string) || availableMarkets[0].base,
@@ -16,6 +25,7 @@ const initialMarketState: MarketState = {
     quoteToken: null,
     markets: null,
     ethInUsd: null,
+    makerAddresses: getMakerAddresses(),
 };
 
 export function market(state: MarketState = initialMarketState, action: RootAction): MarketState {

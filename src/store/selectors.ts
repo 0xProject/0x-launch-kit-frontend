@@ -34,6 +34,7 @@ export const getStepsModalPendingSteps = (state: StoreState) => state.ui.stepsMo
 export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal.doneSteps;
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
 export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
+export const getMakerAddresses = (state: StoreState) => state.market.makerAddresses;
 export const getBaseToken = (state: StoreState) => state.market.baseToken;
 export const getQuoteToken = (state: StoreState) => state.market.quoteToken;
 export const getMarkets = (state: StoreState) => state.market.markets;
