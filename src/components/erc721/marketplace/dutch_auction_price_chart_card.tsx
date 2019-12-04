@@ -1,3 +1,4 @@
+// tslint:disable:no-unused-variable
 import { BigNumber } from '@0x/utils';
 import React from 'react';
 import styled from 'styled-components';
@@ -5,7 +6,6 @@ import styled from 'styled-components';
 import { ETH_DECIMALS } from '../../../common/constants';
 import { themeBreakPoints } from '../../../themes/commons';
 import { getCollectiblePrice } from '../../../util/collectibles';
-import { getDutchAuctionData, isDutchAuction } from '../../../util/orders';
 import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible } from '../../../util/types';
@@ -88,49 +88,50 @@ interface Props {
 export const DutchAuctionPriceChartCard = (props: Props) => {
     const { collectible } = props;
     const { order } = collectible;
-    if (order === null || !isDutchAuction(order)) {
-        return null;
-    }
+    return null;
+    // if (order === null || !isDutchAuction(order)) {
+    //     return null;
+    // }
 
-    const { makerAssetData, expirationTimeSeconds } = order;
-    const { beginAmount, beginTimeSeconds } = getDutchAuctionData(makerAssetData);
-    const price = getCollectiblePrice(collectible) as BigNumber;
-    const { days, hours } = convertTimeInSecondsToDaysAndHours(expirationTimeSeconds.minus(beginTimeSeconds));
+    // const { makerAssetData, expirationTimeSeconds } = order;
+    // const { beginAmount, beginTimeSeconds } = getDutchAuctionData(makerAssetData);
+    // const price = getCollectiblePrice(collectible) as BigNumber;
+    // const { days, hours } = convertTimeInSecondsToDaysAndHours(expirationTimeSeconds.minus(beginTimeSeconds));
 
-    const currentPriceInUnits = +tokenAmountInUnits(price, ETH_DECIMALS);
-    const beginAmountInUnits = +tokenAmountInUnits(beginAmount, ETH_DECIMALS);
-    const endAmountInUnits = +tokenAmountInUnits(order.takerAssetAmount, ETH_DECIMALS);
+    // const currentPriceInUnits = +tokenAmountInUnits(price, ETH_DECIMALS);
+    // const beginAmountInUnits = +tokenAmountInUnits(beginAmount, ETH_DECIMALS);
+    // const endAmountInUnits = +tokenAmountInUnits(order.takerAssetAmount, ETH_DECIMALS);
 
-    return (
-        <Card>
-            <CollectibleDescriptionInnerTitle>Price Chart</CollectibleDescriptionInnerTitle>
-            <PriceChartContainer>
-                <PriceChartPriceAndTime>
-                    <PriceChartTitle>Current Price</PriceChartTitle>
-                    <PriceChartValue>{currentPriceInUnits} ETH</PriceChartValue>
-                    <PriceChartTitle>Time Remaining</PriceChartTitle>
-                    <PriceChartValue>{`${days} Days ${hours} Hrs`}</PriceChartValue>
-                </PriceChartPriceAndTime>
-                <PriceChartGraphWrapper>
-                    <PriceChartGraph>
-                        <DecliningPriceGraph
-                            beginAmountInUnits={beginAmountInUnits}
-                            endAmountInUnits={endAmountInUnits}
-                            currentPriceInUnits={currentPriceInUnits}
-                        />
-                    </PriceChartGraph>
-                    <PriceChartGraphValues>
-                        <div>
-                            <PriceChartTitle>Start Price</PriceChartTitle>
-                            <PriceChartValueNeutral>{beginAmountInUnits} ETH</PriceChartValueNeutral>
-                        </div>
-                        <div>
-                            <PriceChartTitle>End Price</PriceChartTitle>
-                            <PriceChartValueNeutral>{endAmountInUnits} ETH</PriceChartValueNeutral>
-                        </div>
-                    </PriceChartGraphValues>
-                </PriceChartGraphWrapper>
-            </PriceChartContainer>
-        </Card>
-    );
+    // return (
+    //     <Card>
+    //         <CollectibleDescriptionInnerTitle>Price Chart</CollectibleDescriptionInnerTitle>
+    //         <PriceChartContainer>
+    //             <PriceChartPriceAndTime>
+    //                 <PriceChartTitle>Current Price</PriceChartTitle>
+    //                 <PriceChartValue>{currentPriceInUnits} ETH</PriceChartValue>
+    //                 <PriceChartTitle>Time Remaining</PriceChartTitle>
+    //                 <PriceChartValue>{`${days} Days ${hours} Hrs`}</PriceChartValue>
+    //             </PriceChartPriceAndTime>
+    //             <PriceChartGraphWrapper>
+    //                 <PriceChartGraph>
+    //                     <DecliningPriceGraph
+    //                         beginAmountInUnits={beginAmountInUnits}
+    //                         endAmountInUnits={endAmountInUnits}
+    //                         currentPriceInUnits={currentPriceInUnits}
+    //                     />
+    //                 </PriceChartGraph>
+    //                 <PriceChartGraphValues>
+    //                     <div>
+    //                         <PriceChartTitle>Start Price</PriceChartTitle>
+    //                         <PriceChartValueNeutral>{beginAmountInUnits} ETH</PriceChartValueNeutral>
+    //                     </div>
+    //                     <div>
+    //                         <PriceChartTitle>End Price</PriceChartTitle>
+    //                         <PriceChartValueNeutral>{endAmountInUnits} ETH</PriceChartValueNeutral>
+    //                     </div>
+    //                 </PriceChartGraphValues>
+    //             </PriceChartGraphWrapper>
+    //         </PriceChartContainer>
+    //     </Card>
+    // );
 };
