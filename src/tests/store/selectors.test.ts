@@ -1,5 +1,6 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
+import { ZERO } from '../../common/constants';
 import * as selectors from '../../store/selectors';
 import { closedOrder, openOrder } from '../../util/test-utils';
 import { OrderSide, Web3State } from '../../util/types';
@@ -153,7 +154,7 @@ describe('selectors', () => {
         const result = selectors.getSpread(state);
 
         // then
-        expect(result).toEqual(new BigNumber('0'));
+        expect(result).toEqual(ZERO);
     });
 
     it('should return a spread of 0 if there are no buy orders', () => {
@@ -174,7 +175,7 @@ describe('selectors', () => {
         const result = selectors.getSpread(state);
 
         // then
-        expect(result).toEqual(new BigNumber('0'));
+        expect(result).toEqual(ZERO);
     });
 
     it('should return the order book', () => {

@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import { mount } from 'enzyme';
 import React from 'react';
 
+import { ZERO } from '../../../common/constants';
 import { BigNumberInput } from '../../../components/common/big_number_input';
 import { mountWithTheme } from '../../util/test_with_theme';
 
@@ -66,7 +67,7 @@ describe('BigNumberInput', () => {
 
         // then
         expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith(new BigNumber('0'));
+        expect(onChange).toHaveBeenCalledWith(ZERO);
     });
 
     it('should accept a min value', () => {

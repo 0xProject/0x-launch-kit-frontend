@@ -1,5 +1,6 @@
-import { assetDataUtils, BigNumber } from '0x.js';
 import { SignedOrder } from '@0x/connect';
+import { assetDataUtils } from '@0x/order-utils';
+import { BigNumber } from '@0x/utils';
 
 import { getLogger } from '../util/logger';
 import { getTransactionOptions } from '../util/transactions';
@@ -35,11 +36,10 @@ export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token
     const orders: SignedOrder[] = await getAllOrders(baseToken, quoteToken, makerAddresses);
     try {
         const contractWrappers = await getContractWrappers();
-        const ordersAndTradersInfo = await contractWrappers.orderValidator.getOrdersAndTradersInfoAsync(
-            orders,
-            orders.map(o => o.makerAddress),
-        );
-        return ordersToUIOrders(orders, baseToken, ordersAndTradersInfo);
+        const [ordersInfo] = await contractWrappers.devUtils
+            .getOrderRelevantStates(orders, orders.map(o => o.signature))
+            .callAsync();
+        return ordersToUIOrders(orders, baseToken, ordersInfo);
     } catch (err) {
         logger.error(`There was an error getting the orders' info from exchange.`, err);
         throw err;
@@ -66,11 +66,10 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
     const myOrders = await getUserOrders(baseToken, quoteToken, ethAccount);
     try {
         const contractWrappers = await getContractWrappers();
-        const ordersAndTradersInfo = await contractWrappers.orderValidator.getOrdersAndTradersInfoAsync(
-            myOrders,
-            myOrders.map(o => o.makerAddress),
-        );
-        return ordersToUIOrders(myOrders, baseToken, ordersAndTradersInfo);
+        const [ordersInfo] = await contractWrappers.devUtils
+            .getOrderRelevantStates(myOrders, myOrders.map(o => o.signature))
+            .callAsync();
+        return ordersToUIOrders(myOrders, baseToken, ordersInfo);
     } catch (err) {
         logger.error(`There was an error getting the orders' info from exchange.`, err);
         throw err;
@@ -80,6 +79,9 @@ export const getUserOrdersAsUIOrders = async (baseToken: Token, quoteToken: Toke
 export const cancelSignedOrder = async (order: SignedOrder, gasPrice: BigNumber) => {
     const contractWrappers = await getContractWrappers();
     const web3Wrapper = await getWeb3Wrapper();
-    const tx = await contractWrappers.exchange.cancelOrderAsync(order, getTransactionOptions(gasPrice));
+    const tx = await contractWrappers.exchange.cancelOrder(order).sendTransactionAsync({
+        from: order.makerAddress,
+        ...getTransactionOptions(gasPrice),
+    });
     return web3Wrapper.awaitTransactionSuccessAsync(tx);
 };

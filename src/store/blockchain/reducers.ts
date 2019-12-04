@@ -1,7 +1,6 @@
-import { BigNumber } from '0x.js';
 import { getType } from 'typesafe-actions';
 
-import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE } from '../../common/constants';
+import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE, ZERO } from '../../common/constants';
 import { BlockchainState, ConvertBalanceState, Web3State } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -10,7 +9,7 @@ const initialBlockchainState: BlockchainState = {
     ethAccount: '',
     web3State: Web3State.Loading,
     tokenBalances: [],
-    ethBalance: new BigNumber(0),
+    ethBalance: ZERO,
     wethTokenBalance: null,
     gasInfo: {
         gasPriceInWei: DEFAULT_GAS_PRICE,

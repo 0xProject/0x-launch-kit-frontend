@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import retry from 'async-retry';
 
 import { TX_DEFAULTS } from '../common/constants';
@@ -9,7 +9,6 @@ const GET_BLOCK_NUMBER_FROM_TRANSACTION_HASH_RETRIES = 10;
 export const getTransactionOptions = (gasPrice: BigNumber) => {
     let options = {
         gasPrice,
-        shouldValidate: true,
     };
 
     if (process.env.NODE_ENV === 'development') {
