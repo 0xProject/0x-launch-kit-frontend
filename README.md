@@ -72,6 +72,10 @@ services:
             ETHEREUM_CHAIN_ID: 1337
             VERBOSITY: 3
             RPC_ADDR: 'mesh:60557'
+            # You can decrease the BLOCK_POLLING_INTERVAL for test networks to
+            # improve performance. See https://0x-org.gitbook.io/mesh/ for more
+            # Documentation about Mesh and its environment variables.
+            BLOCK_POLLING_INTERVAL: '5s'
         ports:
             - '60557:60557'
             - '60558:60558'
