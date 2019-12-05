@@ -35,7 +35,7 @@ REACT_APP_RELAYER_URL='https://RELAYER_URL/' REACT_APP_RELAYER_WS_URL='wss://REL
 
 A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to the network used by the relayer.
 
-You can optionally pass in any relayer endpoint that complies with the [0x Standard Relayer API](https://github.com/0xProject/standard-relayer-api). For example, if you want to mirror Kovan liquidity from [Radar Relay](https://radarrelay.com/):
+You can optionally pass in any relayer endpoint that complies with the [0x Standard Relayer API](https://github.com/0xProject/standard-relayer-api). For example, if you want to show liquidity from 0x API:
 
 ```
 REACT_APP_RELAYER_URL='https://api.0x.org/sra' REACT_APP_RELAYER_WS_URL='wss://api.0x.org/sra' REACT_APP_NETWORK_ID=1 REACT_APP_CHAIN_ID=1 yarn start
@@ -66,18 +66,20 @@ services:
         ports:
             - '3000:3000'
     mesh:
-        image: 0xorg/mesh:0xV3
+        image: 0xorg/mesh:7.2.1-beta-0xv3
         environment:
             ETHEREUM_RPC_URL: 'http://ganache:8545'
-            ETHEREUM_CHAIN_ID: '1337'
-            ETHEREUM_NETWORK_ID: '50'
-            USE_BOOTSTRAP_LIST: 'true'
+            ETHEREUM_CHAIN_ID: 1337
             VERBOSITY: 3
-            PRIVATE_KEY_PATH: ''
+            RPC_ADDR: 'mesh:60557'
+            # You can decrease the BLOCK_POLLING_INTERVAL for test networks to
+            # improve performance. See https://0x-org.gitbook.io/mesh/ for more
+            # Documentation about Mesh and its environment variables.
             BLOCK_POLLING_INTERVAL: '5s'
-            P2P_LISTEN_PORT: '60557'
         ports:
             - '60557:60557'
+            - '60558:60558'
+            - '60559:60559'
 ```
 
 and then run `docker-compose up`. This will create three containers: one has a ganache with the 0x contracts deployed and some test tokens, another one has an instance of the [launch kit](https://github.com/0xProject/0x-launch-kit) implementation of a relayer that connects to that ganache and finally a container for [0x-mesh](https://github.com/0xProject/0x-mesh) for order sharing and discovery on a p2p network.
