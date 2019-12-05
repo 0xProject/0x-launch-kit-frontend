@@ -306,18 +306,18 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                                 <CollectibleMainInfoTitle>
                                     {currentCollectible ? currentCollectible.name : ''}
                                 </CollectibleMainInfoTitle>
-                                <CollectibleLink
+                                {/* <CollectibleLink
                                     href={currentCollectible ? currentCollectible.assetUrl : ''}
                                     target="_blank"
                                 >
                                     <CollectibleLinkText>CryptoKitties</CollectibleLinkText>
                                     {OutsideUrlIcon()}
-                                </CollectibleLink>
+                                </CollectibleLink> */}
                             </div>
-                            <div>
+                            {/* <div>
                                 <CollectibleMainInfoSubtitle>Last Sale Price</CollectibleMainInfoSubtitle>
                                 <CollectibleMainInfoValue>2.0624 ETH</CollectibleMainInfoValue>
-                            </div>
+                            </div> */}
                         </CollectibleMainInfo>
                     </CollectibleMainInfoWrapper>
                     <FormRow>
