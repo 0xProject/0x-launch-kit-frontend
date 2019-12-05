@@ -66,18 +66,17 @@ services:
         ports:
             - '3000:3000'
     mesh:
-        image: 0xorg/mesh:0xV3
+        image: 0xorg/mesh:7.2.1-beta-0xv3
         environment:
             ETHEREUM_RPC_URL: 'http://ganache:8545'
-            ETHEREUM_CHAIN_ID: '1337'
-            ETHEREUM_NETWORK_ID: '50'
-            USE_BOOTSTRAP_LIST: 'true'
+            ETHEREUM_CHAIN_ID: 1337
             VERBOSITY: 3
-            PRIVATE_KEY_PATH: ''
-            BLOCK_POLLING_INTERVAL: '5s'
-            P2P_LISTEN_PORT: '60557'
+            RPC_ADDR: 'mesh:60557'
         ports:
             - '60557:60557'
+            - '60558:60558'
+            - '60559:60559'
+
 ```
 
 and then run `docker-compose up`. This will create three containers: one has a ganache with the 0x contracts deployed and some test tokens, another one has an instance of the [launch kit](https://github.com/0xProject/0x-launch-kit) implementation of a relayer that connects to that ganache and finally a container for [0x-mesh](https://github.com/0xProject/0x-mesh) for order sharing and discovery on a p2p network.
