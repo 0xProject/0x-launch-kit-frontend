@@ -8,15 +8,20 @@ import { getLogger } from '../util/logger';
 import { Collectible, CollectibleMetadataSource } from '../util/types';
 
 import { getConfiguredSource } from './collectibles_metadata_sources';
+import { getMeshOrderbookAsync } from './mesh';
 
 const logger = getLogger('CollectiblesMetadataGateway');
 
+interface CollectibleOrdersSource {
+    getSellCollectibleOrdersAsync(collectibleAddress: string, wethAddress: string): Promise<SignedOrder[]>;
+}
+
 export class CollectiblesMetadataGateway {
-    private readonly _relayer: Relayer;
+    private readonly _orderSource: CollectibleOrdersSource;
     private readonly _source: CollectibleMetadataSource;
 
-    constructor(relayer: Relayer, source: CollectibleMetadataSource) {
-        this._relayer = relayer;
+    constructor(relayer: CollectibleOrdersSource, source: CollectibleMetadataSource) {
+        this._orderSource = relayer;
         this._source = source;
     }
 
@@ -25,10 +30,10 @@ export class CollectiblesMetadataGateway {
 
         const wethAddress = knownTokens.getWethToken().address;
 
-        // Step 1: Get all sell orders in the relayer
+        // Step 1: Get all sell orders in the collectible order source.
         let orders: any[] = [];
         try {
-            orders = await this._relayer.getSellCollectibleOrdersAsync(COLLECTIBLE_ADDRESS, wethAddress);
+            orders = await this._orderSource.getSellCollectibleOrdersAsync(COLLECTIBLE_ADDRESS, wethAddress);
         } catch (err) {
             logger.error(err);
             throw err;
@@ -78,11 +83,12 @@ export class CollectiblesMetadataGateway {
 }
 
 let collectiblesMetadataGateway: CollectiblesMetadataGateway;
-export const getCollectiblesMetadataGateway = (): CollectiblesMetadataGateway => {
+export async function getCollectiblesMetadataGatewayAsync(): Promise<CollectiblesMetadataGateway> {
     if (!collectiblesMetadataGateway) {
-        const relayer = getRelayer();
+        // const relayer = getRelayer();
+        const meshOrderBook = await getMeshOrderbookAsync();
         const source = getConfiguredSource();
-        collectiblesMetadataGateway = new CollectiblesMetadataGateway(relayer, source);
+        collectiblesMetadataGateway = new CollectiblesMetadataGateway(meshOrderBook, source);
     }
     return collectiblesMetadataGateway;
-};
+}

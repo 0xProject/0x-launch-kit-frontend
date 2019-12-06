@@ -10,6 +10,7 @@
         "@0x/subproviders": "^6.0.0",
         "@0x/utils": "^5.0.0",
         "@0x/web3-wrapper": "^7.0.0",
+        "albrow-mesh-browser-hackathon": "^1.0.5",
         "async-retry": "^1.2.3",
         "async-sema": "^3.0.0",
         "connected-react-router": "^6.2.2",

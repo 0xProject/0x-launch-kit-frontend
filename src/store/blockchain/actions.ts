@@ -481,7 +481,8 @@ export const createSignedCollectibleOrder: ThunkCreator = (
             }
 
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-            return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            const signedOrder = await signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
+            return signedOrder;
         } catch (error) {
             throw new SignedOrderException(error.message);
         }

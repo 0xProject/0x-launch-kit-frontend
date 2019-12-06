@@ -30,12 +30,12 @@ export const selectCollectible = createAction('collectibles/selectCollectible', 
 });
 
 export const getAllCollectibles: ThunkCreator = () => {
-    return async (dispatch, getState, { getCollectiblesMetadataGateway, getWeb3Wrapper }) => {
+    return async (dispatch, getState, { getCollectiblesMetadataGatewayAsync, getWeb3Wrapper }) => {
         dispatch(fetchAllCollectiblesAsync.request());
         try {
             const state = getState();
             const ethAccount = getEthAccount(state);
-            const collectiblesMetadataGateway = getCollectiblesMetadataGateway();
+            const collectiblesMetadataGateway = await getCollectiblesMetadataGatewayAsync();
             const collectibles = await collectiblesMetadataGateway.fetchAllCollectibles(ethAccount);
             dispatch(fetchAllCollectiblesAsync.success({ collectibles }));
         } catch (err) {

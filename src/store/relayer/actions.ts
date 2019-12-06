@@ -7,6 +7,7 @@ import { FEE_PERCENTAGE, FEE_RECIPIENT, ZERO } from '../../common/constants';
 import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { RelayerException } from '../../exceptions/relayer_exception';
+import { getMeshOrderbookAsync } from '../../services/mesh';
 import {
     cancelSignedOrder,
     getAllOrdersAsUIOrders,
@@ -138,7 +139,9 @@ export const cancelOrder: ThunkCreator = (order: UIOrder) => {
 export const submitCollectibleOrder: ThunkCreator = (signedOrder: SignedOrder) => {
     return async dispatch => {
         try {
-            const submitResult = await getRelayer().submitOrderAsync(signedOrder);
+            // const submitResult = await getRelayer().submitOrderAsync(signedOrder);
+            const meshOrderbook = await getMeshOrderbookAsync();
+            const submitResult = meshOrderbook.submitOrderAsync(signedOrder);
             // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());
             // TODO: Dispatch notification

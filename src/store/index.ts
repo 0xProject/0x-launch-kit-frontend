@@ -3,7 +3,7 @@ import { createHashHistory } from 'history';
 import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 
-import { getCollectiblesMetadataGateway } from '../services/collectibles_metadata_gateway';
+import { getCollectiblesMetadataGatewayAsync } from '../services/collectibles_metadata_gateway';
 import { getContractWrappers } from '../services/contract_wrappers';
 import { getWeb3Wrapper, initializeWeb3Wrapper } from '../services/web3_wrapper';
 import { StoreState } from '../util/types';
@@ -18,7 +18,7 @@ const extraArgument = {
     getContractWrappers,
     getWeb3Wrapper,
     initializeWeb3Wrapper,
-    getCollectiblesMetadataGateway,
+    getCollectiblesMetadataGatewayAsync,
 };
 export type ExtraArgument = typeof extraArgument;
 

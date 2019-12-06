@@ -99,11 +99,14 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
 };
 
 export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigRequest: OrderConfigRequest) => {
-    const client = getRelayer();
-    const orderResult = await client.getOrderConfigAsync(orderConfigRequest);
     return {
         ...orderConfigRequest,
-        ...orderResult,
+        makerFee: new BigNumber(0),
+        takerFee: new BigNumber(0),
+        feeRecipientAddress: '0x0000000000000000000000000000000000a1ec5b',
+        senderAddress: '0x0000000000000000000000000000000000000000',
+        makerFeeAssetData: '0x',
+        takerFeeAssetData: '0x',
         chainId: CHAIN_ID,
         salt: new BigNumber(Date.now()),
     };
