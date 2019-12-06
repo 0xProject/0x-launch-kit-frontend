@@ -8,7 +8,15 @@ export const tokenAmountInUnitsToBigNumber = (amount: BigNumber, decimals: numbe
 };
 
 export const tokenAmountInUnits = (amount: BigNumber, decimals: number, toFixedDecimals = 2): string => {
-    return tokenAmountInUnitsToBigNumber(amount, decimals).toFixed(toFixedDecimals);
+    const inUnits = tokenAmountInUnitsToBigNumber(amount, decimals);
+    if (inUnits.lt(0.0001)) {
+        return '< 0.0001';
+    }
+    const fixedWithTrailingZeroesRemoved = inUnits.toFixed(4).replace(/0+$/, '');
+    const formatted = fixedWithTrailingZeroesRemoved.endsWith('.')
+        ? fixedWithTrailingZeroesRemoved.replace('.', '')
+        : fixedWithTrailingZeroesRemoved;
+    return formatted;
 };
 
 export const unitsInTokenAmount = (units: string, decimals: number): BigNumber => {
