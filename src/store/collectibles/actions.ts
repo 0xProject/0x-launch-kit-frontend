@@ -54,6 +54,15 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
         const gasPrice = getGasPriceInWei(state);
         const protocolFee = calculateWorstCaseProtocolFee([order], gasPrice);
 
+        // HACK(albrow): Manually set makerFeeAssetData and takerFeeAssetData.
+        // Are these not being parsed correctly or something?
+        if (order.makerFeeAssetData === '') {
+            order.makerFeeAssetData = '0x';
+        }
+        if (order.takerFeeAssetData === '') {
+            order.takerFeeAssetData = '0x';
+        }
+
         let tx;
         if (isDutchAuction(order)) {
             throw new Error('DutchAuction currently unsupported');

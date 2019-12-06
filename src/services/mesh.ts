@@ -21,10 +21,10 @@ class MeshOrderbook {
         // This handler will be called whenever an order is added, expired,
         // canceled, or filled.
         this._mesh.onOrderEvents((events: OrderEvent[]) => {
-            // for (const event of events) {
-            //     // tslint:disable-next-line:no-console
-            //     console.log(event);
-            // }
+            for (const event of events) {
+                // tslint:disable-next-line:no-console
+                console.log(event);
+            }
         });
     }
 

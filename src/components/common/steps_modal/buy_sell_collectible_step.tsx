@@ -137,6 +137,8 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
 
                 onDone();
             } catch (err) {
+                // tslint:disable-next-line:no-console
+                console.error(err);
                 onError(err);
             }
         }
