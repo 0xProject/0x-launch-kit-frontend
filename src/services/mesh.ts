@@ -39,7 +39,10 @@ class MeshOrderbook {
         const makerAssetDataPrefix = `0x02571792000000000000000000000000${collectibleAddress.slice(2)}`;
         const orders = await this._mesh.getOrdersByMakerAssetDataAsync(makerAssetDataPrefix);
         const wethTakerAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
-        return orders.filter(value => value.takerAssetData === wethTakerAssetData);
+        const filteredOrders = orders.filter(value => value.takerAssetData === wethTakerAssetData);
+        // tslint:disable-next-line:no-console
+        console.log(`number of orders in Mesh: ${filteredOrders.length}`);
+        return filteredOrders;
     }
 
     public async submitOrderAsync(order: SignedOrder): Promise<void> {

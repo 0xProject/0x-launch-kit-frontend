@@ -2371,10 +2371,10 @@ ajv@^6.9.1:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-albrow-mesh-browser-hackathon@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/albrow-mesh-browser-hackathon/-/albrow-mesh-browser-hackathon-1.0.6.tgz#412d728354a26edf55fbdff84aac2f0a672bb492"
-  integrity sha512-B9o9YEaDBksfcYFleCqmDRGL2HZnegl63yoIrSC0fXw+aiqCwEY5DEVuKIrdnxBlpq/L6AOSuHUz0X1l9Hm2Gw==
+albrow-mesh-browser-hackathon@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/albrow-mesh-browser-hackathon/-/albrow-mesh-browser-hackathon-1.0.7.tgz#0692c0430f4ed7aa352b95ab83222a9eb0a42d13"
+  integrity sha512-euUc8zWYeA+np2fOw2qdM1mL63DJIWO8Hu84CLmRKB7TxdXt+MSBasINrqawl7yDKF/fyHBjHxxIUUVDKmnsIw==
   dependencies:
     "@0x/order-utils" "8.5.0-beta.1"
     "@0x/utils" "4.6.0-beta.1"
