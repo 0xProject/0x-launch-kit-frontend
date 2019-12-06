@@ -82,13 +82,12 @@ const CollectibleMainInfoWrapper = styled.div`
 `;
 
 const CollectibleImage = styled.div<ImageProps>`
-    background-color: ${props => props.imageColor};
+    background-color: transparent;
+    border: none;
     background-image: url('${props => props.imageUrl}');
     background-position: 50% 50%;
     background-repeat: no-repeat;
     background-size: contain;
-    border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.borderColor};
     flex-grow: 0;
     flex-shrink: 0;
     height: 120px;
@@ -321,7 +320,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                         </CollectibleMainInfo>
                     </CollectibleMainInfoWrapper>
                     <FormRow>
-                        <CollectibleLabel>Enter a starting price</CollectibleLabel>
+                        <CollectibleLabel>Enter a price</CollectibleLabel>
                         <FieldContainer>
                             <BigInputNumberStyled
                                 decimals={18}
@@ -336,7 +335,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                             </TokenContainer>
                         </FieldContainer>
                     </FormRow>
-                    <FormRow>
+                    {/* <FormRow>
                         <CollectibleLabel>Include ending price</CollectibleLabel>
                         <SwitchWrapper isActive={this.state.shouldIncludeEndPrice}>
                             <SwitchInput
@@ -364,7 +363,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                                 </TokenContainer>
                             </FieldContainer>
                         </FormRow>
-                    ) : null}
+                    ) : null} */}
                     <FormRow>
                         <CollectibleLabel>Set Expiration Date</CollectibleLabel>
                         <SelectStyled onChange={this._updateExpDate}>

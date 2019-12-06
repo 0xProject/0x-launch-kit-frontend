@@ -27,12 +27,10 @@ const CollectibleAssetWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div<{ color: string; image: string }>`
-    background-color: ${props => props.color || props.theme.componentsTheme.cardBackgroundColor};
+    background-color: transparent;
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
-    border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     height: 72px;
     margin-right: 15px;
     width: 72px;
@@ -43,6 +41,7 @@ const TextContainer = styled.div`
     display: flex;
     flex-grow: 1;
     padding: 0 10px 0 0;
+    overflow: hidden;
 `;
 
 const Title = styled.h3`
