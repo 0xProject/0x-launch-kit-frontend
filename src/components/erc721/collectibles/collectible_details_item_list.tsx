@@ -43,6 +43,7 @@ const TextContainer = styled.div`
     display: flex;
     flex-grow: 1;
     padding: 0 10px 0 0;
+    overflow: hidden;
 `;
 
 const Title = styled.h3`
