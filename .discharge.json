@@ -1,6 +1,6 @@
 {
     "domain": "www.p2punchained.com",
-    "build_command": "REACT_APP_RELAYER_URL='http://localhost:3000/v3' REACT_APP_RELAYER_WS_URL='ws://localhost:3000/' REACT_APP_DEFAULT_BASE_PATH='/erc721' REACT_APP_THEME_NAME='LIGHT_THEME' REACT_APP_NETWORK_ID=1 REACT_APP_CHAIN_ID=1 REACT_APP_COLLECTIBLES_SOURCE='opensea' REACT_APP_COLLECTIBLE_ADDRESS='0x0e3a2a1f2146d86a604adc220b4967a898d7fe07' REACT_APP_COLLECTIBLE_NAME='Gods Unchained' REACT_APP_COLLECTIBLE_DESCRIPTION='' yarn build",
+    "build_command": "yarn build",
     "upload_directory": "build",
     "index_key": "index.html",
     "error_key": "404.html",
