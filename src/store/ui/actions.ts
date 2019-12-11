@@ -8,10 +8,10 @@ import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { isWeth } from '../../util/known_tokens';
 import {
     buildLimitOrder,
+    buildLimitOrderIEO,
     buildMarketLimitMatchingOrders,
     buildMarketOrders,
     isDutchAuction,
-    buildLimitOrderIEO,
 } from '../../util/orders';
 import {
     createBasicBuyCollectibleSteps,

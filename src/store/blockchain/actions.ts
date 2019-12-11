@@ -467,10 +467,18 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
         const blockNumber = await web3Wrapper.getBlockNumberAsync();
 
         const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
-        const fromBlock =
-            lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
-        //   const fromBlock = Math.max(blockNumber - START_BLOCK_LIMIT, 1);
-        // lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
+        let limitBlocksToFetch = START_BLOCK_LIMIT;
+        if (lastBlockChecked) {
+            limitBlocksToFetch = blockNumber - lastBlockChecked;
+            if (limitBlocksToFetch > START_BLOCK_LIMIT) {
+                limitBlocksToFetch = START_BLOCK_LIMIT;
+            }
+        }
+
+        /*const fromBlock =
+            lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);*/
+        const fromBlock = Math.max(blockNumber - limitBlocksToFetch, 1);
+        // lastBlockChecked !r== null ? lastBlockChecked + 1 : Math.max(blockNumbe - START_BLOCK_LIMIT, 1);
 
         const toBlock = blockNumber;
 
