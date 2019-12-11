@@ -2,7 +2,13 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_ADDRESS, FEE_RECIPIENT, NETWORK_ID, START_BLOCK_LIMIT } from '../../common/constants';
+import {
+    COLLECTIBLE_ADDRESS,
+    FEE_RECIPIENT,
+    NETWORK_ID,
+    START_BLOCK_LIMIT,
+    USE_RELAYER_MARKET_UPDATES,
+} from '../../common/constants';
 import { ConvertBalanceMustNotBeEqualException } from '../../exceptions/convert_balance_must_not_be_equal_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToAllFillEvents, subscribeToFillEvents } from '../../services/exchange';
@@ -47,10 +53,12 @@ import {
 } from '../market/actions';
 import {
     fetchAllIEOOrders,
+    fetchPastFills,
     fetchUserIEOOrders,
     getOrderBook,
     getOrderbookAndUserOrders,
     initializeRelayerData,
+    subscribeToRelayerWebsocketFillEvents,
 } from '../relayer/actions';
 import {
     getCurrencyPair,
@@ -677,8 +685,17 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
                 // For executing this method (setConnectedUserNotifications) is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(setConnectedUserNotifications(ethAccount));
-                // tslint:disable-next-line:no-floating-promises
-                dispatch(setConnectedDexFills(FEE_RECIPIENT, ethAccount));
+                if (!USE_RELAYER_MARKET_UPDATES) {
+                    // tslint:disable-next-line:no-floating-promises
+                    dispatch(setConnectedDexFills(FEE_RECIPIENT, ethAccount));
+                }
+
+                if (USE_RELAYER_MARKET_UPDATES) {
+                    // tslint:disable-next-line:no-floating-promises
+                    dispatch(subscribeToRelayerWebsocketFillEvents());
+                    // tslint:disable-next-line:no-floating-promises
+                    dispatch(fetchPastFills());
+                }
             } catch (error) {
                 // Relayer error
                 logger.error('The fetch markets from the relayer failed', error);
@@ -953,6 +970,12 @@ export const initializeAppWallet: ThunkCreator = () => {
         }
         // tslint:disable-next-line:no-floating-promises
         dispatch(updateMarketPriceEther());
+        if (USE_RELAYER_MARKET_UPDATES) {
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(subscribeToRelayerWebsocketFillEvents());
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(fetchPastFills());
+        }
     };
 };
 

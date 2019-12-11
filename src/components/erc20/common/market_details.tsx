@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { USE_RELAYER_MARKET_UPDATES } from '../../../common/constants';
 import { changeMarket, goToHome } from '../../../store/actions';
 import {
     getBaseToken,
@@ -73,6 +74,22 @@ const statsToRow = (marketStats: MarketStats, baseToken: Token, currencyPair: Cu
     const lastPrice = marketStats.lastPrice
         ? new BigNumber(marketStats.lastPrice).toFixed(currencyPair.config.pricePrecision)
         : '-';
+    let volume;
+    if (USE_RELAYER_MARKET_UPDATES) {
+        volume =
+            (marketStats.volume &&
+                `${marketStats.volume.toFixed(baseToken.displayDecimals)} ${baseToken.symbol.toUpperCase()}`) ||
+            '- ';
+    } else {
+        volume =
+            (marketStats.volume &&
+                `${tokenAmountInUnits(
+                    marketStats.volume,
+                    baseToken.decimals,
+                    baseToken.displayDecimals,
+                ).toString()} ${baseToken.symbol.toUpperCase()}`) ||
+            '- ';
+    }
 
     return (
         <TR>
@@ -84,15 +101,7 @@ const statsToRow = (marketStats: MarketStats, baseToken: Token, currencyPair: Cu
             <CustomTD styles={{ textAlign: 'right', tabular: true }}>
                 {(marketStats.lowerPrice && marketStats.lowerPrice.toFixed(currencyPair.config.pricePrecision)) || '-'}
             </CustomTD>
-            <CustomTD styles={{ textAlign: 'right', tabular: true }}>
-                {(marketStats.volume &&
-                    `${tokenAmountInUnits(
-                        marketStats.volume,
-                        baseToken.decimals,
-                        baseToken.displayDecimals,
-                    ).toString()} ${baseToken.symbol.toUpperCase()}`) ||
-                    '-'}{' '}
-            </CustomTD>
+            <CustomTD styles={{ textAlign: 'right', tabular: true }}>{volume}</CustomTD>
             <CustomTD styles={{ textAlign: 'right', tabular: true }}>{marketStats.closedOrders || '-'}</CustomTD>
         </TR>
     );

@@ -10,6 +10,7 @@ import configFileTest from './config-test.json';*/
 import configFileIEOProduction from './config-ieo.json';
 import configFileTest from './config-test.json';
 import configFileProduction from './config.json';
+// import configFileProduction from '../config/files/config.json';
 import configTipBot from './settingsAssets.json';
 import configTipBotWhitelistAddresses from './settingsAssetsWhitelistAddresses.json';
 
