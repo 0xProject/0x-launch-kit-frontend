@@ -167,6 +167,7 @@ export interface MarketState {
     readonly quoteInUsd?: BigNumber | null;
     readonly markets: Market[] | null;
     readonly tokensPrice: TokenPrice[] | null;
+    readonly marketStats: RelayerMarketStats | null;
 }
 
 export interface StoreState {
@@ -387,8 +388,83 @@ export interface Fill {
     market: string;
 }
 
+export interface RelayerFill {
+    id: string;
+    tradeId: number;
+    order_hash: string;
+    senderAddress: string;
+    makerAddress: string;
+    takerAddress: string;
+    tokenBaseAddress: string;
+    tokenQuoteAddress: string;
+    exchangeAddress: string;
+    feeRecipientAddress: string;
+    makerFee: string;
+    takerFee: string;
+    filledTokenBaseAmount: string;
+    filledTokenQuoteAmount: string;
+    price: string;
+    signature: string;
+    from: string;
+    created_at: number;
+    side: 'BUY' | 'SELL';
+    pair: string;
+    blockNumber: number;
+}
+
+export interface PaginatedRelayerCollection<T> {
+    total: number;
+    page: number;
+    perPage: number;
+    records: T;
+}
+
+export interface RelayerMarketStats {
+    base: string;
+    quote: string;
+    pair: string;
+    volume_24: number;
+    total_orders: number;
+    price_max_24: number;
+    open_price: number;
+    close_price: number;
+    price_min_24: number;
+    last_price: number;
+    last_price_change: number;
+    last_price_usd: string;
+    utc_date: string;
+    utc_timestamp: number;
+    updated_at: number;
+    resolution: 'D';
+}
+
 export interface MarketFill {
     [market: string]: Fill[];
+}
+
+export interface OrderFilledMessage {
+    action: 'FILL';
+    event: {
+        id: string;
+        baseTokenAddress: string;
+        quoteTokenAddress: string;
+        transactionHash: string;
+        type: 'SELL' | 'BUY';
+        blockNumber: number;
+        makerAddress: string;
+        takerAddress: string;
+        feeRecipientAddress: string;
+        makerFeePaid: string;
+        takerFeePaid: string;
+        filledBaseTokenAmount: string;
+        filledQuoteTokenAmount: string;
+        orderHash: string;
+        timestamp: number;
+        outlier: boolean;
+        price: string;
+        pair: string;
+    };
+    requestId: string;
 }
 
 export interface MarketData {

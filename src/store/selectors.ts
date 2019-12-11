@@ -7,6 +7,7 @@ import {
     INSTANT_APP_BASE_PATH,
     LAUNCHPAD_APP_BASE_PATH,
     MARGIN_APP_BASE_PATH,
+    USE_RELAYER_MARKET_UPDATES,
 } from '../common/constants';
 import { isWeth } from '../util/known_tokens';
 import {
@@ -25,6 +26,7 @@ import {
     MARKETPLACES,
     OrderBook,
     OrderSide,
+    RelayerMarketStats,
     SearchTokenBalanceObject,
     StoreState,
     Token,
@@ -81,6 +83,7 @@ export const getBZXiTokensList = (state: StoreState) => state.bzx.TokensList;
 export const getBZXLoadingState = (state: StoreState) => state.bzx.bzxLoadingState;
 export const getIEOOrders = (state: StoreState) => state.relayer.ieoOrders;
 export const getUserIEOUIOrders = (state: StoreState) => state.relayer.userIEOOrders;
+export const getMarketStats = (state: StoreState) => state.market.marketStats;
 
 export const getCurrentMarketPlace = createSelector(
     getCurrentRoutePath,
@@ -117,33 +120,77 @@ export const getCurrentMarketLastPrice = createSelector(
     },
 );
 
-export const getCurrentMarketTodayVolume = createSelector(
-    getCurrentMarketFills,
-    (marketFills: Fill[]) => {
-        return getTodayVolumeFromFills(marketFills);
-    },
-);
+export const getCurrentMarketTodayVolume = USE_RELAYER_MARKET_UPDATES
+    ? createSelector(
+          getMarketStats,
+          (stats: RelayerMarketStats | null) => {
+              if (stats) {
+                  return new BigNumber(stats.volume_24);
+              } else {
+                  return new BigNumber(0);
+              }
+          },
+      )
+    : createSelector(
+          getCurrentMarketFills,
+          (marketFills: Fill[]) => {
+              return getTodayVolumeFromFills(marketFills);
+          },
+      );
 
-export const getCurrentMarketTodayHighPrice = createSelector(
-    getCurrentMarketFills,
-    (marketFills: Fill[]) => {
-        return getTodayHighPriceFromFills(marketFills);
-    },
-);
+export const getCurrentMarketTodayHighPrice = USE_RELAYER_MARKET_UPDATES
+    ? createSelector(
+          getMarketStats,
+          (stats: RelayerMarketStats | null) => {
+              if (stats) {
+                  return new BigNumber(stats.price_max_24);
+              } else {
+                  return new BigNumber(0);
+              }
+          },
+      )
+    : createSelector(
+          getCurrentMarketFills,
+          (marketFills: Fill[]) => {
+              return getTodayHighPriceFromFills(marketFills);
+          },
+      );
 
-export const getCurrentMarketTodayLowerPrice = createSelector(
-    getCurrentMarketFills,
-    (marketFills: Fill[]) => {
-        return getTodayLowerPriceFromFills(marketFills);
-    },
-);
+export const getCurrentMarketTodayLowerPrice = USE_RELAYER_MARKET_UPDATES
+    ? createSelector(
+          getMarketStats,
+          (stats: RelayerMarketStats | null) => {
+              if (stats) {
+                  return new BigNumber(stats.price_min_24);
+              } else {
+                  return null;
+              }
+          },
+      )
+    : createSelector(
+          getCurrentMarketFills,
+          (marketFills: Fill[]) => {
+              return getTodayLowerPriceFromFills(marketFills);
+          },
+      );
 
-export const getCurrentMarketTodayClosedOrders = createSelector(
-    getCurrentMarketFills,
-    (marketFills: Fill[]) => {
-        return getTodayClosedOrdersFromFills(marketFills);
-    },
-);
+export const getCurrentMarketTodayClosedOrders = USE_RELAYER_MARKET_UPDATES
+    ? createSelector(
+          getMarketStats,
+          (stats: RelayerMarketStats | null) => {
+              if (stats) {
+                  return stats.total_orders;
+              } else {
+                  return 0;
+              }
+          },
+      )
+    : createSelector(
+          getCurrentMarketFills,
+          (marketFills: Fill[]) => {
+              return getTodayClosedOrdersFromFills(marketFills);
+          },
+      );
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {

@@ -3,15 +3,25 @@ import { push } from 'connected-react-router';
 import queryString from 'query-string';
 import { createAction } from 'typesafe-actions';
 
-import { ERC20_APP_BASE_PATH } from '../../common/constants';
+import { ERC20_APP_BASE_PATH, USE_RELAYER_MARKET_UPDATES } from '../../common/constants';
 import { availableMarkets } from '../../common/markets';
 import { getMarketPriceEther, getMarketPriceQuote, getMarketPriceTokens } from '../../services/markets';
-import { getRelayer } from '../../services/relayer';
+import { getMarketStatsFromRelayer, getRelayer } from '../../services/relayer';
 import { getKnownTokens } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
-import { CurrencyPair, Market, StoreState, ThunkCreator, Token, TokenBalance, TokenPrice } from '../../util/types';
-import { getOrderbookAndUserOrders } from '../actions';
-import { getWethTokenBalance } from '../selectors';
+import { marketToString } from '../../util/markets';
+import {
+    CurrencyPair,
+    Market,
+    RelayerMarketStats,
+    StoreState,
+    ThunkCreator,
+    Token,
+    TokenBalance,
+    TokenPrice,
+} from '../../util/types';
+import { fetchPastMarketFills, getOrderbookAndUserOrders } from '../actions';
+import { getCurrencyPair, getWethTokenBalance } from '../selectors';
 
 const logger = getLogger('Market::Actions');
 
@@ -25,6 +35,10 @@ export const setCurrencyPair = createAction('market/CURRENCY_PAIR_set', resolve 
 
 export const setMarkets = createAction('market/MARKETS_set', resolve => {
     return (markets: Market[]) => resolve(markets);
+});
+
+export const setMarketStats = createAction('market/MARKETS_STATS_set', resolve => {
+    return (marketStats: RelayerMarketStats) => resolve(marketStats);
 });
 
 // Market Price Ether Actions
@@ -81,6 +95,12 @@ export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
             }),
         );
         dispatch(setCurrencyPair(currencyPair));
+        if (USE_RELAYER_MARKET_UPDATES) {
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(fetchPastMarketFills());
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(updateMarketStats());
+        }
 
         // tslint:disable-next-line:no-floating-promises
         dispatch(getOrderbookAndUserOrders());
@@ -208,9 +228,29 @@ export const updateMarketPriceTokens: ThunkCreator = () => {
 export const updateERC20Markets = () => {
     return async (dispatch: any) => {
         try {
-            await dispatch(fetchMarkets());
+            // tslint:disable-next-line:no-floating-promises
+            dispatch(fetchMarkets());
+            if (USE_RELAYER_MARKET_UPDATES) {
+                dispatch(updateMarketStats());
+            }
         } catch (error) {
             dispatch(fetchERC20MarketsError(error));
+        }
+    };
+};
+
+export const updateMarketStats: ThunkCreator = () => {
+    return async (dispatch, getState) => {
+        const state = getState() as StoreState;
+        const currencyPair = getCurrencyPair(state);
+        const market = marketToString(currencyPair);
+        try {
+            const marketStats = await getMarketStatsFromRelayer(market);
+            if (marketStats) {
+                dispatch(setMarketStats(marketStats));
+            }
+        } catch (error) {
+            logger.error('Failed to update market stats', error);
         }
     };
 };

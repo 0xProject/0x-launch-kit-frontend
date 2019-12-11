@@ -118,7 +118,7 @@
             "config": {
                 "basePrecision": 0,
                 "pricePrecision": 7,
-                "minAmount": 10000
+                "minAmount": 1
             }
         },
         {

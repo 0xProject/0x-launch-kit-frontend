@@ -2,11 +2,21 @@ import { assetDataUtils, AssetProxyId, BigNumber } from '0x.js';
 import { HttpClient, OrderConfigRequest, OrderConfigResponse, SignedOrder } from '@0x/connect';
 import { RateLimit } from 'async-sema';
 
-import { RELAYER_URL } from '../common/constants';
+import { RELAYER_URL, RELAYER_WS_URL } from '../common/constants';
+import { getLogger } from '../util/logger';
 import { serializeOrder } from '../util/orders';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
-import { AccountMarketStat, MarketData, Token } from '../util/types';
-
+import {
+    AccountMarketStat,
+    MarketData,
+    PaginatedRelayerCollection,
+    RelayerFill,
+    RelayerMarketStats,
+    Token,
+} from '../util/types';
+// tslint:disable-next-line
+const uuidv1 = require('uuid/v1');
+const logger = getLogger('Services::Relayer');
 export class Relayer {
     private readonly _client: HttpClient;
     private readonly _rateLimit: () => Promise<void>;
@@ -162,6 +172,70 @@ export const getRelayer = (): Relayer => {
     return relayer;
 };
 
+export const getMarketFillsFromRelayer = async (
+    pair: string,
+    page: number = 0,
+    perPage: number = 100,
+): Promise<PaginatedRelayerCollection<RelayerFill[]> | null> => {
+    const headers = new Headers({
+        'content-type': 'application/json',
+    });
+
+    const init: RequestInit = {
+        method: 'GET',
+        headers,
+    };
+    // Get only last 100 trades
+    const response = await fetch(
+        `${RELAYER_URL}/markets/${pair}/history?page=${page}&perPage=${(page + 1) * perPage}`,
+        init,
+    );
+    if (response.ok) {
+        return (await response.json()) as PaginatedRelayerCollection<RelayerFill[]>;
+    } else {
+        return null;
+    }
+};
+
+export const getFillsFromRelayer = async (
+    page: number = 0,
+    perPage: number = 100,
+): Promise<PaginatedRelayerCollection<RelayerFill[]> | null> => {
+    const headers = new Headers({
+        'content-type': 'application/json',
+    });
+
+    const init: RequestInit = {
+        method: 'GET',
+        headers,
+    };
+    // Get only last 100 trades
+    const response = await fetch(`${RELAYER_URL}/markets/history?page=${page}&perPage=${(page + 1) * perPage}`, init);
+    if (response.ok) {
+        return (await response.json()) as PaginatedRelayerCollection<RelayerFill[]>;
+    } else {
+        return null;
+    }
+};
+
+export const getMarketStatsFromRelayer = async (pair: string): Promise<RelayerMarketStats | null> => {
+    const headers = new Headers({
+        'content-type': 'application/json',
+    });
+
+    const init: RequestInit = {
+        method: 'GET',
+        headers,
+    };
+    // Get only last 100 trades
+    const response = await fetch(`${RELAYER_URL}/markets/stats/${pair}`, init);
+    if (response.ok) {
+        return (await response.json()) as RelayerMarketStats;
+    } else {
+        return null;
+    }
+};
+
 export const getAccountMarketStatsFromRelayer = async (
     pair: string,
     from: number,
@@ -239,4 +313,46 @@ export const getAllIEOSignedOrders = async (): Promise<SignedOrder[]> => {
     } else {
         return [];
     }
+};
+
+let relayerSocket: WebSocket | null;
+export const getWebsocketRelayerConnection = () => {
+    if (!relayerSocket) {
+        relayerSocket = new WebSocket(RELAYER_WS_URL);
+    }
+    return relayerSocket;
+};
+
+export const startWebsocketMarketsSubscription = (cb_onmessage: any): WebSocket => {
+    const socket = getWebsocketRelayerConnection();
+    const uuid = uuidv1();
+    const requestAll = {
+        type: 'SUBSCRIBE',
+        topic: 'BOOK',
+        market: 'ALL_FILLS_OPTS',
+        requestId: uuid,
+    };
+    socket.onopen = event => {
+        socket.send(JSON.stringify(requestAll));
+    };
+    socket.onerror = event => {
+        logger.error('Socket error. Reconnect will be attempted in 1 second.');
+        setTimeout(() => {
+            relayerSocket = null;
+            startWebsocketMarketsSubscription(cb_onmessage);
+        }, 1000);
+    };
+
+    socket.onclose = event => {
+        logger.error('Socket is closed. Reconnect will be attempted in 1 second.');
+        setTimeout(() => {
+            relayerSocket = null;
+            startWebsocketMarketsSubscription(cb_onmessage);
+        }, 1000);
+    };
+    socket.onmessage = event => {
+        cb_onmessage(event);
+    };
+
+    return socket;
 };

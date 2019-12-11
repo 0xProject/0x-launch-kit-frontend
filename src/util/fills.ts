@@ -1,10 +1,10 @@
 import { assetDataUtils, BigNumber, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
-import { KnownTokens } from './known_tokens';
+import { getKnownTokens, KnownTokens } from './known_tokens';
 import { marketToStringFromTokens } from './markets';
 import { getOrderSideFromFillEvent } from './notifications';
 import { getTransactionLink } from './transaction_link';
-import { Fill, Market, OrderSide, Token } from './types';
+import { Fill, Market, OrderSide, RelayerFill, Token } from './types';
 
 export const buildFill = (
     log: LogWithDecodedArgs<ExchangeFillEventArgs>,
@@ -63,4 +63,21 @@ export const getTransactionHashFromFill = (fill: Fill): string => {
 export const getEtherscanUrlForFillTx = (fill: Fill): string => {
     const hash = getTransactionHashFromFill(fill);
     return getTransactionLink(hash);
+};
+
+export const mapRelayerFillToFill = (fill: RelayerFill): Fill => {
+    const known_tokens = getKnownTokens();
+    return {
+        id: fill.id,
+        amountQuote: new BigNumber(fill.filledTokenQuoteAmount),
+        amountBase: new BigNumber(fill.filledTokenBaseAmount),
+        tokenQuote: known_tokens.getTokenByAddress(fill.tokenQuoteAddress),
+        tokenBase: known_tokens.getTokenByAddress(fill.tokenBaseAddress),
+        side: fill.side === 'BUY' ? OrderSide.Buy : OrderSide.Sell,
+        price: fill.price,
+        timestamp: new Date(Number(fill.created_at)),
+        makerAddress: fill.makerAddress,
+        takerAddress: fill.takerAddress,
+        market: fill.pair,
+    };
 };
