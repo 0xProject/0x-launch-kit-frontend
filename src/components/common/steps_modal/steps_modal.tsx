@@ -17,6 +17,7 @@ import { LendingTokenStepContainer } from './lending_token_step';
 import { SignOrderStepContainer } from './sign_order_step';
 import { ModalContent } from './steps_common';
 import { StepItem } from './steps_progress';
+import { SubmitConfigStepContainer } from './submit_config_step';
 import { ToggleTokenLockStepContainer } from './toggle_token_lock_step';
 import { TransferTokenStepContainer } from './transfer_token_step';
 import { UnlockCollectiblesStepContainer } from './unlock_collectibles_step';
@@ -89,6 +90,9 @@ class StepsModal extends React.Component<Props> {
                     )}
                     {currentStep && currentStep.kind === StepKind.UnLendingToken && (
                         <LendingTokenStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
+                    )}
+                    {currentStep && currentStep.kind === StepKind.SubmitConfig && (
+                        <SubmitConfigStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
 
                     {currentStep &&

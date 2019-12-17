@@ -1,5 +1,8 @@
 import { getType } from 'typesafe-actions';
 
+import { Config } from '../../common/config';
+import { ERC20_THEME_NAME } from '../../common/constants';
+import { getThemeByName } from '../../themes/theme_meta_data_utils';
 import { MarketFill, Step, StepsModalState, UIState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
@@ -21,6 +24,10 @@ const initialUIState: UIState = {
     orderPriceSelected: null,
     sidebarOpen: false,
     openFiatOnRampModal: false,
+    themeName: ERC20_THEME_NAME,
+    erc20Theme: getThemeByName(ERC20_THEME_NAME),
+    generalConfig: Config.getConfig().general,
+    configData: null,
 };
 
 export function stepsModal(state: StepsModalState = initialStepsModalState, action: RootAction): StepsModalState {
@@ -65,6 +72,8 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
             return { ...state, orderPriceSelected: action.payload };
         case getType(actions.setNotifications):
             return { ...state, notifications: action.payload };
+        case getType(actions.setConfigData):
+            return { ...state, configData: action.payload };
         case getType(actions.addNotifications): {
             const newNotifications = action.payload.filter(notification => {
                 const doesAlreadyExist = state.notifications
@@ -84,6 +93,12 @@ export function ui(state: UIState = initialUIState, action: RootAction): UIState
                 return state;
             }
         }
+        case getType(actions.setERC20Theme):
+            return { ...state, erc20Theme: action.payload };
+        case getType(actions.setThemeName):
+            return { ...state, themeName: action.payload };
+        case getType(actions.setGeneralConfig):
+            return { ...state, generalConfig: action.payload };
         case getType(actions.setFills):
             return { ...state, fills: action.payload };
         case getType(actions.setMarketFills):

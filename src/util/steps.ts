@@ -21,6 +21,8 @@ export const getStepTitle = (step: Step): string => {
             return 'Lending';
         case StepKind.UnLendingToken:
             return 'Unlending';
+        case StepKind.SubmitConfig:
+            return 'Dex Config';
         default:
             const _exhaustiveCheck: never = step;
             return _exhaustiveCheck;
@@ -32,6 +34,7 @@ export const isLongStep = (step: Step): boolean => {
         case StepKind.SellCollectible:
         case StepKind.BuySellLimit:
         case StepKind.UnLendingToken:
+        case StepKind.SubmitConfig:
             return false;
         case StepKind.BuySellMarket:
         case StepKind.BuySellLimitMatching:

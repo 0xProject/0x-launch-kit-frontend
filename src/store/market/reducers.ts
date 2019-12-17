@@ -1,15 +1,20 @@
 import { getType } from 'typesafe-actions';
 
-import { availableMarkets } from '../../common/markets';
+import { getAvailableMarkets } from '../../common/markets';
 import { getCurrencyPairByTokensSymbol } from '../../util/known_currency_pairs';
 import { MarketState } from '../../util/types';
 import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
 const parsedUrl = new URL(window.location.href.replace('#/', ''));
-const base = parsedUrl.searchParams.get('base') || availableMarkets[0].base;
-const quote = parsedUrl.searchParams.get('quote') || availableMarkets[0].quote;
-const currencyPair = getCurrencyPairByTokensSymbol(base, quote);
+const base = parsedUrl.searchParams.get('base') || getAvailableMarkets()[0].base;
+const quote = parsedUrl.searchParams.get('quote') || getAvailableMarkets()[0].quote;
+let currencyPair;
+try {
+    currencyPair = getCurrencyPairByTokensSymbol(base, quote);
+} catch (e) {
+    currencyPair = getCurrencyPairByTokensSymbol(getAvailableMarkets()[0].base, getAvailableMarkets()[0].quote);
+}
 
 const initialMarketState: MarketState = {
     currencyPair,

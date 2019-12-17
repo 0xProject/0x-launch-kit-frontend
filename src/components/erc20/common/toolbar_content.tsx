@@ -1,19 +1,19 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
-import ReactSVG from 'react-svg';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { ReactComponent as LogoSvg } from '../../../assets/icons/veridex_logo.svg';
-import { Config } from '../../../common/config';
 import { UI_GENERAL_TITLE } from '../../../common/constants';
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
-import { goToHome, goToWallet, openSideBar } from '../../../store/actions';
+import { goToHome, goToWallet, openSideBar, setERC20Theme, setThemeName } from '../../../store/actions';
+import { getGeneralConfig, getThemeName } from '../../../store/selectors';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
+import { getThemeFromConfigDex } from '../../../themes/theme_meta_data_utils';
 import { isMobile } from '../../../util/screen';
 import { Button } from '../../common/button';
 import { withWindowWidth } from '../../common/hoc/withWindowWidth';
+import { LogoIcon } from '../../common/icons/logo_icon';
 import { MenuBurguer } from '../../common/icons/menu_burguer';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
@@ -50,12 +50,6 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
-const LogoSVGStyled = styled(LogoSvg)`
-    path {
-        fill: ${props => props.theme.componentsTheme.logoERC20Color};
-    }
-`;
-
 const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     align-items: center;
     display: flex;
@@ -76,6 +70,11 @@ const WalletDropdown = styled(WalletConnectionContentContainer)`
 
 const StyledButton = styled(Button)`
     background-color: ${props => props.theme.componentsTheme.topbarBackgroundColor};
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+`;
+
+const StyledMenuBurguer = styled(MenuBurguer)`
+    fill: ${props => props.theme.componentsTheme.textColorCommon};
 `;
 
 const ToolbarContent = (props: Props) => {
@@ -83,18 +82,25 @@ const ToolbarContent = (props: Props) => {
         e.preventDefault();
         props.onGoToHome();
     };
-    const generalConfig = Config.getConfig().general;
-    const logo = generalConfig && generalConfig.icon ? <ReactSVG src={generalConfig.icon} /> : <LogoSVGStyled />;
+    const generalConfig = useSelector(getGeneralConfig);
+    const themeName = useSelector(getThemeName);
+    const logo = generalConfig && generalConfig.icon ? <LogoIcon icon={generalConfig.icon} /> : null;
     const dispatch = useDispatch();
     const setOpenSideBar = () => {
         dispatch(openSideBar(true));
+    };
+    const handleThemeClick = () => {
+        const themeN = themeName === 'DARK_THEME' ? 'LIGHT_THEME' : 'DARK_THEME';
+        dispatch(setThemeName(themeN));
+        const theme = getThemeFromConfigDex(themeN);
+        dispatch(setERC20Theme(theme));
     };
 
     let startContent;
     if (isMobile(props.windowWidth)) {
         startContent = (
             <StyledButton onClick={setOpenSideBar}>
-                <MenuBurguer />
+                <StyledMenuBurguer />
             </StyledButton>
         );
     } else {
@@ -125,6 +131,7 @@ const ToolbarContent = (props: Props) => {
     } else {
         endContent = (
             <>
+                <StyledButton onClick={handleThemeClick}>{themeName === 'DARK_THEME' ? '☼' : '🌑'}</StyledButton>
                 <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
                     My Wallet
                 </MyWalletLink>

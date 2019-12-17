@@ -11,6 +11,7 @@ import {
     getHasUnreadNotifications,
     getMarketFills,
     getNotifications,
+    getThemeName,
     getWallet,
 } from './selectors';
 
@@ -137,6 +138,13 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
             localStorage.resetWalletConnected();
             break;
         }
+        case getType(actions.setThemeName): {
+            const state = getState();
+            const themeName = getThemeName(state);
+            localStorage.saveThemeName(themeName);
+            break;
+        }
+
         case getType(actions.setWallet): {
             const state = getState();
             const wallet = getWallet(state);

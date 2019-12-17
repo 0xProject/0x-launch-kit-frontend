@@ -1,0 +1,175 @@
+{
+    "general": {
+        "title": "My first Dex"
+    },
+    "tokens": [
+        {
+            "decimals": 18,
+            "symbol": "vsf",
+            "name": "VeriSafe",
+            "primaryColor": "#081e6e",
+            "icon": "assets/icons/vsf.svg",
+            "addresses": {
+                "1": "0xac9ce326e95f51b5005e9fe1dd8085a01f18450c",
+                "3": "0xba3a79d758f19efe588247388754b8e4d6edda81",
+                "42": "0xBA3a79D758f19eFe588247388754b8e4d6EddA81"
+            },
+            "id": "verisafe",
+            "c_id": "verisafe",
+            "displayDecimals": 0,
+            "description": "The transparent ecossystem that crypto needs!",
+            "website": "https://www.verisafe.io"
+        },
+        {
+            "symbol": "weth",
+            "name": "Wrapped Ether",
+            "primaryColor": "#3333ff",
+            "icon": "assets/icons/weth.svg",
+            "addresses": {
+                "1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                "3": "0xc778417e063141139fce010982780140aa0cd5ab",
+                "4": "0xc778417e063141139fce010982780140aa0cd5ab",
+                "42": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+                "50": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082"
+            },
+            "decimals": 18,
+            "displayDecimals": 3,
+            "id": "ethereum",
+            "c_id": "ethereum",
+            "website": "https://weth.io",
+            "description": "wETH is 'wrapped ETH'"
+        },
+        {
+            "symbol": "zrx",
+            "name": "0x Protocol Token",
+            "primaryColor": "#333333",
+            "icon": "assets/icons/zrx.svg",
+            "addresses": {
+                "1": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
+                "3": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
+                "4": "0x8080c7e4b81ecf23aa6f877cfbfd9b0c228c6ffa",
+                "5": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
+                "42": "0x2002d3812f58e35f0ea1ffbf80a75a38c32175fa",
+                "50": "0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c"
+            },
+            "decimals": 18,
+            "displayDecimals": 2,
+            "c_id": "0x",
+            "website": "https://0x.org",
+            "description": "0x is an open protocol that enables the peer-to-peer exchange of assets on the Ethereum blockchain."
+        },
+        {
+            "decimals": 8,
+            "symbol": "0xbtc",
+            "name": "0xBitcoin",
+            "primaryColor": "#ff7423",
+            "icon": "assets/icons/zxb.svg",
+            "addresses": {
+                "1": "0xb6ed7644c69416d67b522e20bc294a9a9b405b31"
+            },
+            "displayDecimals": 2,
+            "id": "0xbtc",
+            "c_id": "oxbitcoin",
+            "description": "Pure Mined Currency For Ethereum Applications",
+            "website": "https://0xbitcoin.org"
+        },
+        {
+            "decimals": 18,
+            "displayDecimals": 2,
+            "symbol": "bat",
+            "name": "Basic Attention Token",
+            "icon": "assets/icons/bat.svg",
+            "primaryColor": "#9e1f63",
+            "addresses": {
+                "1": "0x0d8775f648430679a709e98d2b0cb6250d2887ef"
+            },
+            "id": "basic-attention-token",
+            "website": "https://basicattentiontoken.org/",
+            "description": "INTRODUCING BLOCKCHAIN-BASED DIGITAL ADVERTISING",
+            "c_id": "basic-attention-token"
+        },
+        {
+            "decimals": 18,
+            "displayDecimals": 2,
+            "symbol": "mkr",
+            "name": "Maker",
+            "primaryColor": "#68CCBB",
+            "icon": "assets/icons/mkr.svg",
+            "addresses": {
+                "1": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
+                "3": "0x06732516acd125b6e83c127752ed5f027e1b276e",
+                "4": "0xb763e26cd6dd09d16f52dc3c60ebb77e46b03290",
+                "42": "0x7B6B10CAa9E8E9552bA72638eA5b47c25afea1f3",
+                "50": "0x34d402f14d58e001d8efbe6585051bf9706aa064"
+            },
+            "website": "https://makerdao.com/",
+            "c_id": "maker",
+            "description": "Maker is comprised of a decentralized stablecoin, collateral loans, and community governance.",
+            "id": "maker"
+        }
+    ],
+    "pairs": [
+        {
+            "base": "vsf",
+            "quote": "weth",
+            "config": {
+                "basePrecision": 0,
+                "pricePrecision": 8,
+                "minAmount": 10000
+            }
+        },
+        {
+            "base": "zrx",
+            "quote": "weth",
+            "config": {
+                "basePrecision": 0,
+                "pricePrecision": 7,
+                "minAmount": 10000
+            }
+        },
+        {
+            "base": "zrx",
+            "quote": "vsf",
+            "config": {
+                "basePrecision": 0,
+                "pricePrecision": 7,
+                "minAmount": 10
+            }
+        },
+        {
+            "base": "bat",
+            "quote": "weth",
+            "config": {
+                "basePrecision": 2,
+                "pricePrecision": 8
+            }
+        },
+        {
+            "base": "mkr",
+            "quote": "weth",
+            "config": {
+                "basePrecision": 2,
+                "pricePrecision": 6
+            }
+        },
+        {
+            "base": "0xbtc",
+            "quote": "weth",
+            "config": {
+                "basePrecision": 2,
+                "pricePrecision": 8,
+                "minAmount": 1
+            }
+        }
+    ],
+    "marketFilters": [
+        {
+            "text": "ETH",
+            "value": "weth"
+        },
+        {
+            "text": "VSF",
+            "value": "vsf"
+        }
+    ]
+}

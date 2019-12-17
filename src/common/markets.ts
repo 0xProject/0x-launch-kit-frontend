@@ -1,9 +1,9 @@
 import { mapCurrencyPairMetaToCurrencyPair } from '../util/currency_pair_meta_data';
-import { Filter } from '../util/types';
+import { CurrencyPair, CurrencyPairMetaData, Filter } from '../util/types';
 
 import { Config } from './config';
 
-export const availableMarkets = Config.getConfig().pairs.map(mapCurrencyPairMetaToCurrencyPair);
+let availableMarkets: CurrencyPair[] = [];
 
 const allFilter = {
     text: 'ALL',
@@ -11,3 +11,15 @@ const allFilter = {
 };
 const suppliedMarketFilters = Config.getConfig().marketFilters;
 export const marketFilters: Filter[] = suppliedMarketFilters ? [...suppliedMarketFilters, allFilter] : [];
+
+export const updateAvailableMarkets = (pairs: CurrencyPairMetaData[]) => {
+    availableMarkets = pairs.map(mapCurrencyPairMetaToCurrencyPair);
+    return availableMarkets;
+};
+
+export const getAvailableMarkets = (): CurrencyPair[] => {
+    if (!availableMarkets.length) {
+        availableMarkets = Config.getConfig().pairs.map(mapCurrencyPairMetaToCurrencyPair);
+    }
+    return availableMarkets;
+};

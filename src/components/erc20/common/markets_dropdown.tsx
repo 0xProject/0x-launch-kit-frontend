@@ -349,31 +349,36 @@ class MarketsDropdown extends React.Component<Props, State> {
                             market.currencyPair.base === currencyPair.base &&
                             market.currencyPair.quote === currencyPair.quote;
                         const setSelectedMarket = () => this._setSelectedMarket(market.currencyPair);
+                        try {
+                            const token = getKnownTokens().getTokenBySymbol(market.currencyPair.base);
 
-                        const token = getKnownTokens().getTokenBySymbol(market.currencyPair.base);
+                            const baseSymbol = market.currencyPair.base.toUpperCase();
+                            const quoteSymbol = market.currencyPair.quote.toUpperCase();
 
-                        const baseSymbol = market.currencyPair.base.toUpperCase();
-                        const quoteSymbol = market.currencyPair.quote.toUpperCase();
-
-                        return (
-                            <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
-                                <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
-                                    <TokenIconAndLabel>
-                                        <TokenIcon
-                                            symbol={token.symbol}
-                                            primaryColor={token.primaryColor}
-                                            icon={token.icon}
-                                        />
-                                        <TokenLabel>
-                                            {baseSymbol} / {quoteSymbol}
-                                        </TokenLabel>
-                                    </TokenIconAndLabel>
-                                </CustomTDFirstStyled>
-                                <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
-                                    {this._getPrice(market)}
-                                </CustomTDLastStyled>
-                            </TRStyled>
-                        );
+                            return (
+                                <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
+                                    <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
+                                        <TokenIconAndLabel>
+                                            <TokenIcon
+                                                symbol={token.symbol}
+                                                primaryColor={token.primaryColor}
+                                                icon={token.icon}
+                                            />
+                                            <TokenLabel>
+                                                {baseSymbol} / {quoteSymbol}
+                                            </TokenLabel>
+                                        </TokenIconAndLabel>
+                                    </CustomTDFirstStyled>
+                                    <CustomTDLastStyled
+                                        styles={{ textAlign: 'center', borderBottom: true, tabular: true }}
+                                    >
+                                        {this._getPrice(market)}
+                                    </CustomTDLastStyled>
+                                </TRStyled>
+                            );
+                        } catch {
+                            return null;
+                        }
                     })}
                 </TBody>
             </Table>

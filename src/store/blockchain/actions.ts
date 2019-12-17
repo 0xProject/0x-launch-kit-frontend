@@ -482,7 +482,6 @@ export const setConnectedDexFills: ThunkCreator<Promise<any>> = (ethAccount: str
                 limitBlocksToFetch = START_BLOCK_LIMIT;
             }
         }
-
         /*const fromBlock =
             lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);*/
         const fromBlock = Math.max(blockNumber - limitBlocksToFetch, 1);
@@ -842,7 +841,7 @@ export const createSignedCollectibleOrder: ThunkCreator = (
 };
 /**
  *  Initializes the app with a default state if the user does not have metamask, with permissions rejected
- *  or if the user did not connected metamask to the dApp. Takes the info from the NETWORK_ID configured in the env vars
+ *  or if the user diNd not connected metamask to the dApp. Takes the info from the ETWORK_ID configured in the env vars
  */
 export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
     return async (dispatch, getState) => {

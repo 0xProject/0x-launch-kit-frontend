@@ -11,6 +11,7 @@ const hasUnreadNotificationsKey = addPrefix('hasUnreadNotifications');
 const lastBlockCheckedKey = addPrefix('lastBlockChecked');
 const adBlockMessageShownKey = addPrefix('adBlockMessageShown');
 const walletConnectedKey = addPrefix('walletConnected');
+const themeNameKey = addPrefix('themeName');
 
 export class LocalStorage {
     private readonly _storage: Storage;
@@ -215,5 +216,13 @@ export class LocalStorage {
     }
     public getWalletConnected(): Wallet | null | boolean {
         return JSON.parse(this._storage.getItem(walletConnectedKey) || JSON.stringify(false));
+    }
+    public getThemeName(): string | null {
+        return JSON.parse(this._storage.getItem(themeNameKey) || 'null');
+    }
+    public saveThemeName(themeName?: string): void {
+        if (themeName) {
+            this._storage.setItem(themeNameKey, JSON.stringify(themeName));
+        }
     }
 }

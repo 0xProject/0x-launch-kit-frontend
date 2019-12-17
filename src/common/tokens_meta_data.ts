@@ -16,6 +16,7 @@ export interface TokenMetaData {
     description?: string;
     website?: string;
     verisafe_sticker?: string;
+    mainnetAddress?: string;
 }
 
 export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = Config.getConfig().tokens;

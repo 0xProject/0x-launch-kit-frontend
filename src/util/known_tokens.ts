@@ -5,13 +5,17 @@ import { KNOWN_TOKENS_IEO_META_DATA } from '../common/tokens_meta_data_ieo';
 import { getLogger } from '../util/logger';
 
 import { mapTokensIEOMetaDataToTokenByNetworkId } from './token_ieo_meta_data';
-import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
+import {
+    getWethTokenFromTokensMetaDataByNetworkId,
+    mapTokensMetaDataFromForm,
+    mapTokensMetaDataToTokenByNetworkId,
+} from './token_meta_data';
 import { Token } from './types';
 
 const logger = getLogger('Tokens::known_tokens .ts');
 
 export class KnownTokens {
-    private readonly _tokens: Token[] = [];
+    private _tokens: Token[] = [];
     private readonly _tokensIEO: Token[] = [];
     private readonly _wethToken: Token;
 
@@ -22,6 +26,9 @@ export class KnownTokens {
         );
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
     }
+    public updateTokens = (knownTokensMetadata: TokenMetaData[]) => {
+        this._tokens = mapTokensMetaDataFromForm(knownTokensMetadata).filter(token => !isWeth(token.symbol));
+    };
 
     public getTokenBySymbol = (symbol: string): Token => {
         const symbolInLowerCaseScore = symbol.toLowerCase();

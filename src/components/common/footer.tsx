@@ -1,9 +1,10 @@
 import React, { HTMLAttributes } from 'react';
-import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { Config } from '../../common/config';
-import { ERC20_APP_BASE_PATH, GIT_COMMIT } from '../../common/constants';
+import { GIT_COMMIT } from '../../common/constants';
+import { goToDexWizard, goToListedTokens } from '../../store/actions';
 import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 
 import { SocialIcon } from './icons/social_icon';
@@ -43,16 +44,7 @@ const SocialsContainer = styled.div`
 `;
 
 const HrefStyled = styled.a`
-    color: white;
-    text-decoration: none;
-    padding-left: 5px;
-    @media (max-width: ${themeBreakPoints.md}) {
-        padding-left: 2px;
-    }
-`;
-
-const LinkStyled = styled(Link)`
-    color: white;
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     text-decoration: none;
     padding-left: 5px;
     @media (max-width: ${themeBreakPoints.md}) {
@@ -129,6 +121,7 @@ const poweredBySVG = () => {
 
 export const Footer: React.FC<Props> = props => {
     const config = Config.getConfig();
+    const dispatch = useDispatch();
     let socialButtons;
     if (config.general && config.general.social) {
         const social_urls_keys = Object.keys(config.general.social);
@@ -140,11 +133,22 @@ export const Footer: React.FC<Props> = props => {
             ));
         };
     }
+    const handleDexWizardClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        dispatch(goToDexWizard());
+    };
+
+    const handleListTokensClick: React.EventHandler<React.MouseEvent> = e => {
+        e.preventDefault();
+        dispatch(goToListedTokens());
+    };
 
     return (
         <FooterWrapper title={GIT_COMMIT} {...props}>
             <LinksContainer>
-                <LinkStyled to={`${ERC20_APP_BASE_PATH}/listed-tokens`}>Tokens</LinkStyled>
+                <HrefStyled href={`/listed-tokens`} onClick={handleListTokensClick}>
+                    Tokens
+                </HrefStyled>
                 <HrefStyled
                     href="https://www.verisafe.io/terms-and-conditions"
                     target="_blank"
@@ -170,6 +174,11 @@ export const Footer: React.FC<Props> = props => {
                 </HrefStyled>
                 <HrefStyled href="https://my.verisafe.io/help-support/" target="_blank" rel="noopener noreferrer">
                     Listings
+                </HrefStyled>
+            </LinksContainer>
+            <LinksContainer>
+                <HrefStyled href={`/dex-wizard`} onClick={handleDexWizardClick}>
+                    Dex Wizard
                 </HrefStyled>
             </LinksContainer>
             {socialButtons && <SocialsContainer>{socialButtons()}</SocialsContainer>}

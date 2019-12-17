@@ -8,6 +8,7 @@ import configFileTest from './config-test.json';*/
 // Using this due to CI error
 // import configFileIEOProduction from './config-ieo.json';
 import configFileIEOProduction from './config-ieo.json';
+import configTemplateFile from './config-template.json';
 import configFileTest from './config-test.json';
 import configFileProduction from './config.json';
 // import configFileProduction from '../config/files/config.json';
@@ -31,4 +32,4 @@ if (process.env.NODE_ENV === 'development') {
 
 configFileIEO = configFileIEOProduction;
 
-export { configFile, configFileIEO, configTipBot, configTipBotWhitelistAddresses };
+export { configFile, configFileIEO, configTipBot, configTipBotWhitelistAddresses, configTemplateFile };

@@ -59,6 +59,32 @@ export const goToHomeMarginLend: ThunkCreator = () => {
     };
 };
 
+export const goToDexWizard: ThunkCreator = () => {
+    return async (dispatch, getState) => {
+        const state = getState();
+
+        dispatch(
+            push({
+                ...state.router.location,
+                pathname: `${ERC20_APP_BASE_PATH}/dex-wizard`,
+            }),
+        );
+    };
+};
+
+export const goToListedTokens: ThunkCreator = () => {
+    return async (dispatch, getState) => {
+        const state = getState();
+
+        dispatch(
+            push({
+                ...state.router.location,
+                pathname: `${ERC20_APP_BASE_PATH}/listed-tokens`,
+            }),
+        );
+    };
+};
+
 export const goToWallet: ThunkCreator = () => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -153,5 +179,23 @@ export const setCollectiblesListFilterType = (filterType: CollectibleFilterType 
                 search: queryString.stringify(searchObject),
             }),
         );
+    };
+};
+
+export const setDexName = (name: string) => {
+    return async (dispatch: any, getState: any) => {
+        const state = getState();
+        const searchObject = {
+            ...queryString.parse(state.router.location.search),
+            dex: name,
+        };
+
+        dispatch(
+            replace({
+                ...state.router.location,
+                search: queryString.stringify(searchObject),
+            }),
+        );
+        dispatch(goToHomeErc20());
     };
 };

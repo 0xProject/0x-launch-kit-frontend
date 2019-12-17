@@ -24,6 +24,8 @@ export const TX_DEFAULTS = {
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
+export const VERIDEX_ORIGIN = 'http://localhost:3001';
+
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
 export const AFFILIATE_FEE_PERCENTAGE: number = process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE
     ? Number(process.env.REACT_APP_AFFILIATE_FEE_PERCENTAGE)
