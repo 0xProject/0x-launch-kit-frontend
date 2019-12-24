@@ -17,7 +17,7 @@ const load0xInstantScript = (callback: any) => {
 
     if (!existingScript) {
         const script = document.createElement('script');
-        script.src = 'https://instant.0x.org/instant.js';
+        script.src = '/instant.js';
         script.id = 'zerox';
         document.body.appendChild(script);
 
