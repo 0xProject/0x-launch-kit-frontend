@@ -6,6 +6,7 @@ export const ERC20_APP_BASE_PATH = '/erc20';
 export const LAUNCHPAD_APP_BASE_PATH = '/launchpad';
 export const MARGIN_APP_BASE_PATH = '/margin';
 export const INSTANT_APP_BASE_PATH = '/instant';
+export const FIAT_RAMP_APP_BASE_PATH = '/fiat-onramp';
 
 export const USE_RELAYER_MARKET_UPDATES = process.env.REACT_APP_USE_RELAYER_MARKET_UPDATES === 'true' ? true : false;
 
@@ -55,6 +56,8 @@ export const PORTIS_APP_ID = process.env.REACT_APP_PORTIS_APP_ID;
 export const FORTMATIC_APP_ID = process.env.REACT_APP_FORTMATIC_APP_ID;
 
 export const COINDIRECT_MERCHANT_ID = process.env.REACT_APP_COINDIRECT_MERCHANT_ID || '';
+
+export const WYRE_ID = process.env.REACT_APP_WYRE_ID || '';
 
 // Default value is enabled, 0 is disabled
 export const UI_UPDATE_CHECK_INTERVAL: number = process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL

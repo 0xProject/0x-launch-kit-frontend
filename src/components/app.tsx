@@ -59,7 +59,7 @@ class App extends React.Component<Props> {
     public componentDidMount = () => {
         const { MARKETPLACE, onInitConfig, onInitTheme } = this.props;
         // no need to init when instant is the marketplace
-        if (MARKETPLACE === MARKETPLACES.Instant) {
+        if (MARKETPLACE === MARKETPLACES.Instant || MARKETPLACE === MARKETPLACES.FiatRamp) {
             serviceWorker.unregister();
             return;
         }
@@ -88,7 +88,7 @@ class App extends React.Component<Props> {
     public componentDidUpdate = async (prevProps: Readonly<Props>, prevState: Readonly<Props>, snapshot?: any) => {
         const { web3State, MARKETPLACE } = this.props;
         // no need to init when instant is the marketplace
-        if (MARKETPLACE === MARKETPLACES.Instant) {
+        if (MARKETPLACE === MARKETPLACES.Instant || MARKETPLACE === MARKETPLACES.FiatRamp) {
             serviceWorker.unregister();
             return;
         }

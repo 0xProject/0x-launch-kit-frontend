@@ -10,7 +10,7 @@ import {
     goToHomeMarginLend,
     goToWallet,
     logoutWallet,
-    openFiatOnRampModal,
+    openFiatOnRampChooseModal,
     openSideBar,
     setERC20Theme,
     setThemeName,
@@ -89,7 +89,7 @@ export const MobileWalletConnectionContent = () => {
     };
 
     const onClickFiatOnRampModal = () => {
-        dispatch(openFiatOnRampModal(true));
+        dispatch(openFiatOnRampChooseModal(true));
         dispatch(openSideBar(false));
     };
 

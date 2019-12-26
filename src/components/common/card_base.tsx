@@ -11,6 +11,7 @@ const CardWrapper = styled.div`
     background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
     border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    height: 100%;
 `;
 
 export const CardBase: React.FC<Props> = props => {

@@ -6,6 +6,8 @@ import { LocalStorage } from '../services/local_storage';
 
 import * as actions from './actions';
 import {
+    getDynamicLayout,
+    getERC20Layout,
     getEthAccount,
     getFills,
     getHasUnreadNotifications,
@@ -142,6 +144,18 @@ export const localStorageMiddleware: Middleware = ({ getState }: MiddlewareAPI) 
             const state = getState();
             const themeName = getThemeName(state);
             localStorage.saveThemeName(themeName);
+            break;
+        }
+        case getType(actions.setERC20Layout): {
+            const state = getState();
+            const layout = getERC20Layout(state);
+            localStorage.saveErc20Layout(layout);
+            break;
+        }
+        case getType(actions.setDynamicLayout): {
+            const state = getState();
+            const layout = getDynamicLayout(state);
+            localStorage.saveDynamicLayout(layout);
             break;
         }
 

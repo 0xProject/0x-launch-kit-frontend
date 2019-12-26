@@ -1,19 +1,31 @@
 import React, { HTMLAttributes } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { Config } from '../../common/config';
 import { GIT_COMMIT } from '../../common/constants';
-import { goToDexWizard, goToListedTokens } from '../../store/actions';
+import {
+    goToDexWizard,
+    goToListedTokens,
+    openFiatOnRampChooseModal,
+    setERC20Theme,
+    setThemeName,
+} from '../../store/actions';
+import { getThemeName } from '../../store/selectors';
 import { themeBreakPoints, themeDimensions } from '../../themes/commons';
+import { getThemeFromConfigDex } from '../../themes/theme_meta_data_utils';
 
+import { Button } from './button';
 import { SocialIcon } from './icons/social_icon';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
 const FooterWrapper = styled.div`
+    display: block;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    background-color: ${props => props.theme.componentsTheme.background};
 `;
 
 const LinksContainer = styled.div`
@@ -49,6 +61,16 @@ const HrefStyled = styled.a`
     padding-left: 5px;
     @media (max-width: ${themeBreakPoints.md}) {
         padding-left: 2px;
+    }
+`;
+
+const StyledButton = styled(Button)`
+    background-color: ${props => props.theme.componentsTheme.background};
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    padding: 0px;
+    padding-left: 2px;
+    &:hover {
+        text-decoration: underline;
     }
 `;
 
@@ -133,10 +155,22 @@ export const Footer: React.FC<Props> = props => {
             ));
         };
     }
-    const handleDexWizardClick: React.EventHandler<React.MouseEvent> = e => {
+
+    const themeName = useSelector(getThemeName);
+    const handleThemeClick = () => {
+        const themeN = themeName === 'DARK_THEME' ? 'LIGHT_THEME' : 'DARK_THEME';
+        dispatch(setThemeName(themeN));
+        const theme = getThemeFromConfigDex(themeN);
+        dispatch(setERC20Theme(theme));
+    };
+    const handleFiatChooseModal = () => {
+        dispatch(openFiatOnRampChooseModal(true));
+    };
+
+   /*const handleDexWizardClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
         dispatch(goToDexWizard());
-    };
+    };*/
 
     const handleListTokensClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -177,9 +211,15 @@ export const Footer: React.FC<Props> = props => {
                 </HrefStyled>
             </LinksContainer>
             <LinksContainer>
-                <HrefStyled href={`/dex-wizard`} onClick={handleDexWizardClick}>
+                {/*<HrefStyled href={`/dex-wizard`} onClick={handleDexWizardClick}>
                     Dex Wizard
-                </HrefStyled>
+                 </HrefStyled> */}
+                <StyledButton onClick={handleThemeClick} className={'theme-switcher-footer'}>
+                    {themeName === 'DARK_THEME' ? '☼' : '🌑'}
+                </StyledButton>
+                <StyledButton onClick={handleFiatChooseModal} className={'buy-eth-footer'}>
+                    Buy ETH
+                </StyledButton>
             </LinksContainer>
             {socialButtons && <SocialsContainer>{socialButtons()}</SocialsContainer>}
         </FooterWrapper>

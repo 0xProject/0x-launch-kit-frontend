@@ -11,7 +11,8 @@ import { RELAYER_URL } from '../../../common/constants';
 import { UDFCompatibleDatafeed } from '../../../datafeeds/udf/lib/udf-compatible-datafeed';
 
 const ChartContainer = styled.div`
-    height: 400px;
+    height: 430px;
+    width: 100%;
     padding: 5px;
 `;
 
