@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { NETWORK_ID, RELAYER_URL } from '../../common/constants';
-import { openFiatOnRampModal, startToggleTokenLockSteps, startTranferTokenSteps } from '../../store/actions';
+import { openFiatOnRampChooseModal, startToggleTokenLockSteps, startTranferTokenSteps } from '../../store/actions';
 import {
     getEthAccount,
     getEthBalance,
@@ -503,7 +503,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const mapDispatchToProps = {
     onStartToggleTokenLockSteps: startToggleTokenLockSteps,
     onSubmitTransferToken: startTranferTokenSteps,
-    onClickOpenFiatOnRampModal: openFiatOnRampModal,
+    onClickOpenFiatOnRampModal: openFiatOnRampChooseModal,
 };
 
 const WalletTokenBalancesContainer = withTheme(

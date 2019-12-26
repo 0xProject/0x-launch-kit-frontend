@@ -17,7 +17,7 @@ import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 const MarketTradesList = styled(Card)`
-    max-height: 220px;
+    height: 100%;
     overflow: auto;
 `;
 
@@ -93,7 +93,7 @@ class MarketFills extends React.Component<Props> {
                 const tokenQuoteSymbol = isWeth(quoteToken.symbol) ? 'ETH' : quoteToken.symbol.toUpperCase();
                 const tokenBaseSymbol = isWeth(baseToken.symbol) ? 'ETH' : baseToken.symbol.toUpperCase();
                 content = (
-                    <Table isResponsive={true}>
+                    <Table isResponsive={false}>
                         <THead>
                             <TR>
                                 <TH>Side</TH>
@@ -114,8 +114,10 @@ class MarketFills extends React.Component<Props> {
         } else {
             switch (web3State) {
                 case Web3State.Locked:
+                case Web3State.Connect:
+                case Web3State.Connecting:
                 case Web3State.NotInstalled: {
-                    content = <EmptyContent alignAbsoluteCenter={true} text="Connect Wallet to show history" />;
+                    content = <EmptyContent alignAbsoluteCenter={true} text="Connect wallet to show market history" />;
                     break;
                 }
                 case Web3State.Loading: {

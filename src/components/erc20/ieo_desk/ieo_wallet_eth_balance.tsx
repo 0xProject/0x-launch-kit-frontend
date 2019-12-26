@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../../common/constants';
-import { initWallet, openFiatOnRampModal, setWeb3State } from '../../../store/actions';
+import { initWallet, setWeb3State } from '../../../store/actions';
 import {
     getEthAccount,
     getTotalEthBalance,
@@ -79,6 +79,7 @@ const WalletStatusContainer = styled.div`
 
 const WalletCard = styled(Card)`
     max-width: 450px;
+    max-height: 150px;
 `;
 
 const TooltipStyled = styled(Tooltip)`
@@ -144,7 +145,6 @@ interface DispatchProps {
     onConnectWallet: () => any;
     onConnectingWallet: () => any;
     onChooseWallet: () => any;
-    onClickOpenFiatOnRampModal: () => any;
 }
 
 interface OwnProps {
@@ -238,7 +238,6 @@ class IEOWalletEthBalance extends React.Component<Props, State> {
             totalEthBalance,
             onConnectingWallet,
             wallet,
-            onClickOpenFiatOnRampModal,
         } = this.props;
 
         if (quoteTokenBalance) {
@@ -257,9 +256,9 @@ class IEOWalletEthBalance extends React.Component<Props, State> {
             ) : null;
             const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ETH' : tokenSymbolToDisplayString(quoteToken.symbol);
 
-            const openFiatOnRamp = () => {
+            /*const openFiatOnRamp = () => {
                 onClickOpenFiatOnRampModal();
-            };
+            };*/
 
             content = (
                 <>
@@ -270,9 +269,9 @@ class IEOWalletEthBalance extends React.Component<Props, State> {
                         </Label>
                         <Value>{quoteBalanceString}</Value>
                     </LabelWrapper>
-                    <ButtonStyled onClick={openFiatOnRamp} variant={ButtonVariant.Buy}>
+                    {/*  <ButtonStyled onClick={openFiatOnRamp} variant={ButtonVariant.Buy}>
                         Buy ETH
-                    </ButtonStyled>
+            </ButtonStyled>*/}
                 </>
             );
         }
@@ -397,7 +396,6 @@ const mapDispatchToProps = (dispatch: any) => {
         onChooseWallet: () => dispatch(setWeb3State(Web3State.Connect)),
         onConnectingWallet: () => dispatch(setWeb3State(Web3State.Connecting)),
         onConnectWallet: () => dispatch(initWallet()),
-        onClickOpenFiatOnRampModal: () => dispatch(openFiatOnRampModal(true)),
     };
 };
 

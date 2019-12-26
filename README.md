@@ -70,9 +70,11 @@ This is a detailed list of planned features to add to this DEX (includes VeriDex
 -   [x] Add instant as standalone
 -   [x] Code splitting
 -   [ ] Report data to the most known crypto data aggregators (In progress)
--   [ ] Theme switcher
+-   [x] Theme switcher
+-   [x] Dex Wizard
+-   [ ] Upgrade 0x v3
 -   [ ] [i18n](https://github.com/i18next/react-i18next)
--   [ ] Add [tour](https://github.com/elrumordelaluz/reactour)
+-   [x] Add [tour](https://github.com/elrumordelaluz/reactour)
 -   [ ] Add crypto price calculator
 -   [ ] Add Swap interface
 -   [ ] Add Token factory

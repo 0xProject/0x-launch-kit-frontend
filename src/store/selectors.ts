@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 import {
     ERC20_APP_BASE_PATH,
     ERC721_APP_BASE_PATH,
+    FIAT_RAMP_APP_BASE_PATH,
     INSTANT_APP_BASE_PATH,
     LAUNCHPAD_APP_BASE_PATH,
     MARGIN_APP_BASE_PATH,
@@ -61,6 +62,7 @@ export const getStepsModalDoneSteps = (state: StoreState) => state.ui.stepsModal
 export const getStepsModalCurrentStep = (state: StoreState) => state.ui.stepsModal.currentStep;
 export const getSideBarOpenState = (state: StoreState) => state.ui.sidebarOpen;
 export const getOpenFiatOnRampModalState = (state: StoreState) => state.ui.openFiatOnRampModal;
+export const getOpenFiatOnRampChooseModalState = (state: StoreState) => state.ui.openFiatOnRampChooseModal;
 export const getCurrencyPair = (state: StoreState) => state.market.currencyPair;
 export const getBaseToken = (state: StoreState) => state.market.baseToken;
 export const getQuoteToken = (state: StoreState) => state.market.quoteToken;
@@ -87,6 +89,9 @@ export const getERC20Theme = (state: StoreState) => state.ui.erc20Theme;
 export const getThemeName = (state: StoreState) => state.ui.themeName;
 export const getGeneralConfig = (state: StoreState) => state.ui.generalConfig;
 export const getConfigData = (state: StoreState) => state.ui.configData;
+export const getFiatType = (state: StoreState) => state.ui.fiatType;
+export const getERC20Layout = (state: StoreState) => state.ui.erc20Layout;
+export const getDynamicLayout = (state: StoreState) => state.ui.isDynamicLayout;
 export const getMarketStats = (state: StoreState) => state.market.marketStats;
 
 export const getCurrentMarketPlace = createSelector(
@@ -102,6 +107,8 @@ export const getCurrentMarketPlace = createSelector(
             return MARKETPLACES.Margin;
         } else if (currentRoute.includes(INSTANT_APP_BASE_PATH)) {
             return MARKETPLACES.Instant;
+        } else if (currentRoute.includes(FIAT_RAMP_APP_BASE_PATH)) {
+            return MARKETPLACES.FiatRamp;
         } else {
             return MARKETPLACES.ERC20;
         }

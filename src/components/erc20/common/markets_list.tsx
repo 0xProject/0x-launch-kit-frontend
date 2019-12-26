@@ -2,13 +2,14 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { UI_DECIMALS_DISPLAYED_SPREAD_PERCENT } from '../../../common/constants';
+import { UI_DECIMALS_DISPLAYED_SPREAD_PERCENT, USE_RELAYER_MARKET_UPDATES } from '../../../common/constants';
 import { marketFilters } from '../../../common/markets';
 import { changeMarket, goToHome } from '../../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets, getQuoteToken, getWeb3State } from '../../../store/selectors';
 import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
+import { formatTokenSymbol } from '../../../util/tokens';
 import { CurrencyPair, Filter, Market, StoreState, Token, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
@@ -51,8 +52,7 @@ interface MarketRowProps {
 const rowHeight = '48px';
 
 const MarketListCard = styled(Card)`
-    min-height: 520px;
-    max-height: 600px;
+    height: 100%;
     overflow: auto;
     margin-top: 5px;
 `;
@@ -211,34 +211,41 @@ class MarketsList extends React.Component<Props, State> {
     public render = () => {
         const { baseToken, quoteToken, web3State } = this.props;
         let content: React.ReactNode;
-        switch (web3State) {
-            case Web3State.Locked:
-            case Web3State.NotInstalled: {
-                content = <EmptyContent alignAbsoluteCenter={true} text="There are no market details to show" />;
-                break;
-            }
-            case Web3State.Loading: {
+        const defaultBehaviour = () => {
+            if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
                 content = <LoadingWrapper minHeight="120px" />;
-                break;
+            } else if (!baseToken || !quoteToken) {
+                content = <EmptyContent alignAbsoluteCenter={true} text="There are no market details to show" />;
+            } else {
+                content = (
+                    <>
+                        <MarketsFilters>
+                            {/*  <MarketsFiltersLabel>Markets</MarketsFiltersLabel>*/}
+                            {this._getTokensFilterTabs()}
+                            {this._getSearchField()}
+                        </MarketsFilters>
+                        <TableWrapper>{this._getMarkets()}</TableWrapper>
+                    </>
+                );
             }
-            default: {
-                if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
-                    content = <LoadingWrapper minHeight="120px" />;
-                } else if (!baseToken || !quoteToken) {
+        };
+        if (USE_RELAYER_MARKET_UPDATES) {
+            defaultBehaviour();
+        } else {
+            switch (web3State) {
+                case Web3State.Locked:
+                case Web3State.NotInstalled: {
                     content = <EmptyContent alignAbsoluteCenter={true} text="There are no market details to show" />;
-                } else {
-                    content = (
-                        <>
-                            <MarketsFilters>
-                                {/*  <MarketsFiltersLabel>Markets</MarketsFiltersLabel>*/}
-                                {this._getTokensFilterTabs()}
-                                {this._getSearchField()}
-                            </MarketsFilters>
-                            <TableWrapper>{this._getMarkets()}</TableWrapper>
-                        </>
-                    );
+                    break;
                 }
-                break;
+                case Web3State.Loading: {
+                    content = <LoadingWrapper minHeight="120px" />;
+                    break;
+                }
+                default: {
+                    defaultBehaviour();
+                    break;
+                }
             }
         }
 
@@ -317,8 +324,8 @@ class MarketsList extends React.Component<Props, State> {
 
                         const token = getKnownTokens().getTokenBySymbol(market.currencyPair.base);
 
-                        const baseSymbol = market.currencyPair.base.toUpperCase();
-                        const quoteSymbol = market.currencyPair.quote.toUpperCase();
+                        const baseSymbol = formatTokenSymbol(market.currencyPair.base).toUpperCase();
+                        const quoteSymbol = formatTokenSymbol(market.currencyPair.quote).toUpperCase();
 
                         return (
                             <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>

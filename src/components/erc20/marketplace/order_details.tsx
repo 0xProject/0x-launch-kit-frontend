@@ -8,7 +8,7 @@ import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getOpenBuyOrders, getOpenSellOrders, getQuoteInUsd } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
-import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
+import { formatTokenSymbol, tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType, StoreState, UIOrder } from '../../../util/types';
 
 const Row = styled.div`
@@ -209,9 +209,9 @@ class OrderDetails extends React.Component<Props, State> {
         const costAmount = tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals, quoteToken.displayDecimals);
         if (qouteInUSD) {
             const quotePriceAmountUSD = new BigNumber(quoteTokenAmountUnits).multipliedBy(qouteInUSD);
-            return `${costAmount} ${tokenSymbolToDisplayString(quote)} (${quotePriceAmountUSD.toFixed(2)} $)`;
+            return `${costAmount} ${formatTokenSymbol(quote)} (${quotePriceAmountUSD.toFixed(2)} $)`;
         } else {
-            return `${costAmount} ${tokenSymbolToDisplayString(quote)}`;
+            return `${costAmount} ${formatTokenSymbol(quote)}`;
         }
     };
     private readonly _getMedianPriceStringForRender = () => {
@@ -231,7 +231,7 @@ class OrderDetails extends React.Component<Props, State> {
         const quoteTokenAmountUnits = new BigNumber(tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals, 18));
         const baseTokenAmountUnits = new BigNumber(tokenAmountInUnits(tokenAmount, baseToken.decimals, 18));
         const priceDisplay = quoteTokenAmountUnits.div(baseTokenAmountUnits).toFormat(config.pricePrecision + 1);
-        return `${priceDisplay} ${tokenSymbolToDisplayString(quote)}`;
+        return `${priceDisplay} ${formatTokenSymbol(quote)}`;
     };
 
     private readonly _getCostLabelStringForRender = () => {

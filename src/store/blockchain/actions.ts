@@ -932,7 +932,7 @@ export const initializeAppWallet: ThunkCreator = () => {
         }
         const wallet = getWallet(state);
         if (!wallet) {
-            dispatch(setWeb3State(Web3State.Connecting));
+            dispatch(setWeb3State(Web3State.Connect));
         }
 
         const currencyPair = getCurrencyPair(state);

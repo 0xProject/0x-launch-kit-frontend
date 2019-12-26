@@ -1,6 +1,7 @@
 import { BigNumber } from '0x.js';
 
 import { convertDateToUTCTimestamp } from './time_utils';
+import { formatTokenSymbol } from './tokens';
 import { CurrencyPair, Fill, Market, Token } from './types';
 
 export const filterMarketsByTokenSymbol = (markets: Market[], tokenSymbol: string): Market[] => {
@@ -21,6 +22,15 @@ export const filterMarketsByString = (markets: Market[], str: string): Market[] 
  */
 export const marketToString = (currencyPair: CurrencyPair): string => {
     return `${currencyPair.base.toUpperCase()}-${currencyPair.quote.toUpperCase()}`;
+};
+
+/**
+ * Export current market as string
+ */
+export const formatMarketToString = (currencyPair: CurrencyPair): string => {
+    return `${formatTokenSymbol(currencyPair.base).toUpperCase()}-${formatTokenSymbol(
+        currencyPair.quote,
+    ).toUpperCase()}`;
 };
 
 /**

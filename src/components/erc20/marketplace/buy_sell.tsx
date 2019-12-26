@@ -11,10 +11,17 @@ import {
     startBuySellMarketSteps,
 } from '../../../store/actions';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
-import { getCurrencyPair, getOrderPriceSelected, getWeb3State } from '../../../store/selectors';
+import {
+    getBaseTokenBalance,
+    getCurrencyPair,
+    getOrderPriceSelected,
+    getQuoteTokenBalance,
+    getTotalEthBalance,
+    getWeb3State,
+} from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
-import { getKnownTokens } from '../../../util/known_tokens';
-import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../../util/tokens';
+import { getKnownTokens, isWeth } from '../../../util/known_tokens';
+import { formatTokenSymbol, tokenAmountInUnits, unitsInTokenAmount } from '../../../util/tokens';
 import {
     ButtonIcons,
     ButtonVariant,
@@ -22,6 +29,7 @@ import {
     OrderSide,
     OrderType,
     StoreState,
+    TokenBalance,
     Web3State,
 } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
@@ -36,6 +44,9 @@ interface StateProps {
     web3State: Web3State;
     currencyPair: CurrencyPair;
     orderPriceSelected: BigNumber | null;
+    baseTokenBalance: TokenBalance | null;
+    quoteTokenBalance: TokenBalance | null;
+    totalEthBalance: BigNumber;
 }
 
 interface DispatchProps {
@@ -123,10 +134,25 @@ const LabelContainer = styled.div`
     margin-bottom: 10px;
 `;
 
+const LabelAvailableContainer = styled.div`
+    align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+`;
+
 const Label = styled.label<{ color?: string }>`
     color: ${props => props.color || props.theme.componentsTheme.textColorCommon};
     font-size: 14px;
     font-weight: 500;
+    line-height: normal;
+    margin: 0;
+`;
+
+const LabelAvaible = styled.label<{ color?: string }>`
+    color: ${props => props.color || props.theme.componentsTheme.textColorCommon};
+    font-size: 12px;
+    font-weight: normal;
     line-height: normal;
     margin: 0;
 `;
@@ -146,6 +172,12 @@ const InnerTabs = styled(CardTabSelector)`
 const FieldContainer = styled.div`
     height: ${themeDimensions.fieldHeight};
     margin-bottom: 25px;
+    position: relative;
+`;
+
+const FieldAmountContainer = styled.div`
+    height: ${themeDimensions.fieldHeight};
+    margin-bottom: 5px;
     position: relative;
 `;
 
@@ -183,7 +215,7 @@ const TokenText = styled.span`
 
 const BigInputNumberTokenLabel = (props: { tokenSymbol: string }) => (
     <TokenContainer>
-        <TokenText>{tokenSymbolToDisplayString(props.tokenSymbol)}</TokenText>
+        <TokenText>{formatTokenSymbol(props.tokenSymbol)}</TokenText>
     </TokenContainer>
 );
 
@@ -247,9 +279,9 @@ class BuySell extends React.Component<Props, State> {
         const isOrderTypeLimitIsEmpty =
             orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty || isPriceMin);
         const isOrderTypeMarketIsEmpty = orderType === OrderType.Market && (isMakerAmountEmpty || isMakerAmountMin);
-
+        const baseSymbol = formatTokenSymbol(currencyPair.base);
         const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
-        const btnText = error && error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
+        const btnText = error && error.btnMsg ? 'Error' : btnPrefix + baseSymbol;
 
         return (
             <>
@@ -277,7 +309,7 @@ class BuySell extends React.Component<Props, State> {
                             </Label>
                             <InnerTabs tabs={buySellInnerTabs} />
                         </LabelContainer>
-                        <FieldContainer>
+                        <FieldAmountContainer>
                             <BigInputNumberStyled
                                 decimals={decimals}
                                 min={new BigNumber(0)}
@@ -288,7 +320,10 @@ class BuySell extends React.Component<Props, State> {
                                 valueFixedDecimals={basePrecision}
                             />
                             <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
-                        </FieldContainer>
+                        </FieldAmountContainer>
+                        <LabelAvailableContainer>
+                            <LabelAvaible>{this.getAmountAvailableLabel()}</LabelAvaible>
+                        </LabelAvailableContainer>
                         {orderType === OrderType.Limit && (
                             <>
                                 <LabelContainer>
@@ -348,6 +383,42 @@ class BuySell extends React.Component<Props, State> {
         this.setState({
             makerAmount: newValue,
         });
+    };
+
+    public getAmountAvailableLabel = () => {
+        const { baseTokenBalance, quoteTokenBalance, totalEthBalance } = this.props;
+        const { tab } = this.state;
+        if (tab === OrderSide.Sell) {
+            if (baseTokenBalance) {
+                const tokenBalanceAmount = isWeth(baseTokenBalance.token.symbol)
+                    ? totalEthBalance
+                    : baseTokenBalance.balance;
+                const baseBalanceString = tokenAmountInUnits(
+                    tokenBalanceAmount,
+                    baseTokenBalance.token.decimals,
+                    baseTokenBalance.token.displayDecimals,
+                );
+                const symbol = formatTokenSymbol(baseTokenBalance.token.symbol);
+                return `Available: ${baseBalanceString}  ${symbol}`;
+            } else {
+                return null;
+            }
+        } else {
+            if (quoteTokenBalance) {
+                const tokenBalanceAmount = isWeth(quoteTokenBalance.token.symbol)
+                    ? totalEthBalance
+                    : quoteTokenBalance.balance;
+                const quoteBalanceString = tokenAmountInUnits(
+                    tokenBalanceAmount,
+                    quoteTokenBalance.token.decimals,
+                    quoteTokenBalance.token.displayDecimals,
+                );
+                const symbol = formatTokenSymbol(quoteTokenBalance.token.symbol);
+                return `Available: ${quoteBalanceString}  ${symbol}`;
+            } else {
+                return null;
+            }
+        }
     };
 
     public updatePrice = (price: BigNumber) => {
@@ -435,6 +506,9 @@ const mapStateToProps = (state: StoreState): StateProps => {
         web3State: getWeb3State(state),
         currencyPair: getCurrencyPair(state),
         orderPriceSelected: getOrderPriceSelected(state),
+        quoteTokenBalance: getQuoteTokenBalance(state),
+        baseTokenBalance: getBaseTokenBalance(state),
+        totalEthBalance: getTotalEthBalance(state),
     };
 };
 

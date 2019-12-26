@@ -4,7 +4,12 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { NETWORK_ID, RELAYER_URL } from '../../common/constants';
-import { initBZX, openFiatOnRampModal, startLendingTokenSteps, startUnLendingTokenSteps } from '../../store/actions';
+import {
+    initBZX,
+    openFiatOnRampChooseModal,
+    startLendingTokenSteps,
+    startUnLendingTokenSteps,
+} from '../../store/actions';
 import {
     getBZXLoadingState,
     getEthAccount,
@@ -583,7 +588,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const mapDispatchToProps = {
     onSubmitLendingToken: startLendingTokenSteps,
     onSubmitUnLendingToken: startUnLendingTokenSteps,
-    onClickOpenFiatOnRampModal: openFiatOnRampModal,
+    onClickOpenFiatOnRampModal: openFiatOnRampChooseModal,
     initBZXFetching: initBZX,
 };
 

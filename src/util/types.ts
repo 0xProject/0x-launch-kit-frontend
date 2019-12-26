@@ -157,7 +157,11 @@ export interface UIState {
     readonly orderPriceSelected: BigNumber | null;
     readonly sidebarOpen: boolean;
     readonly openFiatOnRampModal: boolean;
+    readonly openFiatOnRampChooseModal: boolean;
+    readonly fiatType: 'APPLE_PAY' | 'CREDIT_CARD';
     readonly erc20Theme: Theme;
+    readonly erc20Layout: string;
+    readonly isDynamicLayout: boolean;
     readonly themeName: string;
     readonly generalConfig?: GeneralConfig;
     readonly configData?: ConfigData | null;
@@ -571,6 +575,7 @@ export enum MARKETPLACES {
     LaunchPad = 'LAUNCHPAD',
     Margin = 'MARGIN',
     Instant = 'INSTANT',
+    FiatRamp = 'FiatRamp',
 }
 
 export enum Wallet {

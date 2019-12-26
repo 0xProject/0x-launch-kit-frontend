@@ -24,6 +24,10 @@ export const tokenSymbolToDisplayString = (symbol: string): string => {
     return isWeth(symbol) ? 'wETH' : symbol.toUpperCase();
 };
 
+export const formatTokenSymbol = (symbol: string): string => {
+    return isWeth(symbol.toLowerCase()) ? 'ETH' : symbol.toUpperCase();
+};
+
 export const getEtherscanLinkForToken = (token: Token): string => {
     return `${ETHERSCAN_URL[NETWORK_ID]}token/${token.address}`;
 };

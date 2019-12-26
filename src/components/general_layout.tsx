@@ -18,7 +18,6 @@ const General = styled.div`
     display: flex;
     flex-direction: column;
     min-height: 100%;
-
     @media (min-width: ${themeBreakPoints.xl}) {
         height: 100%;
     }
@@ -72,14 +71,16 @@ export const GeneralLayout = (props: Props) => {
         );
     } else {
         return (
-            <General {...restProps}>
-                {toolbar}
-                <ContentScroll>
-                    {children}
-                    <Footer />
-                </ContentScroll>
-                <StepsModalContainer />
-            </General>
+            <>
+                <General {...restProps}>
+                    {toolbar}
+                    <ContentScroll>
+                        {children}
+                        <Footer />
+                    </ContentScroll>
+                    <StepsModalContainer />
+                </General>
+            </>
         );
     }
 };

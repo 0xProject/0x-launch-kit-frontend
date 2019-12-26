@@ -137,6 +137,10 @@ export const openFiatOnRampModal = createAction('ui/OPEN_FIAT_ON_RAMP_set', reso
     return (isOpen: boolean) => resolve(isOpen);
 });
 
+export const openFiatOnRampChooseModal = createAction('ui/OPEN_FIAT_ON_RAMP_CHOOSE_set', resolve => {
+    return (isOpen: boolean) => resolve(isOpen);
+});
+
 export const setERC20Theme = createAction('ui/ERC20_THEME_set', resolve => {
     return (theme: Theme) => resolve(theme);
 });
@@ -145,12 +149,24 @@ export const setThemeName = createAction('ui/THEME_NAME_set', resolve => {
     return (themeName: string | undefined) => resolve(themeName);
 });
 
+export const setERC20Layout = createAction('ui/ERC20_LAYOUT_set', resolve => {
+    return (layout: string) => resolve(layout);
+});
+
+export const setDynamicLayout = createAction('ui/DYNAMIC_LAYOUT_set', resolve => {
+    return (isDynamic: boolean) => resolve(isDynamic);
+});
+
 export const setGeneralConfig = createAction('ui/GENERAL_CONFIG_set', resolve => {
     return (generalConfig: GeneralConfig | undefined) => resolve(generalConfig);
 });
 
 export const setConfigData = createAction('ui/CONFIG_DATA_set', resolve => {
     return (config: ConfigData) => resolve(config);
+});
+
+export const setFiatType = createAction('ui/FIAT_TYPE_set', resolve => {
+    return (fiatType: 'APPLE_PAY' | 'CREDIT_CARD') => resolve(fiatType);
 });
 
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {

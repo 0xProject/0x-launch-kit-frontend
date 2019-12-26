@@ -16,7 +16,7 @@ import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 const DexTradesList = styled(Card)`
-    max-height: 220px;
+    height: 100%;
     overflow: auto;
 `;
 
@@ -119,6 +119,8 @@ class OrderFills extends React.Component<Props> {
         } else {
             switch (web3State) {
                 case Web3State.Locked:
+                case Web3State.Connect:
+                case Web3State.Connecting:
                 case Web3State.NotInstalled: {
                     content = <EmptyContent alignAbsoluteCenter={true} text="Connect Wallet to show history" />;
                     break;
