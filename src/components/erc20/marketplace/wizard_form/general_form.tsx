@@ -114,7 +114,7 @@ export const GeneralWizardForm = ({
                     <Field name={`${name}.domain`} type={'url'} component={StyledInput} placeholder={`Domain`} />
                 </FieldContainer>
                 <LabelContainer>
-                    <Label>Fee Recipient</Label>
+                    <Label>Fee Recipient Address</Label>
                     <TooltipStyled
                         description="Address to collect fees from your DEX trades. This will be used in future!"
                         iconType={IconType.Fill}
@@ -122,11 +122,30 @@ export const GeneralWizardForm = ({
                 </LabelContainer>
                 <FieldContainer>
                     <Field
-                        name={`${name}.fee_recipient`}
+                        name={`${name}.feeRecipient`}
                         component={TextInput}
                         placeholder={`Fee Recipient`}
                         pattern={'^0x[a-fA-F0-9]{40}'}
                         patternMismatch={'Not a valid etheureum address'}
+                    />
+                </FieldContainer>
+
+                <LabelContainer>
+                    <Label>Affiliate Percentage</Label>
+                    <TooltipStyled
+                        description="Percentage to collect on instant buys and market buys with ETH!"
+                        iconType={IconType.Fill}
+                    />
+                </LabelContainer>
+                <FieldContainer>
+                    <Field
+                        name={`${name}.feePercentage`}
+                        type={'number'}
+                        component={StyledInput}
+                        placeholder={`Affiliate fee Percentage`}
+                        min={0}
+                        step={0.001}
+                        max={0.05}
                     />
                 </FieldContainer>
                 <LabelContainer>

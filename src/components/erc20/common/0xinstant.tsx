@@ -1,9 +1,13 @@
-import { SignedOrder } from '0x.js';
+import { SignedOrder } from '@0x/types';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import { FEE_RECIPIENT, INSTANT_FEE_PERCENTAGE, RELAYER_URL } from '../../../common/constants';
+import { getERC20ContractWrapper } from '../../../services/contract_wrappers';
+import { getAllOrders } from '../../../services/orders';
 import { getUserIEOSignedOrders } from '../../../services/relayer';
+import { getFeePercentage, getFeeRecipient } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { getKnownTokensIEO } from '../../../util/known_tokens_ieo';
 import { Token, TokenIEO, Wallet } from '../../../util/types';
@@ -17,7 +21,7 @@ const load0xInstantScript = (callback: any) => {
 
     if (!existingScript) {
         const script = document.createElement('script');
-        script.src = 'https://instant.0x.org/instant.js';
+        script.src = 'https://instant.0xproject.com/v3/instant.js';
         script.id = 'zerox';
         document.body.appendChild(script);
 
@@ -59,6 +63,10 @@ export const ZeroXInstantComponent = (props: Props) => {
     const [isError, setError] = useState(false);
     const [text, setText] = useState('Loading ...');
     const query = useQuery();
+    let feePercentage = INSTANT_FEE_PERCENTAGE;
+    const feeP = useSelector(getFeePercentage);
+    feePercentage = feeP ? Number(feeP) : INSTANT_FEE_PERCENTAGE;
+    let feeRecipient = useSelector(getFeeRecipient) || FEE_RECIPIENT;
     useEffect(() => {
         load0xInstantScript(() => {
             setScripReady(true);
@@ -66,15 +74,21 @@ export const ZeroXInstantComponent = (props: Props) => {
     }, []);
 
     const { networkId = 1 } = props;
-    let feePercentage = INSTANT_FEE_PERCENTAGE;
+
     let orderSource: string | SignedOrder[] | undefined = RELAYER_URL;
 
     const openZeroXinstantModal = async () => {
         let token: Token | undefined;
         const tokenName = query.get('token');
         const tokenSymbol = query.get('symbol');
+        const tokenContract = query.get('contract');
         const isEIO = query.get('isEIO');
         const isBot = query.get('isBot');
+        const makerAddresses = query.get('addresses');
+        const affiliate = query.get('affiliate');
+        const affiliatePercentage = query.get('affiliatePercentage');
+        let additionalAssetMetaDataMap = {};
+        let erc20TokenAssetData;
         // TODO refactor this to be better
         try {
             const knownTokens = getKnownTokens();
@@ -126,17 +140,51 @@ export const ZeroXInstantComponent = (props: Props) => {
                         break;
                     }
                 }
+                // fallback to relayer
                 if (!orderSource || orderSource.length === 0) {
-                    orderSource = undefined;
+                    orderSource = RELAYER_URL;
                 }
                 feePercentage = Number(baseToken.feePercentage);
+            }
+            if (tokenContract) {
+                erc20TokenAssetData = zeroExInstant.assetDataForERC20TokenAddress(
+                    tokenContract.toLowerCase(),
+                ) as string;
+                const contract = await getERC20ContractWrapper(tokenContract.toLowerCase(), {});
+                const name = await contract.name().callAsync();
+                const symbol = (await contract.symbol().callAsync()).toLowerCase();
+                const decimals = await contract.decimals().callAsync();
+                additionalAssetMetaDataMap = {
+                    [erc20TokenAssetData]: {
+                        assetProxyId: zeroExInstant.ERC20_PROXY_ID,
+                        decimals,
+                        symbol,
+                        name,
+                    },
+                };
+                orderSource = RELAYER_URL;
+            }
+            if (makerAddresses) {
+                const addresses = makerAddresses.split(',');
+                if (token) {
+                    const orders = await getAllOrders(token, knownTokens.getWethToken(), addresses);
+                    orderSource = orders.length > 0 ? orders : RELAYER_URL;
+                } else {
+                    orderSource = RELAYER_URL;
+                }
+            }
+
+            if (affiliate) {
+                feeRecipient = affiliate;
+                if (affiliatePercentage) {
+                    feePercentage = Number(affiliatePercentage);
+                }
             }
         } catch (e) {
             token = undefined;
             orderSource = undefined;
         }
-        let additionalAssetMetaDataMap = {};
-        let erc20TokenAssetData;
+
         if (token) {
             erc20TokenAssetData = zeroExInstant.assetDataForERC20TokenAddress(token.address) as string;
             additionalAssetMetaDataMap = {
@@ -150,6 +198,7 @@ export const ZeroXInstantComponent = (props: Props) => {
                 },
             };
         }
+
         if (orderSource) {
             zeroExInstant.render(
                 {
@@ -157,7 +206,7 @@ export const ZeroXInstantComponent = (props: Props) => {
                     orderSource,
                     networkId,
                     affiliateInfo: {
-                        feeRecipient: FEE_RECIPIENT,
+                        feeRecipient,
                         feePercentage,
                     },
                     additionalAssetMetaDataMap,

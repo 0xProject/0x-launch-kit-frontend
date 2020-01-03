@@ -100,9 +100,6 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const CheckWalletStateModalContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(CheckWalletStateModal);
+const CheckWalletStateModalContainer = connect(mapStateToProps, mapDispatchToProps)(CheckWalletStateModal);
 
 export { CheckWalletStateModal, CheckWalletStateModalContainer };

@@ -25,7 +25,8 @@ export const MarketFiltersForm = ({ isOpen = false, selector }: { isOpen?: boole
                         <StyledFilter key={name}>
                             <FilterForm name={name} index={index} />
                         </StyledFilter>
-                    ))}
+                    ))
+                }
             </FieldArray>
         </AccordionCollapse>
     </>

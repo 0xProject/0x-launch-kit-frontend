@@ -1,12 +1,13 @@
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
-import { eip712Utils } from '@0x/order-utils';
-// @ts-ignore
+import { ERC721TokenContract } from '@0x/contract-wrappers';
+import { eip712Utils, signatureUtils } from '@0x/order-utils';
+import { MetamaskSubprovider } from '@0x/subproviders';
 import { EIP712TypedData } from '@0x/types';
+import { BigNumber } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 import { createAction } from 'typesafe-actions';
 
 import { Config } from '../../common/config';
-import { COLLECTIBLE_ADDRESS } from '../../common/constants';
+import { CHAIN_ID, COLLECTIBLE_ADDRESS, FEE_PERCENTAGE, FEE_RECIPIENT, ZERO } from '../../common/constants';
 import { getAvailableMarkets, updateAvailableMarkets } from '../../common/markets';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { InsufficientTokenBalanceException } from '../../exceptions/insufficient_token_balance_exception';
@@ -29,7 +30,6 @@ import {
     createBuySellLimitMatchingSteps,
     createBuySellLimitSteps,
     createBuySellMarketSteps,
-    createDutchBuyCollectibleSteps,
     createLendingTokenSteps,
     createSellCollectibleSteps,
 } from '../../util/steps_modals_generation';
@@ -45,6 +45,7 @@ import {
     MarketFill,
     Notification,
     NotificationKind,
+    OrderFeeData,
     OrderSide,
     Step,
     StepKind,
@@ -59,6 +60,7 @@ import {
     TokenIEO,
 } from '../../util/types';
 import { setCurrencyPair } from '../market/actions';
+import { setFeePercentage, setFeeRecipient } from '../relayer/actions';
 import * as selectors from '../selectors';
 
 export const setHasUnreadNotifications = createAction('ui/UNREAD_NOTIFICATIONS_set', resolve => {
@@ -228,13 +230,13 @@ export const startSellCollectibleSteps: ThunkCreator = (
     return async (dispatch, getState, { getContractWrappers }) => {
         const state = getState();
 
-        const contractWrapers = await getContractWrappers();
+        const contractWrappers = await getContractWrappers();
         const ethAccount = selectors.getEthAccount(state);
 
-        const isUnlocked = await contractWrapers.erc721Token.isProxyApprovedForAllAsync(
-            COLLECTIBLE_ADDRESS,
-            ethAccount,
-        );
+        const erc721Token = new ERC721TokenContract(COLLECTIBLE_ADDRESS, contractWrappers.getProvider());
+        const isUnlocked = await erc721Token
+            .isApprovedForAll(ethAccount, contractWrappers.contractAddresses.erc721Proxy)
+            .callAsync();
         const sellCollectibleSteps: Step[] = createSellCollectibleSteps(
             collectible,
             startingPrice,
@@ -257,19 +259,22 @@ export const startBuyCollectibleSteps: ThunkCreator = (collectible: Collectible,
 
         let buyCollectibleSteps;
         if (isDutchAuction(collectible.order)) {
-            const state = getState();
-            const contractWrappers = await getContractWrappers();
+            throw new Error('DutchAuction currently unsupported');
+            // const state = getState();
+            // const contractWrappers = await getContractWrappers();
 
-            const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+            // const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
 
-            const { currentAmount } = await contractWrappers.dutchAuction.getAuctionDetailsAsync(collectible.order);
+            // const { currentAmount } = await contractWrappers.dutchAuction.getAuctionDetails.callAsync(
+            //     collectible.order,
+            // );
 
-            buyCollectibleSteps = createDutchBuyCollectibleSteps(
-                collectible.order,
-                collectible,
-                wethTokenBalance,
-                currentAmount,
-            );
+            // buyCollectibleSteps = createDutchBuyCollectibleSteps(
+            //     collectible.order,
+            //     collectible,
+            //     wethTokenBalance,
+            //     currentAmount,
+            // );
         } else {
             buyCollectibleSteps = createBasicBuyCollectibleSteps(collectible.order, collectible);
         }
@@ -284,7 +289,7 @@ export const startBuySellLimitSteps: ThunkCreator = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
-    makerFee: BigNumber,
+    orderFeeData: OrderFeeData,
 ) => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -301,7 +306,7 @@ export const startBuySellLimitSteps: ThunkCreator = (
             amount,
             price,
             side,
-            makerFee,
+            orderFeeData,
         );
 
         dispatch(setStepsModalCurrentStep(buySellLimitFlow[0]));
@@ -327,7 +332,7 @@ export const startBuySellLimitIEOSteps: ThunkCreator = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
-    makerFee: BigNumber,
+    orderFeeData: OrderFeeData,
     baseToken: Token,
     quoteToken: Token,
 ) => {
@@ -344,7 +349,7 @@ export const startBuySellLimitIEOSteps: ThunkCreator = (
             amount,
             price,
             side,
-            makerFee,
+            orderFeeData,
             true,
         );
 
@@ -358,7 +363,7 @@ export const startBuySellLimitMatchingSteps: ThunkCreator = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
-    takerFee: BigNumber,
+    orderFeeData: OrderFeeData,
 ) => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -373,7 +378,7 @@ export const startBuySellLimitMatchingSteps: ThunkCreator = (
 
         const allOrders =
             side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
-        const { orders, amounts, amountFill, amountsMaker } = buildMarketLimitMatchingOrders(
+        const { ordersToFill, amounts, amountFill, amountsMaker } = buildMarketLimitMatchingOrders(
             {
                 amount,
                 price,
@@ -382,7 +387,7 @@ export const startBuySellLimitMatchingSteps: ThunkCreator = (
             side,
         );
 
-        if (orders.length === 0) {
+        if (ordersToFill.length === 0) {
             return 0;
         }
         const totalFilledAmount = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
@@ -435,7 +440,7 @@ export const startBuySellLimitMatchingSteps: ThunkCreator = (
             side,
             price,
             price_avg,
-            takerFee,
+            orderFeeData,
         );
 
         dispatch(setStepsModalCurrentStep(buySellLimitMatchingFlow[0]));
@@ -491,7 +496,11 @@ export const startUnLendingTokenSteps: ThunkCreator = (
     };
 };
 
-export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => {
+export const startBuySellMarketSteps: ThunkCreator = (
+    amount: BigNumber,
+    side: OrderSide,
+    orderFeeData: OrderFeeData,
+) => {
     return async (dispatch, getState) => {
         const state = getState();
         const baseToken = selectors.getBaseToken(state) as Token;
@@ -504,7 +513,8 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
 
         const orders = side === OrderSide.Buy ? selectors.getOpenSellOrders(state) : selectors.getOpenBuyOrders(state);
-        const { amounts, canBeFilled } = buildMarketOrders(
+        // tslint:disable-next-line:no-unused-variable
+        const [_ordersToFill, filledAmounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
                 orders,
@@ -515,9 +525,9 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             throw new InsufficientOrdersAmountException();
         }
 
-        const totalFilledAmount = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+        const totalFilledAmount = filledAmounts.reduce((total: BigNumber, currentValue: BigNumber) => {
             return total.plus(currentValue);
-        }, new BigNumber(0));
+        }, ZERO);
 
         const price = totalFilledAmount.div(amount);
 
@@ -550,7 +560,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             amount,
             side,
             price,
-            takerFee,
+            orderFeeData,
         );
 
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
@@ -633,7 +643,6 @@ export const createSignedOrderIEO: ThunkCreator = (amount: BigNumber, price: Big
                 side,
                 baseToken.endDate,
             );
-
             const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
             return signatureUtils.ecSignOrderAsync(provider, order, ethAccount);
         } catch (error) {
@@ -655,15 +664,20 @@ export const createConfigSignature: ThunkCreator = (message: string) => {
                     EIP712Domain: [
                         { name: 'name', type: 'string' },
                         { name: 'version', type: 'string' },
-                        { name: 'verifyingContractAddress', type: 'string' },
+                        { name: 'chainId', type: 'uint256' },
+                        { name: 'verifyingContract', type: 'address' },
                     ],
-                    Message: [{ name: 'message', type: 'string' }, { name: 'terms', type: 'string' }],
+                    Message: [
+                        { name: 'message', type: 'string' },
+                        { name: 'terms', type: 'string' },
+                    ],
                 },
                 primaryType: 'Message',
                 domain: {
                     name: 'Veridex',
                     version: '1',
-                    verifyingContractAddress: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+                    chainId: CHAIN_ID,
+                    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
                 },
                 message: {
                     message: 'I want to create/edit this DEX. Veridex terms apply',
@@ -836,6 +850,15 @@ export const initConfigData: ThunkCreator = (queryString: string | undefined, do
             const localStorage = new LocalStorage(window.localStorage);
             const themeName = localStorage.getThemeName() || Config.getConfig().theme_name;
             dispatch(initTheme(themeName));
+            let feeRecipient = FEE_RECIPIENT;
+            let feePercentage = FEE_PERCENTAGE;
+            const general = Config.getConfig().general;
+            if (general) {
+                feeRecipient = general.feeRecipient || FEE_RECIPIENT;
+                feePercentage = general.feePercentage || FEE_PERCENTAGE;
+            }
+            dispatch(setFeeRecipient(feeRecipient));
+            dispatch(setFeePercentage(feePercentage));
         } catch (e) {
             return;
         }

@@ -162,9 +162,6 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const ToolbarContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(Toolbar);
+const ToolbarContainer = connect(mapStateToProps, mapDispatchToProps)(Toolbar);
 
 export { Toolbar, ToolbarContainer };

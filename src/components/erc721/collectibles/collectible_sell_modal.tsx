@@ -1,9 +1,10 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
 import styled, { css, withTheme } from 'styled-components';
 
+import { ZERO } from '../../../common/constants';
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
@@ -324,7 +325,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                         <FieldContainer>
                             <BigInputNumberStyled
                                 decimals={18}
-                                min={new BigNumber(0)}
+                                min={ZERO}
                                 onChange={this._updateStartingPrice}
                                 placeholder={'0.00'}
                                 value={startPrice}
@@ -352,7 +353,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                             <FieldContainer>
                                 <BigInputNumberStyled
                                     decimals={18}
-                                    min={new BigNumber(0)}
+                                    min={ZERO}
                                     onChange={this._updateEndingPrice}
                                     value={endingPrice}
                                     placeholder={'0.00'}
@@ -466,11 +467,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const CollectibleSellModal = withTheme(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(CollectibleSellModalContainer),
-);
+const CollectibleSellModal = withTheme(connect(mapStateToProps, mapDispatchToProps)(CollectibleSellModalContainer));
 
 export { CollectibleSellModal };

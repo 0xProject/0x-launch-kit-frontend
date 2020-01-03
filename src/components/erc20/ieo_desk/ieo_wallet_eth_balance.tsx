@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
@@ -399,11 +399,6 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const IEOWalletEthBalanceContainer = withTheme(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(IEOWalletEthBalance),
-);
+const IEOWalletEthBalanceContainer = withTheme(connect(mapStateToProps, mapDispatchToProps)(IEOWalletEthBalance));
 
 export { IEOWalletEthBalance, IEOWalletEthBalanceContainer };

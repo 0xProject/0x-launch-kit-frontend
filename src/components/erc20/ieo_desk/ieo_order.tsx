@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -21,6 +21,7 @@ import {
     ButtonIcons,
     ButtonVariant,
     CurrencyPair,
+    OrderFeeData,
     OrderSide,
     OrderType,
     StoreState,
@@ -55,7 +56,7 @@ interface DispatchProps {
         amount: BigNumber,
         price: BigNumber,
         side: OrderSide,
-        makerFee: BigNumber,
+        orderFeeData: OrderFeeData,
         baseToken: Token,
         quoteToken: Token,
     ) => Promise<any>;
@@ -268,7 +269,7 @@ class IEOOrder extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { web3State, wethTokenBalance, baseToken, ethAccount } = this.props;
+        const { web3State, wethTokenBalance, baseToken, ethAccount, currencyPair } = this.props;
         const { makerAmount, price, tab, orderType, error } = this.state;
         if (!wethTokenBalance || !baseToken) {
             return (
@@ -361,6 +362,7 @@ class IEOOrder extends React.Component<Props, State> {
                             <BigInputNumberTokenLabel tokenSymbol={quoteToken.symbol} />
                         </FieldContainer>
                         <IEOOrderDetailsContainer
+                            currencyPair={currencyPair}
                             orderType={orderType}
                             orderSide={tab}
                             tokenAmount={amount}
@@ -412,8 +414,8 @@ class IEOOrder extends React.Component<Props, State> {
         const orderSide = this.state.tab;
         const makerAmount = this.state.makerAmount || new BigNumber(0.000001);
         const price = this.state.price || new BigNumber(0);
-        const { makerFee } = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
-        await this.props.onSubmitLimitOrder(makerAmount, price, orderSide, makerFee, baseToken, quoteToken);
+        const orderFeeData = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
+        await this.props.onSubmitLimitOrder(makerAmount, price, orderSide, orderFeeData, baseToken, quoteToken);
         this._reset();
     };
 
@@ -449,10 +451,10 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
             amount: BigNumber,
             price: BigNumber,
             side: OrderSide,
-            makerFee: BigNumber,
+            orderFeeData: OrderFeeData,
             baseToken: Token,
             quoteToken: Token,
-        ) => dispatch(startBuySellLimitIEOSteps(amount, price, side, makerFee, baseToken, quoteToken)),
+        ) => dispatch(startBuySellLimitIEOSteps(amount, price, side, orderFeeData, baseToken, quoteToken)),
         onConnectWallet: () => dispatch(initWallet()),
         onFetchBaseTokenIEO: (token: TokenIEO) => dispatch(fetchBaseTokenIEO(token)),
         onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
@@ -460,9 +462,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const IEOOrderContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(IEOOrder);
+const IEOOrderContainer = connect(mapStateToProps, mapDispatchToProps)(IEOOrder);
 
 export { IEOOrder, IEOOrderContainer };

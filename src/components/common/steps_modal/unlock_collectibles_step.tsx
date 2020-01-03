@@ -91,14 +91,11 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const UnlockCollectiblesStepContainer = connect(
-    mapStateToProps,
-    (dispatch: any) => {
-        return {
-            advanceStep: () => dispatch(stepsModalAdvanceStep()),
-            onUnlockCollectible: (collectible: Collectible) => dispatch(unlockCollectible(collectible)),
-        };
-    },
-)(UnlockCollectiblesStep);
+const UnlockCollectiblesStepContainer = connect(mapStateToProps, (dispatch: any) => {
+    return {
+        advanceStep: () => dispatch(stepsModalAdvanceStep()),
+        onUnlockCollectible: (collectible: Collectible) => dispatch(unlockCollectible(collectible)),
+    };
+})(UnlockCollectiblesStep);
 
 export { UnlockCollectiblesStep, UnlockCollectiblesStepContainer };

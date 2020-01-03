@@ -1,4 +1,5 @@
-import { BigNumber } from '0x.js';
+import { ERC721TokenContract } from '@0x/contract-wrappers';
+import { BigNumber } from '@0x/utils';
 
 import { COLLECTIBLE_ADDRESS } from '../../common/constants';
 import { getContractWrappers } from '../../services/contract_wrappers';
@@ -94,10 +95,8 @@ export class Mocked implements CollectibleMetadataSource {
 
         const allCollectiblesWithOwner = await Promise.all(
             allCollectibles.map(async collectible => {
-                const owner = await contractWrappers.erc721Token.getOwnerOfAsync(
-                    contractAddress,
-                    new BigNumber(collectible.tokenId),
-                );
+                const erc721Token = new ERC721TokenContract(contractAddress, contractWrappers.getProvider());
+                const owner = await erc721Token.ownerOf(new BigNumber(collectible.tokenId)).callAsync();
 
                 return {
                     ...collectible,

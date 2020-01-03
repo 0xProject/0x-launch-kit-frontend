@@ -1,7 +1,8 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { ZERO } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep, getWallet } from '../../../store/selectors';
@@ -103,7 +104,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const quoteTokenSymbol = tokenSymbolToDisplayString(quoteToken.symbol);
         const { amountInReturn } = this.state;
         return `${tokenAmountInUnits(
-            amountInReturn || new BigNumber(0),
+            amountInReturn || ZERO,
             quoteToken.decimals,
             quoteToken.displayDecimals,
         ).toString()} ${quoteTokenSymbol}`;
@@ -119,16 +120,13 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const BuySellTokenStepContainer = connect(
-    mapStateToProps,
-    (dispatch: any) => {
-        return {
-            onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => dispatch(submitMarketOrder(amount, side)),
-            notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) =>
-                dispatch(addMarketBuySellNotification(id, amount, token, side, tx)),
-            refreshOrders: () => dispatch(getOrderbookAndUserOrders()),
-        };
-    },
-)(BuySellTokenStep);
+const BuySellTokenStepContainer = connect(mapStateToProps, (dispatch: any) => {
+    return {
+        onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => dispatch(submitMarketOrder(amount, side)),
+        notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) =>
+            dispatch(addMarketBuySellNotification(id, amount, token, side, tx)),
+        refreshOrders: () => dispatch(getOrderbookAndUserOrders()),
+    };
+})(BuySellTokenStep);
 
 export { BuySellTokenStep, BuySellTokenStepContainer };

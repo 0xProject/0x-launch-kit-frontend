@@ -1,4 +1,4 @@
-import { SignedOrder } from '0x.js';
+import { SignedOrder } from '@0x/order-utils';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -17,7 +17,7 @@ const load0xInstantScript = (callback: any) => {
 
     if (!existingScript) {
         const script = document.createElement('script');
-        script.src = 'https://instant.0x.org/instant.js';
+        script.src = 'https://instant.0xproject.com/v3/instant.js';
         script.id = 'zerox';
         document.body.appendChild(script);
 
@@ -112,7 +112,7 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
                 {
                     provider: (await getWeb3Wrapper()).getProvider(),
                     orderSource,
-                    networkId,
+                    chainId: networkId,
                     affiliateInfo: {
                         feeRecipient: FEE_RECIPIENT,
                         feePercentage,
@@ -131,9 +131,7 @@ export class ZeroXInstantWidget extends React.Component<Props, State> {
                     <BuyButton onClick={openZeroXinstantModal} variant={buttonVariant}>
                         {btnName}
                     </BuyButton>
-                ) : (
-                    ''
-                )}
+                ) : null}
             </>
         );
     };

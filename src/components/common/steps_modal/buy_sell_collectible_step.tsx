@@ -1,4 +1,5 @@
-import { BigNumber, SignedOrder } from '0x.js';
+import { SignedOrder } from '@0x/types';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -170,9 +171,6 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const BuySellCollectibleStepContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(BuySellCollectibleStep);
+const BuySellCollectibleStepContainer = connect(mapStateToProps, mapDispatchToProps)(BuySellCollectibleStep);
 
 export { BuySellCollectibleStep, BuySellCollectibleStepContainer };

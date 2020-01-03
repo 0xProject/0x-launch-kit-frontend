@@ -132,7 +132,7 @@ const MagnifierIconWrapper = styled.div`
 `;
 
 const TableWrapper = styled.div`
-    max-height: 420px;
+    max-height: 520px;
     overflow: auto;
     position: relative;
 `;
@@ -403,9 +403,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const MarketsListContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(MarketsList);
+const MarketsListContainer = connect(mapStateToProps, mapDispatchToProps)(MarketsList);
 
 export { MarketsList, MarketsListContainer };

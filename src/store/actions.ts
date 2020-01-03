@@ -46,7 +46,8 @@ export const updateStore = () => {
                     dispatch(updateLaunchpadStore());
                     break;
                 case MARKETPLACES.Margin:
-                    dispatch(updateBZXStore());
+                    // Updated in market price tokens
+                    // dispatch(updateBZXStore());
                     break;
                 default:
                     break;

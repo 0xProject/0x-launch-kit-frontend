@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -93,9 +93,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const CollectibleCardContainer = connect(
-    mapStateToProps,
-    {},
-)(CollectibleCard);
+const CollectibleCardContainer = connect(mapStateToProps, {})(CollectibleCard);
 
 export { CollectibleCard, CollectibleCardContainer };

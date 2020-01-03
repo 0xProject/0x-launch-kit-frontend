@@ -455,11 +455,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const MarketsDropdownContainer = withWindowWidth(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(MarketsDropdown),
-);
+const MarketsDropdownContainer = withWindowWidth(connect(mapStateToProps, mapDispatchToProps)(MarketsDropdown));
 
 export { MarketsDropdown, MarketsDropdownContainer };

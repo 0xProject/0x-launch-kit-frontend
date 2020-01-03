@@ -82,9 +82,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const WalletConnectionContentContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(WalletConnectionContent);
+const WalletConnectionContentContainer = connect(mapStateToProps, mapDispatchToProps)(WalletConnectionContent);
 
 export { WalletConnectionContent, WalletConnectionContentContainer };

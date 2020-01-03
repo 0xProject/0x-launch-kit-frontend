@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 

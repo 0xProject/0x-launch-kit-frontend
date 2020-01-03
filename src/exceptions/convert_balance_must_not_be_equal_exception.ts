@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
 export class ConvertBalanceMustNotBeEqualException extends Error {
     constructor(currentEthBalance: BigNumber, newEthBalance: BigNumber) {

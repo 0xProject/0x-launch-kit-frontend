@@ -7,6 +7,14 @@ const TOKENIZED_REGISTRY_ADDRESS: { [key: number]: string } = {
     [Network.Kovan]: '0xF1C87dD61BF8a4e21978487e2705D52AA687F97E',
 };
 
+const TOKEN_DATA_ADDRESS: { [key: number]: string } = {
+    [Network.Ropsten]: '0xbb2626199c3a71ed15aead2ee1ad90f6c0759077',
+};
+
 export const getTokenizedRegistryAddress = (): string => {
     return `${TOKENIZED_REGISTRY_ADDRESS[NETWORK_ID].toLowerCase()}`;
+};
+
+export const getTokenDataAddress = (): string => {
+    return `${TOKEN_DATA_ADDRESS[NETWORK_ID].toLowerCase()}`;
 };

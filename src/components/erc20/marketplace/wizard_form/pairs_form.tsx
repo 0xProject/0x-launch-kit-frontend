@@ -45,7 +45,8 @@ export const PairsForm = ({ isOpen = false, selector }: { isOpen?: boolean; sele
                             <StyledPair key={name}>
                                 <PairReadOnly name={name} index={index} />
                             </StyledPair>
-                        ))}
+                        ))
+                    }
                 </FieldArray>
                 <OnChange name={'pairs'}>
                     {(value: CurrencyPair[], _previous: CurrencyPair[]) => {

@@ -1,5 +1,8 @@
-import { assetDataUtils, BigNumber, ExchangeFillEventArgs } from '0x.js';
+import { ExchangeFillEventArgs } from '@0x/contract-wrappers';
+import { assetDataUtils } from '@0x/order-utils';
+import { BigNumber, NULL_BYTES } from '@0x/utils';
 
+import { ZERO } from '../../common/constants';
 import { getKnownTokens } from '../../util/known_tokens';
 import {
     buildOrderFilledNotification,
@@ -61,11 +64,14 @@ describe('buildOrderFilledNotification', () => {
             senderAddress: addressFactory.build().address,
             makerAssetFilledAmount: new BigNumber(2),
             takerAssetFilledAmount: new BigNumber(1),
-            makerFeePaid: new BigNumber(0),
-            takerFeePaid: new BigNumber(0),
+            makerFeePaid: ZERO,
+            takerFeePaid: ZERO,
             orderHash: '',
             makerAssetData: baseTokenAssetData,
             takerAssetData: quoteTokenAssetData,
+            makerFeeAssetData: NULL_BYTES,
+            takerFeeAssetData: NULL_BYTES,
+            protocolFeePaid: ZERO,
         };
         const log: any = {
             args,
@@ -89,11 +95,14 @@ describe('buildOrderFilledNotification', () => {
             senderAddress: addressFactory.build().address,
             makerAssetFilledAmount: new BigNumber(2),
             takerAssetFilledAmount: new BigNumber(1),
-            makerFeePaid: new BigNumber(0),
-            takerFeePaid: new BigNumber(0),
+            makerFeePaid: ZERO,
+            takerFeePaid: ZERO,
             orderHash: '',
             makerAssetData: quoteTokenAssetData,
             takerAssetData: baseTokenAssetData,
+            makerFeeAssetData: NULL_BYTES,
+            takerFeeAssetData: NULL_BYTES,
+            protocolFeePaid: ZERO,
         };
         const log: any = {
             args,

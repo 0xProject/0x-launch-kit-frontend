@@ -32,7 +32,7 @@ const LogoIconContainer = (props: Props) => {
             icon ? <ReactSVG src={icon as string} fallback={() => fallBack} /> : fallBack;
     }
     if (isImage.test(icon as string)) {
-        Icon = icon ? <img src={icon as string} /> : fallBack;
+        Icon = icon ? <img src={icon as string} alt="logo" /> : fallBack;
     }
     if (!Icon) {
         return null;

@@ -1,9 +1,9 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { UI_DECIMALS_DISPLAYED_PRICE_ETH, UI_DECIMALS_DISPLAYED_SPREAD_PERCENT } from '../../../common/constants';
+import { UI_DECIMALS_DISPLAYED_PRICE_ETH, UI_DECIMALS_DISPLAYED_SPREAD_PERCENT, ZERO } from '../../../common/constants';
 import {
     getBaseToken,
     getCurrencyPair,
@@ -208,7 +208,7 @@ class OrderToRow extends React.Component<OrderToRowProps> {
                 return sumSize.plus(mySizeItem.size);
             }
             return sumSize;
-        }, new BigNumber(0));
+        }, ZERO);
 
         const mySizeConverted = tokenAmountInUnits(mySize, baseToken.decimals, basePrecision);
         const isMySizeEmpty = mySize.eq(new BigNumber(0));
@@ -254,10 +254,7 @@ const mapOrderToRowDispatchToProps = (dispatch: any): OrderToRowDispatchProps =>
     };
 };
 
-const OrderToRowContainer = connect(
-    null,
-    mapOrderToRowDispatchToProps,
-)(OrderToRow);
+const OrderToRowContainer = connect(null, mapOrderToRowDispatchToProps)(OrderToRow);
 
 class OrderBookTable extends React.Component<Props> {
     private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
@@ -314,17 +311,24 @@ class OrderBookTable extends React.Component<Props> {
             const spreadAbsFixed = absoluteSpread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
             const spreadPercentFixed = percentageSpread.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT);
             const basePrecision = currencyPair.config.basePrecision;
+
             const totalBase = tokenAmountInUnits(
-                sellOrders.map(o => o.size).reduce((p, c) => p.plus(c)),
+                sellOrders.length > 1 ? sellOrders.map(o => o.size).reduce((p, c) => p.plus(c)) : new BigNumber(0),
                 baseToken.decimals,
                 basePrecision,
             );
-            const totalQuote = buyOrders
-                .map(o =>
-                    new BigNumber(tokenAmountInUnits(o.size, baseToken.decimals, basePrecision)).multipliedBy(o.price),
-                )
-                .reduce((p, c) => p.plus(c))
-                .toFixed(2);
+
+            const totalQuote =
+                buyOrders.length > 1
+                    ? buyOrders
+                          .map(o =>
+                              new BigNumber(tokenAmountInUnits(o.size, baseToken.decimals, basePrecision)).multipliedBy(
+                                  o.price,
+                              ),
+                          )
+                          .reduce((p, c) => p.plus(c))
+                          .toFixed(2)
+                    : new BigNumber(0).toFixed(2);
 
             const baseSymbol = formatTokenSymbol(baseToken.symbol);
             const quoteSymbol = formatTokenSymbol(quoteToken.symbol);

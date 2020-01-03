@@ -2,15 +2,15 @@
  * @jest-environment jsdom
  */
 
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 
+import { ZERO } from '../../../common/constants';
 import { WalletTokenBalances } from '../../../components/account';
 import { DefaultTheme } from '../../../themes/default_theme';
 import { TokenBalance, TokenPrice, Web3State } from '../../../util/types';
 import { mountWithTheme, renderWithTheme } from '../../util/test_with_theme';
 const noop = () => ({});
-const ZERO = new BigNumber(0);
 const tokenDefaults = {
     displayDecimals: 2,
     primaryColor: 'white',

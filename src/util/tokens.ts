@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
 import { NETWORK_ID } from '../common/constants';
 
@@ -26,6 +26,10 @@ export const tokenSymbolToDisplayString = (symbol: string): string => {
 
 export const formatTokenSymbol = (symbol: string): string => {
     return isWeth(symbol.toLowerCase()) ? 'ETH' : symbol.toUpperCase();
+};
+
+export const formatTokenName = (name: string): string => {
+    return (name = 'Wrapped Ether' ? 'Ethereum' : name);
 };
 
 export const getEtherscanLinkForToken = (token: Token): string => {

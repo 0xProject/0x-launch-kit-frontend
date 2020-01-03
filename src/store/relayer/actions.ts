@@ -1,7 +1,9 @@
-import { BigNumber, SignedOrder } from '0x.js';
+import { SignedOrder } from '@0x/types';
+import { BigNumber } from '@0x/utils';
+import { Web3Wrapper } from '@0x/web3-wrapper';
 import { createAction } from 'typesafe-actions';
 
-import { AFFILIATE_FEE_PERCENTAGE, FEE_RECIPIENT } from '../../common/constants';
+import { FEE_PERCENTAGE, FEE_RECIPIENT, ZERO } from '../../common/constants';
 import { INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR } from '../../exceptions/common';
 import { InsufficientOrdersAmountException } from '../../exceptions/insufficient_orders_amount_exception';
 import { RelayerException } from '../../exceptions/relayer_exception';
@@ -31,6 +33,7 @@ import {
     buildLimitOrderIEO,
     buildMarketLimitMatchingOrders,
     buildMarketOrders,
+    calculateWorstCaseProtocolFee,
     sumTakerAssetFillableOrders,
 } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
@@ -40,6 +43,7 @@ import {
     Fill,
     MarketFill,
     NotificationKind,
+    OrderFeeData,
     OrderFilledMessage,
     OrderSide,
     RelayerState,
@@ -57,7 +61,9 @@ import {
     getCurrencyPair,
     getEthAccount,
     getEthBalance,
+    getFeeRecipient,
     getGasPriceInWei,
+    getMakerAddresses,
     getOpenBuyOrders,
     getOpenSellOrders,
     getQuoteToken,
@@ -92,12 +98,21 @@ export const setAccountMarketStats = createAction('relayer/ACCOUNT_MARKET_STATS_
     return (accountMarketStats: AccountMarketStat[]) => resolve(accountMarketStats);
 });
 
+export const setFeeRecipient = createAction('relayer/FEE_RECIPIENT_set', resolve => {
+    return (feeRecipient: string) => resolve(feeRecipient);
+});
+
+export const setFeePercentage = createAction('relayer/FEE_PERCENTAGE_set', resolve => {
+    return (feePercentange: number) => resolve(feePercentange);
+});
+
 export const getAllOrders: ThunkCreator = () => {
     return async (dispatch, getState) => {
         const state = getState();
         const baseToken = getBaseToken(state) as Token;
         const quoteToken = getQuoteToken(state) as Token;
         const web3State = getWeb3State(state) as Web3State;
+        const makerAddresses = getMakerAddresses(state);
         try {
             let uiOrders: UIOrder[] = [];
             const isWeb3NotDoneState = [
@@ -109,9 +124,9 @@ export const getAllOrders: ThunkCreator = () => {
             ].includes(web3State);
             // tslint:disable-next-line:prefer-conditional-expression
             if (isWeb3NotDoneState) {
-                uiOrders = await getAllOrdersAsUIOrdersWithoutOrdersInfo(baseToken, quoteToken);
+                uiOrders = await getAllOrdersAsUIOrdersWithoutOrdersInfo(baseToken, quoteToken, makerAddresses);
             } else {
-                uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken);
+                uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken, makerAddresses);
             }
             dispatch(setOrders(uiOrders));
         } catch (err) {
@@ -282,7 +297,7 @@ export const submitLimitMatchingOrder: ThunkCreator = (amount: BigNumber, price:
         const isBuy = side === OrderSide.Buy;
         const allOrders = isBuy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
 
-        const { orders, amounts, remainingAmount } = buildMarketLimitMatchingOrders(
+        const { ordersToFill, amounts, remainingAmount } = buildMarketLimitMatchingOrders(
             {
                 amount,
                 price,
@@ -291,51 +306,74 @@ export const submitLimitMatchingOrder: ThunkCreator = (amount: BigNumber, price:
             side,
         );
 
-        if (orders.length > 0) {
-            const quoteToken = getQuoteToken(state) as Token;
+        if (ordersToFill.length > 0) {
             const contractWrappers = await getContractWrappers();
-
+            const quoteToken = getQuoteToken(state) as Token;
             // Check if the order is fillable using the forwarder
             const ethBalance = getEthBalance(state) as BigNumber;
-            let ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+            const ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
                 return total.plus(currentValue);
-            }, new BigNumber(0));
+            }, ZERO);
+            const protocolFee = calculateWorstCaseProtocolFee(ordersToFill, gasPrice);
+            const feeAmount = ordersToFill.map(o => o.takerFee).reduce((p, c) => p.plus(c));
+            const affiliateFeeAmount = ethAmountRequired
+                .plus(protocolFee)
+                .plus(feeAmount)
+                .multipliedBy(FEE_PERCENTAGE)
+                .integerValue(BigNumber.ROUND_CEIL);
 
-            ethAmountRequired = ethAmountRequired.plus(
-                ethAmountRequired.times(new BigNumber(AFFILIATE_FEE_PERCENTAGE)).toFixed(0),
-            );
+            const totalEthAmount = ethAmountRequired
+                .plus(protocolFee)
+                .plus(affiliateFeeAmount)
+                .plus(feeAmount);
+            const isEthBalanceEnough = ethBalance.isGreaterThan(totalEthAmount);
+            // HACK(dekz): Forwarder not currently deployed in Ganache
+            const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
+            const isMarketBuyForwarder =
+                isBuy &&
+                isWeth(quoteToken.symbol) &&
+                isEthBalanceEnough &&
+                contractWrappers.forwarder.address !== NULL_ADDRESS;
+            const orderSignatures = ordersToFill.map(o => o.signature);
 
-            const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
-            const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
-
-            let txHash = '';
-            if (isMarketBuyForwarder) {
-                txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
-                    orders,
-                    amount,
-                    ethAccount,
-                    ethAmountRequired,
-                    [],
-                    AFFILIATE_FEE_PERCENTAGE,
-                    FEE_RECIPIENT,
-                    getTransactionOptions(gasPrice),
-                );
-            } else {
-                if (isBuy) {
-                    txHash = await contractWrappers.exchange.marketBuyOrdersAsync(
-                        orders,
-                        amount,
-                        ethAccount,
-                        getTransactionOptions(gasPrice),
-                    );
+            let txHash;
+            try {
+                if (isMarketBuyForwarder) {
+                    txHash = await contractWrappers.forwarder
+                        .marketBuyOrdersWithEth(
+                            ordersToFill,
+                            amount,
+                            orderSignatures,
+                            Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
+                            FEE_RECIPIENT,
+                        )
+                        .sendTransactionAsync({
+                            from: ethAccount,
+                            value: totalEthAmount,
+                            ...getTransactionOptions(gasPrice),
+                        });
                 } else {
-                    txHash = await contractWrappers.exchange.marketSellOrdersAsync(
-                        orders,
-                        amount,
-                        ethAccount,
-                        getTransactionOptions(gasPrice),
-                    );
+                    if (isBuy) {
+                        txHash = await contractWrappers.exchange
+                            .marketBuyOrdersFillOrKill(ordersToFill, amount, orderSignatures)
+                            .sendTransactionAsync({
+                                from: ethAccount,
+                                value: protocolFee,
+                                ...getTransactionOptions(gasPrice),
+                            });
+                    } else {
+                        txHash = await contractWrappers.exchange
+                            .marketSellOrdersFillOrKill(ordersToFill, amount, orderSignatures)
+                            .sendTransactionAsync({
+                                from: ethAccount,
+                                value: protocolFee,
+                                ...getTransactionOptions(gasPrice),
+                            });
+                    }
                 }
+            } catch (e) {
+                logger.log(e.message);
+                throw e;
             }
             const web3Wrapper = await getWeb3Wrapper();
             const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
@@ -356,7 +394,7 @@ export const submitLimitMatchingOrder: ThunkCreator = (amount: BigNumber, price:
                     },
                 ]),
             );
-            const amountInReturn = sumTakerAssetFillableOrders(side, orders, amounts);
+            const amountInReturn = sumTakerAssetFillableOrders(side, ordersToFill, amounts);
             return { txHash, amountInReturn };
         } else {
             return { remainingAmount };
@@ -370,15 +408,17 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 ) => {
     return async (dispatch, getState, { getContractWrappers, getWeb3Wrapper }) => {
         const state = getState();
+        const feeRecipient = getFeeRecipient(state) || FEE_RECIPIENT;
+        const feePercentange = Number(getFeeRecipient(state)) || FEE_PERCENTAGE;
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
 
         const isBuy = side === OrderSide.Buy;
-        const allOrders = isBuy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
-        const { orders, amounts, canBeFilled } = buildMarketOrders(
+        const orders = isBuy ? getOpenSellOrders(state) : getOpenBuyOrders(state);
+        const [ordersToFill, amounts, canBeFilled] = buildMarketOrders(
             {
                 amount,
-                orders: allOrders,
+                orders,
             },
             side,
         );
@@ -390,46 +430,70 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
 
             // Check if the order is fillable using the forwarder
             const ethBalance = getEthBalance(state) as BigNumber;
-            let ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
+            const ethAmountRequired = amounts.reduce((total: BigNumber, currentValue: BigNumber) => {
                 return total.plus(currentValue);
-            }, new BigNumber(0));
+            }, ZERO);
+            const protocolFee = calculateWorstCaseProtocolFee(ordersToFill, gasPrice);
+            const feeAmount = ordersToFill.map(o => o.takerFee).reduce((p, c) => p.plus(c));
+            const affiliateFeeAmount = ethAmountRequired
+                .plus(protocolFee)
+                .plus(feeAmount)
+                .multipliedBy(feePercentange)
+                .integerValue(BigNumber.ROUND_CEIL);
 
-            ethAmountRequired = ethAmountRequired.plus(
-                ethAmountRequired.times(new BigNumber(AFFILIATE_FEE_PERCENTAGE)).toFixed(0),
-            );
+            const totalEthAmount = ethAmountRequired
+                .plus(protocolFee)
+                .plus(affiliateFeeAmount)
+                .plus(feeAmount);
 
-            const isEthBalanceEnough = ethBalance.isGreaterThan(ethAmountRequired);
-            const isMarketBuyForwarder = isBuy && isWeth(quoteToken.symbol) && isEthBalanceEnough;
+            const isEthBalanceEnough = ethBalance.isGreaterThan(totalEthAmount);
+            // HACK(dekz): Forwarder not currently deployed in Ganache
+            const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
+            const isMarketBuyForwarder =
+                isBuy &&
+                isWeth(quoteToken.symbol) &&
+                isEthBalanceEnough &&
+                contractWrappers.forwarder.address !== NULL_ADDRESS;
+            const orderSignatures = ordersToFill.map(o => o.signature);
 
             let txHash;
-
-            if (isMarketBuyForwarder) {
-                txHash = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
-                    orders,
-                    amount,
-                    ethAccount,
-                    ethAmountRequired,
-                    [],
-                    AFFILIATE_FEE_PERCENTAGE,
-                    FEE_RECIPIENT,
-                    getTransactionOptions(gasPrice),
-                );
-            } else {
-                if (isBuy) {
-                    txHash = await contractWrappers.exchange.marketBuyOrdersAsync(
-                        orders,
-                        amount,
-                        ethAccount,
-                        getTransactionOptions(gasPrice),
-                    );
+            try {
+                if (isMarketBuyForwarder) {
+                    txHash = await contractWrappers.forwarder
+                        .marketBuyOrdersWithEth(
+                            ordersToFill,
+                            amount,
+                            orderSignatures,
+                            Web3Wrapper.toBaseUnitAmount(feePercentange, 18),
+                            feeRecipient,
+                        )
+                        .sendTransactionAsync({
+                            from: ethAccount,
+                            value: totalEthAmount,
+                            ...getTransactionOptions(gasPrice),
+                        });
                 } else {
-                    txHash = await contractWrappers.exchange.marketSellOrdersAsync(
-                        orders,
-                        amount,
-                        ethAccount,
-                        getTransactionOptions(gasPrice),
-                    );
+                    if (isBuy) {
+                        txHash = await contractWrappers.exchange
+                            .marketBuyOrdersFillOrKill(ordersToFill, amount, orderSignatures)
+                            .sendTransactionAsync({
+                                from: ethAccount,
+                                value: protocolFee,
+                                ...getTransactionOptions(gasPrice),
+                            });
+                    } else {
+                        txHash = await contractWrappers.exchange
+                            .marketSellOrdersFillOrKill(ordersToFill, amount, orderSignatures)
+                            .sendTransactionAsync({
+                                from: ethAccount,
+                                value: protocolFee,
+                                ...getTransactionOptions(gasPrice),
+                            });
+                    }
                 }
+            } catch (e) {
+                logger.log(e.message);
+                throw e;
             }
 
             const web3Wrapper = await getWeb3Wrapper();
@@ -453,7 +517,7 @@ export const submitMarketOrder: ThunkCreator<Promise<{ txHash: string; amountInR
                 ]),
             );
 
-            const amountInReturn = sumTakerAssetFillableOrders(side, orders, amounts);
+            const amountInReturn = sumTakerAssetFillableOrders(side, ordersToFill, amounts);
 
             return { txHash, amountInReturn };
         } else {
@@ -478,7 +542,7 @@ export const getOrderBook: ThunkCreator = () => {
     };
 };
 
-export const fetchTakerAndMakerFee: ThunkCreator<Promise<{ makerFee: BigNumber; takerFee: BigNumber }>> = (
+export const fetchTakerAndMakerFee: ThunkCreator<Promise<OrderFeeData>> = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
@@ -502,11 +566,13 @@ export const fetchTakerAndMakerFee: ThunkCreator<Promise<{ makerFee: BigNumber; 
             side,
         );
 
-        const { makerFee, takerFee } = order;
+        const { makerFee, takerFee, makerFeeAssetData, takerFeeAssetData } = order;
 
         return {
             makerFee,
             takerFee,
+            makerFeeAssetData,
+            takerFeeAssetData,
         };
     };
 };
@@ -657,7 +723,7 @@ export const fetchPastMarketFills: ThunkCreator<Promise<void>> = () => {
     };
 };
 
-export const fetchTakerAndMakerFeeIEO: ThunkCreator<Promise<{ makerFee: BigNumber; takerFee: BigNumber }>> = (
+export const fetchTakerAndMakerFeeIEO: ThunkCreator<Promise<OrderFeeData>> = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
@@ -682,11 +748,13 @@ export const fetchTakerAndMakerFeeIEO: ThunkCreator<Promise<{ makerFee: BigNumbe
             side,
         );
 
-        const { makerFee, takerFee } = order;
+        const { makerFee, takerFee, makerFeeAssetData, takerFeeAssetData } = order;
 
         return {
             makerFee,
             takerFee,
+            makerFeeAssetData,
+            takerFeeAssetData,
         };
     };
 };

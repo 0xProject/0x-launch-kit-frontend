@@ -173,12 +173,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-export const AllCollectiblesListContainer = connect(
-    allMapStateToProps,
-    mapDispatchToProps,
-)(CollectiblesList);
+export const AllCollectiblesListContainer = connect(allMapStateToProps, mapDispatchToProps)(CollectiblesList);
 
-export const MyCollectiblesListContainer = connect(
-    myMapStateToProps,
-    mapDispatchToProps,
-)(CollectiblesList);
+export const MyCollectiblesListContainer = connect(myMapStateToProps, mapDispatchToProps)(CollectiblesList);

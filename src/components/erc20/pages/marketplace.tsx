@@ -144,7 +144,6 @@ const Marketplace = () => {
      * TODO: Remove this workaround. In some states, react-grid-layoyt is not
      * finding the correct way to get the correct width.
      * */
-
     /*useEffect(()=>{
         setTimeout(() => {
         window.dispatchEvent(new Event('resize'));

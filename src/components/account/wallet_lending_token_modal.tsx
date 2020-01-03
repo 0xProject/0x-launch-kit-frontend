@@ -1,10 +1,10 @@
-import { BigNumber } from '0x.js';
 // tslint:disable-next-line: no-implicit-dependencies
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-import { TX_DEFAULTS } from '../../common/constants';
+import { TX_DEFAULTS_TRANSFER } from '../../common/constants';
 import { themeDimensions } from '../../themes/commons';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
 import { ButtonIcons, ButtonVariant, iTokenData, Token, TokenBalance } from '../../util/types';
@@ -145,7 +145,7 @@ class LendingTokenModal extends React.Component<Props, State> {
     };
     public componentDidMount = () => {
         const { ethBalance } = this.props;
-        if (ethBalance.isLessThan(TX_DEFAULTS.gasTransferToken)) {
+        if (ethBalance.isLessThan(TX_DEFAULTS_TRANSFER.gasTransferToken)) {
             this.setState({
                 error: {
                     btnMsg: 'Error',
