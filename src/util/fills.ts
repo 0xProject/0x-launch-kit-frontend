@@ -1,4 +1,6 @@
-import { assetDataUtils, BigNumber, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
+import { ExchangeFillEventArgs, LogWithDecodedArgs } from '@0x/contract-wrappers';
+import { assetDataUtils } from '@0x/order-utils';
+import { BigNumber } from '@0x/utils';
 
 import { getKnownTokens, KnownTokens } from './known_tokens';
 import { marketToStringFromTokens } from './markets';

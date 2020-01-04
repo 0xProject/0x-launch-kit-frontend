@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
@@ -506,12 +506,7 @@ const mapDispatchToProps = {
     onClickOpenFiatOnRampModal: openFiatOnRampChooseModal,
 };
 
-const WalletTokenBalancesContainer = withTheme(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(WalletTokenBalances),
-);
+const WalletTokenBalancesContainer = withTheme(connect(mapStateToProps, mapDispatchToProps)(WalletTokenBalances));
 
 // tslint:disable-next-line: max-file-line-count
 export { WalletTokenBalances, WalletTokenBalancesContainer };

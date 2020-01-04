@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import { createAction } from 'typesafe-actions';
 
 import { getAllITokens, getToken } from '../../services/bzx';
@@ -83,13 +83,13 @@ export const lendingToken: ThunkCreator<Promise<any>> = (
         const web3Wrapper = await getWeb3Wrapper();
         let txHash: string;
         if (isEth) {
-            txHash = await iContractWrappers.mintWithEther.sendTransactionAsync(ethAccount.toLowerCase(), {
+            txHash = await iContractWrappers.mintWithEther(ethAccount.toLowerCase()).sendTransactionAsync({
                 from: ethAccount.toLowerCase(),
                 value: amount.toString(),
                 gasPrice: getTransactionOptions(gasPrice).gasPrice,
             });
         } else {
-            txHash = await iContractWrappers.mint.sendTransactionAsync(ethAccount, amount, {
+            txHash = await iContractWrappers.mint(ethAccount, amount).sendTransactionAsync({
                 from: ethAccount.toLowerCase(),
                 gasPrice: getTransactionOptions(gasPrice).gasPrice,
             });
@@ -142,12 +142,12 @@ export const unLendingToken: ThunkCreator<Promise<any>> = (
                 from: ethAccount.toLowerCase(),
                 gasPrice: getTransactionOptions(gasPrice).gasPrice,
             });*/
-            txHash = await iContractWrappers.burn.sendTransactionAsync(ethAccount.toLowerCase(), amount, {
+            txHash = await iContractWrappers.burn(ethAccount.toLowerCase(), amount).sendTransactionAsync({
                 from: ethAccount.toLowerCase(),
                 gasPrice: getTransactionOptions(gasPrice).gasPrice,
             });
         } else {
-            txHash = await iContractWrappers.burn.sendTransactionAsync(ethAccount, amount);
+            txHash = await iContractWrappers.burn(ethAccount, amount).sendTransactionAsync();
         }
 
         const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);

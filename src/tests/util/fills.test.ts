@@ -1,4 +1,6 @@
-import { assetDataUtils, BigNumber, ExchangeFillEventArgs } from '0x.js';
+import { ExchangeFillEventArgs } from '@0x/contract-wrappers';
+import { assetDataUtils } from '@0x/order-utils';
+import { BigNumber } from '@0x/utils';
 
 import { buildFill } from '../../util/fills';
 import { getKnownTokens } from '../../util/known_tokens';
@@ -71,6 +73,9 @@ describe('buildFillFromEvent', () => {
             orderHash: '',
             makerAssetData: baseTokenAssetData,
             takerAssetData: quoteTokenAssetData,
+            makerFeeAssetData: '0x',
+            takerFeeAssetData: '0x',
+            protocolFeePaid: new BigNumber(0),
         };
         const log: any = {
             args,

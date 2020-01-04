@@ -27,7 +27,10 @@ const TooltipStyled = styled(Tooltip)``;
 export const ThemeForm = ({ isOpen = false, selector }: { name: string; isOpen?: boolean; selector?: string }) => {
     const dispatch = useDispatch();
 
-    const options = [{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }];
+    const options = [
+        { value: 'dark', label: 'Dark' },
+        { value: 'light', label: 'Light' },
+    ];
     const themeName = useSelector(getThemeName);
     const themeNameForm = themeName === 'DARK_THEME' ? 'theme_dark' : 'theme_light';
     const [selectedOption, setSelectedOption] = useState(themeName === 'DARK_THEME' ? options[0] : options[1]);

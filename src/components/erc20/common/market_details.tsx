@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -18,7 +18,7 @@ import {
 } from '../../../store/selectors';
 import { formatMarketToString, marketToString } from '../../../util/markets';
 import { isMobile } from '../../../util/screen';
-import { tokenAmountInUnits } from '../../../util/tokens';
+import { formatTokenName, formatTokenSymbol, tokenAmountInUnits } from '../../../util/tokens';
 import { CurrencyPair, StoreState, Token, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
@@ -78,7 +78,7 @@ const statsToRow = (marketStats: MarketStats, baseToken: Token, currencyPair: Cu
     if (USE_RELAYER_MARKET_UPDATES) {
         volume =
             (marketStats.volume &&
-                `${marketStats.volume.toFixed(baseToken.displayDecimals)} ${baseToken.symbol.toUpperCase()}`) ||
+                `${marketStats.volume.toFixed(baseToken.displayDecimals)} ${formatTokenSymbol(baseToken.symbol)}`) ||
             '- ';
     } else {
         volume =
@@ -87,13 +87,13 @@ const statsToRow = (marketStats: MarketStats, baseToken: Token, currencyPair: Cu
                     marketStats.volume,
                     baseToken.decimals,
                     baseToken.displayDecimals,
-                ).toString()} ${baseToken.symbol.toUpperCase()}`) ||
+                ).toString()} ${formatTokenSymbol(baseToken.symbol)}`) ||
             '- ';
     }
 
     return (
         <TR>
-            <CustomTD>{baseToken.name}</CustomTD>
+            <CustomTD>{formatTokenName(baseToken.name)}</CustomTD>
             <CustomTD styles={{ textAlign: 'right', tabular: true }}>{lastPrice}</CustomTD>
             <CustomTD styles={{ textAlign: 'right', tabular: true }}>
                 {(marketStats.highPrice && marketStats.highPrice.toFixed(currencyPair.config.pricePrecision)) || '-'}
@@ -135,7 +135,9 @@ const MobileTable = (marketStats: MarketStats, baseToken: Token, currencyPair: C
             <tbody>
                 <TR>
                     <TH>Project</TH>
-                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>{baseToken.name}</CustomTD>
+                    <CustomTD styles={{ textAlign: 'right', tabular: true }}>
+                        {formatTokenName(baseToken.name)}
+                    </CustomTD>
                 </TR>
                 <TR>
                     <TH>Last Price</TH>
@@ -164,7 +166,7 @@ const MobileTable = (marketStats: MarketStats, baseToken: Token, currencyPair: C
                                 marketStats.volume,
                                 baseToken.decimals,
                                 baseToken.displayDecimals,
-                            ).toString()} ${baseToken.symbol.toUpperCase()}`) ||
+                            ).toString()} ${formatTokenSymbol(baseToken.symbol)}`) ||
                             '-'}{' '}
                     </CustomTD>
                 </TR>
@@ -262,11 +264,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const MarketDetailsContainer = withWindowWidth(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(MarketDetails),
-);
+const MarketDetailsContainer = withWindowWidth(connect(mapStateToProps, mapDispatchToProps)(MarketDetails));
 
 export { MarketDetails, MarketDetailsContainer };

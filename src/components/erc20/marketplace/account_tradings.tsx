@@ -159,9 +159,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const AccountTradingsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(AccountTradings);
+const AccountTradingsContainer = connect(mapStateToProps, mapDispatchToProps)(AccountTradings);
 
 export { AccountTradings, AccountTradingsContainer };

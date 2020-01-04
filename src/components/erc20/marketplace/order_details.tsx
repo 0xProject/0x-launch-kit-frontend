@@ -1,15 +1,16 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, NULL_BYTES } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { ZERO } from '../../../common/constants';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getOpenBuyOrders, getOpenSellOrders, getQuoteInUsd } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { formatTokenSymbol, tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, OrderSide, OrderType, StoreState, UIOrder } from '../../../util/types';
+import { CurrencyPair, OrderFeeData, OrderSide, OrderType, StoreState, UIOrder } from '../../../util/types';
 
 const Row = styled.div`
     align-items: center;
@@ -80,21 +81,27 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
+    onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<OrderFeeData>;
 }
 
 type Props = StateProps & OwnProps & DispatchProps;
 
 interface State {
-    feeInZrx: BigNumber;
-    quoteTokenAmount: BigNumber;
+    makerFeeAmount: BigNumber;
+    takerFeeAmount: BigNumber;
+    makerFeeAssetData?: string;
+    takerFeeAssetData?: string;
     canOrderBeFilled?: boolean;
+    quoteTokenAmount: BigNumber;
 }
 
 class OrderDetails extends React.Component<Props, State> {
     public state = {
-        feeInZrx: new BigNumber(0),
-        quoteTokenAmount: new BigNumber(0),
+        makerFeeAmount: ZERO,
+        takerFeeAmount: ZERO,
+        makerFeeAssetData: NULL_BYTES,
+        takerFeeAssetData: NULL_BYTES,
+        quoteTokenAmount: ZERO,
         canOrderBeFilled: true,
     };
 
@@ -159,40 +166,59 @@ class OrderDetails extends React.Component<Props, State> {
             const priceInQuoteBaseUnits = Web3Wrapper.toBaseUnitAmount(tokenPrice, quoteToken.decimals);
             const baseTokenAmountInUnits = Web3Wrapper.toUnitAmount(tokenAmount, baseToken.decimals);
             const quoteTokenAmount = baseTokenAmountInUnits.multipliedBy(priceInQuoteBaseUnits);
-            const { makerFee } = await onFetchTakerAndMakerFee(tokenAmount, tokenPrice, orderSide);
+            const { makerFee, makerFeeAssetData, takerFee, takerFeeAssetData } = await onFetchTakerAndMakerFee(
+                tokenAmount,
+                tokenPrice,
+                orderSide,
+            );
             this.setState({
-                feeInZrx: makerFee,
+                makerFeeAmount: makerFee,
+                makerFeeAssetData,
+                takerFeeAmount: takerFee,
+                takerFeeAssetData,
                 quoteTokenAmount,
             });
         } else {
             const { tokenAmount, openSellOrders, openBuyOrders } = this.props;
             const isSell = orderSide === OrderSide.Sell;
-            const { orders, amounts, canBeFilled } = buildMarketOrders(
+            const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
                 {
                     amount: tokenAmount,
                     orders: isSell ? openBuyOrders : openSellOrders,
                 },
                 orderSide,
             );
-            const feeInZrx = orders.reduce((sum, order) => sum.plus(order.takerFee), new BigNumber(0));
-            const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, orders, amounts);
+            // HACK(dekz): we assume takerFeeAssetData is either empty or is consistent through all orders
+            const firstOrderWithFees = ordersToFill.find(o => o.takerFeeAssetData !== NULL_BYTES);
+            const takerFeeAssetData = firstOrderWithFees ? firstOrderWithFees.takerFeeAssetData : NULL_BYTES;
+            const takerFeeAmount = ordersToFill.reduce((sum, order) => sum.plus(order.takerFee), ZERO);
+            const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, ordersToFill, amountToPayForEachOrder);
 
             this.setState({
-                feeInZrx,
+                takerFeeAmount,
+                takerFeeAssetData,
                 quoteTokenAmount,
-                canOrderBeFilled: canBeFilled,
+                canOrderBeFilled,
             });
         }
     };
 
     private readonly _getFeeStringForRender = () => {
-        const { feeInZrx } = this.state;
-        const feeToken = getKnownTokens().getTokenBySymbol('zrx');
+        const { orderType } = this.props;
+        const { makerFeeAmount, makerFeeAssetData, takerFeeAmount, takerFeeAssetData } = this.state;
+        // If its a Limit order the user is paying a maker fee
+        const feeAssetData = orderType === OrderType.Limit ? makerFeeAssetData : takerFeeAssetData;
+        const feeAmount = orderType === OrderType.Limit ? makerFeeAmount : takerFeeAmount;
+        if (feeAssetData === NULL_BYTES) {
+            return '0.00';
+        }
+        const feeToken = getKnownTokens().getTokenByAssetData(feeAssetData);
+
         return `${tokenAmountInUnits(
-            feeInZrx,
+            feeAmount,
             feeToken.decimals,
             feeToken.displayDecimals,
-        )} ${tokenSymbolToDisplayString('ZRX')}`;
+        )} ${tokenSymbolToDisplayString(feeToken.symbol)}`;
     };
 
     private readonly _getCostStringForRender = () => {
@@ -259,9 +285,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const OrderDetailsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(OrderDetails);
+const OrderDetailsContainer = connect(mapStateToProps, mapDispatchToProps)(OrderDetails);
 
 export { CostValue, OrderDetails, OrderDetailsContainer, Value };

@@ -1,5 +1,4 @@
-import { ZeroExProvider } from '0x.js';
-// tslint:disable-next-line: no-implicit-dependencies
+import { ZeroExProvider } from '@0x/order-utils';
 import { providerUtils } from '@0x/utils';
 
 import { Maybe } from './types';

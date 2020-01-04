@@ -153,9 +153,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const OrderFillsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(OrderFills);
+const OrderFillsContainer = connect(mapStateToProps, mapDispatchToProps)(OrderFills);
 
 export { OrderFills, OrderFillsContainer };

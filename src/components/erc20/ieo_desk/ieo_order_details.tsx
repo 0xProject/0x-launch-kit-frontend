@@ -1,14 +1,16 @@
-import { BigNumber } from '0x.js';
+import { BigNumber, NULL_BYTES } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+import { ZERO } from '../../../common/constants';
 import { fetchTakerAndMakerFeeIEO } from '../../../store/relayer/actions';
 import { getOpenBuyOrders, getOpenSellOrders, getQuoteInUsd } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
+import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { OrderSide, OrderType, StoreState, Token, UIOrder } from '../../../util/types';
+import { CurrencyPair, OrderSide, OrderType, StoreState, Token, UIOrder } from '../../../util/types';
 
 const Row = styled.div`
     align-items: center;
@@ -71,12 +73,13 @@ interface OwnProps {
     orderSide: OrderSide;
     quoteToken: Token;
     baseToken: Token;
+    currencyPair: CurrencyPair;
 }
 
 interface StateProps {
     openSellOrders: UIOrder[];
     openBuyOrders: UIOrder[];
-    qouteInUSD: BigNumber | undefined | null;
+    quoteInUSD: BigNumber | undefined | null;
 }
 
 interface DispatchProps {
@@ -86,15 +89,21 @@ interface DispatchProps {
 type Props = StateProps & OwnProps & DispatchProps;
 
 interface State {
-    feeInZrx: BigNumber;
-    quoteTokenAmount: BigNumber;
+    makerFeeAmount: BigNumber;
+    takerFeeAmount: BigNumber;
+    makerFeeAssetData?: string;
+    takerFeeAssetData?: string;
     canOrderBeFilled?: boolean;
+    quoteTokenAmount: BigNumber;
 }
 
 class IEOOrderDetails extends React.Component<Props, State> {
     public state = {
-        feeInZrx: new BigNumber(0),
-        quoteTokenAmount: new BigNumber(0),
+        makerFeeAmount: ZERO,
+        takerFeeAmount: ZERO,
+        makerFeeAssetData: NULL_BYTES,
+        takerFeeAssetData: NULL_BYTES,
+        quoteTokenAmount: ZERO,
         canOrderBeFilled: true,
     };
 
@@ -103,6 +112,7 @@ class IEOOrderDetails extends React.Component<Props, State> {
         if (
             newProps.tokenPrice !== prevProps.tokenPrice ||
             newProps.orderType !== prevProps.orderType ||
+            newProps.currencyPair !== prevProps.currencyPair ||
             newProps.tokenAmount !== prevProps.tokenAmount ||
             newProps.orderSide !== prevProps.orderSide
         ) {
@@ -137,34 +147,77 @@ class IEOOrderDetails extends React.Component<Props, State> {
     };
 
     private readonly _updateOrderDetailsState = async () => {
-        const { orderSide, quoteToken, baseToken } = this.props;
+        const { currencyPair, orderType, orderSide } = this.props;
+        if (!currencyPair) {
+            return;
+        }
 
-        const { tokenAmount, tokenPrice, onFetchTakerAndMakerFee } = this.props;
-        const priceInQuoteBaseUnits = Web3Wrapper.toBaseUnitAmount(tokenPrice, quoteToken.decimals);
-        const baseTokenAmountInUnits = Web3Wrapper.toUnitAmount(tokenAmount, baseToken.decimals);
-        const quoteTokenAmount = baseTokenAmountInUnits.multipliedBy(priceInQuoteBaseUnits);
-        if (baseToken && quoteToken) {
-            const { makerFee } = await onFetchTakerAndMakerFee(tokenAmount, tokenPrice, orderSide);
+        if (orderType === OrderType.Limit) {
+            const { tokenAmount, tokenPrice, onFetchTakerAndMakerFee } = this.props;
+            const { quote, base } = currencyPair;
+            const quoteToken = getKnownTokens().getTokenBySymbol(quote);
+            const baseToken = getKnownTokens().getTokenBySymbol(base);
+            const priceInQuoteBaseUnits = Web3Wrapper.toBaseUnitAmount(tokenPrice, quoteToken.decimals);
+            const baseTokenAmountInUnits = Web3Wrapper.toUnitAmount(tokenAmount, baseToken.decimals);
+            const quoteTokenAmount = baseTokenAmountInUnits.multipliedBy(priceInQuoteBaseUnits);
+            const { makerFee, makerFeeAssetData, takerFee, takerFeeAssetData } = await onFetchTakerAndMakerFee(
+                tokenAmount,
+                tokenPrice,
+                orderSide,
+            );
             this.setState({
-                feeInZrx: makerFee,
+                makerFeeAmount: makerFee,
+                makerFeeAssetData,
+                takerFeeAmount: takerFee,
+                takerFeeAssetData,
                 quoteTokenAmount,
+            });
+        } else {
+            const { tokenAmount, openSellOrders, openBuyOrders } = this.props;
+            const isSell = orderSide === OrderSide.Sell;
+            const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
+                {
+                    amount: tokenAmount,
+                    orders: isSell ? openBuyOrders : openSellOrders,
+                },
+                orderSide,
+            );
+            // HACK(dekz): we assume takerFeeAssetData is either empty or is consistent through all orders
+            const firstOrderWithFees = ordersToFill.find(o => o.takerFeeAssetData !== NULL_BYTES);
+            const takerFeeAssetData = firstOrderWithFees ? firstOrderWithFees.takerFeeAssetData : NULL_BYTES;
+            const takerFeeAmount = ordersToFill.reduce((sum, order) => sum.plus(order.takerFee), ZERO);
+            const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, ordersToFill, amountToPayForEachOrder);
+
+            this.setState({
+                takerFeeAmount,
+                takerFeeAssetData,
+                quoteTokenAmount,
+                canOrderBeFilled,
             });
         }
     };
 
     private readonly _getFeeStringForRender = () => {
-        const { feeInZrx } = this.state;
-        const feeToken = getKnownTokens().getTokenBySymbol('zrx');
+        const { orderType } = this.props;
+        const { makerFeeAmount, makerFeeAssetData, takerFeeAmount, takerFeeAssetData } = this.state;
+        // If its a Limit order the user is paying a maker fee
+        const feeAssetData = orderType === OrderType.Limit ? makerFeeAssetData : takerFeeAssetData;
+        const feeAmount = orderType === OrderType.Limit ? makerFeeAmount : takerFeeAmount;
+        if (feeAssetData === NULL_BYTES) {
+            return '0.00';
+        }
+        const feeToken = getKnownTokens().getTokenByAssetData(feeAssetData);
+
         return `${tokenAmountInUnits(
-            feeInZrx,
+            feeAmount,
             feeToken.decimals,
             feeToken.displayDecimals,
-        )} ${tokenSymbolToDisplayString('ZRX')}`;
+        )} ${tokenSymbolToDisplayString(feeToken.symbol)}`;
     };
 
     private readonly _getCostStringForRender = () => {
         const { canOrderBeFilled } = this.state;
-        const { orderType, qouteInUSD, quoteToken } = this.props;
+        const { orderType, quoteInUSD, quoteToken } = this.props;
         if (orderType === OrderType.Market && !canOrderBeFilled) {
             return `---`;
         }
@@ -172,8 +225,8 @@ class IEOOrderDetails extends React.Component<Props, State> {
         const quoteSymbol = quoteToken.symbol;
         const quoteTokenAmountUnits = tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals);
         const costAmount = tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals, quoteToken.displayDecimals);
-        if (qouteInUSD) {
-            const quotePriceAmountUSD = new BigNumber(quoteTokenAmountUnits).multipliedBy(qouteInUSD);
+        if (quoteInUSD) {
+            const quotePriceAmountUSD = new BigNumber(quoteTokenAmountUnits).multipliedBy(quoteInUSD);
             return `${costAmount} ${tokenSymbolToDisplayString(quoteSymbol)} (${quotePriceAmountUSD.toFixed(2)} $)`;
         } else {
             return `${costAmount} ${tokenSymbolToDisplayString(quoteSymbol)}`;
@@ -181,8 +234,8 @@ class IEOOrderDetails extends React.Component<Props, State> {
     };
 
     private readonly _getCostLabelStringForRender = () => {
-        const { qouteInUSD, orderSide } = this.props;
-        if (qouteInUSD) {
+        const { quoteInUSD, orderSide } = this.props;
+        if (quoteInUSD) {
             return orderSide === OrderSide.Sell ? 'Total (USD)' : 'Cost (USD)';
         } else {
             return orderSide === OrderSide.Sell ? 'Total' : 'Cost';
@@ -194,7 +247,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
     return {
         openSellOrders: getOpenSellOrders(state),
         openBuyOrders: getOpenBuyOrders(state),
-        qouteInUSD: getQuoteInUsd(state),
+        quoteInUSD: getQuoteInUsd(state),
     };
 };
 
@@ -205,9 +258,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
     };
 };
 
-const IEOOrderDetailsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(IEOOrderDetails);
+const IEOOrderDetailsContainer = connect(mapStateToProps, mapDispatchToProps)(IEOOrderDetails);
 
 export { CostValue, IEOOrderDetails, IEOOrderDetailsContainer, Value };

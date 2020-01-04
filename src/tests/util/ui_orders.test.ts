@@ -1,21 +1,12 @@
-import { BigNumber, OrderAndTraderInfo, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
+import { OrderInfo, OrderStatus } from '@0x/types';
+import { BigNumber } from '@0x/utils';
 
+import { ZERO } from '../../common/constants';
 import { getKnownTokens } from '../../util/known_tokens';
 import { makeOrder, uiOrder } from '../../util/test-utils';
 import { OrderSide, UIOrder } from '../../util/types';
 import { mergeByPrice, ordersToUIOrders } from '../../util/ui_orders';
-const MAX_UINT = new BigNumber(2).pow(256).minus(1);
-const DEFAULT_TRADER_INFO = {
-    makerAllowance: MAX_UINT,
-    takerAllowance: MAX_UINT,
-    makerBalance: MAX_UINT,
-    takerBalance: MAX_UINT,
-    makerZrxAllowance: MAX_UINT,
-    makerZrxBalance: MAX_UINT,
-    takerZrxAllowance: MAX_UINT,
-    takerZrxBalance: MAX_UINT,
-};
 
 describe('ordersToUIOrders', () => {
     const ZrxToken = getKnownTokens().getTokenBySymbol('zrx');
@@ -33,35 +24,27 @@ describe('ordersToUIOrders', () => {
                 takerTokenAddress: quoteToken.address,
             }),
         ];
-        const orderAndTraderInfo: OrderAndTraderInfo[] = [
+        const ordersInfo: OrderInfo[] = [
             {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('0'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                },
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: ZERO,
             },
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, baseToken, orderAndTraderInfo);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
-        expect(uiOrders[0]).toEqual(
-            expect.objectContaining({
-                rawOrder: orders[0],
-                side: OrderSide.Sell,
-                size: new BigNumber('1'),
-                filled: new BigNumber('0'),
-                price: new BigNumber('50'),
-                status: OrderStatus.Fillable,
-                remainingTakerAssetFillAmount: orders[0].takerAssetAmount,
-            }),
-        );
+        expect(uiOrders[0]).toEqual({
+            rawOrder: orders[0],
+            side: OrderSide.Sell,
+            size: new BigNumber('1'),
+            filled: ZERO,
+            price: new BigNumber('50'),
+            status: OrderStatus.Fillable,
+        });
     });
 
     it('should convert a buy Order to a UIOrder', async () => {
@@ -76,35 +59,27 @@ describe('ordersToUIOrders', () => {
                 takerTokenAddress: baseToken.address,
             }),
         ];
-        const orderAndTraderInfo: OrderAndTraderInfo[] = [
+        const ordersInfo: OrderInfo[] = [
             {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('0'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                },
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: ZERO,
             },
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, baseToken, orderAndTraderInfo);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
-        expect(uiOrders[0]).toEqual(
-            expect.objectContaining({
-                rawOrder: orders[0],
-                side: OrderSide.Buy,
-                size: new BigNumber('1'),
-                filled: new BigNumber('0'),
-                price: new BigNumber('100'),
-                status: OrderStatus.Fillable,
-                remainingTakerAssetFillAmount: orders[0].takerAssetAmount,
-            }),
-        );
+        expect(uiOrders[0]).toEqual({
+            rawOrder: orders[0],
+            side: OrderSide.Buy,
+            size: new BigNumber('1'),
+            filled: ZERO,
+            price: new BigNumber('100'),
+            status: OrderStatus.Fillable,
+        });
     });
 
     it('should convert buy and sell Orders to UIOrders', async () => {
@@ -125,56 +100,40 @@ describe('ordersToUIOrders', () => {
                 takerTokenAddress: baseToken.address,
             }),
         ];
-        const orderAndTraderInfo: OrderAndTraderInfo[] = [
+        const ordersInfo: OrderInfo[] = [
             {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('0'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                },
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: ZERO,
             },
             {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('0'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                },
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: ZERO,
             },
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, baseToken, orderAndTraderInfo);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(2);
-        expect(uiOrders[0]).toEqual(
-            expect.objectContaining({
-                rawOrder: orders[0],
-                side: OrderSide.Sell,
-                size: new BigNumber('1'),
-                filled: new BigNumber('0'),
-                price: new BigNumber('50'),
-                status: OrderStatus.Fillable,
-                remainingTakerAssetFillAmount: orders[0].takerAssetAmount,
-            }),
-        );
-        expect(uiOrders[1]).toEqual(
-            expect.objectContaining({
-                rawOrder: orders[1],
-                side: OrderSide.Buy,
-                size: new BigNumber('1'),
-                filled: new BigNumber('0'),
-                price: new BigNumber('100'),
-                status: OrderStatus.Fillable,
-                remainingTakerAssetFillAmount: orders[1].takerAssetAmount,
-            }),
-        );
+        expect(uiOrders[0]).toEqual({
+            rawOrder: orders[0],
+            side: OrderSide.Sell,
+            size: new BigNumber('1'),
+            filled: ZERO,
+            price: new BigNumber('50'),
+            status: OrderStatus.Fillable,
+        });
+        expect(uiOrders[1]).toEqual({
+            rawOrder: orders[1],
+            side: OrderSide.Buy,
+            size: new BigNumber('1'),
+            filled: ZERO,
+            price: new BigNumber('100'),
+            status: OrderStatus.Fillable,
+        });
     });
 
     it('should convert a partially filled sell Order to a UIOrder', async () => {
@@ -183,41 +142,33 @@ describe('ordersToUIOrders', () => {
         const quoteToken = WethToken;
         const orders: SignedOrder[] = [
             makeOrder({
-                makerAssetAmount: '10',
+                makerAssetAmount: '1',
                 takerAssetAmount: '50',
                 makerTokenAddress: baseToken.address,
                 takerTokenAddress: quoteToken.address,
             }),
         ];
-        const orderAndTraderInfo: OrderAndTraderInfo[] = [
+        const ordersInfo: OrderInfo[] = [
             {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('25'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                },
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('25'),
             },
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, baseToken, orderAndTraderInfo);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
-        expect(uiOrders[0]).toEqual(
-            expect.objectContaining({
-                rawOrder: orders[0],
-                side: OrderSide.Sell,
-                size: new BigNumber('10'),
-                filled: new BigNumber('5'),
-                price: new BigNumber('5'),
-                status: OrderStatus.Fillable,
-                remainingTakerAssetFillAmount: new BigNumber('25'),
-            }),
-        );
+        expect(uiOrders[0]).toEqual({
+            rawOrder: orders[0],
+            side: OrderSide.Sell,
+            size: new BigNumber('1'),
+            filled: new BigNumber('0.5'),
+            price: new BigNumber('50'),
+            status: OrderStatus.Fillable,
+        });
     });
 
     it('should convert a partially filled buy Order to a UIOrder', async () => {
@@ -232,35 +183,27 @@ describe('ordersToUIOrders', () => {
                 takerTokenAddress: baseToken.address,
             }),
         ];
-        const orderAndTraderInfo: OrderAndTraderInfo[] = [
+        const ordersInfo: OrderInfo[] = [
             {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('0.75'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                },
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: new BigNumber('0.75'),
             },
         ];
 
         // when
-        const uiOrders = ordersToUIOrders(orders, baseToken, orderAndTraderInfo);
+        const uiOrders = ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(uiOrders).toHaveLength(1);
-        expect(uiOrders[0]).toEqual(
-            expect.objectContaining({
-                rawOrder: orders[0],
-                side: OrderSide.Buy,
-                size: new BigNumber('1'),
-                filled: new BigNumber('0.75'),
-                price: new BigNumber('100'),
-                status: OrderStatus.Fillable,
-                remainingTakerAssetFillAmount: new BigNumber('0.25'),
-            }),
-        );
+        expect(uiOrders[0]).toEqual({
+            rawOrder: orders[0],
+            side: OrderSide.Buy,
+            size: new BigNumber('1'),
+            filled: new BigNumber('0.75'),
+            price: new BigNumber('100'),
+            status: OrderStatus.Fillable,
+        });
     });
 
     it("should throw if orders length and ordersInfo length don't match", async () => {
@@ -281,57 +224,19 @@ describe('ordersToUIOrders', () => {
                 takerTokenAddress: quoteToken.address,
             }),
         ];
-
-        const orderAndTraderInfo: OrderAndTraderInfo[] = [
+        const ordersInfo: OrderInfo[] = [
             {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('0'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                },
+                orderHash: '',
+                orderStatus: OrderStatus.Fillable,
+                orderTakerAssetFilledAmount: ZERO,
             },
         ];
 
         // when
-        const functionCall = () => ordersToUIOrders(orders, baseToken, orderAndTraderInfo);
+        const functionCall = () => ordersToUIOrders(orders, baseToken, ordersInfo);
 
         // then
         expect(functionCall).toThrow();
-    });
-    it('should filter orders which cannot be market filled', async () => {
-        // given
-        const baseToken = ZrxToken;
-        const quoteToken = WethToken;
-        const orders: SignedOrder[] = [
-            makeOrder({
-                makerAssetAmount: '100',
-                takerAssetAmount: '10',
-                makerTokenAddress: quoteToken.address,
-                takerTokenAddress: baseToken.address,
-            }),
-        ];
-        const orderAndTraderInfo: OrderAndTraderInfo[] = [
-            {
-                orderInfo: {
-                    orderHash: '',
-                    orderStatus: OrderStatus.Fillable,
-                    orderTakerAssetFilledAmount: new BigNumber('0'),
-                },
-                traderInfo: {
-                    ...DEFAULT_TRADER_INFO,
-                    makerBalance: new BigNumber(1),
-                },
-            },
-        ];
-
-        // when
-        const uiOrders = ordersToUIOrders(orders, baseToken, orderAndTraderInfo);
-
-        // then
-        expect(uiOrders).toHaveLength(0);
     });
 });
 

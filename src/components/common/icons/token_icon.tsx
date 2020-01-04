@@ -42,7 +42,7 @@ const TokenIconContainer = (props: Props) => {
             icon ? <ReactSVG src={icon as string} fallback={() => fallBack} /> : fallBack;
     }
     if (isImage.test(icon as string)) {
-        Icon = icon ? <img src={icon as string} /> : fallBack;
+        Icon = icon ? <img src={icon as string} alt={`${symbol.toUpperCase()} icon`} /> : fallBack;
     }
     return (
         <IconContainer color={primaryColor || theme.componentsTheme.gray} {...restProps}>

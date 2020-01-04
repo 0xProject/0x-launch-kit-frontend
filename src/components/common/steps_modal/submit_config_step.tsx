@@ -121,15 +121,12 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const SubmitConfigStepContainer = connect(
-    mapStateToProps,
-    (dispatch: any) => {
-        return {
-            createConfigSignature: () => dispatch(createConfigSignature()),
-            submitConfigFile: (config: ConfigRelayerData) => dispatch(submitConfigFile(config)),
-            onSetDexName: (name: string) => dispatch(setDexName(name)),
-        };
-    },
-)(SubmitConfigStep);
+const SubmitConfigStepContainer = connect(mapStateToProps, (dispatch: any) => {
+    return {
+        createConfigSignature: () => dispatch(createConfigSignature()),
+        submitConfigFile: (config: ConfigRelayerData) => dispatch(submitConfigFile(config)),
+        onSetDexName: (name: string) => dispatch(setDexName(name)),
+    };
+})(SubmitConfigStep);
 
 export { SubmitConfigStep, SubmitConfigStepContainer };

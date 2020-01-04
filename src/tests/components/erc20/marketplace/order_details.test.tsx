@@ -1,21 +1,37 @@
-/**
- * @jest-environment jsdom
- */
-
-import { BigNumber, OrderStatus } from '0x.js';
+import { OrderStatus, SignedOrder } from '@0x/types';
+import { BigNumber, NULL_BYTES } from '@0x/utils';
 import { shallow, ShallowWrapper } from 'enzyme';
 import React from 'react';
 
+import { CHAIN_ID, ZERO } from '../../../../common/constants';
 import { CostValue, OrderDetails, Value } from '../../../../components/erc20/marketplace/order_details';
 import { tokenSymbolToDisplayString, unitsInTokenAmount } from '../../../../util/tokens';
 import { OrderSide, OrderType } from '../../../../util/types';
 
+const ORDER_DEFAULTS = {
+    makerAssetData: NULL_BYTES,
+    takerAssetData: NULL_BYTES,
+    chainId: CHAIN_ID,
+};
+
+const ORDER_FEE_DEFAULTS = {
+    makerFee: ZERO,
+    takerFee: ZERO,
+    makerFeeAssetData: NULL_BYTES,
+    takerFeeAssetData: NULL_BYTES,
+};
+
 describe('OrderDetails', () => {
+    const getZeroTotalCost = (): string => {
+        return `0.00`;
+    };
+
     const getExpectedTotalCostText = (amount: number, symbol: string, price: number): string => {
         return `${new BigNumber(amount).toFixed(3)} ${tokenSymbolToDisplayString(symbol)} (${new BigNumber(amount)
             .times(price)
             .toFixed(2)} $)`;
     };
+
     const getExpectedFeeText = (amount: number): string => {
         return `${new BigNumber(amount).toFixed(2)} ${tokenSymbolToDisplayString('zrx')}`;
     };
@@ -46,10 +62,8 @@ describe('OrderDetails', () => {
         // given
         const makerAmount = unitsInTokenAmount('13', 18);
         const tokenPrice = new BigNumber(3);
+        const fees = async () => ORDER_FEE_DEFAULTS;
         const qouteInUSD = new BigNumber(1);
-        const fees = async () => {
-            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
-        };
 
         // when
         const wrapper = shallow(
@@ -69,7 +83,7 @@ describe('OrderDetails', () => {
         const amountText = getAmountTextFromWrapper(wrapper);
         expect(amountText).toEqual(getExpectedTotalCostText(0, currencyPair.quote, 1));
         const feeText = getFeeTextFromWrapper(wrapper);
-        expect(feeText).toEqual(getExpectedFeeText(0));
+        expect(feeText).toEqual(getZeroTotalCost());
     });
 
     it('Calculates fees for market orders', () => {
@@ -80,14 +94,13 @@ describe('OrderDetails', () => {
         const MAKER_FEE = unitsInTokenAmount('3', 18);
         const TAKER_FEE = unitsInTokenAmount('7', 18);
 
-        const signedOrder1 = {
+        const signedOrder1: SignedOrder = {
+            ...ORDER_DEFAULTS,
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
             feeRecipientAddress: '0x0000000000000000000000000000000000000000',
             makerAddress: '0x5409ed021d9299bf6814279a6a1411a7e866a631',
             makerAssetAmount: new BigNumber(1),
-            makerAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
-            makerFee: MAKER_FEE,
             salt: new BigNumber(1),
             senderAddress: '0x0000000000000000000000000000000000000000',
             signature:
@@ -95,9 +108,14 @@ describe('OrderDetails', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            makerAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
+            makerFeeAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            takerFeeAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
+            makerFee: MAKER_FEE,
             takerFee: TAKER_FEE,
         };
         const signedOrder2 = {
+            ...ORDER_DEFAULTS,
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
             feeRecipientAddress: '0x0000000000000000000000000000000000000000',
@@ -112,6 +130,8 @@ describe('OrderDetails', () => {
             takerAddress: '0x0000000000000000000000000000000000000000',
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            makerFeeAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            takerFeeAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
             takerFee: TAKER_FEE,
         };
 
@@ -119,7 +139,7 @@ describe('OrderDetails', () => {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
             size: unitsInTokenAmount('5', 18),
-            filled: new BigNumber(0),
+            filled: ZERO,
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
@@ -127,13 +147,11 @@ describe('OrderDetails', () => {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
             size: unitsInTokenAmount('5', 18),
-            filled: new BigNumber(0),
+            filled: ZERO,
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
-        const fees = async () => {
-            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
-        };
+        const fees = async () => ORDER_FEE_DEFAULTS;
 
         // when
         const wrapper = shallow(
@@ -165,6 +183,7 @@ describe('OrderDetails', () => {
         const TAKER_FEE = unitsInTokenAmount('1', 18);
 
         const signedOrder1 = {
+            ...ORDER_DEFAULTS,
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
             feeRecipientAddress: '0x0000000000000000000000000000000000000000',
@@ -180,8 +199,11 @@ describe('OrderDetails', () => {
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
             takerFee: TAKER_FEE,
+            makerFeeAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            takerFeeAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         };
         const signedOrder2 = {
+            ...ORDER_DEFAULTS,
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
             feeRecipientAddress: '0x0000000000000000000000000000000000000000',
@@ -197,13 +219,15 @@ describe('OrderDetails', () => {
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
             takerFee: TAKER_FEE,
+            makerFeeAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            takerFeeAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         };
 
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
             size: unitsInTokenAmount('10', 18),
-            filled: new BigNumber(0),
+            filled: ZERO,
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
         };
@@ -211,13 +235,11 @@ describe('OrderDetails', () => {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
             size: unitsInTokenAmount('3', 18),
-            filled: new BigNumber(0),
+            filled: ZERO,
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
-        const fees = async () => {
-            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
-        };
+        const fees = async () => ORDER_FEE_DEFAULTS;
 
         // when
         const wrapper = shallow(
@@ -247,6 +269,7 @@ describe('OrderDetails', () => {
         const MAKER_FEE = unitsInTokenAmount('1', 18);
 
         const signedOrder1 = {
+            ...ORDER_DEFAULTS,
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
             feeRecipientAddress: '0x0000000000000000000000000000000000000000',
@@ -262,8 +285,11 @@ describe('OrderDetails', () => {
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
             takerFee: new BigNumber(1),
+            makerFeeAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            takerFeeAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         };
         const signedOrder2 = {
+            ...ORDER_DEFAULTS,
             exchangeAddress: '0x48bacb9266a570d521063ef5dd96e61686dbe788',
             expirationTimeSeconds: new BigNumber(1),
             feeRecipientAddress: '0x0000000000000000000000000000000000000000',
@@ -279,13 +305,15 @@ describe('OrderDetails', () => {
             takerAssetAmount: new BigNumber(1),
             takerAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
             takerFee: new BigNumber(1),
+            makerFeeAssetData: '0xf47261b00000000000000000000000000b1ba0af832d7c05fd64161e0db78e85978e8082',
+            takerFeeAssetData: '0xf47261b0000000000000000000000000871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
         };
 
         const sellOrder1 = {
             rawOrder: signedOrder1,
             side: OrderSide.Sell,
             size: unitsInTokenAmount('10', 18),
-            filled: new BigNumber(0),
+            filled: ZERO,
             price: new BigNumber(2),
             status: OrderStatus.Fillable,
         };
@@ -293,13 +321,11 @@ describe('OrderDetails', () => {
             rawOrder: signedOrder2,
             side: OrderSide.Sell,
             size: unitsInTokenAmount('1', 18),
-            filled: new BigNumber(0),
+            filled: ZERO,
             price: new BigNumber(1),
             status: OrderStatus.Fillable,
         };
-        const fees = async () => {
-            return { makerFee: new BigNumber(0), takerFee: new BigNumber(0) };
-        };
+        const fees = async () => ORDER_FEE_DEFAULTS;
 
         // when
         const wrapper = shallow(

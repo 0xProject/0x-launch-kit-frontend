@@ -1,4 +1,4 @@
-import { ZeroExProvider } from '0x.js';
+import { ZeroExProvider } from '@0x/order-utils';
 import * as Bowser from 'bowser';
 
 import { PROVIDER_TYPE_TO_NAME } from '../common/constants';

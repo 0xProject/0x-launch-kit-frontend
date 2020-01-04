@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 
 import { UI_DECIMALS_DISPLAYED_ORDER_SIZE } from '../common/constants';
 

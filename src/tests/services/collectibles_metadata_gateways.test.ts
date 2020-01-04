@@ -1,8 +1,5 @@
-/**
- * @jest-environment jsdom
- */
-
-import { assetDataUtils, BigNumber } from '0x.js';
+import { assetDataUtils } from '@0x/order-utils';
+import { BigNumber } from '@0x/utils';
 
 import { CollectiblesMetadataGateway } from '../../services/collectibles_metadata_gateway';
 import { addressFactory, collectibleFactory } from '../../util/test-utils';

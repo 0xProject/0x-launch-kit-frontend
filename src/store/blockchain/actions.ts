@@ -1,5 +1,8 @@
 // tslint:disable:max-file-line-count
-import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
+import { ERC20TokenContract, ERC721TokenContract } from '@0x/contract-wrappers';
+import { signatureUtils } from '@0x/order-utils';
+import { MetamaskSubprovider } from '@0x/subproviders';
+import { BigNumber } from '@0x/utils';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
 import {
@@ -7,7 +10,9 @@ import {
     FEE_RECIPIENT,
     NETWORK_ID,
     START_BLOCK_LIMIT,
+    UNLIMITED_ALLOWANCE_IN_BASE_UNITS,
     USE_RELAYER_MARKET_UPDATES,
+    ZERO,
 } from '../../common/constants';
 import { ConvertBalanceMustNotBeEqualException } from '../../exceptions/convert_balance_must_not_be_equal_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
@@ -23,7 +28,7 @@ import { getKnownTokens, isWeth } from '../../util/known_tokens';
 import { getKnownTokensIEO } from '../../util/known_tokens_ieo';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
-import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
+import { buildSellCollectibleOrder } from '../../util/orders';
 import { providerFactory } from '../../util/provider_factory';
 import { getTransactionOptions } from '../../util/transactions';
 import {
@@ -158,48 +163,14 @@ export const toggleTokenLock: ThunkCreator<Promise<any>> = (
         const contractWrappers = await getContractWrappers();
         const web3Wrapper = await getWeb3Wrapper();
 
-        let tx: string;
-        if (isUnlocked) {
-            if (isProxy) {
-                tx = await contractWrappers.erc20Token.setProxyAllowanceAsync(
-                    token.address,
-                    ethAccount,
-                    new BigNumber('0'),
-                    getTransactionOptions(gasPrice),
-                );
-            } else {
-                if (address) {
-                    tx = await contractWrappers.erc20Token.setAllowanceAsync(
-                        token.address,
-                        ethAccount,
-                        address,
-                        new BigNumber('0'),
-                        getTransactionOptions(gasPrice),
-                    );
-                } else {
-                    throw Error('No available path to lock token, missing address parameter');
-                }
-            }
-        } else {
-            if (isProxy) {
-                tx = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(
-                    token.address,
-                    ethAccount,
-                    getTransactionOptions(gasPrice),
-                );
-            } else {
-                if (address) {
-                    tx = await contractWrappers.erc20Token.setUnlimitedAllowanceAsync(
-                        token.address,
-                        ethAccount,
-                        address,
-                        getTransactionOptions(gasPrice),
-                    );
-                } else {
-                    throw Error('No available path to unlock token, missing address parameter');
-                }
-            }
-        }
+        const erc20Token = new ERC20TokenContract(token.address, contractWrappers.getProvider());
+        const amount = isUnlocked ? ZERO : UNLIMITED_ALLOWANCE_IN_BASE_UNITS;
+        const tx = await erc20Token
+            .approve(contractWrappers.contractAddresses.erc20Proxy, amount)
+            .sendTransactionAsync({
+                from: ethAccount,
+                ...getTransactionOptions(gasPrice),
+            });
 
         web3Wrapper.awaitTransactionSuccessAsync(tx).then(() => {
             // tslint:disable-next-line:no-floating-promises
@@ -232,13 +203,11 @@ export const transferToken: ThunkCreator<Promise<any>> = (
                 gasPrice: getTransactionOptions(gasPrice).gasPrice,
             });
         } else {
-            txHash = await contractWrappers.erc20Token.transferAsync(
-                token.address,
-                ethAccount.toLowerCase(),
-                address.toLowerCase(),
-                amount,
-                getTransactionOptions(gasPrice),
-            );
+            const erc20Token = new ERC20TokenContract(token.address, contractWrappers.getProvider());
+            txHash = await erc20Token.transfer(address.toLowerCase(), amount).sendTransactionAsync({
+                from: ethAccount,
+                ...getTransactionOptions(gasPrice),
+            });
         }
 
         const tx = web3Wrapper.awaitTransactionSuccessAsync(txHash);
@@ -303,23 +272,20 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
         const ethAccount = getEthAccount(state);
         const gasPrice = getGasPriceInWei(state);
         const wethBalance = getWethBalance(state);
-        const wethAddress = getKnownTokens().getWethToken().address;
 
         let txHash: string;
+        const wethToken = contractWrappers.weth9;
         if (wethBalance.isLessThan(newWethBalance)) {
-            txHash = await contractWrappers.etherToken.depositAsync(
-                wethAddress,
-                newWethBalance.minus(wethBalance),
-                ethAccount,
-                getTransactionOptions(gasPrice),
-            );
+            txHash = await wethToken.deposit().sendTransactionAsync({
+                value: newWethBalance.minus(wethBalance),
+                from: ethAccount,
+                ...getTransactionOptions(gasPrice),
+            });
         } else if (wethBalance.isGreaterThan(newWethBalance)) {
-            txHash = await contractWrappers.etherToken.withdrawAsync(
-                wethAddress,
-                wethBalance.minus(newWethBalance),
-                ethAccount,
-                getTransactionOptions(gasPrice),
-            );
+            txHash = await wethToken.withdraw(wethBalance.minus(newWethBalance)).sendTransactionAsync({
+                from: ethAccount,
+                ...getTransactionOptions(gasPrice),
+            });
         } else {
             throw new ConvertBalanceMustNotBeEqualException(wethBalance, newWethBalance);
         }
@@ -759,14 +725,11 @@ export const unlockCollectible: ThunkCreator<Promise<string>> = (collectible: Co
         const contractWrappers = await getContractWrappers();
         const gasPrice = getGasPriceInWei(state);
         const ethAccount = getEthAccount(state);
-        const defaultParams = getTransactionOptions(gasPrice);
+        const erc721Token = new ERC721TokenContract(COLLECTIBLE_ADDRESS, contractWrappers.getProvider());
 
-        const tx = await contractWrappers.erc721Token.setProxyApprovalForAllAsync(
-            COLLECTIBLE_ADDRESS,
-            ethAccount,
-            true,
-            defaultParams,
-        );
+        const tx = await erc721Token
+            .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
+            .sendTransactionAsync({ from: ethAccount, ...getTransactionOptions(gasPrice) });
         return tx;
     };
 };
@@ -801,20 +764,21 @@ export const createSignedCollectibleOrder: ThunkCreator = (
             const exchangeAddress = contractWrappers.exchange.address;
             let order;
             if (endPrice) {
+                throw new Error('DutchAuction currently unsupported');
                 // DutchAuction sell
-                const senderAddress = contractWrappers.dutchAuction.address;
-                order = await buildDutchAuctionCollectibleOrder({
-                    account: ethAccount,
-                    amount: new BigNumber('1'),
-                    price: startPrice,
-                    endPrice,
-                    expirationDate,
-                    wethAddress,
-                    collectibleAddress: COLLECTIBLE_ADDRESS,
-                    collectibleId,
-                    exchangeAddress,
-                    senderAddress,
-                });
+                // const senderAddress = contractWrappers.dutchAuction.address;
+                // order = await buildDutchAuctionCollectibleOrder({
+                //     account: ethAccount,
+                //     amount: new BigNumber('1'),
+                //     price: startPrice,
+                //     endPrice,
+                //     expirationDate,
+                //     wethAddress,
+                //     collectibleAddress: COLLECTIBLE_ADDRESS,
+                //     collectibleId,
+                //     exchangeAddress,
+                //     senderAddress,
+                // });
             } else {
                 // Normal Sell
                 order = await buildSellCollectibleOrder(

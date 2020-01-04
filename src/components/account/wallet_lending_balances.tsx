@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
@@ -593,12 +593,7 @@ const mapDispatchToProps = {
 };
 
 const WalletLendingBalancesContainer = withTheme(
-    withWindowWidth(
-        connect(
-            mapStateToProps,
-            mapDispatchToProps,
-        )(WalletLendingBalances),
-    ),
+    withWindowWidth(connect(mapStateToProps, mapDispatchToProps)(WalletLendingBalances)),
 );
 
 // tslint:disable-next-line: max-file-line-count

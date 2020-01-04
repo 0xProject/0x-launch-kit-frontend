@@ -1,4 +1,5 @@
-import { assetDataUtils, BigNumber } from '0x.js';
+import { assetDataUtils } from '@0x/order-utils';
+import { BigNumber } from '@0x/utils';
 
 import { getKnownTokens } from '../../util/known_tokens';
 import * as utilOrders from '../../util/orders';

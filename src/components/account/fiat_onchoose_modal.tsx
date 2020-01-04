@@ -49,11 +49,11 @@ const FiatChooseModal: React.FC<Props> = props => {
     const reset = () => {
         dispatch(openFiatOnRampChooseModal(false));
     };
-    const chooseApplePay = () => {
+    /*const chooseApplePay = () => {
         dispatch(setFiatType('APPLE_PAY'));
         dispatch(openFiatOnRampModal(true));
         reset();
-    };
+    };*/
     const chooseCreditCard = () => {
         dispatch(setFiatType('CREDIT_CARD'));
         dispatch(openFiatOnRampModal(true));

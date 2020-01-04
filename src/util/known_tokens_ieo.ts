@@ -1,4 +1,5 @@
-import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
+import { ExchangeFillEventArgs, LogWithDecodedArgs } from '@0x/contract-wrappers';
+import { assetDataUtils } from '@0x/order-utils';
 
 import { ConfigIEO } from '../common/config';
 import { KNOWN_TOKENS_META_DATA } from '../common/tokens_meta_data';

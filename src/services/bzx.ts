@@ -1,6 +1,6 @@
-import { BigNumber } from '0x.js';
-// tslint:disable-next-line: no-implicit-dependencies
-import { TxData } from 'ethereum-types';
+import { ERC20TokenContract } from '@0x/contract-wrappers';
+import { BigNumber } from '@0x/utils';
+import { TxData } from '@0x/web3-wrapper';
 
 import { iTokenContract } from '../util/bzx/contract_wrappers/i_token';
 import { TokenizedRegistryContract } from '../util/bzx/contract_wrappers/tokenized_registry';
@@ -24,11 +24,9 @@ export const getTokenizedRegistryContractWrapper = async (partialTxData: Partial
 export const getAllITokens = async (ethAccount: string): Promise<[iTokenData[], TokenMetadataBZX[]]> => {
     let tokens;
     try {
-        tokens = await (await getTokenizedRegistryContractWrapper({})).getTokens.callAsync(
-            new BigNumber(0),
-            new BigNumber(10),
-            new BigNumber(0),
-        );
+        tokens = await (await getTokenizedRegistryContractWrapper({}))
+            .getTokens(new BigNumber(0), new BigNumber(10), new BigNumber(0))
+            .callAsync();
     } catch (e) {
         // tslint:disable-next-line:no-console
         throw Error('Tokenized registry failure');
@@ -41,13 +39,14 @@ export const getAllITokens = async (ethAccount: string): Promise<[iTokenData[], 
             const contractWrappers = await getContractWrappers();
             const tkContract = await getITokenContractWrapper(tk.token, { from: ethAccount });
             const token = known_tokens.getTokenByAddress(tk.asset);
-            const price = await tkContract.tokenPrice.callAsync();
-            const checkpointPrice = await tkContract.checkpointPrice.callAsync(ethAccount);
-            const avgBorrowInterestRate = await tkContract.avgBorrowInterestRate.callAsync();
-            const marketLiquidity = await tkContract.marketLiquidity.callAsync();
-            const balance = await tkContract.balanceOf.callAsync(ethAccount);
-            const supplyInterestRate = await tkContract.supplyInterestRate.callAsync();
-            const allowance = await contractWrappers.erc20Token.getAllowanceAsync(token.address, ethAccount, tk.token);
+            const price = await tkContract.tokenPrice().callAsync();
+            const checkpointPrice = await tkContract.checkpointPrice(ethAccount).callAsync();
+            const avgBorrowInterestRate = await tkContract.avgBorrowInterestRate().callAsync();
+            const marketLiquidity = await tkContract.marketLiquidity().callAsync();
+            const balance = await tkContract.balanceOf(ethAccount).callAsync();
+            const supplyInterestRate = await tkContract.supplyInterestRate().callAsync();
+            const erc20Token = new ERC20TokenContract(token.address, contractWrappers.getProvider());
+            const allowance = await erc20Token.allowance(ethAccount, tk.token).callAsync();
             const isUnlocked = allowance.isGreaterThan('10000e18');
 
             iTokens.push({
@@ -78,17 +77,14 @@ export const getToken = async (ethAccount: string, iToken: iTokenData): Promise<
         const contractWrappers = await getContractWrappers();
         const tkContract = await getITokenContractWrapper(iToken.address, { from: ethAccount });
         const token = known_tokens.getTokenByAddress(iToken.token.address);
-        const price = await tkContract.tokenPrice.callAsync();
-        const checkpointPrice = await tkContract.checkpointPrice.callAsync(ethAccount);
-        const avgBorrowInterestRate = await tkContract.avgBorrowInterestRate.callAsync();
-        const marketLiquidity = await tkContract.marketLiquidity.callAsync();
-        const balance = await tkContract.balanceOf.callAsync(ethAccount);
-        const supplyInterestRate = await tkContract.supplyInterestRate.callAsync();
-        const allowance = await contractWrappers.erc20Token.getAllowanceAsync(
-            token.address,
-            ethAccount,
-            iToken.address,
-        );
+        const price = await tkContract.tokenPrice().callAsync();
+        const checkpointPrice = await tkContract.checkpointPrice(ethAccount).callAsync();
+        const avgBorrowInterestRate = await tkContract.avgBorrowInterestRate().callAsync();
+        const marketLiquidity = await tkContract.marketLiquidity().callAsync();
+        const balance = await tkContract.balanceOf(ethAccount).callAsync();
+        const supplyInterestRate = await tkContract.supplyInterestRate().callAsync();
+        const erc20Token = new ERC20TokenContract(token.address, contractWrappers.getProvider());
+        const allowance = await erc20Token.allowance(ethAccount, iToken.address).callAsync();
         const isUnlocked = allowance.isGreaterThan('10000e18');
         it = {
             address: iToken.address,

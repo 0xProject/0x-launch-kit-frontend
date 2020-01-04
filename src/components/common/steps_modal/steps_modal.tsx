@@ -121,11 +121,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const StepsModalContainer = withTheme(
-    connect(
-        mapStateToProps,
-        { reset: stepsModalReset },
-    )(StepsModal),
-);
+const StepsModalContainer = withTheme(connect(mapStateToProps, { reset: stepsModalReset })(StepsModal));
 
 export { StepsModal, StepsModalContainer };

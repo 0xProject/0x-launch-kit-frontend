@@ -130,9 +130,6 @@ const mapStateToProps = (state: StoreState): StateProps => {
 const mapDispatchToProps = {
     onMarkNotificationsAsRead: () => setHasUnreadNotifications(false),
 };
-const NotificationsDropdownContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(NotificationsDropdown);
+const NotificationsDropdownContainer = connect(mapStateToProps, mapDispatchToProps)(NotificationsDropdown);
 
 export { NotificationsDropdown, NotificationsDropdownContainer };

@@ -4,13 +4,7 @@ import styled from 'styled-components';
 
 import { Config } from '../../common/config';
 import { GIT_COMMIT } from '../../common/constants';
-import {
-    goToDexWizard,
-    goToListedTokens,
-    openFiatOnRampChooseModal,
-    setERC20Theme,
-    setThemeName,
-} from '../../store/actions';
+import { goToListedTokens, openFiatOnRampChooseModal, setERC20Theme, setThemeName } from '../../store/actions';
 import { getThemeName } from '../../store/selectors';
 import { themeBreakPoints, themeDimensions } from '../../themes/commons';
 import { getThemeFromConfigDex } from '../../themes/theme_meta_data_utils';
@@ -167,7 +161,7 @@ export const Footer: React.FC<Props> = props => {
         dispatch(openFiatOnRampChooseModal(true));
     };
 
-   /*const handleDexWizardClick: React.EventHandler<React.MouseEvent> = e => {
+    /*const handleDexWizardClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
         dispatch(goToDexWizard());
     };*/

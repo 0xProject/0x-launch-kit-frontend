@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
@@ -291,11 +291,6 @@ const mapDispatchToProps = {
     onStartWrapEtherSteps: startWrapEtherSteps,
 };
 
-const WalletWethBalanceContainer = withTheme(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(WalletWethBalance),
-);
+const WalletWethBalanceContainer = withTheme(connect(mapStateToProps, mapDispatchToProps)(WalletWethBalance));
 
 export { WalletWethBalance, WalletWethBalanceContainer };

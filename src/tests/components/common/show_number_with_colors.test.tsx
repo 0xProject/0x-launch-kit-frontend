@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import { shallow } from 'enzyme';
 import React from 'react';
 

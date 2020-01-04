@@ -1,4 +1,5 @@
-import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
+import { ExchangeFillEventArgs, LogWithDecodedArgs } from '@0x/contract-wrappers';
+import { assetDataUtils } from '@0x/order-utils';
 
 import { KnownTokens } from './known_tokens';
 import { getTransactionLink } from './transaction_link';

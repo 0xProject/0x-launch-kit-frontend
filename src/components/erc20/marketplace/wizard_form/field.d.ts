@@ -1,4 +1,7 @@
-declare module 'react-final-form-html5-validation' {
+declare module 'react-final-form-listeners';
+declare module 'react-final-form-html5-validation';
+
+/*declare module 'react-final-form-html5-validation' {
     import { ComponentType } from 'react';
     import { FieldProps } from 'react-final-form';
 
@@ -35,3 +38,4 @@ declare module 'react-final-form-html5-validation' {
     export const Field: ComponentType<Html5ValidationFieldProps>;
 }
 declare module 'react-final-form-listeners';
+*/

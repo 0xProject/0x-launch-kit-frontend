@@ -1,4 +1,4 @@
-import { BigNumber } from '0x.js';
+import { BigNumber } from '@0x/utils';
 import { push } from 'connected-react-router';
 import queryString from 'query-string';
 import { createAction } from 'typesafe-actions';
@@ -13,6 +13,7 @@ import { marketToString } from '../../util/markets';
 import {
     CurrencyPair,
     Market,
+    MARKETPLACES,
     RelayerMarketStats,
     StoreState,
     ThunkCreator,
@@ -20,8 +21,8 @@ import {
     TokenBalance,
     TokenPrice,
 } from '../../util/types';
-import { fetchPastMarketFills, getOrderbookAndUserOrders } from '../actions';
-import { getCurrencyPair, getWethTokenBalance } from '../selectors';
+import { fetchPastMarketFills, getOrderbookAndUserOrders, updateBZXStore } from '../actions';
+import { getCurrencyPair, getCurrentMarketPlace, getWethTokenBalance } from '../selectors';
 
 const logger = getLogger('Market::Actions');
 
@@ -225,6 +226,11 @@ export const updateMarketPriceTokens: ThunkCreator = () => {
             dispatch(fetchMarketPriceTokensUpdate(tokensPrices));
         } catch (err) {
             dispatch(fetchMarketPriceTokensError(err));
+        }
+
+        const currentMarketPlace = getCurrentMarketPlace(state);
+        if (currentMarketPlace === MARKETPLACES.Margin) {
+            dispatch(updateBZXStore());
         }
     };
 };
