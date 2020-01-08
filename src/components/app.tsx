@@ -72,6 +72,7 @@ class App extends React.Component<Props> {
             //  console.log(themeName);
             onInitTheme(themeName);
         }
+
         if (MARKETPLACE === MARKETPLACES.Instant || MARKETPLACE === MARKETPLACES.FiatRamp) {
             serviceWorker.unregister();
             return;

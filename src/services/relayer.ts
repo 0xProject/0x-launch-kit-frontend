@@ -323,15 +323,12 @@ export const startWebsocketMarketsSubscription = (cb_onmessage: any): WebSocket 
         socket.send(JSON.stringify(requestAll));
     };
     socket.onerror = event => {
-        logger.error('Socket error. Reconnect will be attempted in 1 second.');
-        setTimeout(() => {
-            relayerSocket = null;
-            startWebsocketMarketsSubscription(cb_onmessage);
-        }, 3000);
+        logger.error('Socket error. Reconnect will be attempted in 3 seconds.');
+        socket.close();
     };
 
     socket.onclose = event => {
-        logger.error('Socket is closed. Reconnect will be attempted in 1 second.');
+        logger.error('Socket is closed. Reconnect will be attempted in 3 seconds.');
         setTimeout(() => {
             relayerSocket = null;
             startWebsocketMarketsSubscription(cb_onmessage);

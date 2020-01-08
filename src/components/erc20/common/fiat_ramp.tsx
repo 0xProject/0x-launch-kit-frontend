@@ -55,8 +55,7 @@ export const FiatOnRampModal = (props: Props) => {
                     coinType = 'ETH';
                     break;
             }
-            fiat_link = `https://pay.sendwyre.com/purchase?destCurrency=${coinType}&&dest=${ethAccount}&
-            paymentMethod=apple-pay&accountId=${WYRE_ID}`;
+            fiat_link = `https://pay.sendwyre.com/purchase?destCurrency=${coinType}&&dest=${ethAccount}&paymentMethod=apple-pay&accountId=${WYRE_ID}`;
             break;
         case 'credit-card':
             switch (coin) {
