@@ -209,13 +209,15 @@ class MarketsList extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { baseToken, quoteToken, web3State } = this.props;
+        const { baseToken, quoteToken, web3State, markets } = this.props;
         let content: React.ReactNode;
         const defaultBehaviour = () => {
             if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
                 content = <LoadingWrapper minHeight="120px" />;
             } else if (!baseToken || !quoteToken) {
                 content = <EmptyContent alignAbsoluteCenter={true} text="There are no market details to show" />;
+            } else if (!markets) {
+                content = <LoadingWrapper minHeight="120px" />;
             } else {
                 content = (
                     <>

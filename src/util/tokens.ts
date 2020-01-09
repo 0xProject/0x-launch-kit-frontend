@@ -29,7 +29,7 @@ export const formatTokenSymbol = (symbol: string): string => {
 };
 
 export const formatTokenName = (name: string): string => {
-    return (name = 'Wrapped Ether' ? 'Ethereum' : name);
+    return name === 'Wrapped Ether' ? 'Ethereum' : name;
 };
 
 export const getEtherscanLinkForToken = (token: Token): string => {

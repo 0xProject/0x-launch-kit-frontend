@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
@@ -11,6 +11,8 @@ import { isMobile } from '../../util/screen';
 import { useWindowSize } from '../common/hooks/window_size_hook';
 import { CloseModalButton } from '../common/icons/close_modal_button';
 import { IconType, Tooltip } from '../common/tooltip';
+
+import { LoadingWrapper } from '../common/loading';
 
 interface Props {
     theme: Theme;
@@ -52,19 +54,24 @@ export const FiatOnRampModal: React.FC<Props> = props => {
     const ethAccount = useSelector(getEthAccount);
     const fiatType = useSelector(getFiatType);
     const isOpen = useSelector(getOpenFiatOnRampModalState);
+    const [loading, setLoading] = useState(true);
     const reset = () => {
         dispatch(openFiatOnRampModal(false));
     };
     let fiat_link;
     let description;
-    const frame_width = isMobile(size.width) ? `${size.width - 10}` : '500';
-
+    const frame_width = isMobile(size.width) ? `${size.width - 10}px` : '500px';
+    const frame_height = size.height < 710 ? `${size.height - 100}px` : '610px';
     switch (fiatType) {
         case 'APPLE_PAY':
-            fiat_link = `https://pay.sendwyre.com/purchase?destCurrency=ETH&&dest=${ethAccount}&
-            paymentMethod=apple-pay&accountId=${WYRE_ID}`;
+            fiat_link = `https://pay.sendwyre.com/purchase?destCurrency=ETH&&dest=${ethAccount}&paymentMethod=apple-pay&accountId=${WYRE_ID}`;
             description = `Disclaimer  <br />
             Veridex now enables easy purchase of Ether using ApplePay, through Wyre!`;
+            break;
+        case 'DEBIT_CARD':
+            fiat_link = `https://pay.sendwyre.com/purchase?destCurrency=ETH&&dest=${ethAccount}&paymentMethod=debit-card&accountId=${WYRE_ID}`;
+            description = `Disclaimer  <br />
+            Veridex now enables easy purchase of Ether using Mastercad and Visa cards, through Wyre!`;
             break;
         case 'CREDIT_CARD':
             fiat_link = `https://business.coindirect.com/buy?merchantId=${COINDIRECT_MERCHANT_ID}&to=eth&address=${ethAccount}`;
@@ -78,12 +85,25 @@ export const FiatOnRampModal: React.FC<Props> = props => {
             break;
     }
     const toolTip = <TooltipStyled description={description} iconType={IconType.Fill} />;
+    const onload = () => {
+        setLoading(false);
+    };
+
     return (
         <Modal isOpen={isOpen} style={theme.modalTheme}>
             <CloseModalButton onClick={reset} />
-            <ModalContent>
+            <ModalContent style={{ height: `${size.height - 10}px` }}>
                 <Title>BUY ETH {toolTip}</Title>
-                <iframe title="fiat_on_ramp" src={fiat_link} width={frame_width} height="610" frameBorder="0" />
+                {loading && <LoadingWrapper minHeight="120px" />}
+                <iframe
+                    title="fiat_on_ramp"
+                    src={fiat_link}
+                    width={frame_width}
+                    height={frame_height}
+                    frameBorder="0"
+                    allowFullScreen={true}
+                    onLoad={onload}
+                />
             </ModalContent>
         </Modal>
     );
