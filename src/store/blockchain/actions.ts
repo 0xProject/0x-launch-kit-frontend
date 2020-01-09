@@ -639,13 +639,14 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
             const state = getState();
             const knownTokens = getKnownTokens();
             const ethAccount = getEthAccount(state);
+
             const tokenBalances = await tokensToTokenBalances(knownTokens.getTokens(), ethAccount);
 
             const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
-
             dispatch(setMarketTokens({ baseToken, quoteToken }));
+
             dispatch(setTokenBalances(tokenBalances));
 
             // tslint:disable-next-line:no-floating-promises

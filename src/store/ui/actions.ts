@@ -168,7 +168,7 @@ export const setConfigData = createAction('ui/CONFIG_DATA_set', resolve => {
 });
 
 export const setFiatType = createAction('ui/FIAT_TYPE_set', resolve => {
-    return (fiatType: 'APPLE_PAY' | 'CREDIT_CARD') => resolve(fiatType);
+    return (fiatType: 'APPLE_PAY' | 'CREDIT_CARD' | 'DEBIT_CARD') => resolve(fiatType);
 });
 
 export const startToggleTokenLockSteps: ThunkCreator = (token: Token, isUnlocked: boolean) => {

@@ -59,12 +59,20 @@ const FiatChooseModal: React.FC<Props> = props => {
         dispatch(openFiatOnRampModal(true));
         reset();
     };
+    const chooseDebitCard = () => {
+        dispatch(setFiatType('DEBIT_CARD'));
+        dispatch(openFiatOnRampModal(true));
+        reset();
+    };
 
     const content = (
         <>
             <ModalTitle>Buy With:</ModalTitle>
             <ButtonStyled onClick={chooseApplePay} variant={ButtonVariant.Portis}>
                 <LinkButton>{'Apple Pay'}</LinkButton>
+            </ButtonStyled>
+            <ButtonStyled onClick={chooseDebitCard} variant={ButtonVariant.Torus}>
+                <LinkButton>{'Debit Card'}</LinkButton>
             </ButtonStyled>
             <ButtonStyled onClick={chooseCreditCard} variant={ButtonVariant.Fortmatic}>
                 <LinkButton>{'Credit Card'}</LinkButton>
