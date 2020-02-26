@@ -35,15 +35,16 @@ REACT_APP_RELAYER_URL='https://RELAYER_URL/' REACT_APP_RELAYER_WS_URL='wss://REL
 
 A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to the network used by the relayer.
 
-You can optionally pass in any relayer endpoint that complies with the [0x Standard Relayer API](https://github.com/0xProject/standard-relayer-api). For example, if you want to show liquidity from 0x API:
+You can optionally pass in any relayer endpoint that complies with the [0x Standard Relayer API](https://0x.org/docs/api#sra). For example, if you want to show liquidity from 0x API:
 
 ```
-REACT_APP_RELAYER_URL='https://api.0x.org/sra' REACT_APP_RELAYER_WS_URL='wss://api.0x.org/sra' REACT_APP_NETWORK_ID=1 REACT_APP_CHAIN_ID=1 yarn start
+REACT_APP_RELAYER_URL='https://api.0x.org/sra/v3' REACT_APP_RELAYER_WS_URL='wss://api.0x.org/sra/v3' REACT_APP_NETWORK_ID=1 REACT_APP_CHAIN_ID=1 yarn start
 ```
 
 ### Creating a relayer for development
 
-If you don't have a relayer, you can start one locally for development. First create a `docker-compose.yml` file like this:
+If you don't have a relayer, you can start one locally for development by running [0x-api](https://github.com/0xProject/0x-api#getting-started) directly, or by using docker-compose.  
+For docker-compose, first create a `docker-compose.yml` file like this:
 
 ```yml
 version: '3'
@@ -52,26 +53,39 @@ services:
         image: 0xorg/ganache-cli
         ports:
             - '8545:8545'
-    backend:
-        image: 0xorg/launch-kit-backend:latest
+    postgres:
+        image: postgres:9.6
         environment:
-            HTTP_PORT: '3000'
-            NETWORK_ID: '50'
+            - POSTGRES_USER=api
+            - POSTGRES_PASSWORD=api
+            - POSTGRES_DB=api
+        ports:
+            - '5432:5432'
+    backend:
+        image: 0xorg/0x-api:latest
+        depends_on:
+            - postgres
+            - mesh
+        environment:
             CHAIN_ID: '1337'
             WHITELIST_ALL_TOKENS: 'true'
             FEE_RECIPIENT: '0x0000000000000000000000000000000000000001'
             MAKER_FEE_UNIT_AMOUNT: '0'
             TAKER_FEE_UNIT_AMOUNT: '0'
-            MESH_ENDPOINT: 'ws://mesh:60557'
+            MESH_WEBSOCKET_URI: 'ws://mesh:60557'
+            POSTGRES_URI: 'postgresql://api:api@postgres/api'
+            ETHEREUM_RPC_URL: 'http://ganache:8545'
         ports:
             - '3000:3000'
     mesh:
-        image: 0xorg/mesh:7.2.1-beta-0xv3
+        image: 0xorg/mesh:9.0.1
+        depends_on:
+            - ganache
         environment:
             ETHEREUM_RPC_URL: 'http://ganache:8545'
             ETHEREUM_CHAIN_ID: 1337
             VERBOSITY: 3
-            RPC_ADDR: 'mesh:60557'
+            WS_RPC_ADDR: '0.0.0.0:60557'
             # You can decrease the BLOCK_POLLING_INTERVAL for test networks to
             # improve performance. See https://0x-org.gitbook.io/mesh/ for more
             # Documentation about Mesh and its environment variables.
@@ -82,12 +96,12 @@ services:
             - '60559:60559'
 ```
 
-and then run `docker-compose up`. This will create three containers: one has a ganache with the 0x contracts deployed and some test tokens, another one has an instance of the [launch kit](https://github.com/0xProject/0x-launch-kit) implementation of a relayer that connects to that ganache and finally a container for [0x-mesh](https://github.com/0xProject/0x-mesh) for order sharing and discovery on a p2p network.
+and then run `docker-compose up`. This will create four containers: one is a Postgres database, one has a ganache with the 0x contracts deployed and some test tokens, another one has an instance of [0x-api](https://github.com/0xProject/0x-api) implementation of a relayer that connects to that ganache and finally a container for [0x-mesh](https://github.com/0xProject/0x-mesh) for order sharing and discovery on a p2p network.
 
 After starting those containers, you can run the following in another terminal. A browser tab will open in the `http://localhost:3001` address. You'll need to connect MetaMask to `localhost:8545`.
 
 ```
-REACT_APP_RELAYER_URL='http://localhost:3000/v3' REACT_APP_RELAYER_WS_URL='ws://localhost:3000' yarn start
+REACT_APP_RELAYER_URL='http://localhost:3000/sra/v3' REACT_APP_RELAYER_WS_URL='ws://localhost:3000/sra/v3' yarn start
 ```
 
 > _Note: the state of the relayer will be kept between runs. If you want to start from scratch, use `docker-compose up --force-recreate`_
