@@ -73,6 +73,7 @@ services:
             MAKER_FEE_UNIT_AMOUNT: '0'
             TAKER_FEE_UNIT_AMOUNT: '0'
             MESH_WEBSOCKET_URI: 'ws://mesh:60557'
+            MESH_HTTP_URI: 'http://mesh:60556'
             POSTGRES_URI: 'postgresql://api:api@postgres/api'
             ETHEREUM_RPC_URL: 'http://ganache:8545'
         ports:
@@ -86,11 +87,13 @@ services:
             ETHEREUM_CHAIN_ID: 1337
             VERBOSITY: 3
             WS_RPC_ADDR: '0.0.0.0:60557'
+            HTTP_RPC_ADDR: '0.0.0.0:60556'
             # You can decrease the BLOCK_POLLING_INTERVAL for test networks to
             # improve performance. See https://0x-org.gitbook.io/mesh/ for more
             # Documentation about Mesh and its environment variables.
             BLOCK_POLLING_INTERVAL: '5s'
         ports:
+            - '60556:60556'
             - '60557:60557'
             - '60558:60558'
             - '60559:60559'
