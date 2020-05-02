@@ -38,7 +38,8 @@
         "typesafe-actions": "^3.0.0"
     },
     "scripts": {
-        "start": "PORT=3001 react-scripts --max_old_space_size=4096 start",
+        "start:0x-api": "REACT_APP_DEFAULT_BASE_PATH=/erc20 REACT_APP_THEME_NAME=DARK_THEME REACT_APP_RELAYER_URL='https://api.0x.org/sra/v3' REACT_APP_RELAYER_WS_URL='wss://api.0x.org/sra/v3' REACT_APP_NETWORK_ID=1 REACT_APP_CHAIN_ID=1 yarn start",
+        "start": "PORT=80 react-scripts --max_old_space_size=4096 start",
         "build:tsc": "tsc -b",
         "build": "react-scripts --max_old_space_size=4096 build",
         "test": "REACT_APP_NETWORK_ID=50 REACT_APP_CHAIN_ID=1337 react-scripts test --env=node",
