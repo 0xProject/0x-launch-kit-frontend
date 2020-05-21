@@ -7,7 +7,7 @@ const modalThemeStyle: ThemeModalStyle = {
         bottom: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        flexGrow: '0',
+        flexGrow: 0,
         left: 'auto',
         maxHeight: '90%',
         minWidth: '350px',
@@ -22,7 +22,7 @@ const modalThemeStyle: ThemeModalStyle = {
         backgroundColor: 'rgba(0, 0, 0, 0.4)',
         display: 'flex',
         justifyContent: 'center',
-        zIndex: '12345',
+        zIndex: 12345,
     },
 };
 

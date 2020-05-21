@@ -91,29 +91,8 @@ export interface ThemeProperties {
 }
 
 export interface ThemeModalStyle {
-    content: {
-        backgroundColor: string;
-        borderColor: string;
-        bottom: string;
-        display: string;
-        flexDirection: string;
-        flexGrow: string;
-        left: string;
-        maxHeight: string;
-        minWidth: string;
-        overflow: string;
-        padding: string;
-        position: string;
-        right: string;
-        top: string;
-    };
-    overlay: {
-        alignItems: string;
-        backgroundColor: string;
-        display: string;
-        justifyContent: string;
-        zIndex: string;
-    };
+    content: React.CSSProperties;
+    overlay: React.CSSProperties;
 }
 
 export interface ThemeMetaData {

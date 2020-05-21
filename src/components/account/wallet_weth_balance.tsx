@@ -291,11 +291,6 @@ const mapDispatchToProps = {
     onStartWrapEtherSteps: startWrapEtherSteps,
 };
 
-const WalletWethBalanceContainer = withTheme(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(WalletWethBalance),
-);
+const WalletWethBalanceContainer = withTheme(connect(mapStateToProps, mapDispatchToProps)(WalletWethBalance));
 
 export { WalletWethBalance, WalletWethBalanceContainer };

@@ -19,6 +19,18 @@
             "displayDecimals": 2
         },
         {
+            "symbol": "toz",
+            "name": "Tokenizer",
+            "primaryColor": "#333333",
+            "icon": "assets/icons/toz.svg",
+            "addresses": {
+                "1": "0x74383273cb0bc65f8f8738a2847d2e81b28d4e00",
+                "3": "0x74383273cb0bc65f8f8738a2847d2e81b28d4e00"
+            },
+            "decimals": 18,
+            "displayDecimals": 2
+        },
+        {
             "symbol": "weth",
             "name": "Wrapped Ether",
             "primaryColor": "#3333ff",
@@ -105,6 +117,14 @@
         }
     ],
     "pairs": [
+        {
+            "base": "toz",
+            "quote": "dai"
+        },
+        {
+            "base": "toz",
+            "quote": "weth"
+        },
         {
             "base": "zrx",
             "quote": "weth"

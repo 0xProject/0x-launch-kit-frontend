@@ -87,8 +87,8 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
                     [order],
                     order.makerAssetAmount,
                     [order.signature],
-                    Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
-                    FEE_RECIPIENT,
+                    [Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18)],
+                    [FEE_RECIPIENT],
                 )
                 .sendTransactionAsync({
                     from: ethAccount,
