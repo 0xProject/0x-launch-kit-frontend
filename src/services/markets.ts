@@ -1,15 +1,17 @@
 import { BigNumber } from '@0x/utils';
 
-const ETH_MARKET_PRICE_API_ENDPOINT = 'https://api.coinmarketcap.com/v1/ticker/ethereum/';
+const ETH_MARKET_PRICE_API_ENDPOINT = 'https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?CMC_PRO_API_KEY={your_key}&symbol=ETH';
 
 export const getMarketPriceEther = async (): Promise<BigNumber> => {
-    const promisePriceEtherResolved = await fetch(ETH_MARKET_PRICE_API_ENDPOINT);
+
+    const promisePriceEtherResolved = await fetch(ETH_MARKET_PRICE_API_ENDPOINT,{ mode: 'no-cors'});
     if (promisePriceEtherResolved.status === 200) {
         const data = await promisePriceEtherResolved.json();
-        if (data && data.length) {
-            const item = data[0];
-            const priceTokenUSD = new BigNumber(item.price_usd);
-            return priceTokenUSD;
+        console.log (data);
+        if (data) {
+           const priceTokenUSD  = new BigNumber(data.data.ETH.quote.USD.price);
+            return priceTokenUSD ;
+            
         }
     }
 
